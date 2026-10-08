@@ -28,6 +28,15 @@ public final class NationDashboard {
                 .sorted(Comparator.comparing(TerritoryData::name))
                 .toList();
 
+        List<TerritoryData> claimable = data.territories().stream()
+                .filter(t -> t.ownerNationId() == null)
+                .filter(t -> t.neighbors().stream().anyMatch(neighborId -> {
+                    TerritoryData neighbor = data.territory(neighborId);
+                    return neighbor != null && nation.id().equals(neighbor.ownerNationId());
+                }))
+                .sorted(Comparator.comparing(TerritoryData::name))
+                .toList();
+
         List<String> lines = new ArrayList<>();
         lines.add("H|" + nation.name());
         lines.add("G|Treasury: $" + nation.treasury());
@@ -95,6 +104,19 @@ public final class NationDashboard {
                         lines.add("D|      Upgrade: " + nextBuilding.describe());
                     }
                 }
+            }
+        }
+
+        lines.add("");
+        lines.add("H|AVAILABLE EXPANSION");
+        EconomyCost claimCost = EconomyCatalog.neutralTerritoryClaimCost();
+        if (claimable.isEmpty()) {
+            lines.add("D|No adjacent neutral territories.");
+        } else {
+            lines.add("D|Claim cost: " + claimCost.describe());
+            for (TerritoryData territory : claimable) {
+                lines.add("Y|" + territory.name() + " • " + pretty(territory.specialty()) +
+                        " • /nation claim " + territory.id());
             }
         }
 

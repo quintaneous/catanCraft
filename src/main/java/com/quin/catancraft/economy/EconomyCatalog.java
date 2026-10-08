@@ -8,6 +8,14 @@ import java.util.Map;
 public final class EconomyCatalog {
     private EconomyCatalog() {}
 
+    public static EconomyCost neutralTerritoryClaimCost() {
+        return new EconomyCost(4_000, Map.of(
+                ResourceType.WOOD, 60L,
+                ResourceType.STONE, 40L,
+                ResourceType.AGRICULTURE, 40L
+        ));
+    }
+
     public static EconomyCost buildingCost(BuildingType type) {
         EconomyCost base = new EconomyCost(3_000, Map.of(
                 ResourceType.WOOD, 50L,

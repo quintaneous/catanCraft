@@ -78,6 +78,17 @@ public final class CatanSavedData extends SavedData {
         return territory;
     }
 
+    public boolean linkTerritories(String firstId, String secondId) {
+        TerritoryData first = territory(firstId);
+        TerritoryData second = territory(secondId);
+        if (first == null || second == null || first.id().equals(second.id())) return false;
+
+        first.addNeighbor(second.id());
+        second.addNeighbor(first.id());
+        setDirty();
+        return true;
+    }
+
     @Override
     public CompoundTag save(CompoundTag tag) {
         ListTag nationList = new ListTag();

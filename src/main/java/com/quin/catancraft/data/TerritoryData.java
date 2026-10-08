@@ -2,11 +2,14 @@ package com.quin.catancraft.data;
 
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.Tag;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 
 public final class TerritoryData {
@@ -18,6 +21,7 @@ public final class TerritoryData {
     private int producerLevel = 1;
     private int cityLevel = 1;
     private final List<BuildingInstance> buildings = new ArrayList<>();
+    private final Set<String> neighbors = new LinkedHashSet<>();
 
     public TerritoryData(String id, String name, ResourceType specialty) {
         this.id = id;
@@ -66,6 +70,16 @@ public final class TerritoryData {
         return buildings;
     }
 
+    public Set<String> neighbors() {
+        return Set.copyOf(neighbors);
+    }
+
+    public void addNeighbor(String territoryId) {
+        if (territoryId != null && !territoryId.equalsIgnoreCase(id)) {
+            neighbors.add(territoryId.toLowerCase());
+        }
+    }
+
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         tag.putString("id", id);
@@ -80,6 +94,13 @@ public final class TerritoryData {
             buildingList.add(building.save());
         }
         tag.put("buildings", buildingList);
+
+        ListTag neighborList = new ListTag();
+        for (String neighbor : neighbors) {
+            neighborList.add(StringTag.valueOf(neighbor));
+        }
+        tag.put("neighbors", neighborList);
+
         return tag;
     }
 
@@ -89,9 +110,11 @@ public final class TerritoryData {
                 tag.getString("name"),
                 ResourceType.valueOf(tag.getString("specialty"))
         );
+
         if (tag.hasUUID("ownerNationId")) {
             territory.ownerNationId = tag.getUUID("ownerNationId");
         }
+
         territory.setProducerLevel(tag.getInt("producerLevel"));
         territory.setCityLevel(tag.getInt("cityLevel"));
 
@@ -99,6 +122,12 @@ public final class TerritoryData {
         for (int i = 0; i < buildingList.size(); i++) {
             territory.buildings.add(BuildingInstance.load(buildingList.getCompound(i)));
         }
+
+        ListTag neighborList = tag.getList("neighbors", Tag.TAG_STRING);
+        for (int i = 0; i < neighborList.size(); i++) {
+            territory.neighbors.add(neighborList.getString(i).toLowerCase());
+        }
+
         return territory;
     }
 }
