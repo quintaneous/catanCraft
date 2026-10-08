@@ -39,7 +39,10 @@ public final class MonumentManager {
         }
 
         Set<UUID> present = nationsPresent(server, data, active);
-        if (present.size() > 1) return;
+        if (present.size() > 1) {
+            sendZoneStatus(server, active, "CONTESTED • " + progressPercent(active) + "%");
+            return;
+        }
 
         if (present.isEmpty()) {
             active.addCaptureProgressTicks(-40);
@@ -56,6 +59,14 @@ public final class MonumentManager {
 
         active.addCaptureProgressTicks(20);
         data.setDirty();
+
+        NationData capturingNation = data.nation(nationId);
+        String nationName = capturingNation == null ? "Unknown" : capturingNation.name();
+        sendZoneStatus(
+                server,
+                active,
+                "CAPTURING FOR " + nationName + " • " + progressPercent(active) + "%"
+        );
 
         if (active.captureProgressTicks() >= CAPTURE_TICKS) {
             completeCapture(server, data, active, nationId);
@@ -109,6 +120,31 @@ public final class MonumentManager {
             if (nation != null) result.add(nation.id());
         }
         return result;
+    }
+
+    private static int progressPercent(MonumentData monument) {
+        return Math.min(
+                100,
+                (int) Math.floor(
+                        100.0 * monument.captureProgressTicks() / CAPTURE_TICKS
+                )
+        );
+    }
+
+    private static void sendZoneStatus(
+            MinecraftServer server,
+            MonumentData monument,
+            String status
+    ) {
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            String dimension = player.serverLevel().dimension().location().toString();
+            if (monument.contains(dimension, player.getX(), player.getZ())) {
+                player.displayClientMessage(
+                        Component.literal(monument.name() + " • " + status),
+                        true
+                );
+            }
+        }
     }
 
     private static void completeCapture(MinecraftServer server, CatanSavedData data,
