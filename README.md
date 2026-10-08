@@ -13,6 +13,8 @@ Current work on the `v0.1-foundation` branch:
 - Shared national treasury
 - Shared national resource stockpile
 - Fixed server-defined territories with one specialty resource
+- Server-defined territory adjacency graph
+- Paid claiming of adjacent neutral territories
 - Territory ownership
 - Persistent world save data
 - 15-minute economy cycles
@@ -74,6 +76,8 @@ Create and assign a test territory:
 ```
 /catan territory create iron_valley iron Iron Valley
 /catan territory assign iron_valley Britain
+/catan territory create coal_fields coal Coal Fields
+/catan territory link iron_valley coal_fields
 /catan territory info iron_valley
 ```
 
@@ -86,6 +90,12 @@ Add an industry and resources for testing:
 /catan building add iron_valley steel_mill
 /catan debug cycle
 /nation
+```
+
+Once the nation owns a bordering territory, neutral expansion is player-driven:
+
+```
+/nation claim coal_fields
 ```
 
 Factories default to a target stock of 100 processed units:
