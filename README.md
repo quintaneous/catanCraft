@@ -136,3 +136,33 @@ Useful admin commands:
 ```
 
 The same territory lookup is intended to power later building placement, monuments, sieges, and capture rules.
+
+
+## Monument testing
+
+V0.1 supports up to three configured monuments, with only one active at a time.
+
+Stand at the center of each site and create it:
+
+```
+/catan monument create industrial industrial_complex 25 Industrial Complex
+/catan monument create depot military_depot 25 Military Depot
+/catan monument create refinery refinery 25 Refinery
+```
+
+Useful commands:
+
+```
+/catan monument list
+/catan monument activate industrial
+```
+
+Rules in the current prototype:
+
+- One monument is active globally.
+- A single nation must hold the radius for 120 seconds.
+- Two or more nations in the zone make it contested and pause progress.
+- Empty zones lose capture progress.
+- After a capture there is a 5-minute gap before the next monument rotates in.
+- Capture status is shown in the action bar to players inside the zone.
+- Rewards currently go directly to the national stockpile/treasury; physical cargo delivery can replace this later.
