@@ -31,3 +31,10 @@ jobs:
 
       - name: Build
         run: gradle build --no-daemon
+
+      - name: Upload dev jar
+        uses: actions/upload-artifact@v4
+        with:
+          name: catancraft-dev-jar
+          path: build/libs/*.jar
+          if-no-files-found: error

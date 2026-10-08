@@ -116,3 +116,23 @@ Factories default to a target stock of 100 processed units:
 ## Build
 
 Requires Java 17 and Forge 1.20.1 / 47.4.10.
+
+
+## Defining territory world boundaries
+
+Territories use server-defined X/Z polygons. Stand on each corner/vertex in order and run:
+
+```
+/catan territory boundary add iron_valley
+```
+
+Add at least three points. The polygon closes automatically between the last point and the first point.
+
+Useful admin commands:
+
+```
+/catan territory here
+/catan territory boundary clear iron_valley
+```
+
+The same territory lookup is intended to power later building placement, monuments, sieges, and capture rules.
