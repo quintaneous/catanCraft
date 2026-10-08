@@ -73,6 +73,12 @@ public final class CatanCommands {
         node.then(Commands.literal("stockpile")
                 .executes(ctx -> stockpile(ctx.getSource())));
 
+        node.then(Commands.literal("claim")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .executes(ctx -> claimNeutralTerritory(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "territory")))));
+
         node.then(Commands.literal("build")
                 .then(Commands.argument("territory", StringArgumentType.word())
                         .then(Commands.argument("type", StringArgumentType.word())
@@ -138,6 +144,15 @@ public final class CatanCommands {
                                         ctx.getSource(),
                                         StringArgumentType.getString(ctx, "territory"),
                                         StringArgumentType.getString(ctx, "nation"))))));
+
+        node.then(Commands.literal("link")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.argument("first", StringArgumentType.word())
+                        .then(Commands.argument("second", StringArgumentType.word())
+                                .executes(ctx -> linkTerritories(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "first"),
+                                        StringArgumentType.getString(ctx, "second"))))));
 
         node.then(Commands.literal("info")
                 .then(Commands.argument("territory", StringArgumentType.word())
@@ -346,6 +361,61 @@ public final class CatanCommands {
                 .forEach(entry -> source.sendSuccess(
                         () -> Component.literal(
                                 entry.getKey().id() + ": " + entry.getValue()), false));
+        return 1;
+    }
+
+    private static int claimNeutralTerritory(
+            CommandSourceStack source,
+            String territoryId
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = requireLeaderNation(source, player, data);
+        if (nation == null) return 0;
+
+        TerritoryData territory = data.territory(territoryId);
+        if (territory == null) {
+            source.sendFailure(Component.literal("Unknown territory: " + territoryId));
+            return 0;
+        }
+        if (territory.ownerNationId() != null) {
+            source.sendFailure(Component.literal(territory.name() + " is already owned."));
+            return 0;
+        }
+
+        boolean hasOwnedTerritory = data.territories().stream()
+                .anyMatch(t -> nation.id().equals(t.ownerNationId()));
+        if (!hasOwnedTerritory) {
+            source.sendFailure(Component.literal(
+                    "Your starting territory must be assigned by the server before expanding."));
+            return 0;
+        }
+
+        boolean adjacent = territory.neighbors().stream().anyMatch(neighborId -> {
+            TerritoryData neighbor = data.territory(neighborId);
+            return neighbor != null && nation.id().equals(neighbor.ownerNationId());
+        });
+        if (!adjacent) {
+            source.sendFailure(Component.literal(
+                    territory.name() + " does not border your nation."));
+            return 0;
+        }
+
+        EconomyCost cost = EconomyCatalog.neutralTerritoryClaimCost();
+        if (!cost.canAfford(nation)) {
+            source.sendFailure(Component.literal(
+                    "Cannot afford territorial expansion. Need: " + cost.describe()));
+            return 0;
+        }
+
+        cost.charge(nation);
+        territory.setOwnerNationId(nation.id());
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                nation.name() + " expanded into " + territory.name() +
+                        " for " + cost.describe()), true);
+        NationDashboard.open(player);
         return 1;
     }
 
@@ -590,6 +660,30 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 territory.name() + " is now owned by " + nation.name()), true);
+        return 1;
+    }
+
+    private static int linkTerritories(
+            CommandSourceStack source,
+            String firstId,
+            String secondId
+    ) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        TerritoryData first = data.territory(firstId);
+        TerritoryData second = data.territory(secondId);
+
+        if (first == null || second == null) {
+            source.sendFailure(Component.literal(
+                    "Both territory ids must already exist."));
+            return 0;
+        }
+        if (!data.linkTerritories(firstId, secondId)) {
+            source.sendFailure(Component.literal("Could not link those territories."));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(
+                "Linked " + first.name() + " <-> " + second.name()), true);
         return 1;
     }
 
