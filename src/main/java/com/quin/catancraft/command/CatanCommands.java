@@ -261,6 +261,18 @@ public final class CatanCommands {
                                         StringArgumentType.getString(ctx, "resource"),
                                         LongArgumentType.getLong(ctx, "amount"))))));
 
+        node.then(Commands.literal("money")
+                .then(Commands.argument("amount", LongArgumentType.longArg(1))
+                        .executes(ctx -> debugMoney(
+                                ctx.getSource(),
+                                LongArgumentType.getLong(ctx, "amount")))));
+
+        node.then(Commands.literal("cycles")
+                .then(Commands.argument("count", IntegerArgumentType.integer(1, 100))
+                        .executes(ctx -> debugCycles(
+                                ctx.getSource(),
+                                IntegerArgumentType.getInteger(ctx, "count")))));
+
         return node;
     }
 
@@ -1009,6 +1021,40 @@ public final class CatanCommands {
             source.sendFailure(Component.literal("Unknown resource: " + resourceName));
             return 0;
         }
+    }
+
+    private static int debugMoney(
+            CommandSourceStack source,
+            long amount
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = data.nationForPlayer(player.getUUID());
+
+        if (nation == null) {
+            source.sendFailure(Component.literal("You are not in a nation."));
+            return 0;
+        }
+
+        nation.addTreasury(amount);
+        data.setDirty();
+        source.sendSuccess(() -> Component.literal(
+                "Added $" + amount + " to " + nation.name() +
+                        ". Treasury is now $" + nation.treasury()), true);
+        return 1;
+    }
+
+    private static int debugCycles(
+            CommandSourceStack source,
+            int count
+    ) {
+        for (int i = 0; i < count; i++) {
+            EconomyEngine.runCycle(source.getServer());
+        }
+        source.sendSuccess(() -> Component.literal(
+                "Executed " + count + " production cycles (" +
+                        (count * 15) + " simulated minutes)."), true);
+        return count;
     }
 
     @Nullable
