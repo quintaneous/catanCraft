@@ -6,6 +6,8 @@ import com.quin.catancraft.data.NationData;
 import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import com.quin.catancraft.economy.EconomyBalance;
+import com.quin.catancraft.economy.EconomyCatalog;
+import com.quin.catancraft.economy.EconomyCost;
 import com.quin.catancraft.network.NationNetwork;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -62,22 +64,50 @@ public final class NationDashboard {
                 int perHour = EconomyBalance.rawProductionPerCycle(territory.producerLevel()) * 4;
                 lines.add("B|" + territory.name() + " • " +
                         pretty(territory.specialty()) + " • Producer L" + territory.producerLevel());
-                lines.add("D|  Base output: +" + perHour + "/hr • City L" + territory.cityLevel());
+                lines.add("D|  Base output: +" + perHour + "/hr • City L" + territory.cityLevel() +
+                        " • Slots " + territory.buildings().size() + "/" +
+                        EconomyCatalog.maxBuildingSlots(territory.cityLevel()));
 
-                for (BuildingInstance building : territory.buildings()) {
-                    lines.add("P|  " + pretty(building.type().name()) +
-                            " L" + building.level() +
-                            " • target " + building.targetStock() + " " +
-                            pretty(building.type().output()));
+                EconomyCost nextCity = EconomyCatalog.cityUpgradeCost(territory.cityLevel());
+                if (nextCity != null) {
+                    lines.add("D|  Next City: " + nextCity.describe());
+                }
+
+                EconomyCost nextProducer = EconomyCatalog.producerUpgradeCost(territory.producerLevel());
+                if (nextProducer != null) {
+                    lines.add("D|  Next Producer: " + nextProducer.describe());
+                }
+
+                for (int i = 0; i < territory.buildings().size(); i++) {
+                    BuildingInstance building = territory.buildings().get(i);
+                    String detail = "P|  [" + i + "] " + building.type().displayName() +
+                            " L" + building.level();
+
+                    if (building.type().isProcessor()) {
+                        detail += " • target " + building.targetStock() + " " +
+                                pretty(building.type().output());
+                    }
+                    lines.add(detail);
+
+                    EconomyCost nextBuilding = EconomyCatalog.buildingUpgradeCost(
+                            building.type(), building.level());
+                    if (nextBuilding != null) {
+                        lines.add("D|      Upgrade: " + nextBuilding.describe());
+                    }
                 }
             }
         }
 
         lines.add("");
-        lines.add("H|QUICK COMMANDS");
-        lines.add("D|/nation invite <player>  • invite a player");
-        lines.add("D|/nation leave  • leave your nation");
-        lines.add("D|/catan nation stockpile  • text stockpile view");
+        lines.add("H|LEADER COMMANDS");
+        lines.add("D|/nation build <territory> <building>");
+        lines.add("D|/nation upgrade city <territory>");
+        lines.add("D|/nation upgrade producer <territory>");
+        lines.add("D|/nation building upgrade <territory> <index>");
+        lines.add("");
+        lines.add("H|MEMBERSHIP");
+        lines.add("D|/nation invite <player>  • leader only");
+        lines.add("D|/nation leave  • members may leave");
 
         NationNetwork.openDashboard(player, lines);
         return true;
@@ -88,11 +118,7 @@ public final class NationDashboard {
     }
 
     private static String pretty(ResourceType type) {
-        return pretty(type.name());
-    }
-
-    private static String pretty(String value) {
-        String[] pieces = value.toLowerCase().split("_");
+        String[] pieces = type.id().split("_");
         StringBuilder result = new StringBuilder();
         for (String piece : pieces) {
             if (!result.isEmpty()) result.append(' ');

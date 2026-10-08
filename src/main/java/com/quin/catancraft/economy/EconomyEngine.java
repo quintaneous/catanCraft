@@ -9,8 +9,6 @@ import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import net.minecraft.server.MinecraftServer;
 
-import java.util.Map;
-
 public final class EconomyEngine {
     private static long lastProcessedCycle = Long.MIN_VALUE;
 
@@ -68,9 +66,16 @@ public final class EconomyEngine {
     private static void processBuildings(NationData nation, TerritoryData territory) {
         for (BuildingInstance building : territory.buildings()) {
             BuildingType type = building.type();
+
+            if (type == BuildingType.COMMERCIAL_DISTRICT) {
+                nation.addTreasury(commercialIncomePerCycle(building.level()));
+                continue;
+            }
+
+            if (!type.isProcessor()) continue;
+
             ResourceType output = type.output();
             long current = nation.resource(output);
-
             if (current >= building.targetStock()) continue;
 
             int desiredBatches = type.batchesPerCycle(building.level());
@@ -87,5 +92,15 @@ public final class EconomyEngine {
             nation.consume(type.inputs(), batches);
             nation.addResource(output, (long) type.outputPerBatch() * batches);
         }
+    }
+
+    private static long commercialIncomePerCycle(int level) {
+        return switch (Math.max(1, Math.min(5, level))) {
+            case 1 -> 125L;
+            case 2 -> 225L;
+            case 3 -> 375L;
+            case 4 -> 600L;
+            default -> 900L;
+        };
     }
 }
