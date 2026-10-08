@@ -10,11 +10,14 @@ import com.quin.catancraft.data.BuildingInstance;
 import com.quin.catancraft.data.BuildingType;
 import com.quin.catancraft.data.CatanSavedData;
 import com.quin.catancraft.data.NationData;
+import com.quin.catancraft.data.MonumentData;
+import com.quin.catancraft.data.MonumentType;
 import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
 import com.quin.catancraft.economy.EconomyEngine;
+import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.ui.NationDashboard;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -35,6 +38,7 @@ public final class CatanCommands {
         catan.then(nationNode("nation"));
         catan.then(territoryAdminNode());
         catan.then(buildingAdminNode());
+        catan.then(monumentAdminNode());
         catan.then(debugNode());
         dispatcher.register(catan);
     }
@@ -204,6 +208,35 @@ public final class CatanCommands {
                                                 StringArgumentType.getString(ctx, "territory"),
                                                 IntegerArgumentType.getInteger(ctx, "index"),
                                                 LongArgumentType.getLong(ctx, "amount")))))));
+
+        return node;
+    }
+
+    private static LiteralArgumentBuilder<CommandSourceStack> monumentAdminNode() {
+        LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal("monument");
+
+        node.then(Commands.literal("create")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .then(Commands.argument("type", StringArgumentType.word())
+                                .then(Commands.argument("radius", IntegerArgumentType.integer(5, 100))
+                                        .then(Commands.argument("name", StringArgumentType.greedyString())
+                                                .executes(ctx -> createMonument(
+                                                        ctx.getSource(),
+                                                        StringArgumentType.getString(ctx, "id"),
+                                                        StringArgumentType.getString(ctx, "type"),
+                                                        IntegerArgumentType.getInteger(ctx, "radius"),
+                                                        StringArgumentType.getString(ctx, "name"))))))));
+
+        node.then(Commands.literal("activate")
+                .requires(source -> source.hasPermission(2))
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .executes(ctx -> activateMonument(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id")))));
+
+        node.then(Commands.literal("list")
+                .executes(ctx -> listMonuments(ctx.getSource())));
 
         return node;
     }
@@ -869,6 +902,83 @@ public final class CatanCommands {
         data.setDirty();
         source.sendSuccess(() -> Component.literal(
                 "Building " + index + " target stock set to " + amount), true);
+        return 1;
+    }
+
+    private static int createMonument(
+            CommandSourceStack source,
+            String id,
+            String typeName,
+            int radius,
+            String name
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+
+        if (data.monument(id) != null) {
+            source.sendFailure(Component.literal("Monument id already exists: " + id));
+            return 0;
+        }
+        if (data.monuments().size() >= 3) {
+            source.sendFailure(Component.literal(
+                    "V0.1 is capped at three monuments to keep interaction concentrated."));
+            return 0;
+        }
+
+        final MonumentType type;
+        try {
+            type = MonumentType.parse(typeName);
+        } catch (IllegalArgumentException ex) {
+            source.sendFailure(Component.literal(
+                    "Unknown type. Use industrial_complex, military_depot, or refinery."));
+            return 0;
+        }
+
+        String dimension = player.serverLevel().dimension().location().toString();
+        var pos = player.blockPosition();
+        MonumentData monument = data.createMonument(
+                id, name.trim(), type, dimension,
+                pos.getX(), pos.getY(), pos.getZ(), radius);
+
+        source.sendSuccess(() -> Component.literal(
+                "Created " + monument.name() + " [" + monument.id() + "] at X=" +
+                        monument.x() + " Z=" + monument.z() +
+                        " radius=" + monument.radius()), true);
+        return 1;
+    }
+
+    private static int activateMonument(CommandSourceStack source, String id) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        MonumentData monument = data.monument(id);
+        if (monument == null) {
+            source.sendFailure(Component.literal("Unknown monument: " + id));
+            return 0;
+        }
+
+        MonumentManager.forceActivate(source.getServer(), data, monument);
+        source.sendSuccess(() -> Component.literal("Activated " + monument.name()), true);
+        return 1;
+    }
+
+    private static int listMonuments(CommandSourceStack source) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        MonumentData active = data.activeMonument();
+
+        if (data.monuments().isEmpty()) {
+            source.sendSuccess(() -> Component.literal("No monuments configured."), false);
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal("=== CatanCraft Monuments ==="), false);
+        for (MonumentData monument : data.monuments()) {
+            boolean isActive = active != null && active.id().equals(monument.id());
+            source.sendSuccess(() -> Component.literal(
+                    (isActive ? "[ACTIVE] " : "") +
+                            monument.name() + " [" + monument.id() + "] • " +
+                            monument.type().displayName() +
+                            " • X=" + monument.x() + " Z=" + monument.z() +
+                            " • R=" + monument.radius()), false);
+        }
         return 1;
     }
 

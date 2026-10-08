@@ -4,11 +4,13 @@ import com.quin.catancraft.data.BuildingInstance;
 import com.quin.catancraft.data.BuildingType;
 import com.quin.catancraft.data.CatanSavedData;
 import com.quin.catancraft.data.NationData;
+import com.quin.catancraft.data.MonumentData;
 import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import com.quin.catancraft.economy.EconomyBalance;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
+import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.network.NationNetwork;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -66,6 +68,29 @@ public final class NationDashboard {
         addResource(lines, nation, ResourceType.MECHANICAL_PARTS);
         addResource(lines, nation, ResourceType.ELECTRONICS);
         addResource(lines, nation, ResourceType.EXPLOSIVES);
+        lines.add("");
+
+        lines.add("H|ACTIVE MONUMENT");
+        MonumentData activeMonument = data.activeMonument();
+        if (activeMonument == null) {
+            lines.add("D|No monument is active right now.");
+        } else {
+            int percent = Math.min(100, (int) Math.floor(
+                    100.0 * activeMonument.captureProgressTicks()
+                            / MonumentManager.CAPTURE_TICKS));
+            String holder = "Unclaimed";
+            if (activeMonument.capturingNationId() != null) {
+                NationData holdingNation = data.nation(activeMonument.capturingNationId());
+                if (holdingNation != null) holder = holdingNation.name();
+            }
+
+            lines.add("Y|" + activeMonument.name() +
+                    " • " + activeMonument.type().displayName());
+            lines.add("D|X=" + activeMonument.x() +
+                    " Z=" + activeMonument.z() +
+                    " • Radius " + activeMonument.radius());
+            lines.add("D|Capture: " + percent + "% • " + holder);
+        }
         lines.add("");
 
         lines.add("H|TERRITORIES");
