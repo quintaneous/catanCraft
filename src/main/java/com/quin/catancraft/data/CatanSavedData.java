@@ -19,6 +19,10 @@ public final class CatanSavedData extends SavedData {
 
     private final Map<UUID, NationData> nations = new LinkedHashMap<>();
     private final Map<String, TerritoryData> territories = new LinkedHashMap<>();
+    private final Map<String, MonumentData> monuments = new LinkedHashMap<>();
+    @Nullable private String activeMonumentId;
+    @Nullable private String lastActivatedMonumentId;
+    private long nextMonumentActivationGameTime;
 
     public static CatanSavedData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(
@@ -34,6 +38,53 @@ public final class CatanSavedData extends SavedData {
 
     public Collection<TerritoryData> territories() {
         return territories.values();
+    }
+
+    public Collection<MonumentData> monuments() {
+        return monuments.values();
+    }
+
+    @Nullable
+    public MonumentData monument(String id) {
+        return id == null ? null : monuments.get(id.toLowerCase());
+    }
+
+    public MonumentData createMonument(String id, String name, MonumentType type,
+                                       String dimensionId, int x, int y, int z, int radius) {
+        MonumentData monument = new MonumentData(
+                id, name, type, dimensionId, x, y, z, radius);
+        monuments.put(monument.id(), monument);
+        setDirty();
+        return monument;
+    }
+
+    @Nullable
+    public MonumentData activeMonument() {
+        return monument(activeMonumentId);
+    }
+
+    public void setActiveMonumentId(@Nullable String id) {
+        activeMonumentId = id == null ? null : id.toLowerCase();
+        setDirty();
+    }
+
+    @Nullable
+    public String lastActivatedMonumentId() {
+        return lastActivatedMonumentId;
+    }
+
+    public void setLastActivatedMonumentId(@Nullable String id) {
+        lastActivatedMonumentId = id == null ? null : id.toLowerCase();
+        setDirty();
+    }
+
+    public long nextMonumentActivationGameTime() {
+        return nextMonumentActivationGameTime;
+    }
+
+    public void setNextMonumentActivationGameTime(long value) {
+        nextMonumentActivationGameTime = Math.max(0, value);
+        setDirty();
     }
 
     @Nullable
@@ -116,6 +167,15 @@ public final class CatanSavedData extends SavedData {
             territoryList.add(territory.save());
         }
         tag.put("territories", territoryList);
+
+        ListTag monumentList = new ListTag();
+        for (MonumentData monument : monuments.values()) {
+            monumentList.add(monument.save());
+        }
+        tag.put("monuments", monumentList);
+        if (activeMonumentId != null) tag.putString("activeMonumentId", activeMonumentId);
+        if (lastActivatedMonumentId != null) tag.putString("lastActivatedMonumentId", lastActivatedMonumentId);
+        tag.putLong("nextMonumentActivationGameTime", nextMonumentActivationGameTime);
         return tag;
     }
 
@@ -133,6 +193,20 @@ public final class CatanSavedData extends SavedData {
             TerritoryData territory = TerritoryData.load(territoryList.getCompound(i));
             data.territories.put(territory.id(), territory);
         }
+
+        ListTag monumentList = tag.getList("monuments", Tag.TAG_COMPOUND);
+        for (int i = 0; i < monumentList.size(); i++) {
+            MonumentData monument = MonumentData.load(monumentList.getCompound(i));
+            data.monuments.put(monument.id(), monument);
+        }
+        if (tag.contains("activeMonumentId", Tag.TAG_STRING)) {
+            data.activeMonumentId = tag.getString("activeMonumentId");
+        }
+        if (tag.contains("lastActivatedMonumentId", Tag.TAG_STRING)) {
+            data.lastActivatedMonumentId = tag.getString("lastActivatedMonumentId");
+        }
+        data.nextMonumentActivationGameTime =
+                Math.max(0, tag.getLong("nextMonumentActivationGameTime"));
         return data;
     }
 }

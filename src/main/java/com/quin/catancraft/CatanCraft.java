@@ -3,6 +3,7 @@ package com.quin.catancraft;
 import com.mojang.logging.LogUtils;
 import com.quin.catancraft.command.CatanCommands;
 import com.quin.catancraft.economy.EconomyEngine;
+import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.network.NationNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
@@ -31,6 +32,7 @@ public final class CatanCraft {
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             EconomyEngine.tick(event.getServer());
+            MonumentManager.tick(event.getServer());
         }
     }
 }
