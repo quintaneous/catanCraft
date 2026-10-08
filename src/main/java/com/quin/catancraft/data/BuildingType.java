@@ -24,6 +24,15 @@ public enum BuildingType {
         };
     }
 
+    public int processingTier() {
+        return switch (this) {
+            case STEEL_MILL, CONCRETE_PLANT, TEXTILE_MILL, REFINERY, CHEMICAL_PLANT -> 1;
+            case MACHINE_SHOP -> 2;
+            case ELECTRONICS_FACTORY -> 3;
+            default -> 0;
+        };
+    }
+
     public ResourceType output() {
         return switch (this) {
             case STEEL_MILL -> ResourceType.STEEL;
