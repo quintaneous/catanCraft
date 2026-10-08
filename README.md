@@ -2,13 +2,14 @@
 
 CatanCraft is a clean Forge 1.20.1 mod for a Catan-inspired Minecraft nation/tycoon/war server.
 
-This repository intentionally does **not** reuse the old OPaC Warfare gameplay code. The first milestone is the economy and territory foundation.
+This repository intentionally does **not** reuse the old OPaC Warfare gameplay code.
 
 ## V0.1 foundation
 
-Implemented on the `v0.1-foundation` branch:
+Current work on the `v0.1-foundation` branch:
 
 - Nations with leader/member identity
+- Nation invitations, joining, and leaving
 - Shared national treasury
 - Shared national resource stockpile
 - Fixed server-defined territories with one specialty resource
@@ -18,7 +19,9 @@ Implemented on the `v0.1-foundation` branch:
 - Agriculture upkeep for raw-resource territories
 - Processing buildings with level-based throughput
 - Target-stock behavior so factories do not consume inputs forever
+- In-game nation dashboard opened with `/nation`
 - Admin/debug commands for fast balancing tests
+- GitHub Actions build check
 
 ### Raw resources
 
@@ -40,17 +43,33 @@ Implemented on the `v0.1-foundation` branch:
 - Electronics
 - Explosives
 
-## Current test commands
+## Player commands
 
-Create your nation:
+Create a nation and open its dashboard:
 
 ```
-/catan nation create Britain
-/catan nation info
-/catan nation stockpile
+/nation create Britain
+/nation
 ```
 
-Create and assign a test territory as an operator:
+Invite and join players:
+
+```
+/nation invite PlayerName
+/nation accept Britain
+/nation leave
+```
+
+Text fallbacks:
+
+```
+/nation info
+/nation stockpile
+```
+
+## Admin test commands
+
+Create and assign a test territory:
 
 ```
 /catan territory create iron_valley iron Iron Valley
@@ -66,10 +85,10 @@ Add an industry and resources for testing:
 /catan debug give iron 200
 /catan building add iron_valley steel_mill
 /catan debug cycle
-/catan nation stockpile
+/nation
 ```
 
-Factories default to a target stock of 100 processed units. Example:
+Factories default to a target stock of 100 processed units:
 
 ```
 /catan building target iron_valley 0 250
@@ -77,13 +96,12 @@ Factories default to a target stock of 100 processed units. Example:
 
 ## Next milestones
 
-1. Build a proper nation GUI so ordinary players do not need commands.
-2. Add nation membership/invitations and leadership permissions.
-3. Add building purchase/upgrade costs instead of admin-only placement.
-4. Define map territories with actual world boundaries.
-5. Add the three monument event locations.
-6. Integrate gun and vehicle mods after the economy loop is proven.
-7. Build the new objective-based siege and restoration system.
+1. Add paid building construction and upgrades.
+2. Move building management into clickable GUI screens.
+3. Define map territories with actual world boundaries.
+4. Add the three monument event locations.
+5. Integrate gun and vehicle mods after the economy loop is proven.
+6. Build the new objective-based siege and restoration system.
 
 ## Build
 

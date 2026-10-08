@@ -3,6 +3,7 @@ package com.quin.catancraft;
 import com.mojang.logging.LogUtils;
 import com.quin.catancraft.command.CatanCommands;
 import com.quin.catancraft.economy.EconomyEngine;
+import com.quin.catancraft.network.NationNetwork;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -16,6 +17,7 @@ public final class CatanCraft {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public CatanCraft() {
+        NationNetwork.register();
         MinecraftForge.EVENT_BUS.register(this);
         LOGGER.info("CatanCraft 0.1 foundation loading");
     }

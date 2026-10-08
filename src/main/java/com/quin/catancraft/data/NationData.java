@@ -4,7 +4,6 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 
-import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,6 +15,7 @@ public final class NationData {
     private String name;
     private UUID leaderId;
     private final Set<UUID> members = new HashSet<>();
+    private final Set<UUID> invitedPlayers = new HashSet<>();
     private final EnumMap<ResourceType, Long> stockpile = new EnumMap<>(ResourceType.class);
     private long treasury;
 
@@ -40,6 +40,10 @@ public final class NationData {
 
     public UUID leaderId() {
         return leaderId;
+    }
+
+    public boolean isLeader(UUID playerId) {
+        return leaderId.equals(playerId);
     }
 
     public Set<UUID> members() {
@@ -87,6 +91,7 @@ public final class NationData {
 
     public void addMember(UUID playerId) {
         members.add(playerId);
+        invitedPlayers.remove(playerId);
     }
 
     public void removeMember(UUID playerId) {
@@ -95,6 +100,18 @@ public final class NationData {
 
     public boolean containsMember(UUID playerId) {
         return members.contains(playerId);
+    }
+
+    public void invite(UUID playerId) {
+        invitedPlayers.add(playerId);
+    }
+
+    public void removeInvite(UUID playerId) {
+        invitedPlayers.remove(playerId);
+    }
+
+    public boolean isInvited(UUID playerId) {
+        return invitedPlayers.contains(playerId);
     }
 
     public CompoundTag save() {
@@ -111,6 +128,14 @@ public final class NationData {
             memberList.add(entry);
         }
         tag.put("members", memberList);
+
+        ListTag inviteList = new ListTag();
+        for (UUID invite : invitedPlayers) {
+            CompoundTag entry = new CompoundTag();
+            entry.putUUID("id", invite);
+            inviteList.add(entry);
+        }
+        tag.put("invites", inviteList);
 
         CompoundTag resources = new CompoundTag();
         for (ResourceType type : ResourceType.values()) {
@@ -134,6 +159,12 @@ public final class NationData {
             nation.members.add(memberList.getCompound(i).getUUID("id"));
         }
         nation.members.add(nation.leaderId);
+
+        nation.invitedPlayers.clear();
+        ListTag inviteList = tag.getList("invites", Tag.TAG_COMPOUND);
+        for (int i = 0; i < inviteList.size(); i++) {
+            nation.invitedPlayers.add(inviteList.getCompound(i).getUUID("id"));
+        }
 
         CompoundTag resources = tag.getCompound("stockpile");
         for (ResourceType type : ResourceType.values()) {

@@ -4,6 +4,8 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
 import com.mojang.brigadier.arguments.StringArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.quin.catancraft.data.BuildingInstance;
 import com.quin.catancraft.data.BuildingType;
 import com.quin.catancraft.data.CatanSavedData;
@@ -11,8 +13,10 @@ import com.quin.catancraft.data.NationData;
 import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import com.quin.catancraft.economy.EconomyEngine;
+import com.quin.catancraft.ui.NationDashboard;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
+import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -22,16 +26,10 @@ public final class CatanCommands {
     private CatanCommands() {}
 
     public static void register(CommandDispatcher<CommandSourceStack> dispatcher) {
+        dispatcher.register(nationNode("nation"));
+
         dispatcher.register(Commands.literal("catan")
-                .then(Commands.literal("nation")
-                        .then(Commands.literal("create")
-                                .then(Commands.argument("name", StringArgumentType.greedyString())
-                                        .executes(ctx -> createNation(ctx.getSource(),
-                                                StringArgumentType.getString(ctx, "name")))))
-                        .then(Commands.literal("info")
-                                .executes(ctx -> nationInfo(ctx.getSource())))
-                        .then(Commands.literal("stockpile")
-                                .executes(ctx -> stockpile(ctx.getSource()))))
+                .then(nationNode("nation"))
                 .then(Commands.literal("territory")
                         .then(Commands.literal("create")
                                 .requires(source -> source.hasPermission(2))
@@ -79,7 +77,8 @@ public final class CatanCommands {
                         .then(Commands.literal("cycle")
                                 .executes(ctx -> {
                                     EconomyEngine.runCycle(ctx.getSource().getServer());
-                                    ctx.getSource().sendSuccess(() -> Component.literal("Production cycle executed."), true);
+                                    ctx.getSource().sendSuccess(
+                                            () -> Component.literal("Production cycle executed."), true);
                                     return 1;
                                 }))
                         .then(Commands.literal("give")
@@ -91,7 +90,96 @@ public final class CatanCommands {
                                                         LongArgumentType.getLong(ctx, "amount")))))));
     }
 
-    private static int createNation(CommandSourceStack source, String name) throws Exception {
+    private static LiteralArgumentBuilder<CommandSourceStack> nationNode(String literal) {
+        return Commands.literal(literal)
+                .executes(ctx -> openDashboard(ctx.getSource()))
+                .then(Commands.literal("gui")
+                        .executes(ctx -> openDashboard(ctx.getSource())))
+                .then(Commands.literal("create")
+                        .then(Commands.argument("name", StringArgumentType.greedyString())
+                                .executes(ctx -> createNation(ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "name")))))
+                .then(Commands.literal("invite")
+                        .then(Commands.argument("player", EntityArgument.player())
+                                .executes(ctx -> invitePlayer(
+                                        ctx.getSource(),
+                                        EntityArgument.getPlayer(ctx, "player")))))
+                .then(Commands.literal("accept")
+                        .then(Commands.argument("nation", StringArgumentType.greedyString())
+                                .executes(ctx -> acceptInvite(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "nation")))))
+                .then(Commands.literal("leave")
+                        .executes(ctx -> leaveNation(ctx.getSource())))
+                .then(Commands.literal("info")
+                        .executes(ctx -> nationInfo(ctx.getSource())))
+                .then(Commands.literal("stockpile")
+                        .executes(ctx -> stockpile(ctx.getSource())));
+    }
+
+    private static int openDashboard(CommandSourceStack source) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        if (!NationDashboard.open(player)) {
+            source.sendFailure(Component.literal(
+                    "You are not in a nation. Use /nation create <name> or accept an invitation."));
+            return 0;
+        }
+        return 1;
+    }
+
+    private static int createNation(CommandSourceStack source, String name) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        String cleanName = name.trim();
+
+        if (cleanName.length() < 2 || cleanName.length() > 32) {
+            source.sendFailure(Component.literal("Nation names must be 2-32 characters."));
+            return 0;
+        }
+        if (data.nationForPlayer(player.getUUID()) != null) {
+            source.sendFailure(Component.literal("You are already in a nation."));
+            return 0;
+        }
+        if (data.nationNameExists(cleanName)) {
+            source.sendFailure(Component.literal("A nation with that name already exists."));
+            return 0;
+        }
+
+        NationData nation = data.createNation(cleanName, player.getUUID());
+        source.sendSuccess(() -> Component.literal(
+                "Created nation " + nation.name() + " with starting treasury $" + nation.treasury()), true);
+        NationDashboard.open(player);
+        return 1;
+    }
+
+    private static int invitePlayer(CommandSourceStack source, ServerPlayer target) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = data.nationForPlayer(player.getUUID());
+
+        if (nation == null) {
+            source.sendFailure(Component.literal("You are not in a nation."));
+            return 0;
+        }
+        if (!nation.isLeader(player.getUUID())) {
+            source.sendFailure(Component.literal("Only the nation leader can invite players right now."));
+            return 0;
+        }
+        if (data.nationForPlayer(target.getUUID()) != null) {
+            source.sendFailure(Component.literal(target.getGameProfile().getName() + " is already in a nation."));
+            return 0;
+        }
+
+        nation.invite(target.getUUID());
+        data.setDirty();
+        source.sendSuccess(() -> Component.literal(
+                "Invited " + target.getGameProfile().getName() + " to " + nation.name()), false);
+        target.sendSystemMessage(Component.literal(
+                "You were invited to " + nation.name() + ". Use /nation accept " + nation.name()));
+        return 1;
+    }
+
+    private static int acceptInvite(CommandSourceStack source, String nationName) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         CatanSavedData data = CatanSavedData.get(source.getServer());
 
@@ -99,18 +187,46 @@ public final class CatanCommands {
             source.sendFailure(Component.literal("You are already in a nation."));
             return 0;
         }
-        if (data.nationNameExists(name)) {
-            source.sendFailure(Component.literal("A nation with that name already exists."));
+
+        NationData nation = data.nationByName(nationName.trim());
+        if (nation == null) {
+            source.sendFailure(Component.literal("Unknown nation: " + nationName));
+            return 0;
+        }
+        if (!nation.isInvited(player.getUUID())) {
+            source.sendFailure(Component.literal("You do not have an invitation to " + nation.name() + "."));
             return 0;
         }
 
-        NationData nation = data.createNation(name, player.getUUID());
-        source.sendSuccess(() -> Component.literal(
-                "Created nation " + nation.name() + " with starting treasury $" + nation.treasury()), true);
+        nation.addMember(player.getUUID());
+        data.setDirty();
+        source.sendSuccess(() -> Component.literal("Joined " + nation.name() + "."), true);
+        NationDashboard.open(player);
         return 1;
     }
 
-    private static int nationInfo(CommandSourceStack source) throws Exception {
+    private static int leaveNation(CommandSourceStack source) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = data.nationForPlayer(player.getUUID());
+
+        if (nation == null) {
+            source.sendFailure(Component.literal("You are not in a nation."));
+            return 0;
+        }
+        if (nation.isLeader(player.getUUID())) {
+            source.sendFailure(Component.literal(
+                    "Nation leaders cannot leave yet. Leadership transfer/disbanding will be added separately."));
+            return 0;
+        }
+
+        nation.removeMember(player.getUUID());
+        data.setDirty();
+        source.sendSuccess(() -> Component.literal("Left " + nation.name() + "."), true);
+        return 1;
+    }
+
+    private static int nationInfo(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         CatanSavedData data = CatanSavedData.get(source.getServer());
         NationData nation = data.nationForPlayer(player.getUUID());
@@ -130,7 +246,7 @@ public final class CatanCommands {
         return 1;
     }
 
-    private static int stockpile(CommandSourceStack source) throws Exception {
+    private static int stockpile(CommandSourceStack source) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         NationData nation = CatanSavedData.get(source.getServer()).nationForPlayer(player.getUUID());
         if (nation == null) {
@@ -141,7 +257,6 @@ public final class CatanCommands {
         source.sendSuccess(() -> Component.literal("=== " + nation.name() + " Stockpile ==="), false);
         nation.stockpileView().entrySet().stream()
                 .sorted(Comparator.comparing(entry -> entry.getKey().id()))
-                .filter(entry -> entry.getValue() > 0)
                 .forEach(entry -> source.sendSuccess(
                         () -> Component.literal(entry.getKey().id() + ": " + entry.getValue()), false));
         return 1;
@@ -158,7 +273,8 @@ public final class CatanCommands {
             ResourceType specialty = ResourceType.parse(resource);
             TerritoryData territory = data.createTerritory(id, name, specialty);
             source.sendSuccess(() -> Component.literal(
-                    "Created territory " + territory.name() + " [" + territory.id() + "] specialty=" + specialty.id()), true);
+                    "Created territory " + territory.name() + " [" + territory.id() +
+                            "] specialty=" + specialty.id()), true);
             return 1;
         } catch (IllegalArgumentException ex) {
             source.sendFailure(Component.literal("Unknown resource: " + resource));
@@ -248,7 +364,8 @@ public final class CatanCommands {
         return 1;
     }
 
-    private static int debugGive(CommandSourceStack source, String resourceName, long amount) throws Exception {
+    private static int debugGive(CommandSourceStack source, String resourceName, long amount)
+            throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         CatanSavedData data = CatanSavedData.get(source.getServer());
         NationData nation = data.nationForPlayer(player.getUUID());
