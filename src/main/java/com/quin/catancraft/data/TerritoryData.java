@@ -22,6 +22,8 @@ public final class TerritoryData {
     private int cityLevel = 1;
     private final List<BuildingInstance> buildings = new ArrayList<>();
     private final Set<String> neighbors = new LinkedHashSet<>();
+    @Nullable
+    private TerritoryBoundary boundary;
 
     public TerritoryData(String id, String name, ResourceType specialty) {
         this.id = id;
@@ -80,6 +82,22 @@ public final class TerritoryData {
         }
     }
 
+    @Nullable
+    public TerritoryBoundary boundary() {
+        return boundary;
+    }
+
+    public TerritoryBoundary ensureBoundary(String dimensionId) {
+        if (boundary == null) {
+            boundary = new TerritoryBoundary(dimensionId);
+        }
+        return boundary;
+    }
+
+    public void clearBoundary() {
+        boundary = null;
+    }
+
     public CompoundTag save() {
         CompoundTag tag = new CompoundTag();
         tag.putString("id", id);
@@ -100,6 +118,10 @@ public final class TerritoryData {
             neighborList.add(StringTag.valueOf(neighbor));
         }
         tag.put("neighbors", neighborList);
+
+        if (boundary != null) {
+            tag.put("boundary", boundary.save());
+        }
 
         return tag;
     }
@@ -126,6 +148,10 @@ public final class TerritoryData {
         ListTag neighborList = tag.getList("neighbors", Tag.TAG_STRING);
         for (int i = 0; i < neighborList.size(); i++) {
             territory.neighbors.add(neighborList.getString(i).toLowerCase());
+        }
+
+        if (tag.contains("boundary", Tag.TAG_COMPOUND)) {
+            territory.boundary = TerritoryBoundary.load(tag.getCompound("boundary"));
         }
 
         return territory;

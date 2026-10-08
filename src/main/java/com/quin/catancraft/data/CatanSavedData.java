@@ -1,9 +1,11 @@
 package com.quin.catancraft.data;
 
+import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.Tag;
 import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.saveddata.SavedData;
 
 import javax.annotation.Nullable;
@@ -87,6 +89,18 @@ public final class CatanSavedData extends SavedData {
         second.addNeighbor(first.id());
         setDirty();
         return true;
+    }
+
+    @Nullable
+    public TerritoryData territoryAt(ServerLevel level, BlockPos pos) {
+        String dimensionId = level.dimension().location().toString();
+        for (TerritoryData territory : territories.values()) {
+            TerritoryBoundary boundary = territory.boundary();
+            if (boundary != null && boundary.contains(dimensionId, pos.getX(), pos.getZ())) {
+                return territory;
+            }
+        }
+        return null;
     }
 
     @Override

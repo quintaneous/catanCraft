@@ -154,6 +154,26 @@ public final class CatanCommands {
                                         StringArgumentType.getString(ctx, "first"),
                                         StringArgumentType.getString(ctx, "second"))))));
 
+        LiteralArgumentBuilder<CommandSourceStack> boundary = Commands.literal("boundary")
+                .requires(source -> source.hasPermission(2));
+
+        boundary.then(Commands.literal("add")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .executes(ctx -> addBoundaryPoint(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "territory")))));
+
+        boundary.then(Commands.literal("clear")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .executes(ctx -> clearBoundary(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "territory")))));
+
+        node.then(boundary);
+
+        node.then(Commands.literal("here")
+                .executes(ctx -> territoryHere(ctx.getSource())));
+
         node.then(Commands.literal("info")
                 .then(Commands.argument("territory", StringArgumentType.word())
                         .executes(ctx -> territoryInfo(
@@ -684,6 +704,90 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 "Linked " + first.name() + " <-> " + second.name()), true);
+        return 1;
+    }
+
+    private static int addBoundaryPoint(
+            CommandSourceStack source,
+            String territoryId
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        TerritoryData territory = data.territory(territoryId);
+
+        if (territory == null) {
+            source.sendFailure(Component.literal("Unknown territory: " + territoryId));
+            return 0;
+        }
+
+        String dimensionId = player.serverLevel().dimension().location().toString();
+        var boundary = territory.ensureBoundary(dimensionId);
+
+        if (!boundary.dimensionId().equals(dimensionId)) {
+            source.sendFailure(Component.literal(
+                    "This boundary already belongs to dimension " +
+                            boundary.dimensionId() + ". Clear it before redefining."));
+            return 0;
+        }
+
+        int x = player.blockPosition().getX();
+        int z = player.blockPosition().getZ();
+        boundary.addPoint(x, z);
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                "Added boundary point " + boundary.points().size() +
+                        " for " + territory.name() +
+                        " at X=" + x + " Z=" + z), true);
+        return 1;
+    }
+
+    private static int clearBoundary(
+            CommandSourceStack source,
+            String territoryId
+    ) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        TerritoryData territory = data.territory(territoryId);
+
+        if (territory == null) {
+            source.sendFailure(Component.literal("Unknown territory: " + territoryId));
+            return 0;
+        }
+
+        territory.clearBoundary();
+        data.setDirty();
+        source.sendSuccess(() -> Component.literal(
+                "Cleared world boundary for " + territory.name()), true);
+        return 1;
+    }
+
+    private static int territoryHere(CommandSourceStack source)
+            throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        TerritoryData territory = data.territoryAt(
+                player.serverLevel(),
+                player.blockPosition()
+        );
+
+        if (territory == null) {
+            source.sendSuccess(() -> Component.literal(
+                    "You are not inside a defined CatanCraft territory."), false);
+            return 0;
+        }
+
+        String owner = "Neutral";
+        if (territory.ownerNationId() != null) {
+            NationData nation = data.nation(territory.ownerNationId());
+            owner = nation == null ? "Unknown" : nation.name();
+        }
+
+        String finalOwner = owner;
+        source.sendSuccess(() -> Component.literal(
+                "Current territory: " + territory.name() +
+                        " [" + territory.id() + "] • " +
+                        territory.specialty().id() +
+                        " • Owner: " + finalOwner), false);
         return 1;
     }
 
