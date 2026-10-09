@@ -162,8 +162,8 @@ public final class NationDashboard {
         }
 
         if (leader) {
-            lines.add("D|Propose: /nation trade propose \"Nation\" <offer> <amount> <want> <amount>");
-            lines.add("D|Assets: money or any resource id (steel, oil, electronics, etc.)");
+            lines.add("C|trade_create|Create Trade Proposal");
+            lines.add("D|Offered assets are escrowed until accepted, declined, or canceled.");
         }
         lines.add("");
 

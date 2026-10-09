@@ -86,7 +86,7 @@ public final class NationDashboardScreen extends Screen {
                 continue;
             }
 
-            if (encoded.startsWith("A|")) {
+            if (encoded.startsWith("A|") || encoded.startsWith("C|")) {
                 ActionRow action = ActionRow.parse(encoded);
                 if (action != null) {
                     int actionLeft = left + 14;
@@ -99,14 +99,18 @@ public final class NationDashboardScreen extends Screen {
                             y,
                             actionRight,
                             y + ACTION_HEIGHT,
-                            hovered ? 0xEE36506E : 0xCC28384D
+                            encoded.startsWith("C|")
+                                    ? (hovered ? 0xEE5B3F76 : 0xCC433055)
+                                    : (hovered ? 0xEE36506E : 0xCC28384D)
                     );
                     graphics.fill(
                             actionLeft,
                             y + ACTION_HEIGHT - 1,
                             actionRight,
                             y + ACTION_HEIGHT,
-                            hovered ? 0xFF79C0FF : 0xAA52657A
+                            encoded.startsWith("C|")
+                                    ? (hovered ? 0xFFD2A8FF : 0xAA745780)
+                                    : (hovered ? 0xFF79C0FF : 0xAA52657A)
                     );
                     graphics.drawCenteredString(
                             font,
@@ -217,7 +221,7 @@ public final class NationDashboardScreen extends Screen {
                 continue;
             }
 
-            if (encoded.startsWith("A|")) {
+            if (encoded.startsWith("A|") || encoded.startsWith("C|")) {
                 ActionRow action = ActionRow.parse(encoded);
                 if (action != null) {
                     int actionLeft = left + 14;
@@ -225,7 +229,11 @@ public final class NationDashboardScreen extends Screen {
                     if (mouseX >= actionLeft && mouseX <= actionRight
                             && mouseY >= y && mouseY <= y + ACTION_HEIGHT) {
                         Minecraft minecraft = Minecraft.getInstance();
-                        if (minecraft.player != null && minecraft.player.connection != null) {
+                        if (encoded.startsWith("C|")
+                                && action.command().equals("trade_create")) {
+                            minecraft.setScreen(new TradeProposalScreen(this));
+                        } else if (minecraft.player != null
+                                && minecraft.player.connection != null) {
                             minecraft.player.connection.sendCommand(action.command());
                         }
                         return true;
@@ -274,7 +282,7 @@ public final class NationDashboardScreen extends Screen {
 
             if (line.isEmpty()) {
                 height += 7;
-            } else if (line.startsWith("A|")) {
+            } else if (line.startsWith("A|") || line.startsWith("C|")) {
                 height += ACTION_HEIGHT + ACTION_GAP;
             } else {
                 if (line.startsWith("H|")) height += 4;
