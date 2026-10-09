@@ -25,6 +25,8 @@ import com.quin.catancraft.map.MapZoneDefinition;
 import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
+import com.quin.catancraft.world.MapAssetService;
+import com.quin.catancraft.world.SchematicAssetRegistry;
 import com.quin.catancraft.world.SchematicPlacementService;
 import com.quin.catancraft.world.WorldMapVerifier;
 import net.minecraft.commands.CommandSourceStack;
@@ -304,6 +306,12 @@ public final class CatanCommands {
         node.then(Commands.literal("status")
                 .executes(ctx -> mapStatus(ctx.getSource())));
 
+        node.then(Commands.literal("assetstatus")
+                .executes(ctx -> mapAssetStatus(ctx.getSource())));
+
+        node.then(Commands.literal("placemonuments")
+                .executes(ctx -> placeMapMonuments(ctx.getSource())));
+
         node.then(Commands.literal("verify")
                 .executes(ctx -> verifyCurrentWorld(ctx.getSource())));
 
@@ -560,6 +568,62 @@ public final class CatanCommands {
             source.sendFailure(Component.literal(" - " + failure));
         }
         return 0;
+    }
+
+    private static int mapAssetStatus(CommandSourceStack source) {
+        int ready = 0;
+        int failed = 0;
+
+        TerritoryDefinition sample = MapDefinitionManager.territory("a");
+        for (SchematicAssetRegistry.Asset asset
+                : SchematicAssetRegistry.assets()) {
+            MapAnchor anchor;
+            if (asset.id().equals("industrial_complex")
+                    || asset.id().equals("military_depot")
+                    || asset.id().equals("refinery_monument")) {
+                anchor = SchematicAssetRegistry.monumentAnchor(asset.id());
+            } else {
+                anchor = sample == null
+                        ? null
+                        : SchematicAssetRegistry.territoryAnchor(asset.id(), sample);
+            }
+
+            SchematicPlacementService.Result validation =
+                    SchematicPlacementService.validateAsset(asset.id(), anchor);
+            if (validation.success()) {
+                ready++;
+            } else {
+                failed++;
+                source.sendFailure(Component.literal(
+                        asset.id() + ": " + validation.message()));
+            }
+        }
+
+        int finalReady = ready;
+        int finalFailed = failed;
+        source.sendSuccess(() -> Component.literal(
+                "Physical asset pack: " + finalReady + " ready, " +
+                        finalFailed + " missing/invalid. " +
+                        "Loader checks config/catancraft/schematics_bundle.zip first."),
+                false);
+        return failed == 0 ? 1 : 0;
+    }
+
+    private static int placeMapMonuments(CommandSourceStack source) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        MapAssetService.Result result =
+                MapAssetService.placeMonuments(source.getServer(), data);
+
+        if (!result.success()) {
+            source.sendFailure(Component.literal(
+                    "Monument placement failed: " + result.message()));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(
+                "Current monument structures placed/synchronized. " +
+                        result.changedBlocks() + " blocks changed."), true);
+        return 1;
     }
 
     private static int mapStatus(CommandSourceStack source) {
@@ -938,23 +1002,18 @@ public final class CatanCommands {
             return 0;
         }
 
-        MapAnchor farmAnchor = definition.anchor("plot_5");
-        if (farmAnchor != null
-                && definition.resources().contains(ResourceType.AGRICULTURE)) {
-            SchematicPlacementService.Result farmPlacement =
-                    SchematicPlacementService.place(
-                            source.getServer(),
-                            definition.dimension(),
-                            "farm",
-                            farmAnchor,
-                            false
-                    );
-            if (!farmPlacement.success()) {
-                source.sendFailure(Component.literal(
-                        "Starting-city farm placement failed; the city was not assigned. " +
-                                farmPlacement.message()));
-                return 0;
-            }
+        MapAssetService.Result activation =
+                MapAssetService.activateTerritory(
+                        source.getServer(),
+                        data,
+                        definition,
+                        true
+                );
+        if (!activation.success()) {
+            source.sendFailure(Component.literal(
+                    "Starting-city physical setup failed; the city was not assigned. " +
+                            activation.message()));
+            return 0;
         }
 
         territory.setOwnerNationId(nation.id());
@@ -962,7 +1021,8 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 nation.name() + " selected " + definition.name() +
-                        " as its starting city. Mixed starter production is active."), true);
+                        " as its starting city. Wood, Stone, and Agriculture " +
+                        "start at reduced mixed-territory yield."), true);
         NationDashboard.open(player);
         return 1;
     }
@@ -990,7 +1050,7 @@ public final class CatanCommands {
                 .anyMatch(t -> nation.id().equals(t.ownerNationId()));
         if (!hasOwnedTerritory) {
             source.sendFailure(Component.literal(
-                    "Your starting territory must be assigned by the server before expanding."));
+                    "Your starting territory must be assigned before expanding."));
             return 0;
         }
 
@@ -1014,40 +1074,18 @@ public final class CatanCommands {
         TerritoryDefinition mapDefinition =
                 MapDefinitionManager.territory(territory.id());
 
-        if (mapDefinition != null
-                && !mapDefinition.startsWithSettlement()
-                && !mapDefinition.settlementTemplate().isBlank()) {
-            if (mapDefinition.settlementAnchor() == null) {
-                source.sendFailure(Component.literal(
-                        "This territory has no settlement anchor in the map definition."));
-                return 0;
-            }
-
-            boolean keepWoodResourceYard =
-                    mapDefinition.resources().contains(ResourceType.WOOD);
-
-            SchematicPlacementService.LocalExclusion resourcePlotExclusion =
-                    keepWoodResourceYard
-                            ? null
-                            : new SchematicPlacementService.LocalExclusion(
-                                    6, 0, 45,
-                                    36, 46, 75
-                            );
-
-            SchematicPlacementService.Result placement =
-                    SchematicPlacementService.place(
+        if (mapDefinition != null) {
+            MapAssetService.Result activation =
+                    MapAssetService.activateTerritory(
                             source.getServer(),
-                            mapDefinition.dimension(),
-                            mapDefinition.settlementTemplate(),
-                            mapDefinition.settlementAnchor(),
-                            false,
-                            resourcePlotExclusion
+                            data,
+                            mapDefinition,
+                            false
                     );
-
-            if (!placement.success()) {
+            if (!activation.success()) {
                 source.sendFailure(Component.literal(
                         "City activation failed; no resources were charged. " +
-                                placement.message()));
+                                activation.message()));
                 return 0;
             }
         }
@@ -1059,9 +1097,10 @@ public final class CatanCommands {
         source.sendSuccess(() -> Component.literal(
                 nation.name() + " expanded into " + territory.name() +
                         " for " + cost.describe() +
-                        (mapDefinition != null && !mapDefinition.startsWithSettlement()
-                                ? ". The prepared site is now an active TH1 settlement."
-                                : "")), true);
+                        (mapDefinition == null
+                                ? ""
+                                : ". Its TH1 city and raw-resource assets are now active.")),
+                true);
         NationDashboard.open(player);
         return 1;
     }
@@ -1076,92 +1115,120 @@ public final class CatanCommands {
         NationData nation = requireLeaderNation(source, player, data);
         if (nation == null) return 0;
 
-        TerritoryData territory = requireOwnedTerritory(source, data, nation, territoryId);
+        TerritoryData territory =
+                requireOwnedTerritory(source, data, nation, territoryId);
         if (territory == null) return 0;
 
         final BuildingType type;
         try {
             type = BuildingType.parse(typeName);
         } catch (IllegalArgumentException ex) {
-            source.sendFailure(Component.literal("Unknown building type: " + typeName));
+            source.sendFailure(Component.literal(
+                    "Unknown building type: " + typeName));
             return 0;
         }
 
         if (territory.cityLevel() < type.minCityLevel()) {
             source.sendFailure(Component.literal(
-                    type.displayName() + " requires City Level " + type.minCityLevel() + "."));
+                    type.displayName() + " requires City Level " +
+                            type.minCityLevel() + "."));
             return 0;
         }
 
         int slotCap = EconomyCatalog.maxBuildingSlots(territory.cityLevel());
-        TerritoryDefinition mapDefinition =
-                MapDefinitionManager.territory(territory.id());
-
-        String plotId = "";
-        if (mapDefinition != null) {
-            int physicalPlotCap = mapDefinition.availableBuildingPlots().size();
-            slotCap = Math.min(slotCap, physicalPlotCap);
-
-            java.util.Set<String> occupiedPlots = territory.buildings().stream()
-                    .map(BuildingInstance::plotId)
-                    .filter(value -> !value.isBlank())
-                    .collect(java.util.stream.Collectors.toSet());
-
-            MapAnchor openPlot = mapDefinition.availableBuildingPlots().stream()
-                    .filter(plot -> !occupiedPlots.contains(plot.id()))
-                    .findFirst()
-                    .orElse(null);
-
-            if (openPlot == null) {
-                source.sendFailure(Component.literal(
-                        "No open physical building plots are defined for " +
-                                territory.name() + "."));
-                return 0;
-            }
-            plotId = openPlot.id();
-        }
-
         if (territory.buildings().size() >= slotCap) {
             source.sendFailure(Component.literal(
                     "No open development slots. Upgrade the city first."));
             return 0;
         }
 
+        TerritoryDefinition mapDefinition =
+                MapDefinitionManager.territory(territory.id());
+        String assignedPlot = "";
+
+        String requiredPlot = MapAssetService.requiredPlot(type);
+        if (requiredPlot != null && mapDefinition != null) {
+            boolean occupied = territory.buildings().stream()
+                    .anyMatch(building ->
+                            requiredPlot.equals(building.plotId()));
+            if (occupied) {
+                source.sendFailure(Component.literal(
+                        requiredPlot + " is already occupied. " +
+                                type.displayName() +
+                                " has a fixed physical plot in this city."));
+                return 0;
+            }
+
+            if (mapDefinition.reservedPlotIds().contains(requiredPlot)) {
+                source.sendFailure(Component.literal(
+                        requiredPlot +
+                                " is reserved for this territory's raw-resource asset."));
+                return 0;
+            }
+            assignedPlot = requiredPlot;
+        }
+
         EconomyCost cost = EconomyCatalog.buildingCost(type);
         if (!cost.canAfford(nation)) {
             source.sendFailure(Component.literal(
-                    "Cannot afford " + type.displayName() + ". Need: " + cost.describe()));
+                    "Cannot afford " + type.displayName() +
+                            ". Need: " + cost.describe()));
             return 0;
+        }
+
+        if (mapDefinition != null
+                && SchematicAssetRegistry.buildingAsset(type) != null) {
+            MapAssetService.Result placement =
+                    MapAssetService.placeBuilding(
+                            source.getServer(),
+                            data,
+                            mapDefinition,
+                            type
+                    );
+            if (!placement.success()) {
+                source.sendFailure(Component.literal(
+                        "Physical construction failed; no resources were charged. " +
+                                placement.message()));
+                return 0;
+            }
         }
 
         cost.charge(nation);
         long target = type.isProcessor() ? 100 : 0;
-        String assignedPlot = plotId;
         territory.buildings().add(
                 new BuildingInstance(type, 1, target, assignedPlot));
         data.setDirty();
 
+        String visualNote = SchematicAssetRegistry.buildingAsset(type) == null
+                ? " Physical art for this building is not authored yet."
+                : " Physical structure placed at " + assignedPlot + ".";
+
         source.sendSuccess(() -> Component.literal(
-                "Built " + type.displayName() + " in " + territory.name() +
-                        (assignedPlot.isBlank() ? "" : " at " + assignedPlot) +
-                        " for " + cost.describe()), true);
+                "Built " + type.displayName() + " in " +
+                        territory.name() + " for " + cost.describe() +
+                        visualNote), true);
         NationDashboard.open(player);
         return 1;
     }
 
-    private static int upgradeCity(CommandSourceStack source, String territoryId)
-            throws CommandSyntaxException {
+    private static int upgradeCity(
+            CommandSourceStack source,
+            String territoryId
+    ) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         CatanSavedData data = CatanSavedData.get(source.getServer());
         NationData nation = requireLeaderNation(source, player, data);
         if (nation == null) return 0;
 
-        TerritoryData territory = requireOwnedTerritory(source, data, nation, territoryId);
+        TerritoryData territory =
+                requireOwnedTerritory(source, data, nation, territoryId);
         if (territory == null) return 0;
 
-        EconomyCost cost = EconomyCatalog.cityUpgradeCost(territory.cityLevel());
+        EconomyCost cost =
+                EconomyCatalog.cityUpgradeCost(territory.cityLevel());
         if (cost == null) {
-            source.sendFailure(Component.literal("City is already Level 5."));
+            source.sendFailure(Component.literal(
+                    "City is already Level 5."));
             return 0;
         }
         if (!cost.canAfford(nation)) {
@@ -1174,28 +1241,14 @@ public final class CatanCommands {
         TerritoryDefinition mapDefinition =
                 MapDefinitionManager.territory(territory.id());
 
-        String townHallTemplate = switch (nextLevel) {
-            case 2 -> "thall2";
-            case 3 -> "thall3";
-            default -> "";
-        };
-
-        if (!townHallTemplate.isBlank() && mapDefinition != null) {
-            if (mapDefinition.townHall() == null) {
-                source.sendFailure(Component.literal(
-                        "This city has no Town Hall anchor in the map definition."));
-                return 0;
-            }
-
-            SchematicPlacementService.Result placement =
-                    SchematicPlacementService.place(
+        if (nextLevel <= 3 && mapDefinition != null) {
+            MapAssetService.Result placement =
+                    MapAssetService.upgradeTownHall(
                             source.getServer(),
-                            mapDefinition.dimension(),
-                            townHallTemplate,
-                            mapDefinition.townHall(),
-                            true
+                            data,
+                            mapDefinition,
+                            nextLevel
                     );
-
             if (!placement.success()) {
                 source.sendFailure(Component.literal(
                         "Town Hall upgrade failed; no resources were charged. " +
@@ -1210,7 +1263,7 @@ public final class CatanCommands {
 
         String visualNote = nextLevel <= 3
                 ? " Town Hall upgraded in-world."
-                : " Town Hall remains at the current visual tier until the next art tier is added.";
+                : " TH3 remains the current visual tier while the economy level increases.";
 
         source.sendSuccess(() -> Component.literal(
                 territory.name() + " upgraded to City Level " +
