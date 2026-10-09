@@ -51,15 +51,9 @@ public final class TerritoryData {
         return rawResources().get(0);
     }
 
-    public int productionPercent() {
-        TerritoryDefinition definition = MapDefinitionManager.territory(id);
-        return definition == null ? 100 : definition.productionPercent();
-    }
-
     public int rawProductionPerCycle() {
-        int base = com.quin.catancraft.economy.EconomyBalance
+        return com.quin.catancraft.economy.EconomyBalance
                 .rawProductionPerCycle(producerLevel);
-        return Math.max(1, (base * productionPercent()) / 100);
     }
 
     public int rawResourceYieldPercent(ResourceType resource) {

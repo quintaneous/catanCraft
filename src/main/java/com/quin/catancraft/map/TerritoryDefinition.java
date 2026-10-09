@@ -30,7 +30,6 @@ public final class TerritoryDefinition {
     private List<String> neighbors = new ArrayList<>();
 
     private int startSlot;
-    private int productionPercent = 100;
     private boolean startsWithSettlement;
     private String settlementTemplate = "";
     @Nullable private MapAnchor settlementAnchor;
@@ -85,10 +84,6 @@ public final class TerritoryDefinition {
     }
 
     public int startSlot() { return Math.max(0, startSlot); }
-
-    public int productionPercent() {
-        return Math.max(1, productionPercent);
-    }
 
     public boolean startsWithSettlement() { return startsWithSettlement; }
 

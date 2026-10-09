@@ -204,12 +204,6 @@ public final class MapDefinitionManager {
                 }
             }
 
-            if (territory.productionPercent() < 1 || territory.productionPercent() > 500) {
-                throw new IllegalArgumentException(
-                        "Territory " + id +
-                                " productionPercent must be between 1 and 500.");
-            }
-
             if (territory.startSlot() > 0 && !startSlots.add(territory.startSlot())) {
                 throw new IllegalArgumentException("Duplicate startSlot " + territory.startSlot() + ".");
             }
