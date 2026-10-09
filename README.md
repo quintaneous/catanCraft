@@ -281,3 +281,82 @@ The offering side is moved into escrow immediately. The receiving nation can Acc
 Decline from `/nation`; the sender can Cancel. Declined/canceled proposals refund the
 escrow, and acceptance only succeeds if the receiving nation still has the requested
 assets.
+
+
+## Season one: River & Bridges V3 integration
+
+The mod now ships with the current River & Bridges V3 world definition rather than
+an empty placeholder map.
+
+On an empty CatanCraft config, the first server start installs the bundled map to:
+
+```
+config/catancraft/map.json
+```
+
+If an older test map is already in that file, an operator can explicitly replace it:
+
+```
+/catan map installseason1
+```
+
+The bundled definition matches the current 16-territory / four-start layout:
+A/D/M/P are the four prebuilt starting cities, the other twelve sites begin neutral,
+the central oval court is a public objective overlay, and the four V3 bridges are
+registered as permanent infrastructure.
+
+### Starting-city production
+
+Starting cities produce all three basic resources:
+
+- Wood
+- Stone
+- Agriculture
+
+They currently run at **75% of the per-resource output** of a dedicated territory.
+At Producer L1 this is 8 of each resource per 15-minute cycle before the normal
+territory Agriculture upkeep is applied to the non-food outputs. A dedicated L1
+Wood or Stone territory produces 10 of its specialty per cycle.
+
+This percentage is map data, not hard-coded balance, so it can be tuned without
+rewriting the economy engine.
+
+A new nation with no territory sees the available prebuilt starting cities directly
+in `/nation` and can select one with the GUI or:
+
+```
+/nation start <1-4>
+```
+
+When a starting city is selected, the bundled farm is placed into its reserved
+`plot_5` so Agriculture production has a physical city asset. The existing
+resource-yard plot and farm plot are reserved and cannot be consumed by normal
+industrial construction.
+
+### Neutral city activation
+
+The twelve neutral territories remain physically prepared but empty in the V3 save.
+When a nation purchases an adjacent neutral territory, CatanCraft now pastes the
+accepted `starter_settlement_v2` schematic at that site's predefined map anchor
+before ownership is committed. If placement fails, the claim is canceled and the
+nation is not charged.
+
+### Town Hall visuals
+
+City upgrades now drive the accepted physical Town Hall assets:
+
+- City I -> II pastes `thall2`
+- City II -> III pastes `thall3`
+- City IV/V remain economy levels for now and retain the current TH3 visual until
+  later visual tiers are authored.
+
+The schematic loader uses each asset's stored anchor offset and the map-defined
+0/180-degree orientation, so the southern cities use the same assets without manual
+WorldEdit rotation.
+
+### Management lecterns
+
+The existing management lectern in each city is registered as a physical management
+terminal. A nation member can right-click the lectern in a city their nation owns to
+open the same nation dashboard as `/nation`. Neutral or foreign-city lecterns do not
+grant management access.

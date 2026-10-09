@@ -362,3 +362,94 @@ Expected:
 - Accept transfers both sides atomically.
 - Acceptance fails safely if recipient no longer has the requested assets.
 - Proposal survives server restart while pending.
+
+
+# V0.1.2 River & Bridges V3 integration tests
+
+## 19. Install the current map definition
+
+With the V3 world loaded:
+
+```
+/catan map installseason1
+/catan map status
+```
+
+Expected:
+- Map ID is `season1_river_bridges_v3`.
+- 16 territories load.
+- 3 monuments load.
+- 1 public objective zone loads.
+- 4 bridge infrastructure points load.
+
+## 20. Select a prebuilt start
+
+Create a fresh nation and open `/nation`.
+
+Expected:
+- Four starting-city slots are listed if all are neutral.
+- A/D/M/P correspond to the four prebuilt V3 settlements.
+- Selecting one assigns exactly one starting territory.
+- The same nation cannot take a second start.
+- Another nation cannot take an occupied start.
+
+## 21. Starter mixed production
+
+At Producer L1, run one debug cycle.
+
+Expected starter output before processor activity:
+- +8 Wood
+- +8 Stone
+- +8 Agriculture generated
+- one normal Agriculture upkeep charge supports the non-food raw outputs
+
+Dedicated L1 Wood/Stone territories should still produce +10 of their specialty,
+so a starter remains flexible but weaker at each individual resource.
+
+## 22. Starter farm placement
+
+After choosing a starting city:
+
+Expected:
+- The farm appears at reserved `plot_5`.
+- A/D are north-facing.
+- M/P are rotated 180 degrees.
+- Farm doors/path line up with the prepared settlement.
+- `plot_5` is not offered for normal industrial construction.
+
+## 23. Claim a neutral prepared site
+
+From an owned territory, claim an adjacent neutral V3 territory.
+
+Expected:
+- Claim cost is checked before activation.
+- Accepted starter settlement appears on the neutral 193 x 193 pad.
+- Orientation matches the site's north/south map orientation.
+- Territory ownership changes only after placement succeeds.
+- A placement error does not charge the nation.
+
+## 24. Physical City II / III upgrade
+
+At a claimed or starting city with sufficient resources:
+
+- Upgrade City I -> II.
+- Inspect Town Hall.
+- Upgrade City II -> III.
+- Inspect Town Hall again.
+
+Expected:
+- TH2 and TH3 replace the prior Town Hall automatically.
+- Air in the replacement envelope clears old-tier blocks.
+- Roads, houses and development plots outside the hall envelope remain unchanged.
+- Southern cities rotate correctly.
+- The management lectern remains at its registered world coordinate.
+
+## 25. Management lectern
+
+Right-click the registered city lectern.
+
+Expected:
+- Owner nation member opens `/nation`.
+- Neutral city terminal reports inactive.
+- Foreign nation member is told which nation controls the city.
+- No normal block editing is enabled.
