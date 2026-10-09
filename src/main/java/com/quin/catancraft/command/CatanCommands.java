@@ -23,6 +23,7 @@ import com.quin.catancraft.map.MapAnchor;
 import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
+import com.quin.catancraft.world.CityRestorationService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -308,6 +309,18 @@ public final class CatanCommands {
                                         StringArgumentType.getString(ctx, "territory"),
                                         StringArgumentType.getString(ctx, "anchor"))))));
 
+        node.then(Commands.literal("snapshot")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .executes(ctx -> snapshotCity(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "territory")))));
+
+        node.then(Commands.literal("restore")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .executes(ctx -> restoreCity(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "territory")))));
+
         return node;
     }
 
@@ -480,6 +493,50 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 definition.name() + " • " + anchorId + " • " + anchor.describe()), false);
+        return 1;
+    }
+
+    private static int snapshotCity(
+            CommandSourceStack source,
+            String territoryId
+    ) {
+        TerritoryDefinition territory = MapDefinitionManager.territory(territoryId);
+        if (territory == null) {
+            source.sendFailure(Component.literal(
+                    "No map-defined territory: " + territoryId));
+            return 0;
+        }
+
+        CityRestorationService.Result result =
+                CityRestorationService.capture(source.getServer(), territory);
+        if (!result.success()) {
+            source.sendFailure(Component.literal(result.message()));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(result.message()), true);
+        return 1;
+    }
+
+    private static int restoreCity(
+            CommandSourceStack source,
+            String territoryId
+    ) {
+        TerritoryDefinition territory = MapDefinitionManager.territory(territoryId);
+        if (territory == null) {
+            source.sendFailure(Component.literal(
+                    "No map-defined territory: " + territoryId));
+            return 0;
+        }
+
+        CityRestorationService.Result result =
+                CityRestorationService.restore(source.getServer(), territory);
+        if (!result.success()) {
+            source.sendFailure(Component.literal(result.message()));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(result.message()), true);
         return 1;
     }
 
