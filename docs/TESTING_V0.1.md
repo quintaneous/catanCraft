@@ -595,3 +595,59 @@ Nation dashboard:
 - Each territory row can independently expand/collapse its detailed controls.
 - Collapsing a section actually removes its child rows from layout/scroll height.
 - Dashboard remains functional with several owned territories/buildings.
+
+
+## 29. Environment V4 integration
+
+Use the fresh `CatanCraft Environment V4` world and the Environment V4
+`schematics_bundle.zip`.
+
+Run:
+
+```
+/catan map installseason1
+/catan map reloadassets
+/catan map assetstatus
+/catan map environmentstatus
+/catan map verify
+```
+
+Expected:
+- `assetstatus` reports **32 ready, 0 missing/invalid**.
+- `environmentstatus` reports the authored Environment V4 world is detected.
+- All 16 territory environment markers are recorded without changing blocks.
+- `verify` reports Environment V4 PASS.
+- Existing bridge checks and starter lectern checks still pass.
+
+Starting city:
+- Create a nation and choose A, D, M or P.
+- Environment is **not** repasted.
+- The prebuilt city remains intact.
+- Quarry/Farm/Lumberyard synchronize normally.
+- Restart does not alter the 193 x 193 city environment.
+
+Neutral claim:
+- Claim one adjacent neutral territory.
+- Environment is not repasted because V4 already contains it.
+- Starter settlement and TH1 appear on top of the prepared environment.
+- Correct raw producer/site asset appears.
+- Ownership changes only after physical activation succeeds.
+
+Refresh:
+```
+/catan map refreshassets
+```
+
+Expected:
+- replaceable Town Hall / producer / purchased-factory visuals refresh
+- central district and monuments refresh
+- no `city_environment_*` schematic is repasted
+- no complete starter settlement is repasted
+- ownership, economy levels and purchases remain unchanged
+
+Legacy fallback test (optional, separate backed-up world):
+- On a non-V4 neutral prepared site with no environment marker, claiming the
+  territory first installs its territory-specific `city_environment_<id>`
+  schematic, then settlement/TH1/raw assets.
+- A starting city already built in a legacy world is not automatically cleared
+  by the large environment patch.

@@ -486,3 +486,61 @@ After replacing `config/catancraft/schematics_bundle.zip`, use:
 
 The central district base is an installation patch, not a purchasable building and
 must not be repeatedly pasted as part of normal restart logic.
+
+
+## Environment V4 integration
+
+Environment V4 is now the authored world baseline. The supplied
+`CatanCraft Environment V4` world already contains the 193 x 53 x 193 city
+environment layer for all sixteen territory pads.
+
+The runtime asset pack now contains 32 required schematics:
+
+- 16 territory-specific `city_environment_a` through
+  `city_environment_p` installation patches
+- starter settlement / TH1-TH3
+- six physical producer/factory assets
+- two strategic resource sites
+- central district base
+- three monuments
+
+On the authored V4 world, CatanCraft recognizes the world LevelName and records
+the sixteen environment layers as already installed. It will **not** repaste
+those large air-inclusive environment patches during claims, restarts, or
+`/catan map refreshassets`.
+
+Useful checks:
+
+```
+/catan map installseason1
+/catan map reloadassets
+/catan map assetstatus
+/catan map environmentstatus
+/catan map verify
+```
+
+Expected asset status with the Environment V4 bundle:
+
+```
+Physical asset pack: 32 ready, 0 missing/invalid
+```
+
+For a neutral territory in the authored V4 world, activation order is:
+
+```
+(preinstalled city environment)
+starter settlement
+TH1
+raw producer assets
+strategic resource site when applicable
+```
+
+For a non-V4/legacy world where a neutral site has never received an environment
+layer, CatanCraft uses the territory-specific environment schematic first, then
+the normal settlement activation sequence. Because the environment schematic
+contains air across the complete city pad, it is never used as an ordinary
+visual refresh after a city has developed.
+
+The operator `/catan map assignstart` command now uses the same physical
+activation path as normal `/nation start`, so starting-city producer visuals
+and placement state can no longer drift between admin and player assignment.
