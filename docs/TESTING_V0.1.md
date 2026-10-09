@@ -479,7 +479,7 @@ Then compare starter and dedicated production:
 ```
 
 Expected at Producer L1:
-- A shows Wood 8, Stone 8, Agriculture 8 per 15 minutes at 50% yield.
+- A shows Wood 5, Stone 5, Agriculture 5 per 15 minutes at 50% yield.
 - B shows Wood 10 per 15 minutes at 100% yield.
 - E shows Stone 10 per 15 minutes at 100% yield.
 - A pays one Agriculture upkeep charge for its combined non-food outputs, not one
@@ -544,3 +544,54 @@ Monuments:
 Expected:
 - All three current central monument assets are placed once.
 - Placement state persists after restart.
+
+
+## 28. Visual Polish V3 refresh and processor visibility
+
+Install the Visual Polish V3 `schematics_bundle.zip`, then run:
+
+```
+/catan map installseason1
+/catan map reloadassets
+/catan map assetstatus
+```
+
+Expected:
+- All current runtime assets validate, including `central_district_base`.
+- Monument dimensions/offsets validate against the enlarged V3 contracts.
+- The season map reports the new monument capture coordinates/radius.
+
+On an existing integration-test save:
+
+```
+/catan map refreshassets
+```
+
+Expected:
+- The 301 x 301 central district base is installed first.
+- The enlarged Industrial Complex, Military Depot and Refinery are placed at their
+  new anchors.
+- Current raw producer assets, physical purchased factories and the current Town Hall
+  tier are refreshed in owned cities.
+- Complete starter settlement/city-base schematics are NOT blindly repasted.
+- Ownership, city levels, building levels, stockpiles and plot assignments do not reset.
+
+Processor debug:
+
+```
+/catan debug production a
+```
+
+For a territory containing a Steel Mill, expected output includes the processor.
+If current Steel is at/above its target it should report `PAUSED AT TARGET`.
+After setting Steel below target and providing Iron + Coal it should report `READY`
+with the expected Steel output for the next 15-minute cycle.
+
+Nation dashboard:
+- Main screen opens in a compact state.
+- Resources, Trade, Active Monument, Territories and Available Expansion are
+  individually collapsible.
+- Expanding Territories reveals territory rows.
+- Each territory row can independently expand/collapse its detailed controls.
+- Collapsing a section actually removes its child rows from layout/scroll height.
+- Dashboard remains functional with several owned territories/buildings.

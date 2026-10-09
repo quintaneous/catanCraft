@@ -180,8 +180,14 @@ On first server start CatanCraft creates:
 config/catancraft/map.json
 ```
 
-The file is intentionally empty until the real map coordinates are ready. A complete
-example lives at:
+The bundled River & Bridges V3 season definition is installed automatically when no
+current map is present. Operators can explicitly reinstall the bundled season map with:
+
+```
+/catan map installseason1
+```
+
+A generic schema/example also lives at:
 
 ```
 docs/map-definition.example.json
@@ -220,12 +226,19 @@ test territories, but cannot modify geometry or adjacency for territories define
 
 ### Fixed building plots
 
-Purchased buildings in map-defined territories are permanently assigned to the first
-available configured plot. The plot ID is persisted with the building and shown in
-`/nation`.
+Finished physical buildings use deterministic authored plots rather than a generic
+"first available" slot:
 
-This lets future schematic placement, upgrades, siege damage, and repair use the exact
-same physical location every time.
+- Vehicle Factory -> plot_1
+- Quarry -> plot_2
+- Weapons Factory -> plot_3
+- Steel Mill -> plot_4
+- Farm -> plot_5
+- Lumberyard -> plot_6
+
+Plot IDs are persisted with economic building state. This keeps schematic placement,
+upgrades, siege damage, restoration, and restart behavior tied to the same physical
+location every time.
 
 ### City restoration
 
@@ -328,10 +341,10 @@ in `/nation` and can select one with the GUI or:
 /nation start <1-4>
 ```
 
-When a starting city is selected, the bundled farm is placed into its reserved
-`plot_5` so Agriculture production has a physical city asset. The existing
-resource-yard plot and farm plot are reserved and cannot be consumed by normal
-industrial construction.
+When a starting city is selected, its three basic producer visuals are synchronized:
+Quarry at `plot_2`, Farm at `plot_5`, and Lumberyard at `plot_6`. These plots are
+reserved for their authored raw-resource functions and cannot be consumed by a
+conflicting factory.
 
 ### Neutral city activation
 
@@ -382,10 +395,12 @@ the stockpile:
 /catan debug production b
 ```
 
-This prints each resource's per-cycle/per-hour output, configured yield percentage,
-and Agriculture upkeep. Starter territories A/D/M/P currently use 50% yield for
-Wood, Stone, and Agriculture; dedicated raw-resource territories use 100% unless the
-map file overrides them.
+This prints each raw resource's per-cycle/per-hour output, configured yield
+percentage, Agriculture upkeep, and every installed processor's current status. A
+processor reports whether it is READY, WAITING FOR INPUTS, or PAUSED AT TARGET and
+shows the output expected from its next cycle. Starter territories A/D/M/P currently
+use 50% yield for Wood, Stone, and Agriculture; dedicated raw-resource territories
+use 100% unless the map file overrides them.
 
 
 ## Physical schematic asset pack
@@ -408,8 +423,14 @@ Useful operator commands:
 ```
 /catan map assetstatus
 /catan map reloadassets
+/catan map refreshassets
 /catan map placemonuments
 ```
+
+`reloadassets` clears the schematic cache and validates the currently installed
+bundle. `refreshassets` is the safe visual-revision path: it installs the current
+central-district base and monuments, then refreshes independently replaceable assets
+in owned cities without blindly repasting the complete starter settlement.
 
 Finished physical assignments currently integrated:
 
@@ -430,3 +451,38 @@ is charged. Building economic upgrades L2-L5 keep the same visual schematic for 
 
 Physical placement state is persisted separately from economic state so a server
 restart does not repaste the whole settlement or reset the Town Hall tier.
+
+
+## Visual Polish V3 objective district
+
+The current visual contract replaces the old 41 x 41 monument prototypes with a
+single authored central objective district installed inside X/Z -150..150.
+
+The runtime installation order is:
+
+1. `central_district_base.schem` at `0 81 0`
+2. `industrialcomplex.schem` at `-82 81 -62`
+3. `militarydepot.schem` at `82 81 -58`
+4. `refinerymonument.schem` at `0 81 81`
+
+The gameplay capture zones are intentionally smaller than the full structures:
+
+- Industrial Complex: `-86 81 -80`, radius 14
+- Military Depot: `88 81 -35`, radius 14
+- Refinery: `22 81 107`, radius 14
+
+Asset placement state now includes a visual revision token. This allows a later asset
+pack to replace stale visual geometry without losing the economic building, ownership,
+Town Hall level, or territory state.
+
+After replacing `config/catancraft/schematics_bundle.zip`, use:
+
+```
+/catan map installseason1
+/catan map reloadassets
+/catan map assetstatus
+/catan map refreshassets
+```
+
+The central district base is an installation patch, not a purchasable building and
+must not be repeatedly pasted as part of normal restart logic.
