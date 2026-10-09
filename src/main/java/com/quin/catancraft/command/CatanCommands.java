@@ -776,6 +776,33 @@ public final class CatanCommands {
         }
 
         int slotCap = EconomyCatalog.maxBuildingSlots(territory.cityLevel());
+        TerritoryDefinition mapDefinition =
+                MapDefinitionManager.territory(territory.id());
+
+        String plotId = "";
+        if (mapDefinition != null) {
+            int physicalPlotCap = mapDefinition.buildingPlots().size();
+            slotCap = Math.min(slotCap, physicalPlotCap);
+
+            java.util.Set<String> occupiedPlots = territory.buildings().stream()
+                    .map(BuildingInstance::plotId)
+                    .filter(value -> !value.isBlank())
+                    .collect(java.util.stream.Collectors.toSet());
+
+            MapAnchor openPlot = mapDefinition.buildingPlots().stream()
+                    .filter(plot -> !occupiedPlots.contains(plot.id()))
+                    .findFirst()
+                    .orElse(null);
+
+            if (openPlot == null) {
+                source.sendFailure(Component.literal(
+                        "No open physical building plots are defined for " +
+                                territory.name() + "."));
+                return 0;
+            }
+            plotId = openPlot.id();
+        }
+
         if (territory.buildings().size() >= slotCap) {
             source.sendFailure(Component.literal(
                     "No open development slots. Upgrade the city first."));
@@ -791,11 +818,14 @@ public final class CatanCommands {
 
         cost.charge(nation);
         long target = type.isProcessor() ? 100 : 0;
-        territory.buildings().add(new BuildingInstance(type, 1, target));
+        String assignedPlot = plotId;
+        territory.buildings().add(
+                new BuildingInstance(type, 1, target, assignedPlot));
         data.setDirty();
 
         source.sendSuccess(() -> Component.literal(
                 "Built " + type.displayName() + " in " + territory.name() +
+                        (assignedPlot.isBlank() ? "" : " at " + assignedPlot) +
                         " for " + cost.describe()), true);
         NationDashboard.open(player);
         return 1;

@@ -257,6 +257,9 @@ public final class NationDashboard {
 
                 String detail = "P|[" + i + "] " + building.type().displayName() +
                         " L" + building.level();
+                if (!building.plotId().isBlank()) {
+                    detail += " • " + building.plotId();
+                }
                 if (building.type().isProcessor()) {
                     detail += " • target " + building.targetStock() + " " +
                             pretty(building.type().output());

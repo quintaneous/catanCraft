@@ -192,7 +192,7 @@ public final class CatanSavedData extends SavedData {
 
     public void syncMapDefinitions() {
         for (TerritoryDefinition definition : MapDefinitionManager.territories()) {
-            territories.computeIfAbsent(
+            TerritoryData territory = territories.computeIfAbsent(
                     definition.id(),
                     ignored -> new TerritoryData(
                             definition.id(),
@@ -200,6 +200,15 @@ public final class CatanSavedData extends SavedData {
                             definition.specialty()
                     )
             );
+
+            // V0.1 saves predate physical plot IDs. Assign them deterministically
+            // in existing building order so old test worlds remain usable.
+            for (int i = 0; i < territory.buildings().size(); i++) {
+                BuildingInstance building = territory.buildings().get(i);
+                if (!building.plotId().isBlank()) continue;
+                if (i >= definition.buildingPlots().size()) break;
+                building.setPlotId(definition.buildingPlots().get(i).id());
+            }
         }
 
         for (MonumentDefinition definition : MapDefinitionManager.monuments()) {
