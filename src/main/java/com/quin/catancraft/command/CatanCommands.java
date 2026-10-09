@@ -1437,14 +1437,44 @@ public final class CatanCommands {
 
         try {
             BuildingType type = BuildingType.parse(typeName);
+            String plotId = "";
+            TerritoryDefinition definition =
+                    MapDefinitionManager.territory(territory.id());
+
+            if (definition != null) {
+                java.util.Set<String> occupiedPlots = territory.buildings().stream()
+                        .map(BuildingInstance::plotId)
+                        .filter(value -> !value.isBlank())
+                        .collect(java.util.stream.Collectors.toSet());
+
+                MapAnchor openPlot = definition.buildingPlots().stream()
+                        .filter(plot -> !occupiedPlots.contains(plot.id()))
+                        .findFirst()
+                        .orElse(null);
+
+                if (openPlot == null) {
+                    source.sendFailure(Component.literal(
+                            "No open map-defined building plot in " +
+                                    territory.name() + "."));
+                    return 0;
+                }
+                plotId = openPlot.id();
+            }
+
+            String assignedPlot = plotId;
             territory.buildings().add(
-                    new BuildingInstance(type, 1, type.isProcessor() ? 100 : 0));
+                    new BuildingInstance(
+                            type,
+                            1,
+                            type.isProcessor() ? 100 : 0,
+                            assignedPlot));
             data.setDirty();
             int index = territory.buildings().size() - 1;
 
             source.sendSuccess(() -> Component.literal(
                     "Admin-added " + type.displayName() +
                             " to " + territory.name() +
+                            (assignedPlot.isBlank() ? "" : " at " + assignedPlot) +
                             " at building index " + index), true);
             return 1;
         } catch (IllegalArgumentException ex) {

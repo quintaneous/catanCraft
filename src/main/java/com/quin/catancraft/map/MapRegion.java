@@ -27,6 +27,13 @@ public final class MapRegion {
                 && pos.getZ() >= minZ() && pos.getZ() <= maxZ();
     }
 
+    public boolean contains(MapRegion other) {
+        if (other == null) return false;
+        return other.minX() >= minX() && other.maxX() <= maxX()
+                && other.minY() >= minY() && other.maxY() <= maxY()
+                && other.minZ() >= minZ() && other.maxZ() <= maxZ();
+    }
+
     public boolean isReasonable() {
         return sizeX() > 0 && sizeY() > 0 && sizeZ() > 0
                 && sizeX() <= 1024 && sizeY() <= 384 && sizeZ() <= 1024;

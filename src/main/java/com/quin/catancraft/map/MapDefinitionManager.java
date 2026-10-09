@@ -19,8 +19,10 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public final class MapDefinitionManager {
     public record LoadResult(
@@ -158,9 +160,58 @@ public final class MapDefinitionManager {
                 throw new IllegalArgumentException(
                         "Territory " + id + " has an invalid restorationRegion.");
             }
-            if (territory.siegeRegion() != null && !territory.siegeRegion().isReasonable()) {
-                throw new IllegalArgumentException(
-                        "Territory " + id + " has an invalid siegeRegion.");
+
+            if (territory.siegeRegion() != null) {
+                if (!territory.siegeRegion().isReasonable()) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " has an invalid siegeRegion.");
+                }
+                if (territory.restorationRegion() == null) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id +
+                                    " defines a siegeRegion but no restorationRegion.");
+                }
+                if (!territory.restorationRegion().contains(territory.siegeRegion())) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id +
+                                    " siegeRegion extends outside its restorationRegion.");
+                }
+            }
+
+            Set<String> plotIds = new HashSet<>();
+            for (MapAnchor plot : territory.buildingPlots()) {
+                if (plot.id().isBlank()) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " has a building plot with no id.");
+                }
+                if (!plotIds.add(plot.id())) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id +
+                                    " has duplicate building plot id " + plot.id());
+                }
+                if (plot.rotation() % 90 != 0) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " plot " + plot.id() +
+                                    " rotation must be 0/90/180/270.");
+                }
+            }
+
+            Set<String> defenseIds = new HashSet<>();
+            for (MapAnchor anchor : territory.defenseAnchors()) {
+                if (anchor.id().isBlank()) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " has a defense anchor with no id.");
+                }
+                if (!defenseIds.add(anchor.id())) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id +
+                                    " has duplicate defense anchor id " + anchor.id());
+                }
+                if (anchor.rotation() % 90 != 0) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " defense anchor " + anchor.id() +
+                                    " rotation must be 0/90/180/270.");
+                }
             }
         }
 
