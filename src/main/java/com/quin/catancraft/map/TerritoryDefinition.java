@@ -38,6 +38,7 @@ public final class TerritoryDefinition {
     @Nullable private MapAnchor managementAnchor;
     @Nullable private MapAnchor resourceSite;
     private List<MapAnchor> buildingPlots = new ArrayList<>();
+    private List<String> reservedPlotIds = new ArrayList<>();
     private List<MapAnchor> defenseAnchors = new ArrayList<>();
 
     @Nullable private MapRegion siegeRegion;
@@ -110,6 +111,21 @@ public final class TerritoryDefinition {
 
     public List<MapAnchor> buildingPlots() {
         return buildingPlots == null ? List.of() : List.copyOf(buildingPlots);
+    }
+
+    public Set<String> reservedPlotIds() {
+        if (reservedPlotIds == null) return Set.of();
+        return reservedPlotIds.stream()
+                .filter(value -> value != null && !value.isBlank())
+                .map(value -> value.trim().toLowerCase(Locale.ROOT))
+                .collect(java.util.stream.Collectors.toUnmodifiableSet());
+    }
+
+    public List<MapAnchor> availableBuildingPlots() {
+        Set<String> reserved = reservedPlotIds();
+        return buildingPlots().stream()
+                .filter(plot -> !reserved.contains(plot.id()))
+                .toList();
     }
 
     public List<MapAnchor> defenseAnchors() {

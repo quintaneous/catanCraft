@@ -267,8 +267,9 @@ public final class NationDashboard {
                     " Agriculture/15m • -" + (upkeepCycle * 4) + "/hr");
         }
 
+        int developmentCap = developmentSlotCap(territory);
         lines.add("D|Development slots: " + territory.buildings().size() + "/" +
-                EconomyCatalog.maxBuildingSlots(territory.cityLevel()));
+                developmentCap);
 
         EconomyCost nextCity = EconomyCatalog.cityUpgradeCost(territory.cityLevel());
         if (nextCity != null) {
@@ -372,7 +373,7 @@ public final class NationDashboard {
             }
         }
 
-        int slotCap = EconomyCatalog.maxBuildingSlots(territory.cityLevel());
+        int slotCap = developmentCap;
         if (territory.buildings().size() < slotCap) {
             lines.add("P|Available Construction");
             for (BuildingType type : BuildingType.values()) {
@@ -393,6 +394,14 @@ public final class NationDashboard {
         } else {
             lines.add("Y|No open development slots.");
         }
+    }
+
+    private static int developmentSlotCap(TerritoryData territory) {
+        int economyCap = EconomyCatalog.maxBuildingSlots(territory.cityLevel());
+        TerritoryDefinition definition =
+                MapDefinitionManager.territory(territory.id());
+        if (definition == null) return economyCap;
+        return Math.min(economyCap, definition.availableBuildingPlots().size());
     }
 
     private static String recipeText(BuildingType type) {

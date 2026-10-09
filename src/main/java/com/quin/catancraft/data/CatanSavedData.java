@@ -206,8 +206,8 @@ public final class CatanSavedData extends SavedData {
             for (int i = 0; i < territory.buildings().size(); i++) {
                 BuildingInstance building = territory.buildings().get(i);
                 if (!building.plotId().isBlank()) continue;
-                if (i >= definition.buildingPlots().size()) break;
-                building.setPlotId(definition.buildingPlots().get(i).id());
+                if (i >= definition.availableBuildingPlots().size()) break;
+                building.setPlotId(definition.availableBuildingPlots().get(i).id());
             }
         }
 

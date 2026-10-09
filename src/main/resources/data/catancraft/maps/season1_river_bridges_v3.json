@@ -129,7 +129,11 @@
         "wood": 50,
         "stone": 50,
         "agriculture": 50
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1",
+        "plot_5"
+      ]
     },
     {
       "id": "b",
@@ -252,7 +256,10 @@
         "maxX": -154,
         "maxY": 125,
         "maxZ": -654
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "c",
@@ -375,7 +382,10 @@
         "maxX": 346,
         "maxY": 125,
         "maxZ": -654
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "d",
@@ -504,7 +514,11 @@
         "wood": 50,
         "stone": 50,
         "agriculture": 50
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1",
+        "plot_5"
+      ]
     },
     {
       "id": "e",
@@ -627,7 +641,10 @@
         "maxX": -654,
         "maxY": 125,
         "maxZ": -154
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "f",
@@ -752,7 +769,10 @@
         "maxX": -154,
         "maxY": 125,
         "maxZ": -154
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "g",
@@ -877,7 +897,10 @@
         "maxX": 346,
         "maxY": 125,
         "maxZ": -154
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "h",
@@ -1000,7 +1023,10 @@
         "maxX": 846,
         "maxY": 125,
         "maxZ": -154
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "i",
@@ -1123,7 +1149,10 @@
         "maxX": -654,
         "maxY": 125,
         "maxZ": 346
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "j",
@@ -1248,7 +1277,10 @@
         "maxX": -154,
         "maxY": 125,
         "maxZ": 346
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "k",
@@ -1373,7 +1405,10 @@
         "maxX": 346,
         "maxY": 125,
         "maxZ": 346
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "l",
@@ -1496,7 +1531,10 @@
         "maxX": 846,
         "maxY": 125,
         "maxZ": 346
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "m",
@@ -1625,7 +1663,11 @@
         "wood": 50,
         "stone": 50,
         "agriculture": 50
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1",
+        "plot_5"
+      ]
     },
     {
       "id": "n",
@@ -1748,7 +1790,10 @@
         "maxX": -154,
         "maxY": 125,
         "maxZ": 846
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "o",
@@ -1871,7 +1916,10 @@
         "maxX": 346,
         "maxY": 125,
         "maxZ": 846
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1"
+      ]
     },
     {
       "id": "p",
@@ -2000,7 +2048,11 @@
         "wood": 50,
         "stone": 50,
         "agriculture": 50
-      }
+      },
+      "reservedPlotIds": [
+        "plot_1",
+        "plot_5"
+      ]
     }
   ],
   "publicZones": [

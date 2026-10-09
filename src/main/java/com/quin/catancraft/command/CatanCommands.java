@@ -1030,7 +1030,7 @@ public final class CatanCommands {
 
         String plotId = "";
         if (mapDefinition != null) {
-            int physicalPlotCap = mapDefinition.buildingPlots().size();
+            int physicalPlotCap = mapDefinition.availableBuildingPlots().size();
             slotCap = Math.min(slotCap, physicalPlotCap);
 
             java.util.Set<String> occupiedPlots = territory.buildings().stream()
@@ -1038,7 +1038,7 @@ public final class CatanCommands {
                     .filter(value -> !value.isBlank())
                     .collect(java.util.stream.Collectors.toSet());
 
-            MapAnchor openPlot = mapDefinition.buildingPlots().stream()
+            MapAnchor openPlot = mapDefinition.availableBuildingPlots().stream()
                     .filter(plot -> !occupiedPlots.contains(plot.id()))
                     .findFirst()
                     .orElse(null);
@@ -1744,7 +1744,7 @@ public final class CatanCommands {
                         .filter(value -> !value.isBlank())
                         .collect(java.util.stream.Collectors.toSet());
 
-                MapAnchor openPlot = definition.buildingPlots().stream()
+                MapAnchor openPlot = definition.availableBuildingPlots().stream()
                         .filter(plot -> !occupiedPlots.contains(plot.id()))
                         .findFirst()
                         .orElse(null);
