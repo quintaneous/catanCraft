@@ -85,6 +85,12 @@ public final class CatanCommands {
         node.then(Commands.literal("stockpile")
                 .executes(ctx -> stockpile(ctx.getSource())));
 
+        node.then(Commands.literal("start")
+                .then(Commands.argument("slot", IntegerArgumentType.integer(1, 4))
+                        .executes(ctx -> chooseStartingCity(
+                                ctx.getSource(),
+                                IntegerArgumentType.getInteger(ctx, "slot")))));
+
         node.then(Commands.literal("claim")
                 .then(Commands.argument("territory", StringArgumentType.word())
                         .executes(ctx -> claimNeutralTerritory(
@@ -808,6 +814,64 @@ public final class CatanCommands {
                 .forEach(entry -> source.sendSuccess(
                         () -> Component.literal(
                                 entry.getKey().id() + ": " + entry.getValue()), false));
+        return 1;
+    }
+
+    private static int chooseStartingCity(
+            CommandSourceStack source,
+            int slot
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = requireLeaderNation(source, player, data);
+        if (nation == null) return 0;
+
+        boolean alreadyOwnsTerritory = data.territories().stream()
+                .anyMatch(territory -> nation.id().equals(territory.ownerNationId()));
+        if (alreadyOwnsTerritory) {
+            source.sendFailure(Component.literal(
+                    "Your nation already has a starting territory."));
+            return 0;
+        }
+
+        TerritoryDefinition definition = MapDefinitionManager.territories().stream()
+                .filter(value -> value.startSlot() == slot)
+                .findFirst()
+                .orElse(null);
+        if (definition == null) {
+            source.sendFailure(Component.literal(
+                    "Starting city slot " + slot + " is not defined."));
+            return 0;
+        }
+
+        TerritoryData territory = data.territory(definition.id());
+        if (territory == null) {
+            source.sendFailure(Component.literal(
+                    "Starting territory " + definition.id() +
+                            " is not synchronized with the world save."));
+            return 0;
+        }
+        if (territory.ownerNationId() != null) {
+            NationData owner = data.nation(territory.ownerNationId());
+            source.sendFailure(Component.literal(
+                    definition.name() + " is already controlled by " +
+                            (owner == null ? "another nation" : owner.name()) + "."));
+            return 0;
+        }
+        if (!definition.startsWithSettlement()) {
+            source.sendFailure(Component.literal(
+                    definition.name() +
+                            " is not configured as a prebuilt starting settlement."));
+            return 0;
+        }
+
+        territory.setOwnerNationId(nation.id());
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                nation.name() + " selected " + definition.name() +
+                        " as its starting city."), true);
+        NationDashboard.open(player);
         return 1;
     }
 

@@ -12,6 +12,8 @@ import com.quin.catancraft.economy.EconomyBalance;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
 import com.quin.catancraft.monument.MonumentManager;
+import com.quin.catancraft.map.MapDefinitionManager;
+import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.network.NationNetwork;
 import net.minecraft.server.level.ServerPlayer;
 
@@ -70,6 +72,44 @@ public final class NationDashboard {
         addResource(lines, nation, ResourceType.ELECTRONICS);
         addResource(lines, nation, ResourceType.EXPLOSIVES);
         lines.add("");
+
+        if (territories.isEmpty()) {
+            lines.add("H|CHOOSE STARTING CITY");
+            List<TerritoryDefinition> starts = MapDefinitionManager.territories().stream()
+                    .filter(definition -> definition.startSlot() > 0)
+                    .sorted(Comparator.comparingInt(TerritoryDefinition::startSlot))
+                    .toList();
+
+            boolean anyAvailable = false;
+            for (TerritoryDefinition definition : starts) {
+                TerritoryData state = data.territory(definition.id());
+                boolean available = state != null && state.ownerNationId() == null;
+                String yieldNote = definition.resources().size() > 1
+                        ? " • mixed starter output"
+                        : "";
+
+                if (available) {
+                    anyAvailable = true;
+                    lines.add("Y|Slot " + definition.startSlot() + " • " +
+                            definition.name() + " • " +
+                            resourceListText(definition.resources()) + yieldNote);
+                    if (leader) {
+                        lines.add(action(
+                                "nation start " + definition.startSlot(),
+                                "Choose " + definition.name()
+                        ));
+                    }
+                } else {
+                    lines.add("D|Slot " + definition.startSlot() + " • " +
+                            definition.name() + " • TAKEN");
+                }
+            }
+
+            if (!anyAvailable) {
+                lines.add("R|No starting cities are currently available.");
+            }
+            lines.add("");
+        }
 
         lines.add("H|TRADE");
         List<TradeProposal> incomingTrades = data.tradeProposals().stream()
