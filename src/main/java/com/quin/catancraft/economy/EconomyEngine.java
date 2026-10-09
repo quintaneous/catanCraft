@@ -126,7 +126,7 @@ public final class EconomyEngine {
     }
 
     private static int scaledProduction(int base, int percent) {
-        return Math.max(0, (int) Math.floor(base * (percent / 100.0)));
+        return Math.max(0, (int) Math.round(base * (percent / 100.0)));
     }
 
     private static void processTier(

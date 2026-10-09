@@ -249,7 +249,7 @@ public final class NationDashboard {
             int percent = territory.rawResourceYieldPercent(raw);
             int actualCycle = Math.max(
                     0,
-                    (int) Math.floor(perCycle * (percent / 100.0))
+                    (int) Math.round(perCycle * (percent / 100.0))
             );
             lines.add("G|  " + pretty(raw) + ": +" + actualCycle +
                     "/15m • +" + (actualCycle * 4) + "/hr" +

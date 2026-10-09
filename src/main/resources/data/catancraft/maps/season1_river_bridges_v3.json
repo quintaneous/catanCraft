@@ -126,9 +126,9 @@
         "maxZ": -654
       },
       "resourceYieldPercent": {
-        "wood": 50,
-        "stone": 50,
-        "agriculture": 50
+        "wood": 75,
+        "stone": 75,
+        "agriculture": 75
       },
       "reservedPlotIds": [
         "plot_1",
@@ -511,9 +511,9 @@
         "maxZ": -654
       },
       "resourceYieldPercent": {
-        "wood": 50,
-        "stone": 50,
-        "agriculture": 50
+        "wood": 75,
+        "stone": 75,
+        "agriculture": 75
       },
       "reservedPlotIds": [
         "plot_1",
@@ -1660,9 +1660,9 @@
         "maxZ": 846
       },
       "resourceYieldPercent": {
-        "wood": 50,
-        "stone": 50,
-        "agriculture": 50
+        "wood": 75,
+        "stone": 75,
+        "agriculture": 75
       },
       "reservedPlotIds": [
         "plot_1",
@@ -2045,9 +2045,9 @@
         "maxZ": 846
       },
       "resourceYieldPercent": {
-        "wood": 50,
-        "stone": 50,
-        "agriculture": 50
+        "wood": 75,
+        "stone": 75,
+        "agriculture": 75
       },
       "reservedPlotIds": [
         "plot_1",
