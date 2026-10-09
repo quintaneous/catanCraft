@@ -12,7 +12,7 @@ Current work on the `v0.1-foundation` branch:
 - Nation invitations, joining, and leaving
 - Shared national treasury
 - Shared national resource stockpile
-- Fixed server-defined territories with one specialty resource
+- Fixed server-defined territories with one or more authored raw-resource outputs
 - Server-defined territory adjacency graph
 - Paid claiming of adjacent neutral territories
 - Territory ownership
@@ -360,3 +360,29 @@ The existing management lectern in each city is registered as a physical managem
 terminal. A nation member can right-click the lectern in a city their nation owns to
 open the same nation dashboard as `/nation`. Neutral or foreign-city lecterns do not
 grant management access.
+
+
+### V3 verification and production preview
+
+Before testing the current River & Bridges V3 save, verify that the exact expected
+world is loaded:
+
+```
+/catan map verify
+```
+
+This checks the 16 prepared city sites, four starter management lecterns, four
+registered bridge centers, and the solid central objective court.
+
+For economy tuning, inspect the exact raw output of any territory without changing
+the stockpile:
+
+```
+/catan debug production a
+/catan debug production b
+```
+
+This prints each resource's per-cycle/per-hour output, configured yield percentage,
+and Agriculture upkeep. Starter territories A/D/M/P currently use 75% yield for
+Wood, Stone, and Agriculture; dedicated raw-resource territories use 100% unless the
+map file overrides them.

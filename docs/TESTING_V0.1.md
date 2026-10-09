@@ -453,3 +453,34 @@ Expected:
 - Neutral city terminal reports inactive.
 - Foreign nation member is told which nation controls the city.
 - No normal block editing is enabled.
+
+
+## 26. Verify exact V3 world
+
+With `CatanCraft_River_Bridges_V3` loaded:
+
+```
+/catan map verify
+```
+
+Expected:
+- Verification passes.
+- All 16 prepared city surfaces are found.
+- A/D/M/P management lecterns exist at their registered anchors.
+- All four bridge centers have solid deck blocks.
+- The central court is solid at Y=80.
+
+Then compare starter and dedicated production:
+
+```
+/catan debug production a
+/catan debug production b
+/catan debug production e
+```
+
+Expected at Producer L1:
+- A shows Wood 8, Stone 8, Agriculture 8 per 15 minutes at 75% yield.
+- B shows Wood 10 per 15 minutes at 100% yield.
+- E shows Stone 10 per 15 minutes at 100% yield.
+- A pays one Agriculture upkeep charge for its combined non-food outputs, not one
+  charge per resource.
