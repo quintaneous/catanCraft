@@ -25,6 +25,7 @@ import com.quin.catancraft.map.MapZoneDefinition;
 import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
+import com.quin.catancraft.world.SchematicPlacementService;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -854,13 +855,43 @@ public final class CatanCommands {
             return 0;
         }
 
+        TerritoryDefinition mapDefinition =
+                MapDefinitionManager.territory(territory.id());
+
+        if (mapDefinition != null
+                && !mapDefinition.startsWithSettlement()
+                && !mapDefinition.settlementTemplate().isBlank()) {
+            if (mapDefinition.settlementAnchor() == null) {
+                source.sendFailure(Component.literal(
+                        "This territory has no settlement anchor in the map definition."));
+                return 0;
+            }
+
+            SchematicPlacementService.Result placement =
+                    SchematicPlacementService.place(
+                            player.serverLevel(),
+                            mapDefinition.settlementTemplate(),
+                            mapDefinition.settlementAnchor()
+                    );
+
+            if (!placement.success()) {
+                source.sendFailure(Component.literal(
+                        "City activation failed; no resources were charged. " +
+                                placement.message()));
+                return 0;
+            }
+        }
+
         cost.charge(nation);
         territory.setOwnerNationId(nation.id());
         data.setDirty();
 
         source.sendSuccess(() -> Component.literal(
                 nation.name() + " expanded into " + territory.name() +
-                        " for " + cost.describe()), true);
+                        " for " + cost.describe() +
+                        (mapDefinition != null && !mapDefinition.startsWithSettlement()
+                                ? ". The prepared site is now an active TH1 settlement."
+                                : "")), true);
         NationDashboard.open(player);
         return 1;
     }
