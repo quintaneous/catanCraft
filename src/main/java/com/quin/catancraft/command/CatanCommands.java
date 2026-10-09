@@ -261,6 +261,14 @@ public final class CatanCommands {
                                         StringArgumentType.getString(ctx, "resource"),
                                         LongArgumentType.getLong(ctx, "amount"))))));
 
+        node.then(Commands.literal("set")
+                .then(Commands.argument("resource", StringArgumentType.word())
+                        .then(Commands.argument("amount", LongArgumentType.longArg(0))
+                                .executes(ctx -> debugSetResource(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "resource"),
+                                        LongArgumentType.getLong(ctx, "amount"))))));
+
         node.then(Commands.literal("money")
                 .then(Commands.argument("amount", LongArgumentType.longArg(1))
                         .executes(ctx -> debugMoney(
@@ -1016,6 +1024,36 @@ public final class CatanCommands {
             source.sendSuccess(() -> Component.literal(
                     "Added " + amount + " " + type.id() +
                             " to " + nation.name()), true);
+            return 1;
+        } catch (IllegalArgumentException ex) {
+            source.sendFailure(Component.literal("Unknown resource: " + resourceName));
+            return 0;
+        }
+    }
+
+    private static int debugSetResource(
+            CommandSourceStack source,
+            String resourceName,
+            long amount
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = data.nationForPlayer(player.getUUID());
+
+        if (nation == null) {
+            source.sendFailure(Component.literal("You are not in a nation."));
+            return 0;
+        }
+
+        try {
+            ResourceType type = ResourceType.parse(resourceName);
+            long current = nation.resource(type);
+            nation.addResource(type, amount - current);
+            data.setDirty();
+
+            source.sendSuccess(() -> Component.literal(
+                    "Set " + type.id() + " to " + amount +
+                            " for " + nation.name()), true);
             return 1;
         } catch (IllegalArgumentException ex) {
             source.sendFailure(Component.literal("Unknown resource: " + resourceName));
