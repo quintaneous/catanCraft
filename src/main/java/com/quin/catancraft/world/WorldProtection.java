@@ -4,6 +4,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.BucketItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.level.BlockEvent;
 import net.minecraftforge.event.level.ExplosionEvent;
@@ -43,11 +44,29 @@ public final class WorldProtection {
     }
 
     @SubscribeEvent
+    public void onToolModify(BlockEvent.BlockToolModificationEvent event) {
+        if (event.getPlayer() instanceof ServerPlayer) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
+    public void onFarmlandTrample(BlockEvent.FarmlandTrampleEvent event) {
+        if (event.getEntity() instanceof ServerPlayer) {
+            event.setCanceled(true);
+        }
+    }
+
+    @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (!(event.getEntity() instanceof ServerPlayer)) return;
 
         ItemStack held = event.getItemStack();
-        if (held.getItem() instanceof BlockItem || held.getItem() instanceof BucketItem) {
+        if (held.getItem() instanceof BlockItem
+                || held.getItem() instanceof BucketItem
+                || held.is(Items.FLINT_AND_STEEL)
+                || held.is(Items.FIRE_CHARGE)
+                || held.is(Items.BONE_MEAL)) {
             event.setCanceled(true);
         }
     }
