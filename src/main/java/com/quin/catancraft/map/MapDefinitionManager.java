@@ -102,6 +102,13 @@ public final class MapDefinitionManager {
         return reload(server);
     }
 
+    public static LoadResult installBundledDefault(MinecraftServer server)
+            throws IOException {
+        Files.createDirectories(MAP_PATH.getParent());
+        copyBundledDefault();
+        return reload(server);
+    }
+
     public static LoadResult reload(MinecraftServer server) throws IOException {
         Files.createDirectories(MAP_PATH.getParent());
         installDefaultMapIfNeeded();
@@ -167,10 +174,15 @@ public final class MapDefinitionManager {
 
         if (!install) return;
 
+        copyBundledDefault();
+    }
+
+    private static void copyBundledDefault() throws IOException {
         try (InputStream input =
                      MapDefinitionManager.class.getResourceAsStream(DEFAULT_MAP_RESOURCE)) {
             if (input == null) {
-                throw new IOException("Bundled default map is missing: " + DEFAULT_MAP_RESOURCE);
+                throw new IOException(
+                        "Bundled default map is missing: " + DEFAULT_MAP_RESOURCE);
             }
             Files.copy(input, MAP_PATH, StandardCopyOption.REPLACE_EXISTING);
         }
@@ -201,6 +213,35 @@ public final class MapDefinitionManager {
                     throw new IllegalArgumentException(
                             "Territory " + id + " uses processed resource " +
                                     resource.id() + "; territory resources must be raw resources.");
+                }
+            }
+
+            for (Map.Entry<String, Integer> yieldEntry
+                    : territory.resourceYieldPercentages().entrySet()) {
+                final ResourceType yieldResource;
+                try {
+                    yieldResource = ResourceType.parse(yieldEntry.getKey());
+                } catch (IllegalArgumentException ex) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id +
+                                    " has unknown yield resource " + yieldEntry.getKey());
+                }
+
+                if (!territory.resources().contains(yieldResource)) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " defines a yield for " +
+                                    yieldResource.id() +
+                                    " but does not list that resource.");
+                }
+
+                int percent = yieldEntry.getValue() == null
+                        ? 0
+                        : yieldEntry.getValue();
+                if (percent < 1 || percent > 500) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id + " resource yield for " +
+                                    yieldResource.id() +
+                                    " must be between 1 and 500 percent.");
                 }
             }
 
@@ -250,6 +291,21 @@ public final class MapDefinitionManager {
             Set<String> plotIds = new HashSet<>();
             for (MapAnchor plot : territory.buildingPlots()) {
                 validateAnchor(id, "building plot", plot, plotIds);
+            }
+
+            for (String reservedPlot : territory.reservedPlotIds()) {
+                if (!plotIds.contains(reservedPlot)) {
+                    throw new IllegalArgumentException(
+                            "Territory " + id +
+                                    " reserves unknown building plot " + reservedPlot + ".");
+                }
+            }
+
+            if (!territory.settlementTemplate().isBlank()
+                    && territory.settlementAnchor() == null) {
+                throw new IllegalArgumentException(
+                        "Territory " + id +
+                                " defines a settlementTemplate but no settlementAnchor.");
             }
 
             Set<String> defenseIds = new HashSet<>();

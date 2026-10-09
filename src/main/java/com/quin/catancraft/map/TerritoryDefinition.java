@@ -83,6 +83,12 @@ public final class TerritoryDefinition {
         return Math.max(1, Math.min(500, value));
     }
 
+    public Map<String, Integer> resourceYieldPercentages() {
+        return resourceYieldPercent == null
+                ? Map.of()
+                : Map.copyOf(resourceYieldPercent);
+    }
+
     public int startSlot() { return Math.max(0, startSlot); }
 
     public boolean startsWithSettlement() { return startsWithSettlement; }

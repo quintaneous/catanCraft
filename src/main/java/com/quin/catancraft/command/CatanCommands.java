@@ -297,6 +297,9 @@ public final class CatanCommands {
         node.then(Commands.literal("reload")
                 .executes(ctx -> reloadMapDefinition(ctx.getSource())));
 
+        node.then(Commands.literal("installv3")
+                .executes(ctx -> installBundledV3Map(ctx.getSource())));
+
         node.then(Commands.literal("installseason1")
                 .executes(ctx -> installSeasonOneMap(ctx.getSource())));
 
@@ -404,6 +407,23 @@ public final class CatanCommands {
         } catch (Exception ex) {
             source.sendFailure(Component.literal(
                     "Season map install failed: " + ex.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int installBundledV3Map(CommandSourceStack source) {
+        try {
+            MapDefinitionManager.LoadResult result =
+                    MapDefinitionManager.installBundledDefault(source.getServer());
+            source.sendSuccess(() -> Component.literal(
+                    "Installed bundled River & Bridges V3 map definition: " +
+                            result.territories() + " territories, " +
+                            result.monuments() + " monuments. Existing map.json was replaced."),
+                    true);
+            return 1;
+        } catch (Exception ex) {
+            source.sendFailure(Component.literal(
+                    "Could not install bundled V3 map: " + ex.getMessage()));
             return 0;
         }
     }
