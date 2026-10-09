@@ -312,6 +312,9 @@ public final class CatanCommands {
         node.then(Commands.literal("reloadassets")
                 .executes(ctx -> reloadMapAssets(ctx.getSource())));
 
+        node.then(Commands.literal("refreshassets")
+                .executes(ctx -> refreshMapAssets(ctx.getSource())));
+
         node.then(Commands.literal("placemonuments")
                 .executes(ctx -> placeMapMonuments(ctx.getSource())));
 
@@ -583,6 +586,43 @@ public final class CatanCommands {
         return mapAssetStatus(source);
     }
 
+    private static int refreshMapAssets(CommandSourceStack source) {
+        SchematicPlacementService.clearCache();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+
+        MapAssetService.Result monuments =
+                MapAssetService.placeMonuments(
+                        source.getServer(),
+                        data,
+                        true
+                );
+        if (!monuments.success()) {
+            source.sendFailure(Component.literal(
+                    "Central district refresh failed: " +
+                            monuments.message()));
+            return 0;
+        }
+
+        MapAssetService.Result cities =
+                MapAssetService.refreshOwnedCityVisuals(
+                        source.getServer(),
+                        data
+                );
+        if (!cities.success()) {
+            source.sendFailure(Component.literal(
+                    "City visual refresh failed after central district update: " +
+                            cities.message()));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(
+                "Visual Polish assets refreshed safely. " +
+                        (monuments.changedBlocks() + cities.changedBlocks()) +
+                        " blocks changed. City bases were not repasted."),
+                true);
+        return 1;
+    }
+
     private static int mapAssetStatus(CommandSourceStack source) {
         int ready = 0;
         int failed = 0;
@@ -591,10 +631,8 @@ public final class CatanCommands {
         for (SchematicAssetRegistry.Asset asset
                 : SchematicAssetRegistry.assets()) {
             MapAnchor anchor;
-            if (asset.id().equals("industrial_complex")
-                    || asset.id().equals("military_depot")
-                    || asset.id().equals("refinery_monument")) {
-                anchor = SchematicAssetRegistry.monumentAnchor(asset.id());
+            if (SchematicAssetRegistry.isFixedWorldAsset(asset.id())) {
+                anchor = SchematicAssetRegistry.fixedAnchor(asset.id());
             } else {
                 anchor = sample == null
                         ? null
@@ -634,7 +672,8 @@ public final class CatanCommands {
         }
 
         source.sendSuccess(() -> Component.literal(
-                "Current monument structures placed/synchronized. " +
+                "Visual Polish central district base + three monument structures " +
+                        "placed/synchronized. " +
                         result.changedBlocks() + " blocks changed."), true);
         return 1;
     }

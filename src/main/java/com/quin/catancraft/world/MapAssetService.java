@@ -1,8 +1,11 @@
 package com.quin.catancraft.world;
 
+import com.quin.catancraft.data.BuildingInstance;
 import com.quin.catancraft.data.BuildingType;
 import com.quin.catancraft.data.CatanSavedData;
+import com.quin.catancraft.data.TerritoryData;
 import com.quin.catancraft.map.MapAnchor;
+import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.map.TerritoryDefinition;
 import net.minecraft.server.MinecraftServer;
 
@@ -44,13 +47,13 @@ public final class MapAssetService {
                 executeTasks(server, data, territory.dimension(), tasks, false);
 
         if (result.success() && prebuiltStartingCity) {
-            // River & Bridges V3 already contains the base city and TH1.
-            // Record them only after all added producer assets validated and placed.
-            data.setPlacedMapAsset(
+            recordPlacement(
+                    data,
                     territoryKey(territory.id(), "city_base"),
                     "starter_settlement"
             );
-            data.setPlacedMapAsset(
+            recordPlacement(
+                    data,
                     territoryKey(territory.id(), "town_hall"),
                     "th1"
             );
@@ -86,13 +89,14 @@ public final class MapAssetService {
 
         String key = territoryKey(territory.id(), asset.plot());
         String existing = data.placedMapAsset(key);
-        if (existing != null && !existing.equals(assetId)) {
+
+        if (existing != null && !sameAsset(existing, assetId)) {
             return new Result(false,
                     "Physical plot " + asset.plot() +
                             " is already occupied by " + existing + ".", 0);
         }
 
-        if (assetId.equals(existing)) {
+        if (asset.placementToken().equals(existing)) {
             return new Result(true,
                     assetId + " is already placed at " + asset.plot() + ".", 0);
         }
@@ -114,7 +118,7 @@ public final class MapAssetService {
             return new Result(false, placement.message(), placement.changedBlocks());
         }
 
-        data.setPlacedMapAsset(key, assetId);
+        data.setPlacedMapAsset(key, asset.placementToken());
         data.setDirty();
         return new Result(true, placement.message(), placement.changedBlocks());
     }
@@ -125,11 +129,7 @@ public final class MapAssetService {
             TerritoryDefinition territory,
             int cityLevel
     ) {
-        String assetId = switch (cityLevel) {
-            case 1 -> "th1";
-            case 2 -> "th2";
-            default -> "th3";
-        };
+        String assetId = hallAsset(cityLevel);
 
         MapAnchor anchor =
                 SchematicAssetRegistry.territoryAnchor(assetId, territory);
@@ -155,7 +155,8 @@ public final class MapAssetService {
             return new Result(false, placement.message(), placement.changedBlocks());
         }
 
-        data.setPlacedMapAsset(
+        recordPlacement(
+                data,
                 territoryKey(territory.id(), "town_hall"),
                 assetId
         );
@@ -163,11 +164,29 @@ public final class MapAssetService {
         return new Result(true, placement.message(), placement.changedBlocks());
     }
 
+    /**
+     * Installs the Visual Polish V3 central district base first, then all three
+     * separately managed monuments. Existing legacy monument placement tokens
+     * are treated as stale revisions and safely replaced.
+     */
     public static Result placeMonuments(
             MinecraftServer server,
             CatanSavedData data
     ) {
+        return placeMonuments(server, data, false);
+    }
+
+    public static Result placeMonuments(
+            MinecraftServer server,
+            CatanSavedData data,
+            boolean force
+    ) {
         List<Task> tasks = List.of(
+                new Task(
+                        "central_district_base",
+                        SchematicAssetRegistry.fixedAnchor("central_district_base"),
+                        "district:central_objective_district:base"
+                ),
                 new Task(
                         "industrial_complex",
                         SchematicAssetRegistry.monumentAnchor("industrial_complex"),
@@ -189,8 +208,83 @@ public final class MapAssetService {
                 data,
                 "minecraft:overworld",
                 tasks,
-                false
+                force
         );
+    }
+
+    /**
+     * Re-pastes only independently replaceable city assets plus the current
+     * Town Hall tier. It intentionally NEVER re-pastes starter_settlement,
+     * because doing so could erase purchased plot assets.
+     */
+    public static Result refreshOwnedCityVisuals(
+            MinecraftServer server,
+            CatanSavedData data
+    ) {
+        int changed = 0;
+        int refreshed = 0;
+
+        for (TerritoryData state : data.territories()) {
+            if (state.ownerNationId() == null) continue;
+
+            TerritoryDefinition definition =
+                    MapDefinitionManager.territory(state.id());
+            if (definition == null) continue;
+
+            List<Task> tasks = new ArrayList<>();
+
+            addTerritoryTask(
+                    tasks,
+                    definition,
+                    hallAsset(state.cityLevel())
+            );
+
+            for (String assetId
+                    : SchematicAssetRegistry.rawProducerAssets(definition)) {
+                addTerritoryTask(tasks, definition, assetId);
+            }
+
+            for (BuildingInstance building : state.buildings()) {
+                String assetId =
+                        SchematicAssetRegistry.buildingAsset(building.type());
+                if (assetId != null) {
+                    addTerritoryTask(tasks, definition, assetId);
+                }
+            }
+
+            Result result = executeTasks(
+                    server,
+                    data,
+                    definition.dimension(),
+                    tasks,
+                    true
+            );
+            if (!result.success()) {
+                return new Result(
+                        false,
+                        "Refresh stopped at " + definition.name() +
+                                ": " + result.message(),
+                        changed + result.changedBlocks()
+                );
+            }
+            changed += result.changedBlocks();
+            refreshed += tasks.size();
+        }
+
+        return new Result(
+                true,
+                "Refreshed " + refreshed +
+                        " owned-city visual placements without repasting city bases.",
+                changed
+        );
+    }
+
+    private static String hallAsset(int cityLevel) {
+        return switch (Math.max(1, cityLevel)) {
+            case 1 -> "th1";
+            case 2 -> "th2";
+            default -> "th3";
+        };
     }
 
     private static void addTerritoryTask(
@@ -226,19 +320,27 @@ public final class MapAssetService {
             List<Task> tasks,
             boolean force
     ) {
-        // Preflight every task before touching the world so a missing or stale
-        // schematic cannot leave half of a city activated.
         for (Task task : tasks) {
             if (task.anchor() == null) {
                 return new Result(false,
                         "Missing placement anchor for " + task.assetId() + ".", 0);
             }
 
-            String existing = data.placedMapAsset(task.stateKey());
-            if (!force && task.assetId().equals(existing)) continue;
-            if (!force && existing != null && !existing.equals(task.assetId())) {
+            SchematicAssetRegistry.Asset asset =
+                    SchematicAssetRegistry.asset(task.assetId());
+            if (asset == null) {
                 return new Result(false,
-                        task.stateKey() + " is already occupied by " + existing + ".", 0);
+                        "Unknown placement asset " + task.assetId() + ".", 0);
+            }
+
+            String existing = data.placedMapAsset(task.stateKey());
+            if (!force && asset.placementToken().equals(existing)) continue;
+
+            if (!force && existing != null
+                    && !sameAsset(existing, asset.id())) {
+                return new Result(false,
+                        task.stateKey() + " is already occupied by " +
+                                existing + ".", 0);
             }
 
             SchematicPlacementService.Result validation =
@@ -253,8 +355,11 @@ public final class MapAssetService {
 
         int changed = 0;
         for (Task task : tasks) {
+            SchematicAssetRegistry.Asset asset =
+                    SchematicAssetRegistry.asset(task.assetId());
             String existing = data.placedMapAsset(task.stateKey());
-            if (!force && task.assetId().equals(existing)) continue;
+
+            if (!force && asset.placementToken().equals(existing)) continue;
 
             SchematicPlacementService.Result placement =
                     SchematicPlacementService.placeAsset(
@@ -270,8 +375,12 @@ public final class MapAssetService {
                         changed + placement.changedBlocks()
                 );
             }
+
             changed += placement.changedBlocks();
-            data.setPlacedMapAsset(task.stateKey(), task.assetId());
+            data.setPlacedMapAsset(
+                    task.stateKey(),
+                    asset.placementToken()
+            );
         }
 
         data.setDirty();
@@ -280,6 +389,25 @@ public final class MapAssetService {
                 "Placed/synchronized " + tasks.size() +
                         " physical assets (" + changed + " changed blocks).",
                 changed
+        );
+    }
+
+    private static boolean sameAsset(String storedValue, String assetId) {
+        if (storedValue == null || assetId == null) return false;
+        return storedValue.equals(assetId)
+                || storedValue.startsWith(assetId + "@r");
+    }
+
+    private static void recordPlacement(
+            CatanSavedData data,
+            String stateKey,
+            String assetId
+    ) {
+        SchematicAssetRegistry.Asset asset =
+                SchematicAssetRegistry.asset(assetId);
+        data.setPlacedMapAsset(
+                stateKey,
+                asset == null ? assetId : asset.placementToken()
         );
     }
 
