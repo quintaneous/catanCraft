@@ -85,7 +85,7 @@ public final class NationDashboard {
                 TerritoryData state = data.territory(definition.id());
                 boolean available = state != null && state.ownerNationId() == null;
                 String yieldNote = definition.resources().size() > 1
-                        ? " • 50% starter yield each"
+                        ? " • reduced starter yield"
                         : "";
 
                 if (available) {
