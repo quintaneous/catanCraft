@@ -15,9 +15,14 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.level.block.Rotation;
+import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -54,6 +59,85 @@ public final class SchematicPlacementService {
     private static final Map<String, SchematicData> CACHE = new HashMap<>();
 
     private SchematicPlacementService() {}
+
+    public static Result validateAsset(
+            String assetId,
+            MapAnchor worldAnchor
+    ) {
+        SchematicAssetRegistry.Asset asset =
+                SchematicAssetRegistry.asset(assetId);
+        if (asset == null) {
+            return new Result(false, "Unknown physical asset: " + assetId, 0);
+        }
+        if (worldAnchor == null) {
+            return new Result(false, "No world anchor for " + assetId + ".", 0);
+        }
+        if (!asset.allowedRotations().contains(worldAnchor.rotation())) {
+            return new Result(
+                    false,
+                    assetId + " does not allow rotation " +
+                            worldAnchor.rotation() + ".",
+                    0
+            );
+        }
+
+        final SchematicData schematic;
+        try {
+            schematic = load(asset.template());
+        } catch (Exception ex) {
+            return new Result(
+                    false,
+                    "Could not load " + asset.template() + ".schem: " +
+                            ex.getMessage(),
+                    0
+            );
+        }
+
+        if (schematic.width() != asset.width()
+                || schematic.height() != asset.height()
+                || schematic.length() != asset.length()) {
+            return new Result(
+                    false,
+                    assetId + " dimensions do not match the handoff contract.",
+                    0
+            );
+        }
+        if (schematic.anchorX() != asset.anchorX()
+                || schematic.anchorY() != asset.anchorY()
+                || schematic.anchorZ() != asset.anchorZ()) {
+            return new Result(
+                    false,
+                    assetId + " stored schematic offset does not match the handoff contract.",
+                    0
+            );
+        }
+
+        return new Result(true, assetId + " contract validated.", 0);
+    }
+
+    public static Result placeAsset(
+            MinecraftServer server,
+            String dimensionId,
+            String assetId,
+            MapAnchor worldAnchor
+    ) {
+        SchematicAssetRegistry.Asset asset =
+                SchematicAssetRegistry.asset(assetId);
+        if (asset == null) {
+            return new Result(false, "Unknown physical asset: " + assetId, 0);
+        }
+
+        Result validation = validateAsset(assetId, worldAnchor);
+        if (!validation.success()) return validation;
+
+        return place(
+                server,
+                dimensionId,
+                asset.template(),
+                worldAnchor,
+                asset.includesAir()
+        );
+    }
 
     public static Result place(
             MinecraftServer server,
@@ -256,15 +340,44 @@ public final class SchematicPlacementService {
         SchematicData cached = CACHE.get(templateName);
         if (cached != null) return cached;
 
-        String resource = "/data/catancraft/schematics/" + templateName + ".schem";
-        CompoundTag schematic;
+        String fileName = templateName + ".schem";
+        Path configRoot = FMLPaths.CONFIGDIR.get().resolve("catancraft");
+        Path external = configRoot.resolve("schematics").resolve(fileName);
+        CompoundTag schematic = null;
 
-        try (InputStream input =
-                     SchematicPlacementService.class.getResourceAsStream(resource)) {
-            if (input == null) {
-                throw new IOException("missing bundled resource " + resource);
+        if (Files.exists(external)) {
+            try (InputStream input = Files.newInputStream(external)) {
+                schematic = NbtIo.readCompressed(input);
             }
-            schematic = NbtIo.readCompressed(input);
+        }
+
+        Path bundle = configRoot.resolve("schematics_bundle.zip");
+        if (schematic == null && Files.exists(bundle)) {
+            try (ZipFile zip = new ZipFile(bundle.toFile())) {
+                ZipEntry entry = zip.getEntry(fileName);
+                if (entry != null) {
+                    try (InputStream input = zip.getInputStream(entry)) {
+                        schematic = NbtIo.readCompressed(input);
+                    }
+                }
+            }
+        }
+
+        String resource = "/data/catancraft/schematics/" + fileName;
+        if (schematic == null) {
+            try (InputStream input =
+                         SchematicPlacementService.class.getResourceAsStream(resource)) {
+                if (input != null) {
+                    schematic = NbtIo.readCompressed(input);
+                }
+            }
+        }
+
+        if (schematic == null) {
+            throw new IOException(
+                    "missing " + fileName +
+                            ". Put it in config/catancraft/schematics/, " +
+                            "config/catancraft/schematics_bundle.zip, or bundle it in the mod.");
         }
 
         int width = schematic.getShort("Width");

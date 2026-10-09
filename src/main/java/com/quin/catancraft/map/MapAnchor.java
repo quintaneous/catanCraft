@@ -7,6 +7,22 @@ public final class MapAnchor {
     private int z;
     private int rotation;
 
+    public MapAnchor() {}
+
+    public MapAnchor(
+            String id,
+            int x,
+            int y,
+            int z,
+            int rotation
+    ) {
+        this.id = id == null ? "" : id;
+        this.x = x;
+        this.y = y;
+        this.z = z;
+        this.rotation = rotation;
+    }
+
     public String id() {
         return id == null ? "" : id.trim().toLowerCase();
     }

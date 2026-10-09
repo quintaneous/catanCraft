@@ -3,6 +3,7 @@ package com.quin.catancraft.data;
 import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.map.MonumentDefinition;
 import com.quin.catancraft.map.TerritoryDefinition;
+import com.quin.catancraft.world.SchematicAssetRegistry;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -24,6 +25,7 @@ public final class CatanSavedData extends SavedData {
     private final Map<String, TerritoryData> territories = new LinkedHashMap<>();
     private final Map<String, MonumentData> monuments = new LinkedHashMap<>();
     private final Map<String, TradeProposal> tradeProposals = new LinkedHashMap<>();
+    private final Map<String, String> placedMapAssets = new LinkedHashMap<>();
     @Nullable private String activeMonumentId;
     @Nullable private String lastActivatedMonumentId;
     private long nextMonumentActivationGameTime;
@@ -50,6 +52,23 @@ public final class CatanSavedData extends SavedData {
 
     public Collection<TradeProposal> tradeProposals() {
         return tradeProposals.values();
+    }
+
+    @Nullable
+    public String placedMapAsset(String key) {
+        return key == null ? null : placedMapAssets.get(key.toLowerCase());
+    }
+
+    public void setPlacedMapAsset(String key, String assetId) {
+        if (key == null || key.isBlank() || assetId == null || assetId.isBlank()) {
+            return;
+        }
+        placedMapAssets.put(key.toLowerCase(), assetId.toLowerCase());
+        setDirty();
+    }
+
+    public Map<String, String> placedMapAssetsView() {
+        return Map.copyOf(placedMapAssets);
     }
 
     @Nullable
@@ -201,13 +220,13 @@ public final class CatanSavedData extends SavedData {
                     )
             );
 
-            // V0.1 saves predate physical plot IDs. Assign them deterministically
-            // in existing building order so old test worlds remain usable.
-            for (int i = 0; i < territory.buildings().size(); i++) {
-                BuildingInstance building = territory.buildings().get(i);
+            // Old saves predate deterministic visual plot contracts.
+            // Only finished physical building types receive a fixed plot here;
+            // unfinished/data-only buildings stay plotless until art exists.
+            for (BuildingInstance building : territory.buildings()) {
                 if (!building.plotId().isBlank()) continue;
-                if (i >= definition.availableBuildingPlots().size()) break;
-                building.setPlotId(definition.availableBuildingPlots().get(i).id());
+                String plot = SchematicAssetRegistry.requiredPlot(building.type());
+                if (plot != null) building.setPlotId(plot);
             }
         }
 
@@ -278,6 +297,13 @@ public final class CatanSavedData extends SavedData {
             tradeList.add(proposal.save());
         }
         tag.put("tradeProposals", tradeList);
+
+        CompoundTag placedAssetsTag = new CompoundTag();
+        for (Map.Entry<String, String> entry : placedMapAssets.entrySet()) {
+            placedAssetsTag.putString(entry.getKey(), entry.getValue());
+        }
+        tag.put("placedMapAssets", placedAssetsTag);
+
         if (activeMonumentId != null) tag.putString("activeMonumentId", activeMonumentId);
         if (lastActivatedMonumentId != null) tag.putString("lastActivatedMonumentId", lastActivatedMonumentId);
         tag.putLong("nextMonumentActivationGameTime", nextMonumentActivationGameTime);
@@ -310,6 +336,17 @@ public final class CatanSavedData extends SavedData {
             TradeProposal proposal = TradeProposal.load(tradeList.getCompound(i));
             data.tradeProposals.put(proposal.id(), proposal);
         }
+
+        if (tag.contains("placedMapAssets", Tag.TAG_COMPOUND)) {
+            CompoundTag placedAssetsTag = tag.getCompound("placedMapAssets");
+            for (String key : placedAssetsTag.getAllKeys()) {
+                data.placedMapAssets.put(
+                        key.toLowerCase(),
+                        placedAssetsTag.getString(key).toLowerCase()
+                );
+            }
+        }
+
         if (tag.contains("activeMonumentId", Tag.TAG_STRING)) {
             data.activeMonumentId = tag.getString("activeMonumentId");
         }
