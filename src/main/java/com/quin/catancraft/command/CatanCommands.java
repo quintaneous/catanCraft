@@ -321,6 +321,9 @@ public final class CatanCommands {
         node.then(Commands.literal("placemonuments")
                 .executes(ctx -> placeMapMonuments(ctx.getSource())));
 
+        node.then(Commands.literal("updatemonuments")
+                .executes(ctx -> updateMapMonuments(ctx.getSource())));
+
         node.then(Commands.literal("verify")
                 .executes(ctx -> verifyCurrentWorld(ctx.getSource())));
 
@@ -721,6 +724,22 @@ public final class CatanCommands {
         return failed == 0 ? 1 : 0;
     }
 
+    private static int updateMapMonuments(CommandSourceStack source) {
+        SchematicPlacementService.clearCache();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        MapAssetService.Result result = MapAssetService.updateMonumentInteriors(
+                source.getServer(), data);
+        if (!result.success()) {
+            source.sendFailure(Component.literal(
+                    "Monument Gameplay R1 update failed: " + result.message()));
+            return 0;
+        }
+        source.sendSuccess(() -> Component.literal(
+                "Monument Gameplay R1 synchronized: " + result.changedBlocks() +
+                        " changed blocks. City environments and nation state untouched."),
+                true);
+        return 1;
+    }
     private static int placeMapMonuments(CommandSourceStack source) {
         CatanSavedData data = CatanSavedData.get(source.getServer());
         MapAssetService.Result result =

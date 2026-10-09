@@ -183,15 +183,15 @@ public final class SchematicAssetRegistry {
                 Set.of(0), 0, 0));
 
         add(new Asset(
-                "industrial_complex", "industrialcomplex", "M1", 3,
+                "industrial_complex", "industrialcomplex", "M1", 4,
                 85, 47, 85, 42, 2, 42, true,
                 Set.of(0), 0, 0));
         add(new Asset(
-                "military_depot", "militarydepot", "M2", 3,
+                "military_depot", "militarydepot", "M2", 4,
                 85, 45, 77, 42, 2, 38, true,
                 Set.of(0), 0, 0));
         add(new Asset(
-                "refinery_monument", "refinerymonument", "M3", 3,
+                "refinery_monument", "refinerymonument", "M3", 4,
                 79, 55, 89, 39, 2, 44, true,
                 Set.of(0), 0, 0));
     }

@@ -16,6 +16,8 @@ import java.util.List;
 public final class MapAssetService {
     public static final String ENVIRONMENT_V4_LEVEL_NAME =
             "CatanCraft Environment V4";
+    public static final String MONUMENT_GAMEPLAY_R1_LEVEL_NAME =
+            "CatanCraft Environment V4 - Monument Gameplay R1";
 
     public record Result(boolean success, String message, int changedBlocks) {}
 
@@ -35,8 +37,10 @@ public final class MapAssetService {
     public static boolean isEnvironmentV4World(MinecraftServer server) {
         if (server == null || server.getWorldData() == null) return false;
         String levelName = server.getWorldData().getLevelName();
-        return levelName != null
-                && ENVIRONMENT_V4_LEVEL_NAME.equalsIgnoreCase(levelName.trim());
+        if (levelName == null) return false;
+        String normalized = levelName.trim();
+        return ENVIRONMENT_V4_LEVEL_NAME.equalsIgnoreCase(normalized)
+                || MONUMENT_GAMEPLAY_R1_LEVEL_NAME.equalsIgnoreCase(normalized);
     }
 
     public static int environmentMarkerCount(CatanSavedData data) {
@@ -300,6 +304,27 @@ public final class MapAssetService {
         );
     }
 
+    /**
+     * Synchronizes only the three revised Monument Gameplay R1 interiors.
+     * Leaves the central district base, city environments and nation state untouched.
+     * Revision markers make repeated calls idempotent.
+     */
+    public static Result updateMonumentInteriors(
+            MinecraftServer server, CatanSavedData data
+    ) {
+        List<Task> tasks = List.of(
+                new Task("industrial_complex",
+                        SchematicAssetRegistry.monumentAnchor("industrial_complex"),
+                        "monument:industrial:M1"),
+                new Task("military_depot",
+                        SchematicAssetRegistry.monumentAnchor("military_depot"),
+                        "monument:depot:M2"),
+                new Task("refinery_monument",
+                        SchematicAssetRegistry.monumentAnchor("refinery_monument"),
+                        "monument:refinery:M3")
+        );
+        return executeTasks(server, data, "minecraft:overworld", tasks, false);
+    }
     /**
      * Re-pastes only independently replaceable city assets plus the current
      * Town Hall tier. It intentionally NEVER re-pastes either the 193x193 V4
