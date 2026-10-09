@@ -256,163 +256,144 @@ public final class NationDashboard {
             TerritoryData territory,
             boolean leader
     ) {
-        lines.add("D|City L" + territory.cityLevel() +
-                " • Producer L" + territory.producerLevel());
-        lines.add("D|Raw outputs: " + resourceListText(territory.rawResources()));
         for (ResourceType raw : territory.rawResources()) {
             int percent = territory.rawResourceYieldPercent(raw);
             int actualCycle = EconomyEngine.rawOutputPerCycle(territory, raw);
-            int actualHour = EconomyEngine.rawOutputPerHour(territory, raw);
-            lines.add("G|  " + pretty(raw) + ": +" + actualCycle +
-                    "/15m • +" + actualHour + "/hr" +
-                    (percent == 100 ? "" : " • " + percent + "% yield"));
+            String yield = percent == 100 ? "" : " • " + percent + "%";
+            lines.add("G|" + pretty(raw) + " +" + actualCycle +
+                    "/15m" + yield);
         }
 
         boolean hasNonAgriculture = territory.rawResources().stream()
                 .anyMatch(type -> type != ResourceType.AGRICULTURE);
-        if (!hasNonAgriculture) {
-            lines.add("D|Producer upkeep: none");
-        } else {
+        if (hasNonAgriculture) {
             int upkeepCycle = EconomyBalance.agricultureUpkeepPerCycle(
                     territory.producerLevel());
-            lines.add("Y|Territory upkeep: -" + upkeepCycle +
-                    " Agriculture/15m • -" + (upkeepCycle * 4) + "/hr");
+            lines.add("Y|Upkeep -" + upkeepCycle + " Agriculture/15m");
         }
 
         int developmentCap = developmentSlotCap(territory);
-        lines.add("D|Development slots: " + territory.buildings().size() + "/" +
-                developmentCap);
+        lines.add("D|Development " + territory.buildings().size() + "/" +
+                developmentCap + " • City L" + territory.cityLevel() +
+                " • Producer L" + territory.producerLevel());
 
         EconomyCost nextCity = EconomyCatalog.cityUpgradeCost(territory.cityLevel());
         if (nextCity != null) {
-            lines.add("D|Next City Level: " + nextCity.describe());
             if (leader) {
                 lines.add(action(
                         "nation upgrade city " + territory.id(),
-                        "Upgrade City → L" + (territory.cityLevel() + 1) +
+                        "City L" + territory.cityLevel() + " → L" +
+                                (territory.cityLevel() + 1) +
                                 " • " + nextCity.describe()
                 ));
+            } else {
+                lines.add("D|Next city upgrade: " + nextCity.describe());
             }
         } else {
-            lines.add("G|City is max level.");
+            lines.add("G|City max level");
         }
 
-        EconomyCost nextProducer = EconomyCatalog.producerUpgradeCost(territory.producerLevel());
+        EconomyCost nextProducer =
+                EconomyCatalog.producerUpgradeCost(territory.producerLevel());
         if (nextProducer != null) {
-            lines.add("D|Next Producer Level: " + nextProducer.describe());
             if (leader) {
                 lines.add(action(
                         "nation upgrade producer " + territory.id(),
-                        "Upgrade Raw Production → L" + (territory.producerLevel() + 1) +
+                        "Producer L" + territory.producerLevel() + " → L" +
+                                (territory.producerLevel() + 1) +
                                 " • " + nextProducer.describe()
                 ));
+            } else {
+                lines.add("D|Next producer upgrade: " + nextProducer.describe());
             }
         } else {
-            lines.add("G|Resource producer is max level.");
+            lines.add("G|Producer max level");
         }
 
-        if (territory.buildings().isEmpty()) {
-            lines.add("D|No functional city buildings yet.");
-        } else {
-            lines.add("P|Functional Buildings");
+        if (!territory.buildings().isEmpty()) {
+            lines.add("P|BUILDINGS");
             for (int i = 0; i < territory.buildings().size(); i++) {
                 BuildingInstance building = territory.buildings().get(i);
+                BuildingType type = building.type();
 
-                String detail = "P|[" + i + "] " + building.type().displayName() +
+                String detail = "[" + i + "] " + type.displayName() +
                         " L" + building.level();
-                if (!building.plotId().isBlank()) {
-                    detail += " • " + building.plotId();
-                }
-                if (building.type().isProcessor()) {
-                    detail += " • target " + building.targetStock() + " " +
-                            pretty(building.type().output());
-                }
-                lines.add(detail);
 
-                if (building.type().isProcessor()) {
-                    BuildingType type = building.type();
-                    int batches = type.batchesPerCycle(building.level());
-                    int outputCycle = type.outputPerBatch() * batches;
-                    int outputHour = outputCycle * 4;
-
-                    lines.add("D|  Recipe: " + recipeText(type) +
-                            " -> " + type.outputPerBatch() + " " +
-                            pretty(type.output()) + "/batch");
-                    lines.add("G|  Max output: +" + outputCycle + " " +
-                            pretty(type.output()) + "/15m • +" +
-                            outputHour + "/hr");
-                    lines.add("Y|  Max inputs: " +
-                            inputRateText(type, batches));
-
+                if (type.isProcessor()) {
                     EconomyEngine.ProcessorPreview preview =
                             EconomyEngine.processorPreview(nation, building);
-
-                    switch (preview.status()) {
-                        case PAUSED_TARGET ->
-                                lines.add("D|  Status: PAUSED - target reached (" +
-                                        preview.currentOutput() + "/" +
-                                        preview.targetStock() + ")");
-                        case WAITING_INPUTS ->
-                                lines.add("R|  Status: WAITING - missing inputs");
-                        case READY ->
-                                lines.add("G|  Status: READY • next cycle +" +
-                                        preview.outputPerCycle() + " " +
-                                        pretty(type.output()));
-                    }
+                    detail += switch (preview.status()) {
+                        case PAUSED_TARGET -> " • Paused " +
+                                preview.currentOutput() + "/" +
+                                preview.targetStock();
+                        case WAITING_INPUTS -> " • Missing inputs";
+                        case READY -> " • Ready • +" +
+                                preview.outputPerCycle() + " " +
+                                pretty(type.output()) + "/15m";
+                    };
                 }
 
-                EconomyCost nextBuilding = EconomyCatalog.buildingUpgradeCost(
-                        building.type(), building.level());
+                lines.add("P|" + detail);
 
-                if (nextBuilding != null && building.level() < territory.cityLevel()) {
-                    lines.add("D|  Upgrade: " + nextBuilding.describe());
+                if (type.isProcessor()) {
+                    lines.add("D|  " + recipeText(type) + " → " +
+                            type.outputPerBatch() + " " +
+                            pretty(type.output()) + "/batch" +
+                            " • target " + building.targetStock());
+                }
+
+                EconomyCost nextBuilding =
+                        EconomyCatalog.buildingUpgradeCost(type, building.level());
+                if (nextBuilding != null
+                        && building.level() < territory.cityLevel()) {
                     if (leader) {
                         lines.add(action(
-                                "nation building upgrade " + territory.id() + " " + i,
-                                "Upgrade " + building.type().displayName() +
-                                        " → L" + (building.level() + 1) +
+                                "nation building upgrade " + territory.id() +
+                                        " " + i,
+                                "Upgrade " + type.displayName() + " → L" +
+                                        (building.level() + 1) +
                                         " • " + nextBuilding.describe()
                         ));
                     }
-                } else if (building.level() >= territory.cityLevel() && building.level() < 5) {
-                    lines.add("Y|  Upgrade city first to raise this building.");
+                } else if (building.level() >= territory.cityLevel()
+                        && building.level() < 5) {
+                    lines.add("D|  City level limits this building");
                 }
 
-                if (leader && building.type().isProcessor()) {
+                if (leader && type.isProcessor()) {
                     long down = Math.max(0, building.targetStock() - 50);
                     long up = building.targetStock() + 50;
                     lines.add(action(
-                            "nation building target " + territory.id() + " " + i + " " + down,
-                            "Lower " + building.type().displayName() + " target to " + down
+                            "nation building target " + territory.id() +
+                                    " " + i + " " + down,
+                            "Target -50"
                     ));
                     lines.add(action(
-                            "nation building target " + territory.id() + " " + i + " " + up,
-                            "Raise " + building.type().displayName() + " target to " + up
+                            "nation building target " + territory.id() +
+                                    " " + i + " " + up,
+                            "Target +50"
                     ));
                 }
             }
         }
 
-        int slotCap = developmentCap;
-        if (territory.buildings().size() < slotCap) {
-            lines.add("P|Available Construction");
+        if (territory.buildings().size() < developmentCap) {
+            lines.add("P|BUILD NEW");
             for (BuildingType type : BuildingType.values()) {
                 if (type.minCityLevel() > territory.cityLevel()) continue;
 
                 EconomyCost cost = EconomyCatalog.buildingCost(type);
-                String label = "Build " + type.displayName() + " • " + cost.describe();
-
                 if (leader) {
                     lines.add(action(
                             "nation build " + territory.id() + " " + type.id(),
-                            label
+                            type.displayName() + " • " + cost.describe()
                     ));
                 } else {
-                    lines.add("D|" + label);
+                    lines.add("D|" + type.displayName() + " • " + cost.describe());
                 }
             }
         } else {
-            lines.add("Y|No open development slots.");
+            lines.add("Y|No open development slots");
         }
     }
 
