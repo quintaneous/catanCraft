@@ -1064,12 +1064,49 @@ public final class CatanCommands {
             return 0;
         }
 
+        int nextLevel = territory.cityLevel() + 1;
+        TerritoryDefinition mapDefinition =
+                MapDefinitionManager.territory(territory.id());
+
+        String townHallTemplate = switch (nextLevel) {
+            case 2 -> "thall2";
+            case 3 -> "thall3";
+            default -> "";
+        };
+
+        if (!townHallTemplate.isBlank() && mapDefinition != null) {
+            if (mapDefinition.townHall() == null) {
+                source.sendFailure(Component.literal(
+                        "This city has no Town Hall anchor in the map definition."));
+                return 0;
+            }
+
+            SchematicPlacementService.Result placement =
+                    SchematicPlacementService.place(
+                            player.serverLevel(),
+                            townHallTemplate,
+                            mapDefinition.townHall()
+                    );
+
+            if (!placement.success()) {
+                source.sendFailure(Component.literal(
+                        "Town Hall upgrade failed; no resources were charged. " +
+                                placement.message()));
+                return 0;
+            }
+        }
+
         cost.charge(nation);
-        territory.setCityLevel(territory.cityLevel() + 1);
+        territory.setCityLevel(nextLevel);
         data.setDirty();
 
+        String visualNote = nextLevel <= 3
+                ? " Town Hall upgraded in-world."
+                : " Town Hall remains at the current visual tier until the next art tier is added.";
+
         source.sendSuccess(() -> Component.literal(
-                territory.name() + " upgraded to City Level " + territory.cityLevel()), true);
+                territory.name() + " upgraded to City Level " +
+                        territory.cityLevel() + "." + visualNote), true);
         NationDashboard.open(player);
         return 1;
     }
