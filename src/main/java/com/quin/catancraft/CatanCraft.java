@@ -5,6 +5,7 @@ import com.quin.catancraft.command.CatanCommands;
 import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.network.NationNetwork;
+import com.quin.catancraft.world.WorldProtection;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -20,6 +21,7 @@ public final class CatanCraft {
     public CatanCraft() {
         NationNetwork.register();
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.register(new WorldProtection());
         LOGGER.info("CatanCraft 0.1 foundation loading");
     }
 

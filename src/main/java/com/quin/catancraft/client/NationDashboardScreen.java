@@ -6,7 +6,9 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public final class NationDashboardScreen extends Screen {
     private static final int PANEL_WIDTH = 500;
@@ -15,6 +17,8 @@ public final class NationDashboardScreen extends Screen {
     private static final int LINE_HEIGHT = 12;
     private static final int ACTION_HEIGHT = 18;
     private static final int ACTION_GAP = 3;
+
+    private static final Set<String> EXPANDED_TERRITORIES = new HashSet<>();
 
     private final List<String> lines;
     private double scroll;
@@ -42,7 +46,41 @@ public final class NationDashboardScreen extends Screen {
         graphics.enableScissor(left + 6, contentTop, right - 6, bottom - 8);
 
         int y = contentTop + 2 - (int) scroll;
+        boolean territoryHidden = false;
         for (String encoded : lines) {
+            if (encoded.startsWith("T|")) {
+                TerritoryRow territory = TerritoryRow.parse(encoded);
+                if (territory != null) {
+                    boolean expanded = EXPANDED_TERRITORIES.contains(territory.id());
+                    territoryHidden = !expanded;
+
+                    int rowLeft = left + 10;
+                    int rowRight = right - 10;
+                    boolean hovered = mouseX >= rowLeft && mouseX <= rowRight
+                            && mouseY >= y && mouseY <= y + ACTION_HEIGHT;
+                    graphics.fill(rowLeft, y, rowRight, y + ACTION_HEIGHT,
+                            hovered ? 0xEE31475F : 0xDD202C3A);
+                    graphics.drawString(
+                            font,
+                            (expanded ? "▼ " : "▶ ") + territory.label(),
+                            rowLeft + 7,
+                            y + 5,
+                            hovered ? 0xFFFFFF : 0x79C0FF,
+                            false
+                    );
+                    y += ACTION_HEIGHT + ACTION_GAP;
+                }
+                continue;
+            }
+
+            if (encoded.startsWith("E|")) {
+                territoryHidden = false;
+                y += 4;
+                continue;
+            }
+
+            if (territoryHidden) continue;
+
             if (encoded.isEmpty()) {
                 y += 7;
                 continue;
@@ -141,8 +179,39 @@ public final class NationDashboardScreen extends Screen {
         int right = left + panelWidth;
         int contentTop = TOP + 30;
         int y = contentTop + 2 - (int) scroll;
+        boolean territoryHidden = false;
 
         for (String encoded : lines) {
+            if (encoded.startsWith("T|")) {
+                TerritoryRow territory = TerritoryRow.parse(encoded);
+                if (territory != null) {
+                    boolean expanded = EXPANDED_TERRITORIES.contains(territory.id());
+                    int rowLeft = left + 10;
+                    int rowRight = right - 10;
+                    if (mouseX >= rowLeft && mouseX <= rowRight
+                            && mouseY >= y && mouseY <= y + ACTION_HEIGHT) {
+                        if (expanded) {
+                            EXPANDED_TERRITORIES.remove(territory.id());
+                        } else {
+                            EXPANDED_TERRITORIES.add(territory.id());
+                        }
+                        clampScroll();
+                        return true;
+                    }
+                    territoryHidden = !expanded;
+                    y += ACTION_HEIGHT + ACTION_GAP;
+                }
+                continue;
+            }
+
+            if (encoded.startsWith("E|")) {
+                territoryHidden = false;
+                y += 4;
+                continue;
+            }
+
+            if (territoryHidden) continue;
+
             if (encoded.isEmpty()) {
                 y += 7;
                 continue;
@@ -183,7 +252,26 @@ public final class NationDashboardScreen extends Screen {
 
     private int measuredContentHeight() {
         int height = 4;
+        boolean territoryHidden = false;
+
         for (String line : lines) {
+            if (line.startsWith("T|")) {
+                TerritoryRow territory = TerritoryRow.parse(line);
+                if (territory != null) {
+                    territoryHidden = !EXPANDED_TERRITORIES.contains(territory.id());
+                    height += ACTION_HEIGHT + ACTION_GAP;
+                }
+                continue;
+            }
+
+            if (line.startsWith("E|")) {
+                territoryHidden = false;
+                height += 4;
+                continue;
+            }
+
+            if (territoryHidden) continue;
+
             if (line.isEmpty()) {
                 height += 7;
             } else if (line.startsWith("A|")) {
@@ -196,9 +284,25 @@ public final class NationDashboardScreen extends Screen {
         return height;
     }
 
+    private void clampScroll() {
+        int visibleHeight = Math.max(1, (this.height - BOTTOM_MARGIN - 8) - (TOP + 30));
+        int maxScroll = Math.max(0, measuredContentHeight() - visibleHeight);
+        scroll = Math.max(0, Math.min(maxScroll, scroll));
+    }
+
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    private record TerritoryRow(String id, String label) {
+        private static TerritoryRow parse(String encoded) {
+            String[] pieces = encoded.split("\\|", 3);
+            if (pieces.length != 3 || pieces[1].isBlank() || pieces[2].isBlank()) {
+                return null;
+            }
+            return new TerritoryRow(pieces[1], pieces[2]);
+        }
     }
 
     private record ActionRow(String command, String label) {

@@ -100,7 +100,12 @@ public final class NationDashboard {
             lines.add("Y|No territory assigned yet.");
         } else {
             for (TerritoryData territory : territories) {
+                lines.add("T|" + territory.id() + "|" +
+                        territory.name() + " • " + pretty(territory.specialty()) +
+                        " • City L" + territory.cityLevel() +
+                        " • Producer L" + territory.producerLevel());
                 addTerritory(lines, nation, territory, leader);
+                lines.add("E|" + territory.id());
             }
         }
 
@@ -140,9 +145,6 @@ public final class NationDashboard {
         int perCycle = EconomyBalance.rawProductionPerCycle(territory.producerLevel());
         int perHour = perCycle * 4;
 
-        lines.add("");
-        lines.add("B|" + territory.name() + " • " +
-                pretty(territory.specialty()) + " Territory");
         lines.add("D|City L" + territory.cityLevel() +
                 " • Producer L" + territory.producerLevel());
         lines.add("G|Producer: +" + perCycle + " " +
