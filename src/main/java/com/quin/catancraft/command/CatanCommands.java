@@ -21,6 +21,7 @@ import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.map.MapAnchor;
 import com.quin.catancraft.map.MapDefinitionManager;
+import com.quin.catancraft.map.MapZoneDefinition;
 import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
@@ -389,10 +390,15 @@ public final class CatanCommands {
 
     private static int mapStatus(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
-                "CatanCraft map definition: " + MapDefinitionManager.path()), false);
+                "CatanCraft map: " + MapDefinitionManager.mapId()), false);
+        source.sendSuccess(() -> Component.literal(
+                "Definition: " + MapDefinitionManager.path()), false);
         source.sendSuccess(() -> Component.literal(
                 MapDefinitionManager.territories().size() + " territories • " +
-                        MapDefinitionManager.monuments().size() + " monuments"), false);
+                        MapDefinitionManager.monuments().size() + " monuments • " +
+                        MapDefinitionManager.publicZones().size() + " public zones • " +
+                        MapDefinitionManager.infrastructure().size() +
+                        " infrastructure points"), false);
         return 1;
     }
 
@@ -403,8 +409,18 @@ public final class CatanCommands {
                 player.serverLevel(),
                 player.blockPosition()
         );
+        MapZoneDefinition zone = MapDefinitionManager.publicZoneAt(
+                player.serverLevel(),
+                player.blockPosition()
+        );
 
         if (definition == null) {
+            if (zone != null) {
+                source.sendSuccess(() -> Component.literal(
+                        "Public zone: " + zone.name() + " [" + zone.id() +
+                                "] • " + zone.type()), false);
+                return 1;
+            }
             source.sendSuccess(() -> Component.literal(
                     "This position is not inside a map-defined territory."), false);
             return 0;
@@ -414,10 +430,14 @@ public final class CatanCommands {
                 && definition.siegeRegion().contains(player.blockPosition());
         boolean restoration = definition.restorationRegion() != null
                 && definition.restorationRegion().contains(player.blockPosition());
+        String zoneText = zone == null
+                ? ""
+                : " • PUBLIC: " + zone.name();
 
         source.sendSuccess(() -> Component.literal(
                 definition.name() + " [" + definition.id() + "] • " +
-                        definition.specialty().id() +
+                        resourceListText(definition.resources()) +
+                        zoneText +
                         " • siegeRegion=" + siege +
                         " • restorationRegion=" + restoration), false);
         return 1;
@@ -436,8 +456,11 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 definition.name() + " [" + definition.id() + "] • " +
-                        definition.specialty().id() + " • " +
-                        definition.dimension()), false);
+                        resourceListText(definition.resources()) + " • " +
+                        definition.dimension() +
+                        (definition.startSlot() > 0
+                                ? " • Start slot " + definition.startSlot()
+                                : "")), false);
 
         String city = definition.cityCenter() == null
                 ? "not set"
@@ -1171,6 +1194,17 @@ public final class CatanCommands {
         return 1;
     }
 
+    private static String resourceListText(
+            java.util.List<ResourceType> resources
+    ) {
+        StringBuilder result = new StringBuilder();
+        for (ResourceType resource : resources) {
+            if (!result.isEmpty()) result.append(" + ");
+            result.append(resource.id().replace('_', ' '));
+        }
+        return result.toString();
+    }
+
     private static String normalizeTradeAsset(String raw) {
         if (raw.equalsIgnoreCase("money") || raw.equalsIgnoreCase("cash")) {
             return "money";
@@ -1414,7 +1448,7 @@ public final class CatanCommands {
         String finalOwner = owner;
         source.sendSuccess(() -> Component.literal(
                 territory.name() + " [" + territory.id() + "] | " +
-                        territory.specialty().id() +
+                        resourceListText(territory.rawResources()) +
                         " | Owner: " + finalOwner +
                         " | Producer L" + territory.producerLevel() +
                         " | City L" + territory.cityLevel() +
