@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
@@ -38,6 +39,29 @@ public final class SchematicPlacementService {
     private static final Map<String, SchematicData> CACHE = new HashMap<>();
 
     private SchematicPlacementService() {}
+
+    public static Result place(
+            MinecraftServer server,
+            String dimensionId,
+            String templateName,
+            MapAnchor worldAnchor
+    ) {
+        ServerLevel level = null;
+        for (ServerLevel candidate : server.getAllLevels()) {
+            if (candidate.dimension().location().toString().equals(dimensionId)) {
+                level = candidate;
+                break;
+            }
+        }
+        if (level == null) {
+            return new Result(
+                    false,
+                    "Target dimension is not loaded: " + dimensionId,
+                    0
+            );
+        }
+        return place(level, templateName, worldAnchor);
+    }
 
     public static Result place(
             ServerLevel level,

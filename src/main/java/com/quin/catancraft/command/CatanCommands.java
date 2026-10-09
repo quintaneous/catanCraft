@@ -505,20 +505,18 @@ public final class CatanCommands {
         MapAnchor farmAnchor = definition.anchor("plot_5");
         if (farmAnchor != null
                 && definition.resources().contains(ResourceType.AGRICULTURE)) {
-            ServerPlayer executor = source.getPlayer();
-            if (executor != null) {
-                SchematicPlacementService.Result farmPlacement =
-                        SchematicPlacementService.place(
-                                executor.serverLevel(),
-                                "farm",
-                                farmAnchor
-                        );
-                if (!farmPlacement.success()) {
-                    source.sendFailure(Component.literal(
-                            "Starting-city farm placement failed; assignment canceled. " +
-                                    farmPlacement.message()));
-                    return 0;
-                }
+            SchematicPlacementService.Result farmPlacement =
+                    SchematicPlacementService.place(
+                            source.getServer(),
+                            definition.dimension(),
+                            "farm",
+                            farmAnchor
+                    );
+            if (!farmPlacement.success()) {
+                source.sendFailure(Component.literal(
+                        "Starting-city farm placement failed; assignment canceled. " +
+                                farmPlacement.message()));
+                return 0;
             }
         }
 
@@ -912,7 +910,8 @@ public final class CatanCommands {
                 && definition.resources().contains(ResourceType.AGRICULTURE)) {
             SchematicPlacementService.Result farmPlacement =
                     SchematicPlacementService.place(
-                            player.serverLevel(),
+                            source.getServer(),
+                            definition.dimension(),
                             "farm",
                             farmAnchor
                     );
@@ -992,7 +991,8 @@ public final class CatanCommands {
 
             SchematicPlacementService.Result placement =
                     SchematicPlacementService.place(
-                            player.serverLevel(),
+                            source.getServer(),
+                            mapDefinition.dimension(),
                             mapDefinition.settlementTemplate(),
                             mapDefinition.settlementAnchor()
                     );
@@ -1142,7 +1142,8 @@ public final class CatanCommands {
 
             SchematicPlacementService.Result placement =
                     SchematicPlacementService.place(
-                            player.serverLevel(),
+                            source.getServer(),
+                            mapDefinition.dimension(),
                             townHallTemplate,
                             mapDefinition.townHall()
                     );
