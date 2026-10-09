@@ -510,7 +510,8 @@ public final class CatanCommands {
                             source.getServer(),
                             definition.dimension(),
                             "farm",
-                            farmAnchor
+                            farmAnchor,
+                            false
                     );
             if (!farmPlacement.success()) {
                 source.sendFailure(Component.literal(
@@ -913,7 +914,8 @@ public final class CatanCommands {
                             source.getServer(),
                             definition.dimension(),
                             "farm",
-                            farmAnchor
+                            farmAnchor,
+                            false
                     );
             if (!farmPlacement.success()) {
                 source.sendFailure(Component.literal(
@@ -994,7 +996,8 @@ public final class CatanCommands {
                             source.getServer(),
                             mapDefinition.dimension(),
                             mapDefinition.settlementTemplate(),
-                            mapDefinition.settlementAnchor()
+                            mapDefinition.settlementAnchor(),
+                            false
                     );
 
             if (!placement.success()) {
@@ -1145,7 +1148,8 @@ public final class CatanCommands {
                             source.getServer(),
                             mapDefinition.dimension(),
                             townHallTemplate,
-                            mapDefinition.townHall()
+                            mapDefinition.townHall(),
+                            true
                     );
 
             if (!placement.success()) {

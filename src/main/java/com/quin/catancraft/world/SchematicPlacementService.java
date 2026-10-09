@@ -60,13 +60,46 @@ public final class SchematicPlacementService {
                     0
             );
         }
-        return place(level, templateName, worldAnchor);
+        return place(level, templateName, worldAnchor, true);
+    }
+
+    public static Result place(
+            MinecraftServer server,
+            String dimensionId,
+            String templateName,
+            MapAnchor worldAnchor,
+            boolean applyAir
+    ) {
+        ServerLevel level = null;
+        for (ServerLevel candidate : server.getAllLevels()) {
+            if (candidate.dimension().location().toString().equals(dimensionId)) {
+                level = candidate;
+                break;
+            }
+        }
+        if (level == null) {
+            return new Result(
+                    false,
+                    "Target dimension is not loaded: " + dimensionId,
+                    0
+            );
+        }
+        return place(level, templateName, worldAnchor, applyAir);
     }
 
     public static Result place(
             ServerLevel level,
             String templateName,
             MapAnchor worldAnchor
+    ) {
+        return place(level, templateName, worldAnchor, true);
+    }
+
+    public static Result place(
+            ServerLevel level,
+            String templateName,
+            MapAnchor worldAnchor,
+            boolean applyAir
     ) {
         if (templateName == null || templateName.isBlank()) {
             return new Result(false, "No schematic template is configured.", 0);
@@ -135,6 +168,8 @@ public final class SchematicPlacementService {
                     );
 
                     BlockState target = schematic.palette()[paletteIndex].rotate(rotation);
+                    if (!applyAir && target.isAir()) continue;
+
                     BlockState current = level.getBlockState(worldPos);
                     if (current.equals(target)) continue;
 
