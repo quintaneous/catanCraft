@@ -124,6 +124,11 @@
         "maxX": -654,
         "maxY": 125,
         "maxZ": -654
+      },
+      "resourceYieldPercent": {
+        "wood": 50,
+        "stone": 50,
+        "agriculture": 50
       }
     },
     {
@@ -494,6 +499,11 @@
         "maxX": 846,
         "maxY": 125,
         "maxZ": -654
+      },
+      "resourceYieldPercent": {
+        "wood": 50,
+        "stone": 50,
+        "agriculture": 50
       }
     },
     {
@@ -1610,6 +1620,11 @@
         "maxX": -654,
         "maxY": 125,
         "maxZ": 846
+      },
+      "resourceYieldPercent": {
+        "wood": 50,
+        "stone": 50,
+        "agriculture": 50
       }
     },
     {
@@ -1980,6 +1995,11 @@
         "maxX": 846,
         "maxY": 125,
         "maxZ": 846
+      },
+      "resourceYieldPercent": {
+        "wood": 50,
+        "stone": 50,
+        "agriculture": 50
       }
     }
   ],

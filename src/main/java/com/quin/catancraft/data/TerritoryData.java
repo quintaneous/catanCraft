@@ -51,6 +51,11 @@ public final class TerritoryData {
         return rawResources().get(0);
     }
 
+    public int rawResourceYieldPercent(ResourceType resource) {
+        TerritoryDefinition definition = MapDefinitionManager.territory(id);
+        return definition == null ? 100 : definition.resourceYieldPercent(resource);
+    }
+
     @Nullable
     public UUID ownerNationId() {
         return ownerNationId;

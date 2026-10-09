@@ -205,8 +205,16 @@ public final class NationDashboard {
         lines.add("D|City L" + territory.cityLevel() +
                 " • Producer L" + territory.producerLevel());
         lines.add("D|Raw outputs: " + resourceListText(territory.rawResources()));
-        lines.add("G|Producer rate: +" + perCycle +
-                " each/15m • +" + perHour + " each/hr");
+        for (ResourceType raw : territory.rawResources()) {
+            int percent = territory.rawResourceYieldPercent(raw);
+            int actualCycle = Math.max(
+                    0,
+                    (int) Math.floor(perCycle * (percent / 100.0))
+            );
+            lines.add("G|  " + pretty(raw) + ": +" + actualCycle +
+                    "/15m • +" + (actualCycle * 4) + "/hr" +
+                    (percent == 100 ? "" : " • " + percent + "% yield"));
+        }
 
         boolean hasNonAgriculture = territory.rawResources().stream()
                 .anyMatch(type -> type != ResourceType.AGRICULTURE);

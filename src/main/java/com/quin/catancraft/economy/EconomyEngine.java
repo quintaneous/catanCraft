@@ -36,10 +36,12 @@ public final class EconomyEngine {
             if (nation == null) continue;
 
             if (territory.rawResources().contains(ResourceType.AGRICULTURE)) {
-                nation.addResource(
-                        ResourceType.AGRICULTURE,
-                        EconomyBalance.rawProductionPerCycle(territory.producerLevel())
-                );
+                int base = EconomyBalance.rawProductionPerCycle(
+                        territory.producerLevel());
+                int agriculture = scaledProduction(
+                        base,
+                        territory.rawResourceYieldPercent(ResourceType.AGRICULTURE));
+                nation.addResource(ResourceType.AGRICULTURE, agriculture);
             }
         }
 
@@ -111,12 +113,20 @@ public final class EconomyEngine {
             nation.addResource(ResourceType.AGRICULTURE, -upkeep);
         }
 
-        int adjustedProduction =
-                Math.max(0, (int) Math.floor(production * supplyRatio));
-
         for (ResourceType output : outputs) {
+            int outputBase = scaledProduction(
+                    production,
+                    territory.rawResourceYieldPercent(output));
+            int adjustedProduction = Math.max(
+                    0,
+                    (int) Math.floor(outputBase * supplyRatio)
+            );
             nation.addResource(output, adjustedProduction);
         }
+    }
+
+    private static int scaledProduction(int base, int percent) {
+        return Math.max(0, (int) Math.floor(base * (percent / 100.0)));
     }
 
     private static void processTier(

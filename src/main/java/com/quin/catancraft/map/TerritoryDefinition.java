@@ -6,8 +6,10 @@ import com.quin.catancraft.data.TerritoryBoundary;
 import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 
 public final class TerritoryDefinition {
@@ -22,6 +24,7 @@ public final class TerritoryDefinition {
     private String name = "";
     private String specialty = "wood";
     private List<String> resources = new ArrayList<>();
+    private Map<String, Integer> resourceYieldPercent = new LinkedHashMap<>();
     private String dimension = "minecraft:overworld";
     private List<BoundaryPoint> boundary = new ArrayList<>();
     private List<String> neighbors = new ArrayList<>();
@@ -70,6 +73,13 @@ public final class TerritoryDefinition {
 
     public ResourceType specialty() {
         return resources().get(0);
+    }
+
+    public int resourceYieldPercent(ResourceType resource) {
+        if (resourceYieldPercent == null) return 100;
+        Integer value = resourceYieldPercent.get(resource.id());
+        if (value == null) return 100;
+        return Math.max(1, Math.min(500, value));
     }
 
     public int startSlot() { return Math.max(0, startSlot); }
