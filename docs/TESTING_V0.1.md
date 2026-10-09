@@ -398,9 +398,9 @@ Expected:
 At Producer L1, run one debug cycle.
 
 Expected starter output before processor activity:
-- +8 Wood
-- +8 Stone
-- +8 Agriculture generated
+- +5 Wood
+- +5 Stone
+- +5 Agriculture generated
 - one normal Agriculture upkeep charge supports the non-food raw outputs
 
 Dedicated L1 Wood/Stone territories should still produce +10 of their specialty,
@@ -479,8 +479,68 @@ Then compare starter and dedicated production:
 ```
 
 Expected at Producer L1:
-- A shows Wood 8, Stone 8, Agriculture 8 per 15 minutes at 75% yield.
+- A shows Wood 8, Stone 8, Agriculture 8 per 15 minutes at 50% yield.
 - B shows Wood 10 per 15 minutes at 100% yield.
 - E shows Stone 10 per 15 minutes at 100% yield.
 - A pays one Agriculture upkeep charge for its combined non-food outputs, not one
   charge per resource.
+
+
+## 27. Deterministic physical asset integration
+
+Install the current schematic bundle as:
+
+```
+config/catancraft/schematics_bundle.zip
+```
+
+Then:
+
+```
+/catan map reloadassets
+/catan map assetstatus
+```
+
+Expected:
+- Every current handoff asset validates.
+- Wrong dimensions or stored offsets are rejected before any world blocks change.
+
+Fresh starter-city test:
+1. Create nation.
+2. Select one of A/D/M/P.
+3. Inspect plot_2, plot_5 and plot_6.
+
+Expected:
+- Quarry is at plot_2.
+- Farm is at plot_5.
+- Lumberyard is at plot_6.
+- Starter production preview reports 5 Wood, 5 Stone, 5 Agriculture per 15m at L1.
+- The prebuilt settlement itself is not repasted.
+
+Fresh neutral claim:
+- Claim a Wood territory: settlement + TH1 + Lumberyard appear.
+- Claim a Stone territory: settlement + TH1 + Quarry appear.
+- Claim F/K: settlement + TH1 + Iron/Oil rear strategic site appear.
+- Claim G/J: settlement + TH1 + Coal/Copper rear strategic site appear.
+
+Purchased factory test:
+- Vehicle Factory always uses plot_1.
+- Weapons Factory always uses plot_3.
+- Steel Mill always uses plot_4.
+- Purchase fails safely if its fixed physical plot is already occupied.
+- The nation is not charged if physical placement validation fails.
+
+Town Hall:
+- City II replaces only the Town Hall with TH2.
+- City III replaces only the Town Hall with TH3.
+- Building level upgrades do not repaste Tier-1 factory geometry.
+
+Monuments:
+
+```
+/catan map placemonuments
+```
+
+Expected:
+- All three current central monument assets are placed once.
+- Placement state persists after restart.

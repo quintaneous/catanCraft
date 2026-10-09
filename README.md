@@ -313,8 +313,8 @@ Starting cities produce all three basic resources:
 - Stone
 - Agriculture
 
-They currently run at **75% of the per-resource output** of a dedicated territory.
-At Producer L1 this is 8 of each resource per 15-minute cycle before the normal
+They currently run at **50% of the per-resource output** of a dedicated territory.
+At Producer L1 this is 5 of each resource per 15-minute cycle before the normal
 territory Agriculture upkeep is applied to the non-food outputs. A dedicated L1
 Wood or Stone territory produces 10 of its specialty per cycle.
 
@@ -383,6 +383,50 @@ the stockpile:
 ```
 
 This prints each resource's per-cycle/per-hour output, configured yield percentage,
-and Agriculture upkeep. Starter territories A/D/M/P currently use 75% yield for
+and Agriculture upkeep. Starter territories A/D/M/P currently use 50% yield for
 Wood, Stone, and Agriculture; dedicated raw-resource territories use 100% unless the
 map file overrides them.
+
+
+## Physical schematic asset pack
+
+CatanCraft now validates the Blender handoff's deterministic physical contracts before
+placing a structure. The current development asset pack can be installed as a single:
+
+```
+config/catancraft/schematics_bundle.zip
+```
+
+Individual overrides can instead be placed in:
+
+```
+config/catancraft/schematics/<name>.schem
+```
+
+Useful operator commands:
+
+```
+/catan map assetstatus
+/catan map reloadassets
+/catan map placemonuments
+```
+
+Finished physical assignments currently integrated:
+
+- Vehicle Factory -> plot_1
+- Quarry -> plot_2
+- Weapons Factory -> plot_3
+- Steel Mill -> plot_4
+- Farm -> plot_5
+- Lumberyard -> plot_6
+- F/K -> Iron/Oil strategic resource site
+- G/J -> Coal/Copper strategic resource site
+- Industrial Complex / Military Depot / Refinery -> the three central monument pads
+
+Starting cities place Quarry, Farm and Lumberyard when selected. Neutral city claims
+place the city base, TH1 and that territory's configured raw-resource asset(s) before
+ownership/cost is committed. Finished purchased factories are pasted before the nation
+is charged. Building economic upgrades L2-L5 keep the same visual schematic for now.
+
+Physical placement state is persisted separately from economic state so a server
+restart does not repaste the whole settlement or reset the Town Hall tier.
