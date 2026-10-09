@@ -47,11 +47,20 @@ public final class MonumentData {
         captureProgressTicks = 0;
     }
 
-    public boolean contains(String dimension, double playerX, double playerZ) {
+    public boolean contains(
+            String dimension,
+            double playerX,
+            double playerY,
+            double playerZ
+    ) {
         if (!dimensionId.equals(dimension)) return false;
+
         double dx = playerX - (x + 0.5);
         double dz = playerZ - (z + 0.5);
-        return dx * dx + dz * dz <= (double) radius * radius;
+        double dy = Math.abs(playerY - (y + 0.5));
+
+        return dx * dx + dz * dz <= (double) radius * radius
+                && dy <= 12.0;
     }
 
     public CompoundTag save() {

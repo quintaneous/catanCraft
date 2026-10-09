@@ -115,7 +115,7 @@ public final class MonumentManager {
         Set<UUID> result = new LinkedHashSet<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             String dimension = player.serverLevel().dimension().location().toString();
-            if (!monument.contains(dimension, player.getX(), player.getZ())) continue;
+            if (!monument.contains(dimension, player.getX(), player.getY(), player.getZ())) continue;
             NationData nation = data.nationForPlayer(player.getUUID());
             if (nation != null) result.add(nation.id());
         }
@@ -138,7 +138,7 @@ public final class MonumentManager {
     ) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             String dimension = player.serverLevel().dimension().location().toString();
-            if (monument.contains(dimension, player.getX(), player.getZ())) {
+            if (monument.contains(dimension, player.getX(), player.getY(), player.getZ())) {
                 player.displayClientMessage(
                         Component.literal(monument.name() + " • " + status),
                         true
@@ -177,7 +177,9 @@ public final class MonumentManager {
     private static void announceActivation(MinecraftServer server, MonumentData monument) {
         server.getPlayerList().broadcastSystemMessage(
                 Component.literal("[CatanCraft] Monument active: " + monument.name() +
-                        " at X=" + monument.x() + " Z=" + monument.z() +
+                        " at X=" + monument.x() +
+                        " Y=" + monument.y() +
+                        " Z=" + monument.z() +
                         ". Hold the zone for " + CAPTURE_SECONDS + " seconds."), false);
     }
 }

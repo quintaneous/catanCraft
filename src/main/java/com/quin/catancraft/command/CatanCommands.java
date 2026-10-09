@@ -996,7 +996,9 @@ public final class CatanCommands {
                     (isActive ? "[ACTIVE] " : "") +
                             monument.name() + " [" + monument.id() + "] • " +
                             monument.type().displayName() +
-                            " • X=" + monument.x() + " Z=" + monument.z() +
+                            " • X=" + monument.x() +
+                            " Y=" + monument.y() +
+                            " Z=" + monument.z() +
                             " • R=" + monument.radius()), false);
         }
         return 1;
