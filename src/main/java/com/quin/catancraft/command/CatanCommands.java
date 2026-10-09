@@ -26,6 +26,7 @@ import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
 import com.quin.catancraft.world.SchematicPlacementService;
+import com.quin.catancraft.world.WorldMapVerifier;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
@@ -303,6 +304,9 @@ public final class CatanCommands {
         node.then(Commands.literal("status")
                 .executes(ctx -> mapStatus(ctx.getSource())));
 
+        node.then(Commands.literal("verify")
+                .executes(ctx -> verifyCurrentWorld(ctx.getSource())));
+
         node.then(Commands.literal("starts")
                 .executes(ctx -> mapStarts(ctx.getSource())));
 
@@ -534,6 +538,28 @@ public final class CatanCommands {
                 "Assigned start slot " + slot + " (" + definition.name() +
                         ") to " + nation.name() + "."), true);
         return 1;
+    }
+
+    private static int verifyCurrentWorld(CommandSourceStack source) {
+        WorldMapVerifier.Report report =
+                WorldMapVerifier.verify(source.getServer());
+
+        if (report.success()) {
+            source.sendSuccess(() -> Component.literal(
+                    "River & Bridges V3 world verification PASS: " +
+                            report.passed() + "/" + report.checks() +
+                            " checks matched."), true);
+            return 1;
+        }
+
+        source.sendFailure(Component.literal(
+                "V3 world verification FAILED: " +
+                        report.passed() + "/" + report.checks() +
+                        " checks matched."));
+        for (String failure : report.failures()) {
+            source.sendFailure(Component.literal(" - " + failure));
+        }
+        return 0;
     }
 
     private static int mapStatus(CommandSourceStack source) {
