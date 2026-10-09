@@ -158,7 +158,7 @@ public final class NationDashboard {
         } else {
             for (TerritoryData territory : territories) {
                 lines.add("T|" + territory.id() + "|" +
-                        territory.name() + " • " + pretty(territory.specialty()) +
+                        territory.name() + " • " + resourceListText(territory.rawResources()) +
                         " • City L" + territory.cityLevel() +
                         " • Producer L" + territory.producerLevel());
                 addTerritory(lines, nation, territory, leader);
@@ -174,7 +174,7 @@ public final class NationDashboard {
         } else {
             lines.add("D|Standard expansion cost: " + claimCost.describe());
             for (TerritoryData territory : claimable) {
-                lines.add("Y|" + territory.name() + " • " + pretty(territory.specialty()));
+                lines.add("Y|" + territory.name() + " • " + resourceListText(territory.rawResources()));
                 if (leader) {
                     lines.add(action(
                             "nation claim " + territory.id(),
@@ -204,15 +204,18 @@ public final class NationDashboard {
 
         lines.add("D|City L" + territory.cityLevel() +
                 " • Producer L" + territory.producerLevel());
-        lines.add("G|Producer: +" + perCycle + " " +
-                pretty(territory.specialty()) + "/15m • +" + perHour + "/hr");
+        lines.add("D|Raw outputs: " + resourceListText(territory.rawResources()));
+        lines.add("G|Producer rate: +" + perCycle +
+                " each/15m • +" + perHour + " each/hr");
 
-        if (territory.specialty() == ResourceType.AGRICULTURE) {
+        boolean hasNonAgriculture = territory.rawResources().stream()
+                .anyMatch(type -> type != ResourceType.AGRICULTURE);
+        if (!hasNonAgriculture) {
             lines.add("D|Producer upkeep: none");
         } else {
             int upkeepCycle = EconomyBalance.agricultureUpkeepPerCycle(
                     territory.producerLevel());
-            lines.add("Y|Producer upkeep: -" + upkeepCycle +
+            lines.add("Y|Territory upkeep: -" + upkeepCycle +
                     " Agriculture/15m • -" + (upkeepCycle * 4) + "/hr");
         }
 
@@ -239,8 +242,7 @@ public final class NationDashboard {
             if (leader) {
                 lines.add(action(
                         "nation upgrade producer " + territory.id(),
-                        "Upgrade " + pretty(territory.specialty()) +
-                                " Production → L" + (territory.producerLevel() + 1) +
+                        "Upgrade Raw Production → L" + (territory.producerLevel() + 1) +
                                 " • " + nextProducer.describe()
                 ));
             }
@@ -394,6 +396,15 @@ public final class NationDashboard {
         } catch (IllegalArgumentException ex) {
             return amount + " " + asset;
         }
+    }
+
+    private static String resourceListText(List<ResourceType> resources) {
+        StringBuilder result = new StringBuilder();
+        for (ResourceType resource : resources) {
+            if (!result.isEmpty()) result.append(" + ");
+            result.append(pretty(resource));
+        }
+        return result.toString();
     }
 
     private static String pretty(ResourceType type) {

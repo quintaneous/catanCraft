@@ -42,9 +42,13 @@ public final class TerritoryData {
         return definition == null ? name : definition.name();
     }
 
-    public ResourceType specialty() {
+    public List<ResourceType> rawResources() {
         TerritoryDefinition definition = MapDefinitionManager.territory(id);
-        return definition == null ? specialty : definition.specialty();
+        return definition == null ? List.of(specialty) : definition.resources();
+    }
+
+    public ResourceType specialty() {
+        return rawResources().get(0);
     }
 
     @Nullable

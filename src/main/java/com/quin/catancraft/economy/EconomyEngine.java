@@ -9,6 +9,8 @@ import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import net.minecraft.server.MinecraftServer;
 
+import java.util.List;
+
 public final class EconomyEngine {
     private static long lastProcessedCycle = Long.MIN_VALUE;
 
@@ -27,12 +29,13 @@ public final class EconomyEngine {
     public static void runCycle(MinecraftServer server) {
         CatanSavedData data = CatanSavedData.get(server);
 
-        // Phase 1: agriculture is produced first so same-cycle upkeep never
-        // depends on territory insertion order.
+        // Phase 1: every territory that contains Agriculture produces it first.
+        // This keeps upkeep deterministic even for multi-resource starter regions.
         for (TerritoryData territory : data.territories()) {
             NationData nation = owner(data, territory);
             if (nation == null) continue;
-            if (territory.specialty() == ResourceType.AGRICULTURE) {
+
+            if (territory.rawResources().contains(ResourceType.AGRICULTURE)) {
                 nation.addResource(
                         ResourceType.AGRICULTURE,
                         EconomyBalance.rawProductionPerCycle(territory.producerLevel())
@@ -40,19 +43,17 @@ public final class EconomyEngine {
             }
         }
 
-        // Phase 2: all other raw territories draw upkeep from the now-current
-        // national Agriculture stockpile.
+        // Phase 2: a territory pays one Agriculture upkeep charge to operate all
+        // of its non-food raw outputs. This supports the actual season-one map:
+        // starts produce wood/stone/agriculture, F/K produce iron/oil, and G/J
+        // produce coal/copper without double-charging a bundled territory.
         for (TerritoryData territory : data.territories()) {
             NationData nation = owner(data, territory);
             if (nation == null) continue;
-            if (territory.specialty() != ResourceType.AGRICULTURE) {
-                produceNonAgricultureResource(nation, territory);
-            }
+            produceNonAgricultureResources(nation, territory);
         }
 
-        // Phase 3: processors run by dependency tier. This makes Steel happen
-        // before Mechanical Parts, and Mechanical Parts before Electronics,
-        // regardless of territory creation order.
+        // Phase 3: processors run by dependency tier.
         for (int tier = 1; tier <= 3; tier++) {
             for (TerritoryData territory : data.territories()) {
                 NationData nation = owner(data, territory);
@@ -88,24 +89,34 @@ public final class EconomyEngine {
         return data.nation(territory.ownerNationId());
     }
 
-    private static void produceNonAgricultureResource(
+    private static void produceNonAgricultureResources(
             NationData nation,
             TerritoryData territory
     ) {
+        List<ResourceType> outputs = territory.rawResources().stream()
+                .filter(type -> type != ResourceType.AGRICULTURE)
+                .toList();
+        if (outputs.isEmpty()) return;
+
         int level = territory.producerLevel();
         int production = EconomyBalance.rawProductionPerCycle(level);
         int upkeep = EconomyBalance.agricultureUpkeepPerCycle(level);
         long available = nation.resource(ResourceType.AGRICULTURE);
 
+        double supplyRatio = 1.0;
         if (available < upkeep) {
-            double supplyRatio = upkeep == 0 ? 1.0 : (double) available / upkeep;
-            production = Math.max(0, (int) Math.floor(production * supplyRatio));
+            supplyRatio = upkeep == 0 ? 1.0 : (double) available / upkeep;
             nation.addResource(ResourceType.AGRICULTURE, -available);
         } else {
             nation.addResource(ResourceType.AGRICULTURE, -upkeep);
         }
 
-        nation.addResource(territory.specialty(), production);
+        int adjustedProduction =
+                Math.max(0, (int) Math.floor(production * supplyRatio));
+
+        for (ResourceType output : outputs) {
+            nation.addResource(output, adjustedProduction);
+        }
     }
 
     private static void processTier(
