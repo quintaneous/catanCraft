@@ -355,8 +355,13 @@ public final class SchematicPlacementService {
             }
         }
 
-        Path bundle = configRoot.resolve("schematics_bundle.zip");
-        if (schematic == null && Files.exists(bundle)) {
+        Path[] bundles = new Path[] {
+                configRoot.resolve("schematics_bundle.zip"),
+                configRoot.resolve("CatanCraft_Current_Schematic_Assets.zip")
+        };
+        for (Path bundle : bundles) {
+            if (schematic != null || !Files.exists(bundle)) continue;
+
             try (ZipFile zip = new ZipFile(bundle.toFile())) {
                 ZipEntry entry = zip.getEntry(fileName);
                 if (entry != null) {
@@ -381,7 +386,9 @@ public final class SchematicPlacementService {
             throw new IOException(
                     "missing " + fileName +
                             ". Put it in config/catancraft/schematics/, " +
-                            "config/catancraft/schematics_bundle.zip, or bundle it in the mod.");
+                            "config/catancraft/schematics_bundle.zip, " +
+                            "config/catancraft/CatanCraft_Current_Schematic_Assets.zip, " +
+                            "or bundle it in the mod.");
         }
 
         int width = schematic.getShort("Width");
