@@ -297,6 +297,9 @@ public final class CatanCommands {
         node.then(Commands.literal("reload")
                 .executes(ctx -> reloadMapDefinition(ctx.getSource())));
 
+        node.then(Commands.literal("installseason1")
+                .executes(ctx -> installSeasonOneMap(ctx.getSource())));
+
         node.then(Commands.literal("status")
                 .executes(ctx -> mapStatus(ctx.getSource())));
 
@@ -384,6 +387,25 @@ public final class CatanCommands {
                                 IntegerArgumentType.getInteger(ctx, "count")))));
 
         return node;
+    }
+
+    private static int installSeasonOneMap(CommandSourceStack source) {
+        try {
+            MapDefinitionManager.LoadResult result =
+                    MapDefinitionManager.installBundledSeasonOne(source.getServer());
+            source.sendSuccess(() -> Component.literal(
+                    "Installed bundled River & Bridges V3 season map: " +
+                            result.territories() + " territories, " +
+                            result.monuments() + " monuments."), true);
+            source.sendSuccess(() -> Component.literal(
+                    "This overwrote config/catancraft/map.json with the map bundled in the mod."),
+                    false);
+            return 1;
+        } catch (Exception ex) {
+            source.sendFailure(Component.literal(
+                    "Season map install failed: " + ex.getMessage()));
+            return 0;
+        }
     }
 
     private static int reloadMapDefinition(CommandSourceStack source) {

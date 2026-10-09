@@ -87,6 +87,21 @@ public final class MapDefinitionManager {
         return null;
     }
 
+    public static LoadResult installBundledSeasonOne(
+            MinecraftServer server
+    ) throws IOException {
+        Files.createDirectories(MAP_PATH.getParent());
+        try (InputStream input =
+                     MapDefinitionManager.class.getResourceAsStream(DEFAULT_MAP_RESOURCE)) {
+            if (input == null) {
+                throw new IOException(
+                        "Bundled default map is missing: " + DEFAULT_MAP_RESOURCE);
+            }
+            Files.copy(input, MAP_PATH, StandardCopyOption.REPLACE_EXISTING);
+        }
+        return reload(server);
+    }
+
     public static LoadResult reload(MinecraftServer server) throws IOException {
         Files.createDirectories(MAP_PATH.getParent());
         installDefaultMapIfNeeded();
