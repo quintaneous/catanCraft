@@ -293,6 +293,17 @@ public final class CatanCommands {
         node.then(Commands.literal("status")
                 .executes(ctx -> mapStatus(ctx.getSource())));
 
+        node.then(Commands.literal("starts")
+                .executes(ctx -> mapStarts(ctx.getSource())));
+
+        node.then(Commands.literal("assignstart")
+                .then(Commands.argument("slot", IntegerArgumentType.integer(1))
+                        .then(Commands.argument("nation", StringArgumentType.greedyString())
+                                .executes(ctx -> assignStartTerritory(
+                                        ctx.getSource(),
+                                        IntegerArgumentType.getInteger(ctx, "slot"),
+                                        StringArgumentType.getString(ctx, "nation"))))));
+
         node.then(Commands.literal("here")
                 .executes(ctx -> mapHere(ctx.getSource())));
 
@@ -386,6 +397,89 @@ public final class CatanCommands {
                     "Map reload failed: " + ex.getMessage()));
             return 0;
         }
+    }
+
+    private static int mapStarts(CommandSourceStack source) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+
+        source.sendSuccess(() -> Component.literal("=== CatanCraft Starting Cities ==="), false);
+
+        MapDefinitionManager.territories().stream()
+                .filter(definition -> definition.startSlot() > 0)
+                .sorted(Comparator.comparingInt(TerritoryDefinition::startSlot))
+                .forEach(definition -> {
+                    TerritoryData territory = data.territory(definition.id());
+                    String ownerName = "Neutral";
+                    if (territory != null && territory.ownerNationId() != null) {
+                        NationData owner = data.nation(territory.ownerNationId());
+                        ownerName = owner == null ? "Unknown" : owner.name();
+                    }
+
+                    String finalOwnerName = ownerName;
+                    source.sendSuccess(() -> Component.literal(
+                            "Slot " + definition.startSlot() + " • " +
+                                    definition.name() + " [" + definition.id() +
+                                    "] • " + finalOwnerName), false);
+                });
+        return 1;
+    }
+
+    private static int assignStartTerritory(
+            CommandSourceStack source,
+            int slot,
+            String nationName
+    ) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData nation = data.nationByName(nationName.trim());
+        if (nation == null) {
+            source.sendFailure(Component.literal("Unknown nation: " + nationName));
+            return 0;
+        }
+
+        TerritoryDefinition definition = MapDefinitionManager.territories().stream()
+                .filter(value -> value.startSlot() == slot)
+                .findFirst()
+                .orElse(null);
+        if (definition == null) {
+            source.sendFailure(Component.literal("No map start slot " + slot + "."));
+            return 0;
+        }
+
+        TerritoryData territory = data.territory(definition.id());
+        if (territory == null) {
+            source.sendFailure(Component.literal(
+                    "Map territory " + definition.id() + " is not synchronized."));
+            return 0;
+        }
+
+        if (territory.ownerNationId() != null
+                && !territory.ownerNationId().equals(nation.id())) {
+            NationData currentOwner = data.nation(territory.ownerNationId());
+            source.sendFailure(Component.literal(
+                    definition.name() + " is already assigned to " +
+                            (currentOwner == null ? "another nation" : currentOwner.name()) + "."));
+            return 0;
+        }
+
+        boolean alreadyHasStart = MapDefinitionManager.territories().stream()
+                .filter(value -> value.startSlot() > 0)
+                .map(value -> data.territory(value.id()))
+                .anyMatch(value -> value != null
+                        && nation.id().equals(value.ownerNationId()));
+
+        if (alreadyHasStart && !nation.id().equals(territory.ownerNationId())) {
+            source.sendFailure(Component.literal(
+                    nation.name() + " already owns a starting city."));
+            return 0;
+        }
+
+        territory.setOwnerNationId(nation.id());
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                "Assigned start slot " + slot + " (" + definition.name() +
+                        ") to " + nation.name() + "."), true);
+        return 1;
     }
 
     private static int mapStatus(CommandSourceStack source) {

@@ -7,6 +7,7 @@ import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.network.NationNetwork;
 import com.quin.catancraft.world.WorldProtection;
+import com.quin.catancraft.world.MapInteractionHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.event.TickEvent;
@@ -24,6 +25,7 @@ public final class CatanCraft {
         NationNetwork.register();
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new WorldProtection());
+        MinecraftForge.EVENT_BUS.register(new MapInteractionHandler());
         LOGGER.info("CatanCraft 0.1 foundation loading");
     }
 
