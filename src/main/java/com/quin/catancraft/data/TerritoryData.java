@@ -1,5 +1,7 @@
 package com.quin.catancraft.data;
 
+import com.quin.catancraft.map.MapDefinitionManager;
+import com.quin.catancraft.map.TerritoryDefinition;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
@@ -36,11 +38,13 @@ public final class TerritoryData {
     }
 
     public String name() {
-        return name;
+        TerritoryDefinition definition = MapDefinitionManager.territory(id);
+        return definition == null ? name : definition.name();
     }
 
     public ResourceType specialty() {
-        return specialty;
+        TerritoryDefinition definition = MapDefinitionManager.territory(id);
+        return definition == null ? specialty : definition.specialty();
     }
 
     @Nullable
@@ -73,7 +77,10 @@ public final class TerritoryData {
     }
 
     public Set<String> neighbors() {
-        return Set.copyOf(neighbors);
+        TerritoryDefinition definition = MapDefinitionManager.territory(id);
+        return definition == null
+                ? Set.copyOf(neighbors)
+                : new LinkedHashSet<>(definition.neighbors());
     }
 
     public void addNeighbor(String territoryId) {
@@ -84,7 +91,8 @@ public final class TerritoryData {
 
     @Nullable
     public TerritoryBoundary boundary() {
-        return boundary;
+        TerritoryDefinition definition = MapDefinitionManager.territory(id);
+        return definition == null ? boundary : definition.toBoundary();
     }
 
     public TerritoryBoundary ensureBoundary(String dimensionId) {

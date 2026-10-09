@@ -1,5 +1,8 @@
 package com.quin.catancraft.data;
 
+import com.quin.catancraft.map.MapDefinitionManager;
+import com.quin.catancraft.map.MonumentDefinition;
+import com.quin.catancraft.map.TerritoryDefinition;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -187,10 +190,52 @@ public final class CatanSavedData extends SavedData {
         return true;
     }
 
+    public void syncMapDefinitions() {
+        for (TerritoryDefinition definition : MapDefinitionManager.territories()) {
+            territories.computeIfAbsent(
+                    definition.id(),
+                    ignored -> new TerritoryData(
+                            definition.id(),
+                            definition.name(),
+                            definition.specialty()
+                    )
+            );
+        }
+
+        for (MonumentDefinition definition : MapDefinitionManager.monuments()) {
+            MonumentData previous = monuments.get(definition.id());
+            MonumentData synced = new MonumentData(
+                    definition.id(),
+                    definition.name(),
+                    definition.type(),
+                    definition.dimension(),
+                    definition.x(),
+                    definition.y(),
+                    definition.z(),
+                    definition.radius()
+            );
+
+            if (previous != null) {
+                synced.setCapturingNationId(previous.capturingNationId());
+                synced.setCaptureProgressTicks(previous.captureProgressTicks());
+            }
+            monuments.put(definition.id(), synced);
+        }
+
+        setDirty();
+    }
+
     @Nullable
     public TerritoryData territoryAt(ServerLevel level, BlockPos pos) {
+        TerritoryDefinition defined = MapDefinitionManager.territoryAt(level, pos);
+        if (defined != null) {
+            return territory(defined.id());
+        }
+
         String dimensionId = level.dimension().location().toString();
         for (TerritoryData territory : territories.values()) {
+            if (MapDefinitionManager.territory(territory.id()) != null) continue;
+
             TerritoryBoundary boundary = territory.boundary();
             if (boundary != null && boundary.contains(dimensionId, pos.getX(), pos.getZ())) {
                 return territory;
