@@ -19,6 +19,9 @@ import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
 import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
+import com.quin.catancraft.map.MapAnchor;
+import com.quin.catancraft.map.MapDefinitionManager;
+import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -40,6 +43,7 @@ public final class CatanCommands {
         catan.then(territoryAdminNode());
         catan.then(buildingAdminNode());
         catan.then(monumentAdminNode());
+        catan.then(mapAdminNode());
         catan.then(debugNode());
         dispatcher.register(catan);
     }
@@ -277,6 +281,36 @@ public final class CatanCommands {
         return node;
     }
 
+    private static LiteralArgumentBuilder<CommandSourceStack> mapAdminNode() {
+        LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal("map")
+                .requires(source -> source.hasPermission(2));
+
+        node.then(Commands.literal("reload")
+                .executes(ctx -> reloadMapDefinition(ctx.getSource())));
+
+        node.then(Commands.literal("status")
+                .executes(ctx -> mapStatus(ctx.getSource())));
+
+        node.then(Commands.literal("here")
+                .executes(ctx -> mapHere(ctx.getSource())));
+
+        node.then(Commands.literal("territory")
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .executes(ctx -> mapTerritoryInfo(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id")))));
+
+        node.then(Commands.literal("anchor")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .then(Commands.argument("anchor", StringArgumentType.word())
+                                .executes(ctx -> mapAnchorInfo(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "territory"),
+                                        StringArgumentType.getString(ctx, "anchor"))))));
+
+        return node;
+    }
+
     private static LiteralArgumentBuilder<CommandSourceStack> debugNode() {
         LiteralArgumentBuilder<CommandSourceStack> node = Commands.literal("debug")
                 .requires(source -> source.hasPermission(2));
@@ -318,6 +352,135 @@ public final class CatanCommands {
                                 IntegerArgumentType.getInteger(ctx, "count")))));
 
         return node;
+    }
+
+    private static int reloadMapDefinition(CommandSourceStack source) {
+        try {
+            MapDefinitionManager.LoadResult result =
+                    MapDefinitionManager.reload(source.getServer());
+            source.sendSuccess(() -> Component.literal(
+                    "Reloaded CatanCraft map: " + result.territories() +
+                            " territories, " + result.monuments() +
+                            " monuments. Warnings: " + result.warnings().size()), true);
+            for (String warning : result.warnings()) {
+                source.sendSuccess(() -> Component.literal(
+                        "[Map warning] " + warning), false);
+            }
+            return 1;
+        } catch (Exception ex) {
+            source.sendFailure(Component.literal(
+                    "Map reload failed: " + ex.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int mapStatus(CommandSourceStack source) {
+        source.sendSuccess(() -> Component.literal(
+                "CatanCraft map definition: " + MapDefinitionManager.path()), false);
+        source.sendSuccess(() -> Component.literal(
+                MapDefinitionManager.territories().size() + " territories • " +
+                        MapDefinitionManager.monuments().size() + " monuments"), false);
+        return 1;
+    }
+
+    private static int mapHere(CommandSourceStack source)
+            throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        TerritoryDefinition definition = MapDefinitionManager.territoryAt(
+                player.serverLevel(),
+                player.blockPosition()
+        );
+
+        if (definition == null) {
+            source.sendSuccess(() -> Component.literal(
+                    "This position is not inside a map-defined territory."), false);
+            return 0;
+        }
+
+        boolean siege = definition.siegeRegion() != null
+                && definition.siegeRegion().contains(player.blockPosition());
+        boolean restoration = definition.restorationRegion() != null
+                && definition.restorationRegion().contains(player.blockPosition());
+
+        source.sendSuccess(() -> Component.literal(
+                definition.name() + " [" + definition.id() + "] • " +
+                        definition.specialty().id() +
+                        " • siegeRegion=" + siege +
+                        " • restorationRegion=" + restoration), false);
+        return 1;
+    }
+
+    private static int mapTerritoryInfo(
+            CommandSourceStack source,
+            String territoryId
+    ) {
+        TerritoryDefinition definition = MapDefinitionManager.territory(territoryId);
+        if (definition == null) {
+            source.sendFailure(Component.literal(
+                    "No map-defined territory: " + territoryId));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(
+                definition.name() + " [" + definition.id() + "] • " +
+                        definition.specialty().id() + " • " +
+                        definition.dimension()), false);
+
+        String city = definition.cityCenter() == null
+                ? "not set"
+                : definition.cityCenter().describe();
+        String hall = definition.townHall() == null
+                ? "not set"
+                : definition.townHall().describe();
+        String resource = definition.resourceSite() == null
+                ? "not set"
+                : definition.resourceSite().describe();
+
+        source.sendSuccess(() -> Component.literal(
+                "City center: " + city), false);
+        source.sendSuccess(() -> Component.literal(
+                "Town Hall: " + hall), false);
+        source.sendSuccess(() -> Component.literal(
+                "Resource site: " + resource), false);
+        source.sendSuccess(() -> Component.literal(
+                "Building plots: " + definition.buildingPlots().size() +
+                        " • Defense anchors: " + definition.defenseAnchors().size() +
+                        " • Neighbors: " + String.join(", ", definition.neighbors())), false);
+
+        if (definition.siegeRegion() != null) {
+            source.sendSuccess(() -> Component.literal(
+                    "Siege region: " + definition.siegeRegion().describe()), false);
+        }
+        if (definition.restorationRegion() != null) {
+            source.sendSuccess(() -> Component.literal(
+                    "Restoration region: " +
+                            definition.restorationRegion().describe()), false);
+        }
+        return 1;
+    }
+
+    private static int mapAnchorInfo(
+            CommandSourceStack source,
+            String territoryId,
+            String anchorId
+    ) {
+        TerritoryDefinition definition = MapDefinitionManager.territory(territoryId);
+        if (definition == null) {
+            source.sendFailure(Component.literal(
+                    "No map-defined territory: " + territoryId));
+            return 0;
+        }
+
+        MapAnchor anchor = definition.anchor(anchorId);
+        if (anchor == null) {
+            source.sendFailure(Component.literal(
+                    "Unknown anchor '" + anchorId + "' in " + definition.name() + "."));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(
+                definition.name() + " • " + anchorId + " • " + anchor.describe()), false);
+        return 1;
     }
 
     private static int openDashboard(CommandSourceStack source) throws CommandSyntaxException {
@@ -967,6 +1130,13 @@ public final class CatanCommands {
             String resource,
             String name
     ) {
+        if (MapDefinitionManager.territory(id) != null) {
+            source.sendFailure(Component.literal(
+                    "Territory " + id +
+                            " is map-defined. Edit config/catancraft/map.json instead."));
+            return 0;
+        }
+
         CatanSavedData data = CatanSavedData.get(source.getServer());
         if (data.territory(id) != null) {
             source.sendFailure(Component.literal("Territory id already exists."));
@@ -1017,6 +1187,13 @@ public final class CatanCommands {
             String firstId,
             String secondId
     ) {
+        if (MapDefinitionManager.territory(firstId) != null
+                || MapDefinitionManager.territory(secondId) != null) {
+            source.sendFailure(Component.literal(
+                    "Map-defined adjacency cannot be changed in-game. Edit map.json instead."));
+            return 0;
+        }
+
         CatanSavedData data = CatanSavedData.get(source.getServer());
         TerritoryData first = data.territory(firstId);
         TerritoryData second = data.territory(secondId);
@@ -1041,6 +1218,12 @@ public final class CatanCommands {
             String territoryId
     ) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
+        if (MapDefinitionManager.territory(territoryId) != null) {
+            source.sendFailure(Component.literal(
+                    "This territory boundary is map-defined. Edit map.json instead."));
+            return 0;
+        }
+
         CatanSavedData data = CatanSavedData.get(source.getServer());
         TerritoryData territory = data.territory(territoryId);
 
@@ -1075,6 +1258,12 @@ public final class CatanCommands {
             CommandSourceStack source,
             String territoryId
     ) {
+        if (MapDefinitionManager.territory(territoryId) != null) {
+            source.sendFailure(Component.literal(
+                    "This territory boundary is map-defined. Edit map.json instead."));
+            return 0;
+        }
+
         CatanSavedData data = CatanSavedData.get(source.getServer());
         TerritoryData territory = data.territory(territoryId);
 
