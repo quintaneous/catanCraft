@@ -166,3 +166,118 @@ Rules in the current prototype:
 - After a capture there is a 5-minute gap before the next monument rotates in.
 - Capture status is shown in the action bar to players inside the zone.
 - Rewards currently go directly to the national stockpile/treasury; physical cargo delivery can replace this later.
+
+
+## Authoritative map definition
+
+The real CatanCraft world is a locked strategy map. Terrain, roads, rivers, cities,
+resource sites, monuments, building plots, and defense positions are authored before
+the season begins.
+
+On first server start CatanCraft creates:
+
+```
+config/catancraft/map.json
+```
+
+The file is intentionally empty until the real map coordinates are ready. A complete
+example lives at:
+
+```
+docs/map-definition.example.json
+```
+
+Each map-defined territory can provide:
+
+- X/Z polygon boundary
+- specialty resource
+- fixed neighboring territories
+- city-center anchor
+- Town Hall anchor
+- resource-site anchor
+- fixed building plots
+- fixed defense anchors
+- siege damage region
+- restoration region
+
+Map definitions are authoritative. Ownership, City Level, Producer Level, purchased
+buildings, building levels, and nation data remain world-save state.
+
+Useful operator commands:
+
+```
+/catan map reload
+/catan map status
+/catan map here
+/catan map territory iron_valley
+/catan map anchor iron_valley town_hall
+/catan map anchor iron_valley plot_1
+```
+
+Legacy `/catan territory create/link/boundary` commands remain available for throwaway
+test territories, but cannot modify geometry or adjacency for territories defined in
+`map.json`.
+
+### Fixed building plots
+
+Purchased buildings in map-defined territories are permanently assigned to the first
+available configured plot. The plot ID is persisted with the building and shown in
+`/nation`.
+
+This lets future schematic placement, upgrades, siege damage, and repair use the exact
+same physical location every time.
+
+### City restoration
+
+A territory's `siegeRegion` is the only city area that may eventually be allowed to
+take wartime block damage. It must be fully contained inside the territory's
+`restorationRegion`; invalid definitions are rejected.
+
+The restoration service captures the city's current block state, excluding entities:
+
+```
+/catan map snapshot iron_valley
+```
+
+For testing, the saved state can be reapplied with:
+
+```
+/catan map restore iron_valley
+```
+
+Later siege code will call these automatically at siege start/end. This means a
+developed city returns to its actual pre-war state rather than an old baseline layout.
+
+Snapshots are currently capped at 4,000,000 blocks per city region to prevent an
+accidentally huge definition from freezing the server.
+
+## Locked-world rules
+
+Normal players cannot:
+
+- break blocks
+- place blocks
+- place liquids with buckets
+- alter terrain through explosions
+
+Explosion entity damage is left alone, but block destruction is suppressed globally.
+When the siege system is added, only blocks inside an active city's registered
+`siegeRegion` will be eligible for temporary destruction.
+
+Players will not manually place trenches, walls, or sandbags. Purchased defenses will
+be generated at predefined defense anchors.
+
+## Nation trading
+
+Leaders can create nation-to-nation trade proposals:
+
+```
+/nation trade propose "Germany" steel 100 money 4000
+/nation trade propose "Germany" money 5000 coal 150
+/nation trade propose "Germany" oil 100 electronics 20
+```
+
+The offering side is moved into escrow immediately. The receiving nation can Accept or
+Decline from `/nation`; the sender can Cancel. Declined/canceled proposals refund the
+escrow, and acceptance only succeeds if the receiving nation still has the requested
+assets.

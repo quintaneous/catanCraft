@@ -243,3 +243,122 @@ V0.1 is ready for the next milestone when:
 - [ ] Factory targets work.
 - [ ] Monument rotation/capture/rewards work.
 - [ ] No crash occurs when players log out during any of the above.
+
+
+# V0.1.1 Real-map integration tests
+
+These tests are for the new locked-world and map-definition layer.
+
+## 12. Load map definition
+
+Copy the real map coordinates into:
+
+```
+config/catancraft/map.json
+```
+
+Then:
+
+```
+/catan map reload
+/catan map status
+```
+
+Expected:
+- Map reload succeeds.
+- Territory and monument counts match the file.
+- Invalid neighbor IDs are rejected.
+- Duplicate/blank building plot IDs are rejected.
+- A siege region outside its restoration region is rejected.
+
+## 13. World-coordinate lookup
+
+Move through several territories and run:
+
+```
+/catan map here
+```
+
+Expected:
+- Correct territory is reported at several points in each polygon.
+- Outside-map positions report no map-defined territory.
+- Siege/restoration-region flags only become true inside those city regions.
+
+## 14. Anchor verification
+
+For representative territories:
+
+```
+/catan map territory iron_valley
+/catan map anchor iron_valley city
+/catan map anchor iron_valley town_hall
+/catan map anchor iron_valley resource_site
+/catan map anchor iron_valley plot_1
+```
+
+Expected:
+- Coordinates match the authored map.
+- Town Hall faces the intended direction.
+- Building plots line up with the prepared city footprints.
+- Defense anchors line up with gates/walls/defensive positions.
+
+## 15. Fixed building plots
+
+Build multiple industries in one map-defined territory.
+
+Expected:
+- Each building receives a unique plot ID.
+- Plot ID appears in `/nation`.
+- Reloading the world preserves plot assignments.
+- An old V0.1 save without plot IDs is migrated onto plots in deterministic order.
+- Construction fails when no physical plot remains.
+
+## 16. Locked-world protection
+
+As a normal player, attempt to:
+- break terrain
+- break a city block
+- place a block
+- empty a water/lava bucket
+- explode terrain
+
+Expected:
+- No blocks are changed by any attempt.
+- Explosions can still affect entities normally.
+- Administrative map commands still work.
+
+## 17. City snapshot and restore
+
+For one small test city with a configured `restorationRegion`:
+
+```
+/catan map snapshot iron_valley
+```
+
+As an administrator, deliberately alter several blocks inside the region, then:
+
+```
+/catan map restore iron_valley
+```
+
+Expected:
+- Blocks return to the captured state.
+- Air spaces are restored.
+- Block entities survive restoration correctly.
+- Players/mobs/vehicles are not duplicated by restoration.
+
+Do this on a small city region first before using full production-sized bounds.
+
+## 18. Trade proposal flow
+
+Requires two nations.
+
+Expected:
+- Sender creates a proposal.
+- Offered assets immediately leave usable stock and enter escrow.
+- Recipient sees Accept/Decline controls in `/nation`.
+- Decline refunds sender.
+- Cancel refunds sender.
+- Accept transfers both sides atomically.
+- Acceptance fails safely if recipient no longer has the requested assets.
+- Proposal survives server restart while pending.
