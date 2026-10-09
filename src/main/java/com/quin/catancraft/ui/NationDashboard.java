@@ -98,7 +98,7 @@ public final class NationDashboard {
             lines.add("Y|No territory assigned yet.");
         } else {
             for (TerritoryData territory : territories) {
-                addTerritory(lines, territory, leader);
+                addTerritory(lines, nation, territory, leader);
             }
         }
 
@@ -131,17 +131,30 @@ public final class NationDashboard {
 
     private static void addTerritory(
             List<String> lines,
+            NationData nation,
             TerritoryData territory,
             boolean leader
     ) {
-        int perHour = EconomyBalance.rawProductionPerCycle(territory.producerLevel()) * 4;
+        int perCycle = EconomyBalance.rawProductionPerCycle(territory.producerLevel());
+        int perHour = perCycle * 4;
 
         lines.add("");
         lines.add("B|" + territory.name() + " • " +
                 pretty(territory.specialty()) + " Territory");
         lines.add("D|City L" + territory.cityLevel() +
-                " • Producer L" + territory.producerLevel() +
-                " • Base output +" + perHour + "/hr");
+                " • Producer L" + territory.producerLevel());
+        lines.add("G|Producer: +" + perCycle + " " +
+                pretty(territory.specialty()) + "/15m • +" + perHour + "/hr");
+
+        if (territory.specialty() == ResourceType.AGRICULTURE) {
+            lines.add("D|Producer upkeep: none");
+        } else {
+            int upkeepCycle = EconomyBalance.agricultureUpkeepPerCycle(
+                    territory.producerLevel());
+            lines.add("Y|Producer upkeep: -" + upkeepCycle +
+                    " Agriculture/15m • -" + (upkeepCycle * 4) + "/hr");
+        }
+
         lines.add("D|Development slots: " + territory.buildings().size() + "/" +
                 EconomyCatalog.maxBuildingSlots(territory.cityLevel()));
 
@@ -188,6 +201,30 @@ public final class NationDashboard {
                             pretty(building.type().output());
                 }
                 lines.add(detail);
+
+                if (building.type().isProcessor()) {
+                    BuildingType type = building.type();
+                    int batches = type.batchesPerCycle(building.level());
+                    int outputCycle = type.outputPerBatch() * batches;
+                    int outputHour = outputCycle * 4;
+
+                    lines.add("D|  Recipe: " + recipeText(type) +
+                            " -> " + type.outputPerBatch() + " " +
+                            pretty(type.output()) + "/batch");
+                    lines.add("G|  Max output: +" + outputCycle + " " +
+                            pretty(type.output()) + "/15m • +" +
+                            outputHour + "/hr");
+                    lines.add("Y|  Max inputs: " +
+                            inputRateText(type, batches));
+
+                    if (nation.resource(type.output()) >= building.targetStock()) {
+                        lines.add("D|  Status: PAUSED - target stock reached");
+                    } else if (!nation.canConsume(type.inputs(), 1)) {
+                        lines.add("R|  Status: WAITING - missing inputs");
+                    } else {
+                        lines.add("G|  Status: READY TO PRODUCE");
+                    }
+                }
 
                 EconomyCost nextBuilding = EconomyCatalog.buildingUpgradeCost(
                         building.type(), building.level());
@@ -242,6 +279,38 @@ public final class NationDashboard {
         } else {
             lines.add("Y|No open development slots.");
         }
+    }
+
+    private static String recipeText(BuildingType type) {
+        StringBuilder result = new StringBuilder();
+        type.inputs().entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().id()))
+                .forEach(entry -> {
+                    if (!result.isEmpty()) result.append(" + ");
+                    result.append(entry.getValue())
+                            .append(" ")
+                            .append(pretty(entry.getKey()));
+                });
+        return result.toString();
+    }
+
+    private static String inputRateText(BuildingType type, int batchesPerCycle) {
+        StringBuilder result = new StringBuilder();
+        type.inputs().entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().id()))
+                .forEach(entry -> {
+                    if (!result.isEmpty()) result.append(" • ");
+                    int perCycle = entry.getValue() * batchesPerCycle;
+                    int perHour = perCycle * 4;
+                    result.append("-")
+                            .append(perCycle)
+                            .append(" ")
+                            .append(pretty(entry.getKey()))
+                            .append("/15m • -")
+                            .append(perHour)
+                            .append("/hr");
+                });
+        return result.toString();
     }
 
     private static String action(String command, String label) {
