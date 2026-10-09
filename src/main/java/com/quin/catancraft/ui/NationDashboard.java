@@ -7,6 +7,7 @@ import com.quin.catancraft.data.NationData;
 import com.quin.catancraft.data.MonumentData;
 import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
+import com.quin.catancraft.data.TradeProposal;
 import com.quin.catancraft.economy.EconomyBalance;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
@@ -68,6 +69,62 @@ public final class NationDashboard {
         addResource(lines, nation, ResourceType.MECHANICAL_PARTS);
         addResource(lines, nation, ResourceType.ELECTRONICS);
         addResource(lines, nation, ResourceType.EXPLOSIVES);
+        lines.add("");
+
+        lines.add("H|TRADE");
+        List<TradeProposal> incomingTrades = data.tradeProposals().stream()
+                .filter(t -> nation.id().equals(t.recipientNationId()))
+                .sorted(Comparator.comparingLong(TradeProposal::createdGameTime))
+                .toList();
+        List<TradeProposal> outgoingTrades = data.tradeProposals().stream()
+                .filter(t -> nation.id().equals(t.senderNationId()))
+                .sorted(Comparator.comparingLong(TradeProposal::createdGameTime))
+                .toList();
+
+        if (incomingTrades.isEmpty() && outgoingTrades.isEmpty()) {
+            lines.add("D|No pending trade proposals.");
+        }
+
+        for (TradeProposal proposal : incomingTrades) {
+            NationData sender = data.nation(proposal.senderNationId());
+            String senderName = sender == null ? "Unknown Nation" : sender.name();
+            lines.add("Y|INCOMING #" + proposal.id() + " • " + senderName);
+            lines.add("G|  They offer: " + tradeAssetText(
+                    proposal.offeredAsset(), proposal.offeredAmount()));
+            lines.add("D|  They request: " + tradeAssetText(
+                    proposal.requestedAsset(), proposal.requestedAmount()));
+            if (leader) {
+                lines.add(action(
+                        "nation trade accept " + proposal.id(),
+                        "Accept trade #" + proposal.id()
+                ));
+                lines.add(action(
+                        "nation trade decline " + proposal.id(),
+                        "Decline trade #" + proposal.id()
+                ));
+            }
+        }
+
+        for (TradeProposal proposal : outgoingTrades) {
+            NationData recipient = data.nation(proposal.recipientNationId());
+            String recipientName = recipient == null ? "Unknown Nation" : recipient.name();
+            lines.add("B|OUTGOING #" + proposal.id() + " • " + recipientName);
+            lines.add("D|  Escrowed: " + tradeAssetText(
+                    proposal.offeredAsset(), proposal.offeredAmount()));
+            lines.add("D|  Requested: " + tradeAssetText(
+                    proposal.requestedAsset(), proposal.requestedAmount()));
+            if (leader) {
+                lines.add(action(
+                        "nation trade cancel " + proposal.id(),
+                        "Cancel trade #" + proposal.id()
+                ));
+            }
+        }
+
+        if (leader) {
+            lines.add("D|Propose: /nation trade propose \"Nation\" <offer> <amount> <want> <amount>");
+            lines.add("D|Assets: money or any resource id (steel, oil, electronics, etc.)");
+        }
         lines.add("");
 
         lines.add("H|ACTIVE MONUMENT");
@@ -323,6 +380,17 @@ public final class NationDashboard {
 
     private static void addResource(List<String> lines, NationData nation, ResourceType type) {
         lines.add("G|" + pretty(type) + ": " + nation.resource(type));
+    }
+
+    private static String tradeAssetText(String asset, long amount) {
+        if ("money".equalsIgnoreCase(asset)) {
+            return "$" + amount;
+        }
+        try {
+            return amount + " " + pretty(ResourceType.parse(asset));
+        } catch (IllegalArgumentException ex) {
+            return amount + " " + asset;
+        }
     }
 
     private static String pretty(ResourceType type) {

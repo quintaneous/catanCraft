@@ -14,6 +14,7 @@ import com.quin.catancraft.data.MonumentData;
 import com.quin.catancraft.data.MonumentType;
 import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
+import com.quin.catancraft.data.TradeProposal;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
 import com.quin.catancraft.economy.EconomyEngine;
@@ -122,6 +123,41 @@ public final class CatanCommands {
                                                 IntegerArgumentType.getInteger(ctx, "index"),
                                                 LongArgumentType.getLong(ctx, "amount")))))));
         node.then(building);
+
+        LiteralArgumentBuilder<CommandSourceStack> trade = Commands.literal("trade");
+        trade.then(Commands.literal("propose")
+                .then(Commands.argument("nation", StringArgumentType.string())
+                        .then(Commands.argument("offerAsset", StringArgumentType.word())
+                                .then(Commands.argument("offerAmount", LongArgumentType.longArg(1))
+                                        .then(Commands.argument("requestAsset", StringArgumentType.word())
+                                                .then(Commands.argument("requestAmount", LongArgumentType.longArg(1))
+                                                        .executes(ctx -> proposeTrade(
+                                                                ctx.getSource(),
+                                                                StringArgumentType.getString(ctx, "nation"),
+                                                                StringArgumentType.getString(ctx, "offerAsset"),
+                                                                LongArgumentType.getLong(ctx, "offerAmount"),
+                                                                StringArgumentType.getString(ctx, "requestAsset"),
+                                                                LongArgumentType.getLong(ctx, "requestAmount")))))))));
+
+        trade.then(Commands.literal("accept")
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .executes(ctx -> acceptTrade(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id")))));
+
+        trade.then(Commands.literal("decline")
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .executes(ctx -> declineTrade(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id")))));
+
+        trade.then(Commands.literal("cancel")
+                .then(Commands.argument("id", StringArgumentType.word())
+                        .executes(ctx -> cancelTrade(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "id")))));
+
+        node.then(trade);
 
         return node;
     }
@@ -683,6 +719,246 @@ public final class CatanCommands {
                         " target stock set to " + amount), false);
         NationDashboard.open(player);
         return 1;
+    }
+
+    private static int proposeTrade(
+            CommandSourceStack source,
+            String recipientNationName,
+            String offeredAssetRaw,
+            long offeredAmount,
+            String requestedAssetRaw,
+            long requestedAmount
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData sender = requireLeaderNation(source, player, data);
+        if (sender == null) return 0;
+
+        NationData recipient = data.nationByName(recipientNationName.trim());
+        if (recipient == null) {
+            source.sendFailure(Component.literal(
+                    "Unknown nation: " + recipientNationName));
+            return 0;
+        }
+        if (sender.id().equals(recipient.id())) {
+            source.sendFailure(Component.literal("You cannot trade with your own nation."));
+            return 0;
+        }
+
+        final String offeredAsset;
+        final String requestedAsset;
+        try {
+            offeredAsset = normalizeTradeAsset(offeredAssetRaw);
+            requestedAsset = normalizeTradeAsset(requestedAssetRaw);
+        } catch (IllegalArgumentException ex) {
+            source.sendFailure(Component.literal(
+                    "Trade assets must be money or a valid resource id."));
+            return 0;
+        }
+
+        if (!hasTradeAsset(sender, offeredAsset, offeredAmount)) {
+            source.sendFailure(Component.literal(
+                    "Your nation does not have enough " +
+                            tradeAssetDisplay(offeredAsset) + " to escrow this offer."));
+            return 0;
+        }
+
+        debitTradeAsset(sender, offeredAsset, offeredAmount);
+
+        TradeProposal proposal = data.createTradeProposal(
+                sender.id(),
+                recipient.id(),
+                offeredAsset,
+                offeredAmount,
+                requestedAsset,
+                requestedAmount,
+                source.getServer().overworld().getGameTime()
+        );
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                "Trade #" + proposal.id() + " sent to " + recipient.name() +
+                        ": offer " + tradeAssetAmountText(offeredAsset, offeredAmount) +
+                        " for " + tradeAssetAmountText(requestedAsset, requestedAmount) +
+                        ". Offered assets are now in escrow."), true);
+
+        source.getServer().getPlayerList().getPlayers().stream()
+                .filter(p -> recipient.containsMember(p.getUUID()))
+                .forEach(p -> p.sendSystemMessage(Component.literal(
+                        "[CatanCraft] New trade proposal #" + proposal.id() +
+                                " from " + sender.name() + ". Open /nation to review it.")));
+
+        NationDashboard.open(player);
+        return 1;
+    }
+
+    private static int acceptTrade(
+            CommandSourceStack source,
+            String proposalId
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData recipient = requireLeaderNation(source, player, data);
+        if (recipient == null) return 0;
+
+        TradeProposal proposal = data.tradeProposal(proposalId);
+        if (proposal == null || !recipient.id().equals(proposal.recipientNationId())) {
+            source.sendFailure(Component.literal(
+                    "No incoming trade proposal with id " + proposalId + "."));
+            return 0;
+        }
+
+        NationData sender = data.nation(proposal.senderNationId());
+        if (sender == null) {
+            source.sendFailure(Component.literal(
+                    "The sending nation no longer exists."));
+            return 0;
+        }
+
+        if (!hasTradeAsset(
+                recipient,
+                proposal.requestedAsset(),
+                proposal.requestedAmount())) {
+            source.sendFailure(Component.literal(
+                    "Your nation does not have enough " +
+                            tradeAssetDisplay(proposal.requestedAsset()) +
+                            " to accept this trade."));
+            return 0;
+        }
+
+        debitTradeAsset(
+                recipient,
+                proposal.requestedAsset(),
+                proposal.requestedAmount());
+        creditTradeAsset(
+                sender,
+                proposal.requestedAsset(),
+                proposal.requestedAmount());
+        creditTradeAsset(
+                recipient,
+                proposal.offeredAsset(),
+                proposal.offeredAmount());
+
+        data.removeTradeProposal(proposal.id());
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                "Accepted trade #" + proposal.id() + " with " + sender.name() + "."), true);
+
+        source.getServer().getPlayerList().getPlayers().stream()
+                .filter(p -> sender.containsMember(p.getUUID()))
+                .forEach(p -> p.sendSystemMessage(Component.literal(
+                        "[CatanCraft] " + recipient.name() +
+                                " accepted trade #" + proposal.id() + ".")));
+
+        NationDashboard.open(player);
+        return 1;
+    }
+
+    private static int declineTrade(
+            CommandSourceStack source,
+            String proposalId
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData recipient = requireLeaderNation(source, player, data);
+        if (recipient == null) return 0;
+
+        TradeProposal proposal = data.tradeProposal(proposalId);
+        if (proposal == null || !recipient.id().equals(proposal.recipientNationId())) {
+            source.sendFailure(Component.literal(
+                    "No incoming trade proposal with id " + proposalId + "."));
+            return 0;
+        }
+
+        NationData sender = data.nation(proposal.senderNationId());
+        if (sender != null) {
+            creditTradeAsset(sender, proposal.offeredAsset(), proposal.offeredAmount());
+        }
+
+        data.removeTradeProposal(proposal.id());
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                "Declined trade #" + proposal.id() + "."), true);
+
+        if (sender != null) {
+            source.getServer().getPlayerList().getPlayers().stream()
+                    .filter(p -> sender.containsMember(p.getUUID()))
+                    .forEach(p -> p.sendSystemMessage(Component.literal(
+                            "[CatanCraft] " + recipient.name() +
+                                    " declined trade #" + proposal.id() +
+                                    ". Escrow was refunded.")));
+        }
+
+        NationDashboard.open(player);
+        return 1;
+    }
+
+    private static int cancelTrade(
+            CommandSourceStack source,
+            String proposalId
+    ) throws CommandSyntaxException {
+        ServerPlayer player = source.getPlayerOrException();
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        NationData sender = requireLeaderNation(source, player, data);
+        if (sender == null) return 0;
+
+        TradeProposal proposal = data.tradeProposal(proposalId);
+        if (proposal == null || !sender.id().equals(proposal.senderNationId())) {
+            source.sendFailure(Component.literal(
+                    "No outgoing trade proposal with id " + proposalId + "."));
+            return 0;
+        }
+
+        creditTradeAsset(sender, proposal.offeredAsset(), proposal.offeredAmount());
+        data.removeTradeProposal(proposal.id());
+        data.setDirty();
+
+        source.sendSuccess(() -> Component.literal(
+                "Canceled trade #" + proposal.id() + ". Escrow was refunded."), true);
+        NationDashboard.open(player);
+        return 1;
+    }
+
+    private static String normalizeTradeAsset(String raw) {
+        if (raw.equalsIgnoreCase("money") || raw.equalsIgnoreCase("cash")) {
+            return "money";
+        }
+        return ResourceType.parse(raw).id();
+    }
+
+    private static boolean hasTradeAsset(NationData nation, String asset, long amount) {
+        if ("money".equals(asset)) {
+            return nation.treasury() >= amount;
+        }
+        return nation.resource(ResourceType.parse(asset)) >= amount;
+    }
+
+    private static void debitTradeAsset(NationData nation, String asset, long amount) {
+        if ("money".equals(asset)) {
+            nation.setTreasury(nation.treasury() - amount);
+        } else {
+            nation.addResource(ResourceType.parse(asset), -amount);
+        }
+    }
+
+    private static void creditTradeAsset(NationData nation, String asset, long amount) {
+        if ("money".equals(asset)) {
+            nation.addTreasury(amount);
+        } else {
+            nation.addResource(ResourceType.parse(asset), amount);
+        }
+    }
+
+    private static String tradeAssetDisplay(String asset) {
+        if ("money".equals(asset)) return "money";
+        return ResourceType.parse(asset).id().replace('_', ' ');
+    }
+
+    private static String tradeAssetAmountText(String asset, long amount) {
+        if ("money".equals(asset)) return "$" + amount;
+        return amount + " " + tradeAssetDisplay(asset);
     }
 
     private static int createTerritory(

@@ -20,6 +20,7 @@ public final class CatanSavedData extends SavedData {
     private final Map<UUID, NationData> nations = new LinkedHashMap<>();
     private final Map<String, TerritoryData> territories = new LinkedHashMap<>();
     private final Map<String, MonumentData> monuments = new LinkedHashMap<>();
+    private final Map<String, TradeProposal> tradeProposals = new LinkedHashMap<>();
     @Nullable private String activeMonumentId;
     @Nullable private String lastActivatedMonumentId;
     private long nextMonumentActivationGameTime;
@@ -42,6 +43,50 @@ public final class CatanSavedData extends SavedData {
 
     public Collection<MonumentData> monuments() {
         return monuments.values();
+    }
+
+    public Collection<TradeProposal> tradeProposals() {
+        return tradeProposals.values();
+    }
+
+    @Nullable
+    public TradeProposal tradeProposal(String id) {
+        return id == null ? null : tradeProposals.get(id.toLowerCase());
+    }
+
+    public TradeProposal createTradeProposal(
+            UUID senderNationId,
+            UUID recipientNationId,
+            String offeredAsset,
+            long offeredAmount,
+            String requestedAsset,
+            long requestedAmount,
+            long createdGameTime
+    ) {
+        String id;
+        do {
+            id = UUID.randomUUID().toString().substring(0, 8);
+        } while (tradeProposals.containsKey(id));
+
+        TradeProposal proposal = new TradeProposal(
+                id,
+                senderNationId,
+                recipientNationId,
+                offeredAsset,
+                offeredAmount,
+                requestedAsset,
+                requestedAmount,
+                createdGameTime
+        );
+        tradeProposals.put(proposal.id(), proposal);
+        setDirty();
+        return proposal;
+    }
+
+    public void removeTradeProposal(String id) {
+        if (id != null && tradeProposals.remove(id.toLowerCase()) != null) {
+            setDirty();
+        }
     }
 
     @Nullable
@@ -173,6 +218,12 @@ public final class CatanSavedData extends SavedData {
             monumentList.add(monument.save());
         }
         tag.put("monuments", monumentList);
+
+        ListTag tradeList = new ListTag();
+        for (TradeProposal proposal : tradeProposals.values()) {
+            tradeList.add(proposal.save());
+        }
+        tag.put("tradeProposals", tradeList);
         if (activeMonumentId != null) tag.putString("activeMonumentId", activeMonumentId);
         if (lastActivatedMonumentId != null) tag.putString("lastActivatedMonumentId", lastActivatedMonumentId);
         tag.putLong("nextMonumentActivationGameTime", nextMonumentActivationGameTime);
@@ -198,6 +249,12 @@ public final class CatanSavedData extends SavedData {
         for (int i = 0; i < monumentList.size(); i++) {
             MonumentData monument = MonumentData.load(monumentList.getCompound(i));
             data.monuments.put(monument.id(), monument);
+        }
+
+        ListTag tradeList = tag.getList("tradeProposals", Tag.TAG_COMPOUND);
+        for (int i = 0; i < tradeList.size(); i++) {
+            TradeProposal proposal = TradeProposal.load(tradeList.getCompound(i));
+            data.tradeProposals.put(proposal.id(), proposal);
         }
         if (tag.contains("activeMonumentId", Tag.TAG_STRING)) {
             data.activeMonumentId = tag.getString("activeMonumentId");
