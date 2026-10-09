@@ -52,8 +52,16 @@ public final class NationDashboard {
         lines.add("B|Members: " + nation.members().size());
         lines.add("B|Territories: " + territories.size());
         lines.add("D|Role: " + (leader ? "Leader" : "Member"));
+        lines.add("D|Quick stock: W " + nation.resource(ResourceType.WOOD) +
+                " • S " + nation.resource(ResourceType.STONE) +
+                " • A " + nation.resource(ResourceType.AGRICULTURE) +
+                " • Steel " + nation.resource(ResourceType.STEEL));
         lines.add("");
 
+        long stockedTypes = java.util.Arrays.stream(ResourceType.values())
+                .filter(type -> nation.resource(type) > 0)
+                .count();
+        lines.add("S|resources|RESOURCES • " + stockedTypes + " types stocked");
         lines.add("H|RAW RESOURCES");
         addResource(lines, nation, ResourceType.WOOD);
         addResource(lines, nation, ResourceType.STONE);
@@ -72,6 +80,7 @@ public final class NationDashboard {
         addResource(lines, nation, ResourceType.MECHANICAL_PARTS);
         addResource(lines, nation, ResourceType.ELECTRONICS);
         addResource(lines, nation, ResourceType.EXPLOSIVES);
+        lines.add("X|resources");
         lines.add("");
 
         if (territories.isEmpty()) {
@@ -112,7 +121,6 @@ public final class NationDashboard {
             lines.add("");
         }
 
-        lines.add("H|TRADE");
         List<TradeProposal> incomingTrades = data.tradeProposals().stream()
                 .filter(t -> nation.id().equals(t.recipientNationId()))
                 .sorted(Comparator.comparingLong(TradeProposal::createdGameTime))
@@ -122,6 +130,8 @@ public final class NationDashboard {
                 .sorted(Comparator.comparingLong(TradeProposal::createdGameTime))
                 .toList();
 
+        lines.add("S|trade|TRADE • " +
+                (incomingTrades.size() + outgoingTrades.size()) + " pending");
         if (incomingTrades.isEmpty() && outgoingTrades.isEmpty()) {
             lines.add("D|No pending trade proposals.");
         }
@@ -166,10 +176,12 @@ public final class NationDashboard {
             lines.add("C|trade_create|Create Trade Proposal");
             lines.add("D|Offered assets are escrowed until accepted, declined, or canceled.");
         }
+        lines.add("X|trade");
         lines.add("");
 
-        lines.add("H|ACTIVE MONUMENT");
         MonumentData activeMonument = data.activeMonument();
+        lines.add("S|monument|ACTIVE MONUMENT • " +
+                (activeMonument == null ? "None" : activeMonument.name()));
         if (activeMonument == null) {
             lines.add("D|No monument is active right now.");
         } else {
@@ -191,9 +203,10 @@ public final class NationDashboard {
                     " • Vertical ±12");
             lines.add("D|Capture: " + percent + "% • " + holder);
         }
+        lines.add("X|monument");
         lines.add("");
 
-        lines.add("H|TERRITORIES");
+        lines.add("S|territories|TERRITORIES • " + territories.size());
         if (territories.isEmpty()) {
             lines.add("Y|No territory assigned yet.");
         } else {
@@ -206,9 +219,10 @@ public final class NationDashboard {
                 lines.add("E|" + territory.id());
             }
         }
+        lines.add("X|territories");
 
         lines.add("");
-        lines.add("H|AVAILABLE EXPANSION");
+        lines.add("S|expansion|AVAILABLE EXPANSION • " + claimable.size());
         EconomyCost claimCost = EconomyCatalog.neutralTerritoryClaimCost();
         if (claimable.isEmpty()) {
             lines.add("D|No adjacent neutral territories.");
@@ -224,6 +238,8 @@ public final class NationDashboard {
                 }
             }
         }
+
+        lines.add("X|expansion");
 
         if (!leader) {
             lines.add("");
@@ -328,12 +344,20 @@ public final class NationDashboard {
                     lines.add("Y|  Max inputs: " +
                             inputRateText(type, batches));
 
-                    if (nation.resource(type.output()) >= building.targetStock()) {
-                        lines.add("D|  Status: PAUSED - target stock reached");
-                    } else if (!nation.canConsume(type.inputs(), 1)) {
-                        lines.add("R|  Status: WAITING - missing inputs");
-                    } else {
-                        lines.add("G|  Status: READY TO PRODUCE");
+                    EconomyEngine.ProcessorPreview preview =
+                            EconomyEngine.processorPreview(nation, building);
+
+                    switch (preview.status()) {
+                        case PAUSED_TARGET ->
+                                lines.add("D|  Status: PAUSED - target reached (" +
+                                        preview.currentOutput() + "/" +
+                                        preview.targetStock() + ")");
+                        case WAITING_INPUTS ->
+                                lines.add("R|  Status: WAITING - missing inputs");
+                        case READY ->
+                                lines.add("G|  Status: READY • next cycle +" +
+                                        preview.outputPerCycle() + " " +
+                                        pretty(type.output()));
                     }
                 }
 

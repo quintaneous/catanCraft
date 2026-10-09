@@ -2115,7 +2115,7 @@ public final class CatanCommands {
         source.sendSuccess(() -> Component.literal(
                 "=== " + territory.name() + " production preview ==="), false);
         source.sendSuccess(() -> Component.literal(
-                "Producer Level " + territory.producerLevel()), false);
+                "Raw Producer Level " + territory.producerLevel()), false);
 
         for (ResourceType resource : territory.rawResources()) {
             int perCycle = EconomyEngine.rawOutputPerCycle(territory, resource);
@@ -2139,7 +2139,72 @@ public final class CatanCommands {
             source.sendSuccess(() -> Component.literal(
                     "Territory Agriculture upkeep: none"), false);
         }
+
+        java.util.List<BuildingInstance> processors = territory.buildings().stream()
+                .filter(building -> building.type().isProcessor())
+                .toList();
+
+        if (processors.isEmpty()) {
+            source.sendSuccess(() -> Component.literal(
+                    "Processors: none installed."), false);
+            return 1;
+        }
+
+        NationData owner = territory.ownerNationId() == null
+                ? null
+                : data.nation(territory.ownerNationId());
+        if (owner == null) {
+            source.sendSuccess(() -> Component.literal(
+                    "Processors installed, but territory has no valid owning nation."), false);
+            return 1;
+        }
+
+        source.sendSuccess(() -> Component.literal("=== Processors ==="), false);
+        for (BuildingInstance building : processors) {
+            BuildingType type = building.type();
+            EconomyEngine.ProcessorPreview preview =
+                    EconomyEngine.processorPreview(owner, building);
+
+            String status = switch (preview.status()) {
+                case READY -> "READY";
+                case WAITING_INPUTS -> "WAITING FOR INPUTS";
+                case PAUSED_TARGET -> "PAUSED AT TARGET " +
+                        preview.currentOutput() + "/" + preview.targetStock();
+            };
+
+            String rate = preview.status() == EconomyEngine.ProcessorStatus.READY
+                    ? "+" + preview.outputPerCycle() + " " +
+                            type.output().id() + "/15m • +" +
+                            (preview.outputPerCycle() * 4) + "/hr"
+                    : "+0 " + type.output().id() + "/15m";
+
+            int batches = preview.status() == EconomyEngine.ProcessorStatus.READY
+                    ? preview.runnableBatches()
+                    : preview.desiredBatches();
+
+            String inputs = processorInputsText(type, Math.max(1, batches));
+
+            source.sendSuccess(() -> Component.literal(
+                    type.displayName() + " L" + building.level() +
+                            ": " + rate + " • " + status), false);
+            source.sendSuccess(() -> Component.literal(
+                    "  Inputs at shown rate: " + inputs +
+                            " • target " + building.targetStock()), false);
+        }
         return 1;
+    }
+
+    private static String processorInputsText(BuildingType type, int batches) {
+        StringBuilder result = new StringBuilder();
+        type.inputs().entrySet().stream()
+                .sorted(Comparator.comparing(entry -> entry.getKey().id()))
+                .forEach(entry -> {
+                    if (!result.isEmpty()) result.append(" + ");
+                    result.append(entry.getValue() * batches)
+                            .append(" ")
+                            .append(entry.getKey().id());
+                });
+        return result.isEmpty() ? "none" : result.toString();
     }
 
     private static int debugCycles(

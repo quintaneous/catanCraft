@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.function.Supplier;
 
 public final class NationDashboardPacket {
-    private static final int MAX_LINES = 256;
-    private static final int MAX_LINE_LENGTH = 256;
+    private static final int MAX_LINES = 1024;
+    private static final int MAX_LINE_LENGTH = 512;
 
     private final List<String> lines;
 

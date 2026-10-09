@@ -18,6 +18,7 @@ public final class NationDashboardScreen extends Screen {
     private static final int ACTION_HEIGHT = 18;
     private static final int ACTION_GAP = 3;
 
+    private static final Set<String> EXPANDED_SECTIONS = new HashSet<>();
     private static final Set<String> EXPANDED_TERRITORIES = new HashSet<>();
 
     private final List<String> lines;
@@ -46,8 +47,44 @@ public final class NationDashboardScreen extends Screen {
         graphics.enableScissor(left + 6, contentTop, right - 6, bottom - 8);
 
         int y = contentTop + 2 - (int) scroll;
+        boolean sectionHidden = false;
         boolean territoryHidden = false;
         for (String encoded : lines) {
+            if (encoded.startsWith("S|")) {
+                CollapsibleRow section = CollapsibleRow.parse(encoded);
+                if (section != null) {
+                    boolean expanded = EXPANDED_SECTIONS.contains(section.id());
+                    sectionHidden = !expanded;
+                    territoryHidden = false;
+
+                    int rowLeft = left + 8;
+                    int rowRight = right - 8;
+                    boolean hovered = mouseX >= rowLeft && mouseX <= rowRight
+                            && mouseY >= y && mouseY <= y + ACTION_HEIGHT;
+                    graphics.fill(rowLeft, y, rowRight, y + ACTION_HEIGHT,
+                            hovered ? 0xEE5A4930 : 0xDD3A3022);
+                    graphics.drawString(
+                            font,
+                            (expanded ? "▼ " : "▶ ") + section.label(),
+                            rowLeft + 7,
+                            y + 5,
+                            hovered ? 0xFFFFFF : 0xFFD166,
+                            false
+                    );
+                    y += ACTION_HEIGHT + ACTION_GAP;
+                }
+                continue;
+            }
+
+            if (encoded.startsWith("X|")) {
+                sectionHidden = false;
+                territoryHidden = false;
+                y += 4;
+                continue;
+            }
+
+            if (sectionHidden) continue;
+
             if (encoded.startsWith("T|")) {
                 TerritoryRow territory = TerritoryRow.parse(encoded);
                 if (territory != null) {
@@ -166,7 +203,7 @@ public final class NationDashboardScreen extends Screen {
         }
 
         graphics.drawCenteredString(font,
-                "Click actions  •  Mouse wheel to scroll  •  Esc to close",
+                "Click sections/territories to expand  •  Mouse wheel to scroll  •  Esc to close",
                 this.width / 2, bottom + 6, 0x8B949E);
 
         super.render(graphics, mouseX, mouseY, partialTick);
@@ -183,9 +220,42 @@ public final class NationDashboardScreen extends Screen {
         int right = left + panelWidth;
         int contentTop = TOP + 30;
         int y = contentTop + 2 - (int) scroll;
+        boolean sectionHidden = false;
         boolean territoryHidden = false;
 
         for (String encoded : lines) {
+            if (encoded.startsWith("S|")) {
+                CollapsibleRow section = CollapsibleRow.parse(encoded);
+                if (section != null) {
+                    boolean expanded = EXPANDED_SECTIONS.contains(section.id());
+                    int rowLeft = left + 8;
+                    int rowRight = right - 8;
+                    if (mouseX >= rowLeft && mouseX <= rowRight
+                            && mouseY >= y && mouseY <= y + ACTION_HEIGHT) {
+                        if (expanded) {
+                            EXPANDED_SECTIONS.remove(section.id());
+                        } else {
+                            EXPANDED_SECTIONS.add(section.id());
+                        }
+                        clampScroll();
+                        return true;
+                    }
+                    sectionHidden = !expanded;
+                    territoryHidden = false;
+                    y += ACTION_HEIGHT + ACTION_GAP;
+                }
+                continue;
+            }
+
+            if (encoded.startsWith("X|")) {
+                sectionHidden = false;
+                territoryHidden = false;
+                y += 4;
+                continue;
+            }
+
+            if (sectionHidden) continue;
+
             if (encoded.startsWith("T|")) {
                 TerritoryRow territory = TerritoryRow.parse(encoded);
                 if (territory != null) {
@@ -260,9 +330,29 @@ public final class NationDashboardScreen extends Screen {
 
     private int measuredContentHeight() {
         int height = 4;
+        boolean sectionHidden = false;
         boolean territoryHidden = false;
 
         for (String line : lines) {
+            if (line.startsWith("S|")) {
+                CollapsibleRow section = CollapsibleRow.parse(line);
+                if (section != null) {
+                    sectionHidden = !EXPANDED_SECTIONS.contains(section.id());
+                    territoryHidden = false;
+                    height += ACTION_HEIGHT + ACTION_GAP;
+                }
+                continue;
+            }
+
+            if (line.startsWith("X|")) {
+                sectionHidden = false;
+                territoryHidden = false;
+                height += 4;
+                continue;
+            }
+
+            if (sectionHidden) continue;
+
             if (line.startsWith("T|")) {
                 TerritoryRow territory = TerritoryRow.parse(line);
                 if (territory != null) {
@@ -301,6 +391,16 @@ public final class NationDashboardScreen extends Screen {
     @Override
     public boolean isPauseScreen() {
         return false;
+    }
+
+    private record CollapsibleRow(String id, String label) {
+        private static CollapsibleRow parse(String encoded) {
+            String[] pieces = encoded.split("\\|", 3);
+            if (pieces.length != 3 || pieces[1].isBlank() || pieces[2].isBlank()) {
+                return null;
+            }
+            return new CollapsibleRow(pieces[1], pieces[2]);
+        }
     }
 
     private record TerritoryRow(String id, String label) {

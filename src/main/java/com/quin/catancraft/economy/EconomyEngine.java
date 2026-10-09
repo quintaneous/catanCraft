@@ -12,6 +12,21 @@ import net.minecraft.server.MinecraftServer;
 import java.util.List;
 
 public final class EconomyEngine {
+    public enum ProcessorStatus {
+        READY,
+        WAITING_INPUTS,
+        PAUSED_TARGET
+    }
+
+    public record ProcessorPreview(
+            ProcessorStatus status,
+            int desiredBatches,
+            int runnableBatches,
+            int outputPerCycle,
+            long currentOutput,
+            long targetStock
+    ) {}
+
     private static long lastProcessedCycle = Long.MIN_VALUE;
 
     private EconomyEngine() {}
@@ -33,6 +48,63 @@ public final class EconomyEngine {
             ResourceType resource
     ) {
         return rawOutputPerCycle(territory, resource) * 4;
+    }
+
+    public static ProcessorPreview processorPreview(
+            NationData nation,
+            BuildingInstance building
+    ) {
+        BuildingType type = building.type();
+        if (!type.isProcessor()) {
+            throw new IllegalArgumentException(
+                    type.displayName() + " is not a processor.");
+        }
+
+        ResourceType output = type.output();
+        long current = nation.resource(output);
+        int desiredBatches = type.batchesPerCycle(building.level());
+
+        if (current >= building.targetStock()) {
+            return new ProcessorPreview(
+                    ProcessorStatus.PAUSED_TARGET,
+                    desiredBatches,
+                    0,
+                    0,
+                    current,
+                    building.targetStock()
+            );
+        }
+
+        long missing = building.targetStock() - current;
+        int batchesByTarget = (int) Math.max(
+                1,
+                Math.ceil((double) missing / type.outputPerBatch())
+        );
+        int runnable = Math.min(desiredBatches, batchesByTarget);
+
+        while (runnable > 0 && !nation.canConsume(type.inputs(), runnable)) {
+            runnable--;
+        }
+
+        if (runnable <= 0) {
+            return new ProcessorPreview(
+                    ProcessorStatus.WAITING_INPUTS,
+                    desiredBatches,
+                    0,
+                    0,
+                    current,
+                    building.targetStock()
+            );
+        }
+
+        return new ProcessorPreview(
+                ProcessorStatus.READY,
+                desiredBatches,
+                runnable,
+                type.outputPerBatch() * runnable,
+                current,
+                building.targetStock()
+        );
     }
 
     public static void tick(MinecraftServer server) {
@@ -152,25 +224,15 @@ public final class EconomyEngine {
             BuildingType type = building.type();
             if (!type.isProcessor() || type.processingTier() != tier) continue;
 
-            ResourceType output = type.output();
-            long current = nation.resource(output);
-            if (current >= building.targetStock()) continue;
-
-            int desiredBatches = type.batchesPerCycle(building.level());
-            long missing = building.targetStock() - current;
-            int batchesByTarget = (int) Math.max(
-                    1,
-                    Math.ceil((double) missing / type.outputPerBatch())
-            );
-            int batches = Math.min(desiredBatches, batchesByTarget);
-
-            while (batches > 0 && !nation.canConsume(type.inputs(), batches)) {
-                batches--;
+            ProcessorPreview preview = processorPreview(nation, building);
+            if (preview.status() != ProcessorStatus.READY
+                    || preview.runnableBatches() <= 0) {
+                continue;
             }
-            if (batches <= 0) continue;
 
+            int batches = preview.runnableBatches();
             nation.consume(type.inputs(), batches);
-            nation.addResource(output, (long) type.outputPerBatch() * batches);
+            nation.addResource(type.output(), preview.outputPerCycle());
         }
     }
 
