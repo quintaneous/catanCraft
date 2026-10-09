@@ -25,6 +25,21 @@ import java.util.Optional;
 public final class SchematicPlacementService {
     public record Result(boolean success, String message, int changedBlocks) {}
 
+    public record LocalExclusion(
+            int minX,
+            int minY,
+            int minZ,
+            int maxX,
+            int maxY,
+            int maxZ
+    ) {
+        public boolean contains(int x, int y, int z) {
+            return x >= Math.min(minX, maxX) && x <= Math.max(minX, maxX)
+                    && y >= Math.min(minY, maxY) && y <= Math.max(minY, maxY)
+                    && z >= Math.min(minZ, maxZ) && z <= Math.max(minZ, maxZ);
+        }
+    }
+
     private record SchematicData(
             int width,
             int height,
@@ -84,7 +99,32 @@ public final class SchematicPlacementService {
                     0
             );
         }
-        return place(level, templateName, worldAnchor, applyAir);
+        return place(level, templateName, worldAnchor, applyAir, null);
+    }
+
+    public static Result place(
+            MinecraftServer server,
+            String dimensionId,
+            String templateName,
+            MapAnchor worldAnchor,
+            boolean applyAir,
+            LocalExclusion exclusion
+    ) {
+        ServerLevel level = null;
+        for (ServerLevel candidate : server.getAllLevels()) {
+            if (candidate.dimension().location().toString().equals(dimensionId)) {
+                level = candidate;
+                break;
+            }
+        }
+        if (level == null) {
+            return new Result(
+                    false,
+                    "Target dimension is not loaded: " + dimensionId,
+                    0
+            );
+        }
+        return place(level, templateName, worldAnchor, applyAir, exclusion);
     }
 
     public static Result place(
@@ -100,6 +140,16 @@ public final class SchematicPlacementService {
             String templateName,
             MapAnchor worldAnchor,
             boolean applyAir
+    ) {
+        return place(level, templateName, worldAnchor, applyAir, null);
+    }
+
+    public static Result place(
+            ServerLevel level,
+            String templateName,
+            MapAnchor worldAnchor,
+            boolean applyAir,
+            LocalExclusion exclusion
     ) {
         if (templateName == null || templateName.isBlank()) {
             return new Result(false, "No schematic template is configured.", 0);
@@ -129,6 +179,10 @@ public final class SchematicPlacementService {
             for (int z = 0; z < schematic.length(); z++) {
                 for (int x = 0; x < schematic.width(); x++) {
                     int paletteIndex = schematic.states()[index++];
+
+                    if (exclusion != null && exclusion.contains(x, y, z)) {
+                        continue;
+                    }
                     if (paletteIndex < 0 || paletteIndex >= schematic.palette().length) {
                         return new Result(
                                 false,

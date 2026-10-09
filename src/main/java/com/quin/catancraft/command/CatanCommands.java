@@ -991,13 +991,25 @@ public final class CatanCommands {
                 return 0;
             }
 
+            boolean keepWoodResourceYard =
+                    mapDefinition.resources().contains(ResourceType.WOOD);
+
+            SchematicPlacementService.LocalExclusion resourcePlotExclusion =
+                    keepWoodResourceYard
+                            ? null
+                            : new SchematicPlacementService.LocalExclusion(
+                                    6, 0, 45,
+                                    36, 46, 75
+                            );
+
             SchematicPlacementService.Result placement =
                     SchematicPlacementService.place(
                             source.getServer(),
                             mapDefinition.dimension(),
                             mapDefinition.settlementTemplate(),
                             mapDefinition.settlementAnchor(),
-                            false
+                            false,
+                            resourcePlotExclusion
                     );
 
             if (!placement.success()) {
