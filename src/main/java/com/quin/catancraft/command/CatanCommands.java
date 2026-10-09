@@ -309,6 +309,9 @@ public final class CatanCommands {
         node.then(Commands.literal("assetstatus")
                 .executes(ctx -> mapAssetStatus(ctx.getSource())));
 
+        node.then(Commands.literal("reloadassets")
+                .executes(ctx -> reloadMapAssets(ctx.getSource())));
+
         node.then(Commands.literal("placemonuments")
                 .executes(ctx -> placeMapMonuments(ctx.getSource())));
 
@@ -568,6 +571,16 @@ public final class CatanCommands {
             source.sendFailure(Component.literal(" - " + failure));
         }
         return 0;
+    }
+
+    private static int reloadMapAssets(CommandSourceStack source) {
+        SchematicPlacementService.clearCache();
+        source.sendSuccess(() -> Component.literal(
+                "Cleared the CatanCraft schematic cache. " +
+                        "Updated files in config/catancraft/schematics/ or " +
+                        "schematics_bundle.zip will be used on the next placement."),
+                false);
+        return mapAssetStatus(source);
     }
 
     private static int mapAssetStatus(CommandSourceStack source) {

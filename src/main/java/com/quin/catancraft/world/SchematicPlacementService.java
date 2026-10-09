@@ -60,6 +60,10 @@ public final class SchematicPlacementService {
 
     private SchematicPlacementService() {}
 
+    public static void clearCache() {
+        CACHE.clear();
+    }
+
     public static Result validateAsset(
             String assetId,
             MapAnchor worldAnchor

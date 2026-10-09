@@ -30,18 +30,7 @@ public final class MapAssetService {
     ) {
         List<Task> tasks = new ArrayList<>();
 
-        if (prebuiltStartingCity) {
-            // River & Bridges V3 already contains these four base settlements.
-            // Record the base/hall as authoritative without repasting the whole city.
-            data.setPlacedMapAsset(
-                    territoryKey(territory.id(), "city_base"),
-                    "starter_settlement"
-            );
-            data.setPlacedMapAsset(
-                    territoryKey(territory.id(), "town_hall"),
-                    "th1"
-            );
-        } else {
+        if (!prebuiltStartingCity) {
             addTerritoryTask(tasks, territory, "starter_settlement");
             addTerritoryTask(tasks, territory, "th1");
         }
@@ -51,8 +40,22 @@ public final class MapAssetService {
             addTerritoryTask(tasks, territory, assetId);
         }
 
-        Result result = executeTasks(server, data, territory.dimension(), tasks, false);
-        if (result.success()) data.setDirty();
+        Result result =
+                executeTasks(server, data, territory.dimension(), tasks, false);
+
+        if (result.success() && prebuiltStartingCity) {
+            // River & Bridges V3 already contains the base city and TH1.
+            // Record them only after all added producer assets validated and placed.
+            data.setPlacedMapAsset(
+                    territoryKey(territory.id(), "city_base"),
+                    "starter_settlement"
+            );
+            data.setPlacedMapAsset(
+                    territoryKey(territory.id(), "town_hall"),
+                    "th1"
+            );
+            data.setDirty();
+        }
         return result;
     }
 
