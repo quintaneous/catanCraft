@@ -256,6 +256,11 @@ public final class NationDashboard {
             TerritoryData territory,
             boolean leader
     ) {
+        int developmentCap = developmentSlotCap(territory);
+
+        lines.add("N|" + territory.id() + "|economy|PRODUCTION & UPGRADES • City L" +
+                territory.cityLevel() + " • Producer L" + territory.producerLevel());
+
         for (ResourceType raw : territory.rawResources()) {
             int percent = territory.rawResourceYieldPercent(raw);
             int actualCycle = EconomyEngine.rawOutputPerCycle(territory, raw);
@@ -272,11 +277,6 @@ public final class NationDashboard {
             lines.add("Y|Upkeep -" + upkeepCycle + " Agriculture/15m");
         }
 
-        int developmentCap = developmentSlotCap(territory);
-        lines.add("D|Development " + territory.buildings().size() + "/" +
-                developmentCap + " • City L" + territory.cityLevel() +
-                " • Producer L" + territory.producerLevel());
-
         EconomyCost nextCity = EconomyCatalog.cityUpgradeCost(territory.cityLevel());
         if (nextCity != null) {
             if (leader) {
@@ -287,7 +287,7 @@ public final class NationDashboard {
                                 " • " + nextCity.describe()
                 ));
             } else {
-                lines.add("D|Next city upgrade: " + nextCity.describe());
+                lines.add("D|Next city upgrade • " + nextCity.describe());
             }
         } else {
             lines.add("G|City max level");
@@ -304,14 +304,18 @@ public final class NationDashboard {
                                 " • " + nextProducer.describe()
                 ));
             } else {
-                lines.add("D|Next producer upgrade: " + nextProducer.describe());
+                lines.add("D|Next producer upgrade • " + nextProducer.describe());
             }
         } else {
             lines.add("G|Producer max level");
         }
+        lines.add("Q|" + territory.id() + "|economy");
 
-        if (!territory.buildings().isEmpty()) {
-            lines.add("P|BUILDINGS");
+        lines.add("N|" + territory.id() + "|buildings|BUILDINGS • " +
+                territory.buildings().size() + "/" + developmentCap);
+        if (territory.buildings().isEmpty()) {
+            lines.add("D|No purchased industries in this territory.");
+        } else {
             for (int i = 0; i < territory.buildings().size(); i++) {
                 BuildingInstance building = territory.buildings().get(i);
                 BuildingType type = building.type();
@@ -376,9 +380,12 @@ public final class NationDashboard {
                 }
             }
         }
+        lines.add("Q|" + territory.id() + "|buildings");
 
-        if (territory.buildings().size() < developmentCap) {
-            lines.add("P|BUILD NEW");
+        int openSlots = Math.max(0, developmentCap - territory.buildings().size());
+        lines.add("N|" + territory.id() + "|construction|CONSTRUCTION • " +
+                openSlots + (openSlots == 1 ? " slot open" : " slots open"));
+        if (openSlots > 0) {
             for (BuildingType type : BuildingType.values()) {
                 if (type.minCityLevel() > territory.cityLevel()) continue;
 
@@ -393,8 +400,9 @@ public final class NationDashboard {
                 }
             }
         } else {
-            lines.add("Y|No open development slots");
+            lines.add("Y|No open development slots. Upgrade the city to expand.");
         }
+        lines.add("Q|" + territory.id() + "|construction");
     }
 
     private static int developmentSlotCap(TerritoryData territory) {

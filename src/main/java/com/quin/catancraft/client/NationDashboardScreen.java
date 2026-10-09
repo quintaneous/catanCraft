@@ -23,6 +23,7 @@ public final class NationDashboardScreen extends Screen {
 
     private static Page LAST_PAGE = Page.OVERVIEW;
     private static final Set<String> OPEN_TERRITORIES = new HashSet<>();
+    private static final Set<String> OPEN_TERRITORY_SECTIONS = new HashSet<>();
 
     private final List<String> lines;
     private final List<HitTarget> hitTargets = new ArrayList<>();
@@ -102,7 +103,7 @@ public final class NationDashboardScreen extends Screen {
 
         graphics.drawCenteredString(
                 font,
-                "Tabs keep details separate • Mouse wheel to scroll • Esc to close",
+                "Click territory and section rows to expand • Mouse wheel to scroll • Esc to close",
                 this.width / 2,
                 bottom + 5,
                 0x7D8590
@@ -375,47 +376,98 @@ public final class NationDashboardScreen extends Screen {
             int contentBottom
     ) {
         List<String> section = sectionLines("territories");
-        boolean hidden = false;
+        boolean territoryHidden = false;
+        boolean subsectionHidden = false;
+        String currentTerritory = "";
 
         for (String encoded : section) {
             if (encoded.startsWith("T|")) {
                 TerritoryRow territory = TerritoryRow.parse(encoded);
                 if (territory == null) continue;
 
+                currentTerritory = territory.id();
                 boolean open = OPEN_TERRITORIES.contains(territory.id());
-                hidden = !open;
+                territoryHidden = !open;
+                subsectionHidden = false;
 
                 int x1 = left + 14;
                 int x2 = right - 14;
                 boolean hovered = mouseX >= x1 && mouseX <= x2
-                        && mouseY >= y && mouseY <= y + 24;
-                graphics.fill(x1, y, x2, y + 24,
+                        && mouseY >= y && mouseY <= y + 26;
+                graphics.fill(x1, y, x2, y + 26,
                         hovered ? 0xEE31475F : 0xDD202C3A);
                 graphics.drawString(
                         font,
                         (open ? "▼ " : "▶ ") + territory.label(),
                         x1 + 8,
-                        y + 8,
+                        y + 9,
                         open ? 0xFFFFFF : 0x79C0FF,
                         false
                 );
 
-                if (y + 24 >= contentTop && y <= contentBottom) {
+                if (y + 26 >= contentTop && y <= contentBottom) {
                     hitTargets.add(new HitTarget(
-                            x1, y, x2, y + 24,
+                            x1, y, x2, y + 26,
                             HitKind.TERRITORY, territory.id()));
                 }
-                y += 29;
+                y += 31;
                 continue;
             }
 
             if (encoded.startsWith("E|")) {
-                hidden = false;
+                currentTerritory = "";
+                territoryHidden = false;
+                subsectionHidden = false;
                 y += 4;
                 continue;
             }
 
-            if (hidden) continue;
+            if (territoryHidden) continue;
+
+            if (encoded.startsWith("N|")) {
+                TerritorySectionRow subsection =
+                        TerritorySectionRow.parse(encoded);
+                if (subsection == null) continue;
+
+                String key = subsection.key();
+                boolean open = OPEN_TERRITORY_SECTIONS.contains(key);
+                subsectionHidden = !open;
+
+                int x1 = left + 24;
+                int x2 = right - 24;
+                boolean hovered = mouseX >= x1 && mouseX <= x2
+                        && mouseY >= y && mouseY <= y + 22;
+
+                graphics.fill(
+                        x1, y, x2, y + 22,
+                        hovered ? 0xEE2A3A4C : 0xCC192530
+                );
+                graphics.drawString(
+                        font,
+                        (open ? "▼ " : "▶ ") + subsection.label(),
+                        x1 + 8,
+                        y + 7,
+                        open ? 0xFFFFFF : 0xAAB4C0,
+                        false
+                );
+
+                if (y + 22 >= contentTop && y <= contentBottom) {
+                    hitTargets.add(new HitTarget(
+                            x1, y, x2, y + 22,
+                            HitKind.SUBSECTION, key));
+                }
+                y += 27;
+                continue;
+            }
+
+            if (encoded.startsWith("Q|")) {
+                subsectionHidden = false;
+                y += 2;
+                continue;
+            }
+
+            if (subsectionHidden) continue;
+
             y = drawEncodedLine(
                     graphics, mouseX, mouseY, left, right, y,
                     contentTop, contentBottom, encoded);
@@ -647,6 +699,14 @@ public final class NationDashboardScreen extends Screen {
                 return true;
             }
 
+            if (hit.kind() == HitKind.SUBSECTION) {
+                if (!OPEN_TERRITORY_SECTIONS.add(hit.value())) {
+                    OPEN_TERRITORY_SECTIONS.remove(hit.value());
+                }
+                clampScroll();
+                return true;
+            }
+
             if (hit.kind() == HitKind.ACTION) {
                 Minecraft minecraft = Minecraft.getInstance();
                 boolean clientAction = hit.value().startsWith("C:");
@@ -700,6 +760,7 @@ public final class NationDashboardScreen extends Screen {
     private enum HitKind {
         PAGE,
         TERRITORY,
+        SUBSECTION,
         ACTION
     }
 
@@ -731,6 +792,31 @@ public final class NationDashboardScreen extends Screen {
                 return null;
             }
             return new TerritoryRow(pieces[1], pieces[2]);
+        }
+    }
+
+    private record TerritorySectionRow(
+            String territoryId,
+            String sectionId,
+            String label
+    ) {
+        private static TerritorySectionRow parse(String encoded) {
+            String[] pieces = encoded.split("\\|", 4);
+            if (pieces.length != 4
+                    || pieces[1].isBlank()
+                    || pieces[2].isBlank()
+                    || pieces[3].isBlank()) {
+                return null;
+            }
+            return new TerritorySectionRow(
+                    pieces[1],
+                    pieces[2],
+                    pieces[3]
+            );
+        }
+
+        private String key() {
+            return territoryId + ":" + sectionId;
         }
     }
 
