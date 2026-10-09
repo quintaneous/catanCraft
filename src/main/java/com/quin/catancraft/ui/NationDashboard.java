@@ -11,6 +11,7 @@ import com.quin.catancraft.data.TradeProposal;
 import com.quin.catancraft.economy.EconomyBalance;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
+import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.map.TerritoryDefinition;
@@ -239,20 +240,15 @@ public final class NationDashboard {
             TerritoryData territory,
             boolean leader
     ) {
-        int perCycle = territory.rawProductionPerCycle();
-        int perHour = perCycle * 4;
-
         lines.add("D|City L" + territory.cityLevel() +
                 " • Producer L" + territory.producerLevel());
         lines.add("D|Raw outputs: " + resourceListText(territory.rawResources()));
         for (ResourceType raw : territory.rawResources()) {
             int percent = territory.rawResourceYieldPercent(raw);
-            int actualCycle = Math.max(
-                    0,
-                    (int) Math.round(perCycle * (percent / 100.0))
-            );
+            int actualCycle = EconomyEngine.rawOutputPerCycle(territory, raw);
+            int actualHour = EconomyEngine.rawOutputPerHour(territory, raw);
             lines.add("G|  " + pretty(raw) + ": +" + actualCycle +
-                    "/15m • +" + (actualCycle * 4) + "/hr" +
+                    "/15m • +" + actualHour + "/hr" +
                     (percent == 100 ? "" : " • " + percent + "% yield"));
         }
 

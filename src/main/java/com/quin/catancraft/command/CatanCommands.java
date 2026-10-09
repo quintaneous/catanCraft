@@ -389,6 +389,12 @@ public final class CatanCommands {
                                 ctx.getSource(),
                                 IntegerArgumentType.getInteger(ctx, "count")))));
 
+        node.then(Commands.literal("production")
+                .then(Commands.argument("territory", StringArgumentType.word())
+                        .executes(ctx -> debugProduction(
+                                ctx.getSource(),
+                                StringArgumentType.getString(ctx, "territory")))));
+
         return node;
     }
 
@@ -2019,6 +2025,48 @@ public final class CatanCommands {
         source.sendSuccess(() -> Component.literal(
                 "Added $" + amount + " to " + nation.name() +
                         ". Treasury is now $" + nation.treasury()), true);
+        return 1;
+    }
+
+    private static int debugProduction(
+            CommandSourceStack source,
+            String territoryId
+    ) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        TerritoryData territory = data.territory(territoryId);
+        if (territory == null) {
+            source.sendFailure(Component.literal(
+                    "Unknown territory: " + territoryId));
+            return 0;
+        }
+
+        source.sendSuccess(() -> Component.literal(
+                "=== " + territory.name() + " production preview ==="), false);
+        source.sendSuccess(() -> Component.literal(
+                "Producer Level " + territory.producerLevel()), false);
+
+        for (ResourceType resource : territory.rawResources()) {
+            int perCycle = EconomyEngine.rawOutputPerCycle(territory, resource);
+            int perHour = EconomyEngine.rawOutputPerHour(territory, resource);
+            int percent = territory.rawResourceYieldPercent(resource);
+
+            source.sendSuccess(() -> Component.literal(
+                    resource.id() + ": +" + perCycle + "/15m • +" +
+                            perHour + "/hr • " + percent + "% yield"), false);
+        }
+
+        boolean hasNonFood = territory.rawResources().stream()
+                .anyMatch(resource -> resource != ResourceType.AGRICULTURE);
+        if (hasNonFood) {
+            int upkeep = com.quin.catancraft.economy.EconomyBalance
+                    .agricultureUpkeepPerCycle(territory.producerLevel());
+            source.sendSuccess(() -> Component.literal(
+                    "Territory Agriculture upkeep: -" + upkeep +
+                            "/15m • -" + (upkeep * 4) + "/hr"), false);
+        } else {
+            source.sendSuccess(() -> Component.literal(
+                    "Territory Agriculture upkeep: none"), false);
+        }
         return 1;
     }
 

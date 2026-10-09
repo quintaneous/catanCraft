@@ -16,6 +16,25 @@ public final class EconomyEngine {
 
     private EconomyEngine() {}
 
+    public static int rawOutputPerCycle(
+            TerritoryData territory,
+            ResourceType resource
+    ) {
+        if (!territory.rawResources().contains(resource)) return 0;
+        int base = EconomyBalance.rawProductionPerCycle(territory.producerLevel());
+        return scaledProduction(
+                base,
+                territory.rawResourceYieldPercent(resource)
+        );
+    }
+
+    public static int rawOutputPerHour(
+            TerritoryData territory,
+            ResourceType resource
+    ) {
+        return rawOutputPerCycle(territory, resource) * 4;
+    }
+
     public static void tick(MinecraftServer server) {
         long gameTime = server.overworld().getGameTime();
         long cycle = gameTime / EconomyBalance.CYCLE_TICKS;
@@ -36,12 +55,10 @@ public final class EconomyEngine {
             if (nation == null) continue;
 
             if (territory.rawResources().contains(ResourceType.AGRICULTURE)) {
-                int base = EconomyBalance.rawProductionPerCycle(
-                        territory.producerLevel());
-                int agriculture = scaledProduction(
-                        base,
-                        territory.rawResourceYieldPercent(ResourceType.AGRICULTURE));
-                nation.addResource(ResourceType.AGRICULTURE, agriculture);
+                nation.addResource(
+                        ResourceType.AGRICULTURE,
+                        rawOutputPerCycle(territory, ResourceType.AGRICULTURE)
+                );
             }
         }
 
@@ -101,7 +118,6 @@ public final class EconomyEngine {
         if (outputs.isEmpty()) return;
 
         int level = territory.producerLevel();
-        int production = territory.rawProductionPerCycle();
         int upkeep = EconomyBalance.agricultureUpkeepPerCycle(level);
         long available = nation.resource(ResourceType.AGRICULTURE);
 
@@ -114,9 +130,7 @@ public final class EconomyEngine {
         }
 
         for (ResourceType output : outputs) {
-            int outputBase = scaledProduction(
-                    production,
-                    territory.rawResourceYieldPercent(output));
+            int outputBase = rawOutputPerCycle(territory, output);
             int adjustedProduction = Math.max(
                     0,
                     (int) Math.floor(outputBase * supplyRatio)
