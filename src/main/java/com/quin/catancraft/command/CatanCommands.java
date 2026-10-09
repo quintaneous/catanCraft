@@ -480,6 +480,26 @@ public final class CatanCommands {
             return 0;
         }
 
+        MapAnchor farmAnchor = definition.anchor("plot_5");
+        if (farmAnchor != null
+                && definition.resources().contains(ResourceType.AGRICULTURE)) {
+            ServerPlayer executor = source.getPlayer();
+            if (executor != null) {
+                SchematicPlacementService.Result farmPlacement =
+                        SchematicPlacementService.place(
+                                executor.serverLevel(),
+                                "farm",
+                                farmAnchor
+                        );
+                if (!farmPlacement.success()) {
+                    source.sendFailure(Component.literal(
+                            "Starting-city farm placement failed; assignment canceled. " +
+                                    farmPlacement.message()));
+                    return 0;
+                }
+            }
+        }
+
         territory.setOwnerNationId(nation.id());
         data.setDirty();
 
@@ -865,12 +885,29 @@ public final class CatanCommands {
             return 0;
         }
 
+        MapAnchor farmAnchor = definition.anchor("plot_5");
+        if (farmAnchor != null
+                && definition.resources().contains(ResourceType.AGRICULTURE)) {
+            SchematicPlacementService.Result farmPlacement =
+                    SchematicPlacementService.place(
+                            player.serverLevel(),
+                            "farm",
+                            farmAnchor
+                    );
+            if (!farmPlacement.success()) {
+                source.sendFailure(Component.literal(
+                        "Starting-city farm placement failed; the city was not assigned. " +
+                                farmPlacement.message()));
+                return 0;
+            }
+        }
+
         territory.setOwnerNationId(nation.id());
         data.setDirty();
 
         source.sendSuccess(() -> Component.literal(
                 nation.name() + " selected " + definition.name() +
-                        " as its starting city."), true);
+                        " as its starting city. Mixed starter production is active."), true);
         NationDashboard.open(player);
         return 1;
     }
