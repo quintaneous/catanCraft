@@ -11,14 +11,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
 /**
- * Deterministic placement contracts for the current Visual Polish V3 asset set.
+ * Deterministic placement contracts for the Environment V4 asset set.
  *
- * Ordinary city anchors remain relative to the authored V3 city center. The
- * enlarged central objective district and monuments use fixed world anchors.
+ * Environment V4 keeps every existing gameplay anchor fixed and adds one
+ * installation-only 193x53x193 environment schematic per territory.
  */
 public final class SchematicAssetRegistry {
     public record Bounds(BlockPos min, BlockPos max) {}
@@ -102,48 +103,68 @@ public final class SchematicAssetRegistry {
     private static final Map<String, Asset> ASSETS = new LinkedHashMap<>();
 
     static {
+        // Environment V4 installation patches. These paste before any city
+        // structure on a site that is not already part of the authored V4 world.
+        for (char territory = 'a'; territory <= 'p'; territory++) {
+            String suffix = String.valueOf(territory);
+            add(new Asset(
+                    "city_environment_" + suffix,
+                    "city_environment_" + suffix,
+                    "city_environment",
+                    4,
+                    193, 53, 193,
+                    96, 8, 13,
+                    true,
+                    Set.of(0, 180),
+                    0, -83
+            ));
+        }
+
+        // V4 city assets. Placement contracts are unchanged from V3, but the
+        // schematic bytes changed, so their visual revision is bumped.
         add(new Asset(
-                "starter_settlement", "starter_settlement_v2", "city_base", 3,
+                "starter_settlement", "starter_settlement_v2", "city_base", 4,
                 161, 47, 169, 80, 2, 1, true,
                 Set.of(0, 180), 0, -83));
         add(new Asset(
-                "th1", "thall1", "town_hall", 3,
+                "th1", "thall1", "town_hall", 4,
                 75, 47, 65, 37, 2, 1, true,
                 Set.of(0, 180), 0, -39));
         add(new Asset(
-                "th2", "thall2", "town_hall", 3,
+                "th2", "thall2", "town_hall", 4,
                 75, 47, 65, 37, 2, 1, true,
                 Set.of(0, 180), 0, -39));
         add(new Asset(
-                "th3", "thall3", "town_hall", 3,
+                "th3", "thall3", "town_hall", 4,
                 75, 47, 65, 37, 2, 1, true,
                 Set.of(0, 180), 0, -39));
 
         add(new Asset(
-                "vehicle_factory", "vehiclefactory", "plot_1", 3,
+                "vehicle_factory", "vehiclefactory", "plot_1", 4,
                 31, 47, 31, 29, 2, 15, true,
                 Set.of(0, 180), -45, -24));
         add(new Asset(
-                "quarry", "quarry", "plot_2", 3,
+                "quarry", "quarry", "plot_2", 4,
                 31, 47, 31, 1, 8, 15, true,
                 Set.of(0, 180), 45, -24));
         add(new Asset(
-                "weapons_factory", "weaponsfactory", "plot_3", 3,
+                "weapons_factory", "weaponsfactory", "plot_3", 4,
                 31, 47, 31, 29, 2, 15, true,
                 Set.of(0, 180), -45, 16));
         add(new Asset(
-                "steel_mill", "steel_mill", "plot_4", 3,
+                "steel_mill", "steel_mill", "plot_4", 4,
                 31, 47, 31, 1, 2, 15, true,
                 Set.of(0, 180), 45, 16));
         add(new Asset(
-                "farm", "farm", "plot_5", 3,
+                "farm", "farm", "plot_5", 4,
                 31, 47, 31, 15, 2, 1, true,
                 Set.of(0, 180), -22, 44));
         add(new Asset(
-                "lumberyard", "lumberyard", "plot_6", 3,
+                "lumberyard", "lumberyard", "plot_6", 4,
                 31, 47, 31, 15, 2, 1, true,
                 Set.of(0, 180), 22, 44));
 
+        // Strategic-site schematics are byte-identical to the accepted V3 set.
         add(new Asset(
                 "iron_oil_site", "iron_oil_site", "strategic_resource_anchor", 3,
                 31, 23, 11, 15, 2, 0, true,
@@ -153,24 +174,24 @@ public final class SchematicAssetRegistry {
                 31, 23, 11, 15, 2, 0, true,
                 Set.of(0, 180), 0, 85));
 
-        // Visual Polish V3 central installation patch. It is never a normal
-        // purchasable asset and is pasted before the three monument structures.
+        // Environment V4 updates the central approach/base geometry while
+        // retaining the Visual Polish V3 placement contract.
         add(new Asset(
                 "central_district_base", "central_district_base",
-                "central_objective_district", 1,
+                "central_objective_district", 2,
                 301, 61, 301, 150, 8, 150, true,
                 Set.of(0), 0, 0));
 
         add(new Asset(
-                "industrial_complex", "industrialcomplex", "M1", 2,
+                "industrial_complex", "industrialcomplex", "M1", 3,
                 85, 47, 85, 42, 2, 42, true,
                 Set.of(0), 0, 0));
         add(new Asset(
-                "military_depot", "militarydepot", "M2", 2,
+                "military_depot", "militarydepot", "M2", 3,
                 85, 45, 77, 42, 2, 38, true,
                 Set.of(0), 0, 0));
         add(new Asset(
-                "refinery_monument", "refinerymonument", "M3", 2,
+                "refinery_monument", "refinerymonument", "M3", 3,
                 79, 55, 89, 39, 2, 44, true,
                 Set.of(0), 0, 0));
     }
@@ -187,7 +208,7 @@ public final class SchematicAssetRegistry {
 
     @Nullable
     public static Asset asset(String id) {
-        return id == null ? null : ASSETS.get(id.toLowerCase());
+        return id == null ? null : ASSETS.get(id.toLowerCase(Locale.ROOT));
     }
 
     @Nullable
@@ -207,6 +228,30 @@ public final class SchematicAssetRegistry {
         return asset == null ? null : asset.plot();
     }
 
+    @Nullable
+    public static String cityEnvironmentAsset(String territoryId) {
+        if (territoryId == null || territoryId.isBlank()) return null;
+        String id = "city_environment_" +
+                territoryId.trim().toLowerCase(Locale.ROOT);
+        return ASSETS.containsKey(id) ? id : null;
+    }
+
+    public static boolean isCityEnvironmentAsset(String assetId) {
+        return assetId != null
+                && assetId.toLowerCase(Locale.ROOT).startsWith("city_environment_");
+    }
+
+    @Nullable
+    public static String environmentTerritoryId(String assetId) {
+        if (!isCityEnvironmentAsset(assetId)) return null;
+        String suffix = assetId.substring("city_environment_".length())
+                .toLowerCase(Locale.ROOT);
+        return suffix.length() == 1 && suffix.charAt(0) >= 'a'
+                && suffix.charAt(0) <= 'p'
+                ? suffix
+                : null;
+    }
+
     public static List<String> rawProducerAssets(TerritoryDefinition territory) {
         List<String> result = new ArrayList<>();
         List<ResourceType> resources = territory.resources();
@@ -224,6 +269,12 @@ public final class SchematicAssetRegistry {
             result.add("coal_copper_site");
         }
         return result;
+    }
+
+    @Nullable
+    public static MapAnchor environmentAnchor(TerritoryDefinition territory) {
+        String assetId = cityEnvironmentAsset(territory.id());
+        return assetId == null ? null : territoryAnchor(assetId, territory);
     }
 
     @Nullable

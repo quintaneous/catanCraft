@@ -14,6 +14,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public final class MapAssetService {
+    public static final String ENVIRONMENT_V4_LEVEL_NAME =
+            "CatanCraft Environment V4";
+
     public record Result(boolean success, String message, int changedBlocks) {}
 
     private record Task(String assetId, MapAnchor anchor, String stateKey) {}
@@ -25,6 +28,58 @@ public final class MapAssetService {
         return SchematicAssetRegistry.requiredPlot(type);
     }
 
+    /**
+     * The authored Environment V4 world already contains all sixteen
+     * 193x53x193 environment layers. Never paste those layers over it.
+     */
+    public static boolean isEnvironmentV4World(MinecraftServer server) {
+        if (server == null || server.getWorldData() == null) return false;
+        String levelName = server.getWorldData().getLevelName();
+        return levelName != null
+                && ENVIRONMENT_V4_LEVEL_NAME.equalsIgnoreCase(levelName.trim());
+    }
+
+    public static int environmentMarkerCount(CatanSavedData data) {
+        int count = 0;
+        for (TerritoryDefinition territory : MapDefinitionManager.territories()) {
+            if (environmentRecorded(data, territory)) count++;
+        }
+        return count;
+    }
+
+    public static boolean allEnvironmentMarkersPresent(CatanSavedData data) {
+        int defined = MapDefinitionManager.territories().size();
+        return defined > 0 && environmentMarkerCount(data) == defined;
+    }
+
+    /**
+     * Records the environment layer as already installed without changing any
+     * blocks. This is safe only for the authored Environment V4 world.
+     */
+    public static int adoptPreinstalledEnvironmentV4(
+            MinecraftServer server,
+            CatanSavedData data
+    ) {
+        if (!isEnvironmentV4World(server)) return 0;
+
+        int changed = 0;
+        for (TerritoryDefinition territory : MapDefinitionManager.territories()) {
+            String assetId =
+                    SchematicAssetRegistry.cityEnvironmentAsset(territory.id());
+            SchematicAssetRegistry.Asset asset =
+                    SchematicAssetRegistry.asset(assetId);
+            if (asset == null) continue;
+
+            String key = environmentKey(territory.id());
+            if (!asset.placementToken().equals(data.placedMapAsset(key))) {
+                data.setPlacedMapAsset(key, asset.placementToken());
+                changed++;
+            }
+        }
+        if (changed > 0) data.setDirty();
+        return changed;
+    }
+
     public static Result activateTerritory(
             MinecraftServer server,
             CatanSavedData data,
@@ -32,6 +87,39 @@ public final class MapAssetService {
             boolean prebuiltStartingCity
     ) {
         List<Task> tasks = new ArrayList<>();
+
+        String environmentAssetId =
+                SchematicAssetRegistry.cityEnvironmentAsset(territory.id());
+        SchematicAssetRegistry.Asset environmentAsset =
+                SchematicAssetRegistry.asset(environmentAssetId);
+
+        if (environmentAsset == null) {
+            return new Result(
+                    false,
+                    "No Environment V4 placement contract for territory " +
+                            territory.id() + ".",
+                    0
+            );
+        }
+
+        if (isEnvironmentV4World(server)) {
+            // Environment V4 ships with this layer already baked into all
+            // sixteen pads. Persist the fact; never clear the pad again.
+            data.setPlacedMapAsset(
+                    environmentKey(territory.id()),
+                    environmentAsset.placementToken()
+            );
+        } else if (!environmentRecorded(data, territory)
+                && !prebuiltStartingCity) {
+            // Compatibility/fallback path for an uninitialized legacy site.
+            // This MUST be the first task because the environment includes air
+            // over the complete 193x53x193 city pad.
+            tasks.add(new Task(
+                    environmentAssetId,
+                    SchematicAssetRegistry.environmentAnchor(territory),
+                    environmentKey(territory.id())
+            ));
+        }
 
         if (!prebuiltStartingCity) {
             addTerritoryTask(tasks, territory, "starter_settlement");
@@ -165,9 +253,9 @@ public final class MapAssetService {
     }
 
     /**
-     * Installs the Visual Polish V3 central district base first, then all three
-     * separately managed monuments. Existing legacy monument placement tokens
-     * are treated as stale revisions and safely replaced.
+     * Installs the Environment V4 central district base first, then all three
+     * separately managed monuments. Existing legacy placement tokens are stale
+     * revisions and therefore get replaced once.
      */
     public static Result placeMonuments(
             MinecraftServer server,
@@ -214,8 +302,8 @@ public final class MapAssetService {
 
     /**
      * Re-pastes only independently replaceable city assets plus the current
-     * Town Hall tier. It intentionally NEVER re-pastes starter_settlement,
-     * because doing so could erase purchased plot assets.
+     * Town Hall tier. It intentionally NEVER re-pastes either the 193x193 V4
+     * environment or starter_settlement because either could erase purchases.
      */
     public static Result refreshOwnedCityVisuals(
             MinecraftServer server,
@@ -274,7 +362,8 @@ public final class MapAssetService {
         return new Result(
                 true,
                 "Refreshed " + refreshed +
-                        " owned-city visual placements without repasting city bases.",
+                        " owned-city visual placements without repasting " +
+                        "city environments or settlement bases.",
                 changed
         );
     }
@@ -285,6 +374,21 @@ public final class MapAssetService {
             case 2 -> "th2";
             default -> "th3";
         };
+    }
+
+    private static boolean environmentRecorded(
+            CatanSavedData data,
+            TerritoryDefinition territory
+    ) {
+        String assetId =
+                SchematicAssetRegistry.cityEnvironmentAsset(territory.id());
+        SchematicAssetRegistry.Asset asset =
+                SchematicAssetRegistry.asset(assetId);
+        if (asset == null) return false;
+
+        String existing =
+                data.placedMapAsset(environmentKey(territory.id()));
+        return asset.placementToken().equals(existing);
     }
 
     private static void addTerritoryTask(
@@ -409,6 +513,10 @@ public final class MapAssetService {
                 stateKey,
                 asset == null ? assetId : asset.placementToken()
         );
+    }
+
+    private static String environmentKey(String territoryId) {
+        return territoryKey(territoryId, "city_environment");
     }
 
     private static String territoryKey(String territoryId, String slot) {

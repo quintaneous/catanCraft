@@ -309,6 +309,9 @@ public final class CatanCommands {
         node.then(Commands.literal("assetstatus")
                 .executes(ctx -> mapAssetStatus(ctx.getSource())));
 
+        node.then(Commands.literal("environmentstatus")
+                .executes(ctx -> mapEnvironmentStatus(ctx.getSource())));
+
         node.then(Commands.literal("reloadassets")
                 .executes(ctx -> reloadMapAssets(ctx.getSource())));
 
@@ -417,10 +420,24 @@ public final class CatanCommands {
         try {
             MapDefinitionManager.LoadResult result =
                     MapDefinitionManager.installBundledSeasonOne(source.getServer());
+            CatanSavedData data = CatanSavedData.get(source.getServer());
+            int adopted = MapAssetService.adoptPreinstalledEnvironmentV4(
+                    source.getServer(),
+                    data
+            );
+
             source.sendSuccess(() -> Component.literal(
-                    "Installed bundled River & Bridges V3 season map: " +
+                    "Installed bundled River & Bridges V3 strategy definition: " +
                             result.territories() + " territories, " +
                             result.monuments() + " monuments."), true);
+            source.sendSuccess(() -> Component.literal(
+                    "Environment V4 baseline: " +
+                            (MapAssetService.isEnvironmentV4World(source.getServer())
+                                    ? "detected; recorded " + adopted +
+                                    " prepared territory environment markers."
+                                    : "not detected; uninitialized neutral sites will " +
+                                    "install their territory environment before activation.")),
+                    false);
             source.sendSuccess(() -> Component.literal(
                     "This overwrote config/catancraft/map.json with the map bundled in the mod."),
                     false);
@@ -436,10 +453,19 @@ public final class CatanCommands {
         try {
             MapDefinitionManager.LoadResult result =
                     MapDefinitionManager.reload(source.getServer());
+            CatanSavedData data = CatanSavedData.get(source.getServer());
+            int adopted = MapAssetService.adoptPreinstalledEnvironmentV4(
+                    source.getServer(),
+                    data
+            );
             source.sendSuccess(() -> Component.literal(
                     "Reloaded CatanCraft map: " + result.territories() +
                             " territories, " + result.monuments() +
-                            " monuments. Warnings: " + result.warnings().size()), true);
+                            " monuments. Warnings: " + result.warnings().size() +
+                            (adopted > 0
+                                    ? " • adopted " + adopted +
+                                    " Environment V4 markers"
+                                    : "")), true);
             for (String warning : result.warnings()) {
                 source.sendSuccess(() -> Component.literal(
                         "[Map warning] " + warning), false);
@@ -526,23 +552,18 @@ public final class CatanCommands {
             return 0;
         }
 
-        MapAnchor farmAnchor = definition.anchor("plot_5");
-        if (farmAnchor != null
-                && definition.resources().contains(ResourceType.AGRICULTURE)) {
-            SchematicPlacementService.Result farmPlacement =
-                    SchematicPlacementService.place(
-                            source.getServer(),
-                            definition.dimension(),
-                            "farm",
-                            farmAnchor,
-                            false
-                    );
-            if (!farmPlacement.success()) {
-                source.sendFailure(Component.literal(
-                        "Starting-city farm placement failed; assignment canceled. " +
-                                farmPlacement.message()));
-                return 0;
-            }
+        MapAssetService.Result activation =
+                MapAssetService.activateTerritory(
+                        source.getServer(),
+                        data,
+                        definition,
+                        true
+                );
+        if (!activation.success()) {
+            source.sendFailure(Component.literal(
+                    "Starting-city physical setup failed; assignment canceled. " +
+                            activation.message()));
+            return 0;
         }
 
         territory.setOwnerNationId(nation.id());
@@ -550,7 +571,9 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 "Assigned start slot " + slot + " (" + definition.name() +
-                        ") to " + nation.name() + "."), true);
+                        ") to " + nation.name() +
+                        " using the same physical activation path as /nation start."),
+                true);
         return 1;
     }
 
@@ -560,14 +583,14 @@ public final class CatanCommands {
 
         if (report.success()) {
             source.sendSuccess(() -> Component.literal(
-                    "River & Bridges V3 world verification PASS: " +
+                    "Environment V4 world verification PASS: " +
                             report.passed() + "/" + report.checks() +
                             " checks matched."), true);
             return 1;
         }
 
         source.sendFailure(Component.literal(
-                "V3 world verification FAILED: " +
+                "Environment V4 verification FAILED: " +
                         report.passed() + "/" + report.checks() +
                         " checks matched."));
         for (String failure : report.failures()) {
@@ -616,10 +639,40 @@ public final class CatanCommands {
         }
 
         source.sendSuccess(() -> Component.literal(
-                "Visual Polish assets refreshed safely. " +
+                "Environment V4 replaceable assets refreshed safely. " +
                         (monuments.changedBlocks() + cities.changedBlocks()) +
-                        " blocks changed. City bases were not repasted."),
+                        " blocks changed. 193x193 city environments and settlement " +
+                        "bases were not repasted."),
                 true);
+        return 1;
+    }
+
+    private static int mapEnvironmentStatus(CommandSourceStack source) {
+        CatanSavedData data = CatanSavedData.get(source.getServer());
+        int tracked = MapAssetService.environmentMarkerCount(data);
+        int total = MapDefinitionManager.territories().size();
+        boolean authoredWorld =
+                MapAssetService.isEnvironmentV4World(source.getServer());
+
+        source.sendSuccess(() -> Component.literal(
+                "Environment V4 • authored world=" + authoredWorld +
+                        " • prepared markers=" + tracked + "/" + total +
+                        " • level='" +
+                        source.getServer().getWorldData().getLevelName() + "'"),
+                false);
+
+        if (!authoredWorld && tracked < total) {
+            source.sendSuccess(() -> Component.literal(
+                    "Fallback mode: a neutral territory without an environment marker " +
+                            "will paste its territory-specific 193x53x193 environment " +
+                            "before the settlement is activated."),
+                    false);
+        } else {
+            source.sendSuccess(() -> Component.literal(
+                    "Prepared V4 environments will not be repasted during claims, " +
+                            "restarts, or visual refreshes."),
+                    false);
+        }
         return 1;
     }
 
@@ -633,6 +686,14 @@ public final class CatanCommands {
             MapAnchor anchor;
             if (SchematicAssetRegistry.isFixedWorldAsset(asset.id())) {
                 anchor = SchematicAssetRegistry.fixedAnchor(asset.id());
+            } else if (SchematicAssetRegistry.isCityEnvironmentAsset(asset.id())) {
+                String territoryId =
+                        SchematicAssetRegistry.environmentTerritoryId(asset.id());
+                TerritoryDefinition target =
+                        MapDefinitionManager.territory(territoryId);
+                anchor = target == null
+                        ? null
+                        : SchematicAssetRegistry.environmentAnchor(target);
             } else {
                 anchor = sample == null
                         ? null

@@ -1,5 +1,6 @@
 package com.quin.catancraft.world;
 
+import com.quin.catancraft.data.CatanSavedData;
 import com.quin.catancraft.map.InfrastructureDefinition;
 import com.quin.catancraft.map.MapAnchor;
 import com.quin.catancraft.map.MapDefinitionManager;
@@ -10,7 +11,6 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 
-import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,10 +37,21 @@ public final class WorldMapVerifier {
                             "', expected season1_river_bridges_v3.");
         }
 
+        CatanSavedData data = CatanSavedData.get(server);
+        boolean v4Baseline =
+                MapAssetService.isEnvironmentV4World(server)
+                        || MapAssetService.allEnvironmentMarkersPresent(data);
+
+        check(
+                counts,
+                failures,
+                "Environment V4 baseline",
+                v4Baseline
+        );
+
         ServerLevel overworld = server.overworld();
 
-        // Every prepared site in the exported V3 world has a solid Y=80 pad
-        // beneath its configured city-center standing position.
+        // Environment V4 preserves the authored city-center surface at Y=80.
         for (TerritoryDefinition territory : MapDefinitionManager.territories()) {
             MapAnchor center = territory.cityCenter();
             if (center == null) continue;
@@ -51,8 +62,8 @@ public final class WorldMapVerifier {
                             center.x(), center.y() - 1, center.z()
                     )));
 
-            // The four already-built starting settlements contain a management
-            // lectern at the exact registered anchor.
+            // The four authored starting settlements retain the exact
+            // management lectern anchor.
             if (territory.startsWithSettlement()) {
                 MapAnchor management = territory.managementAnchor();
                 boolean lectern = management != null
@@ -66,7 +77,7 @@ public final class WorldMapVerifier {
             }
         }
 
-        // V3 bridge metadata stores the actual deck Y.
+        // V4 intentionally leaves all four bridge collision volumes unchanged.
         for (InfrastructureDefinition point : MapDefinitionManager.infrastructure()) {
             if (!"bridge".equals(point.type())) continue;
             check(counts, failures,
@@ -76,10 +87,8 @@ public final class WorldMapVerifier {
                     )));
         }
 
-        // River & Bridges V3 specifically moved the river around the center.
-        // The center must therefore be solid at surface Y=80.
         check(counts, failures,
-                "solid central court",
+                "solid central district",
                 isSolidSurface(overworld, new BlockPos(0, 80, 0)));
 
         return new Report(counts[0], counts[1], List.copyOf(failures));
@@ -95,7 +104,7 @@ public final class WorldMapVerifier {
         if (passed) {
             counts[1]++;
         } else {
-            failures.add(name + " did not match the V3 world.");
+            failures.add(name + " did not match the Environment V4 baseline.");
         }
     }
 
