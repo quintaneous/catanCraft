@@ -1,0 +1,2082 @@
+{
+  "format": 2,
+  "mapId": "season1_river_bridges_v3",
+  "territories": [
+    {
+      "id": "a",
+      "name": "Northwest Hearth",
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -1000,
+          "z": -1000
+        },
+        {
+          "x": -500,
+          "z": -1000
+        },
+        {
+          "x": -500,
+          "z": -500
+        },
+        {
+          "x": -1000,
+          "z": -500
+        }
+      ],
+      "neighbors": [
+        "b",
+        "e"
+      ],
+      "startSlot": 1,
+      "startsWithSettlement": true,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -750,
+        "y": 81,
+        "z": -833,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -750,
+        "y": 81,
+        "z": -750,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -750,
+        "y": 81,
+        "z": -789,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -750,
+        "y": 84,
+        "z": -773,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -809,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": -691,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": -809,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": -691,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": -772,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": -728,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": -654
+      },
+      "restorationRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": -654
+      }
+    },
+    {
+      "id": "b",
+      "name": "Pine Reach",
+      "resources": [
+        "wood"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -500,
+          "z": -1000
+        },
+        {
+          "x": 0,
+          "z": -1000
+        },
+        {
+          "x": 0,
+          "z": -500
+        },
+        {
+          "x": -500,
+          "z": -500
+        }
+      ],
+      "neighbors": [
+        "a",
+        "c",
+        "f"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -250,
+        "y": 81,
+        "z": -833,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -250,
+        "y": 81,
+        "z": -750,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -250,
+        "y": 81,
+        "z": -789,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -250,
+        "y": 84,
+        "z": -773,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -309,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": -191,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": -309,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": -191,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": -272,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": -228,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": -654
+      },
+      "restorationRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": -654
+      }
+    },
+    {
+      "id": "c",
+      "name": "North Quarry",
+      "resources": [
+        "stone"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 0,
+          "z": -1000
+        },
+        {
+          "x": 500,
+          "z": -1000
+        },
+        {
+          "x": 500,
+          "z": -500
+        },
+        {
+          "x": 0,
+          "z": -500
+        }
+      ],
+      "neighbors": [
+        "b",
+        "d",
+        "g"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 250,
+        "y": 81,
+        "z": -833,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 250,
+        "y": 81,
+        "z": -750,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 250,
+        "y": 81,
+        "z": -789,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 250,
+        "y": 84,
+        "z": -773,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 191,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": 309,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": 191,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": 309,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": 228,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": 272,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": -654
+      },
+      "restorationRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": -654
+      }
+    },
+    {
+      "id": "d",
+      "name": "Northeast Hearth",
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 500,
+          "z": -1000
+        },
+        {
+          "x": 1000,
+          "z": -1000
+        },
+        {
+          "x": 1000,
+          "z": -500
+        },
+        {
+          "x": 500,
+          "z": -500
+        }
+      ],
+      "neighbors": [
+        "c",
+        "h"
+      ],
+      "startSlot": 2,
+      "startsWithSettlement": true,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 750,
+        "y": 81,
+        "z": -833,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 750,
+        "y": 81,
+        "z": -750,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 750,
+        "y": 81,
+        "z": -789,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 750,
+        "y": 84,
+        "z": -773,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 691,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": 809,
+          "y": 81,
+          "z": -788,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": 691,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": 809,
+          "y": 81,
+          "z": -748,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": 728,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": 772,
+          "y": 81,
+          "z": -706,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": -654
+      },
+      "restorationRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": -846,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": -654
+      }
+    },
+    {
+      "id": "e",
+      "name": "West Quarry",
+      "resources": [
+        "stone"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -1000,
+          "z": -500
+        },
+        {
+          "x": -500,
+          "z": -500
+        },
+        {
+          "x": -500,
+          "z": 0
+        },
+        {
+          "x": -1000,
+          "z": 0
+        }
+      ],
+      "neighbors": [
+        "a",
+        "f",
+        "i"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -750,
+        "y": 81,
+        "z": -333,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -750,
+        "y": 81,
+        "z": -250,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -750,
+        "y": 81,
+        "z": -289,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -750,
+        "y": 84,
+        "z": -273,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -809,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": -691,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": -809,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": -691,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": -772,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": -728,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": -154
+      },
+      "restorationRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": -154
+      }
+    },
+    {
+      "id": "f",
+      "name": "Iron Basin",
+      "resources": [
+        "iron",
+        "oil"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -500,
+          "z": -500
+        },
+        {
+          "x": 0,
+          "z": -500
+        },
+        {
+          "x": 0,
+          "z": 0
+        },
+        {
+          "x": -500,
+          "z": 0
+        }
+      ],
+      "neighbors": [
+        "b",
+        "e",
+        "g",
+        "j"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -250,
+        "y": 81,
+        "z": -333,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -250,
+        "y": 81,
+        "z": -250,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -250,
+        "y": 81,
+        "z": -289,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -250,
+        "y": 84,
+        "z": -273,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -309,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": -191,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": -309,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": -191,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": -272,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": -228,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": -154
+      },
+      "restorationRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": -154
+      }
+    },
+    {
+      "id": "g",
+      "name": "Copper Ridge",
+      "resources": [
+        "coal",
+        "copper"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 0,
+          "z": -500
+        },
+        {
+          "x": 500,
+          "z": -500
+        },
+        {
+          "x": 500,
+          "z": 0
+        },
+        {
+          "x": 0,
+          "z": 0
+        }
+      ],
+      "neighbors": [
+        "c",
+        "f",
+        "h",
+        "k"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 250,
+        "y": 81,
+        "z": -333,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 250,
+        "y": 81,
+        "z": -250,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 250,
+        "y": 81,
+        "z": -289,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 250,
+        "y": 84,
+        "z": -273,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 191,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": 309,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": 191,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": 309,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": 228,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": 272,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": -154
+      },
+      "restorationRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": -154
+      }
+    },
+    {
+      "id": "h",
+      "name": "Eastwood",
+      "resources": [
+        "wood"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 500,
+          "z": -500
+        },
+        {
+          "x": 1000,
+          "z": -500
+        },
+        {
+          "x": 1000,
+          "z": 0
+        },
+        {
+          "x": 500,
+          "z": 0
+        }
+      ],
+      "neighbors": [
+        "d",
+        "g",
+        "l"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 750,
+        "y": 81,
+        "z": -333,
+        "rotation": 0
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 750,
+        "y": 81,
+        "z": -250,
+        "rotation": 0
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 750,
+        "y": 81,
+        "z": -289,
+        "rotation": 0
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 750,
+        "y": 84,
+        "z": -273,
+        "rotation": 0
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 691,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_2",
+          "x": 809,
+          "y": 81,
+          "z": -288,
+          "rotation": 0
+        },
+        {
+          "id": "plot_3",
+          "x": 691,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_4",
+          "x": 809,
+          "y": 81,
+          "z": -248,
+          "rotation": 0
+        },
+        {
+          "id": "plot_5",
+          "x": 728,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        },
+        {
+          "id": "plot_6",
+          "x": 772,
+          "y": 81,
+          "z": -206,
+          "rotation": 0
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": -154
+      },
+      "restorationRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": -346,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": -154
+      }
+    },
+    {
+      "id": "i",
+      "name": "Westwood",
+      "resources": [
+        "wood"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -1000,
+          "z": 0
+        },
+        {
+          "x": -500,
+          "z": 0
+        },
+        {
+          "x": -500,
+          "z": 500
+        },
+        {
+          "x": -1000,
+          "z": 500
+        }
+      ],
+      "neighbors": [
+        "e",
+        "j",
+        "m"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -750,
+        "y": 81,
+        "z": 333,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -750,
+        "y": 81,
+        "z": 250,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -750,
+        "y": 81,
+        "z": 289,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -750,
+        "y": 84,
+        "z": 273,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -691,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": -809,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": -691,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": -809,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": -728,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": -772,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": 346
+      },
+      "restorationRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": 346
+      }
+    },
+    {
+      "id": "j",
+      "name": "Copper Hollow",
+      "resources": [
+        "coal",
+        "copper"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -500,
+          "z": 0
+        },
+        {
+          "x": 0,
+          "z": 0
+        },
+        {
+          "x": 0,
+          "z": 500
+        },
+        {
+          "x": -500,
+          "z": 500
+        }
+      ],
+      "neighbors": [
+        "f",
+        "i",
+        "k",
+        "n"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -250,
+        "y": 81,
+        "z": 333,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -250,
+        "y": 81,
+        "z": 250,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -250,
+        "y": 81,
+        "z": 289,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -250,
+        "y": 84,
+        "z": 273,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -191,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": -309,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": -191,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": -309,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": -228,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": -272,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": 346
+      },
+      "restorationRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": 346
+      }
+    },
+    {
+      "id": "k",
+      "name": "Iron Hollow",
+      "resources": [
+        "iron",
+        "oil"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 0,
+          "z": 0
+        },
+        {
+          "x": 500,
+          "z": 0
+        },
+        {
+          "x": 500,
+          "z": 500
+        },
+        {
+          "x": 0,
+          "z": 500
+        }
+      ],
+      "neighbors": [
+        "g",
+        "j",
+        "l",
+        "o"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 250,
+        "y": 81,
+        "z": 333,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 250,
+        "y": 81,
+        "z": 250,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 250,
+        "y": 81,
+        "z": 289,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 250,
+        "y": 84,
+        "z": 273,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 309,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": 191,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": 309,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": 191,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": 272,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": 228,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": 346
+      },
+      "restorationRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": 346
+      }
+    },
+    {
+      "id": "l",
+      "name": "East Quarry",
+      "resources": [
+        "stone"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 500,
+          "z": 0
+        },
+        {
+          "x": 1000,
+          "z": 0
+        },
+        {
+          "x": 1000,
+          "z": 500
+        },
+        {
+          "x": 500,
+          "z": 500
+        }
+      ],
+      "neighbors": [
+        "h",
+        "k",
+        "p"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 750,
+        "y": 81,
+        "z": 333,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 750,
+        "y": 81,
+        "z": 250,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 750,
+        "y": 81,
+        "z": 289,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 750,
+        "y": 84,
+        "z": 273,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 809,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": 691,
+          "y": 81,
+          "z": 288,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": 809,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": 691,
+          "y": 81,
+          "z": 248,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": 772,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": 728,
+          "y": 81,
+          "z": 206,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": 346
+      },
+      "restorationRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": 154,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": 346
+      }
+    },
+    {
+      "id": "m",
+      "name": "Southwest Hearth",
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -1000,
+          "z": 500
+        },
+        {
+          "x": -500,
+          "z": 500
+        },
+        {
+          "x": -500,
+          "z": 1000
+        },
+        {
+          "x": -1000,
+          "z": 1000
+        }
+      ],
+      "neighbors": [
+        "i",
+        "n"
+      ],
+      "startSlot": 3,
+      "startsWithSettlement": true,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -750,
+        "y": 81,
+        "z": 833,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -750,
+        "y": 81,
+        "z": 750,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -750,
+        "y": 81,
+        "z": 789,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -750,
+        "y": 84,
+        "z": 773,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -691,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": -809,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": -691,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": -809,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": -728,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": -772,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": 846
+      },
+      "restorationRegion": {
+        "minX": -846,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": -654,
+        "maxY": 125,
+        "maxZ": 846
+      }
+    },
+    {
+      "id": "n",
+      "name": "South Quarry",
+      "resources": [
+        "stone"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -500,
+          "z": 500
+        },
+        {
+          "x": 0,
+          "z": 500
+        },
+        {
+          "x": 0,
+          "z": 1000
+        },
+        {
+          "x": -500,
+          "z": 1000
+        }
+      ],
+      "neighbors": [
+        "j",
+        "m",
+        "o"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": -250,
+        "y": 81,
+        "z": 833,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": -250,
+        "y": 81,
+        "z": 750,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": -250,
+        "y": 81,
+        "z": 789,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": -250,
+        "y": 84,
+        "z": 773,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": -191,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": -309,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": -191,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": -309,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": -228,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": -272,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": 846
+      },
+      "restorationRegion": {
+        "minX": -346,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": -154,
+        "maxY": 125,
+        "maxZ": 846
+      }
+    },
+    {
+      "id": "o",
+      "name": "Pine Vale",
+      "resources": [
+        "wood"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 0,
+          "z": 500
+        },
+        {
+          "x": 500,
+          "z": 500
+        },
+        {
+          "x": 500,
+          "z": 1000
+        },
+        {
+          "x": 0,
+          "z": 1000
+        }
+      ],
+      "neighbors": [
+        "k",
+        "n",
+        "p"
+      ],
+      "startSlot": 0,
+      "startsWithSettlement": false,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 250,
+        "y": 81,
+        "z": 833,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 250,
+        "y": 81,
+        "z": 750,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 250,
+        "y": 81,
+        "z": 789,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 250,
+        "y": 84,
+        "z": 773,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 309,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": 191,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": 309,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": 191,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": 272,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": 228,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": 846
+      },
+      "restorationRegion": {
+        "minX": 154,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": 346,
+        "maxY": 125,
+        "maxZ": 846
+      }
+    },
+    {
+      "id": "p",
+      "name": "Southeast Hearth",
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": 500,
+          "z": 500
+        },
+        {
+          "x": 1000,
+          "z": 500
+        },
+        {
+          "x": 1000,
+          "z": 1000
+        },
+        {
+          "x": 500,
+          "z": 1000
+        }
+      ],
+      "neighbors": [
+        "l",
+        "o"
+      ],
+      "startSlot": 4,
+      "startsWithSettlement": true,
+      "settlementTemplate": "starter_settlement_v2",
+      "settlementAnchor": {
+        "id": "settlement",
+        "x": 750,
+        "y": 81,
+        "z": 833,
+        "rotation": 180
+      },
+      "cityCenter": {
+        "id": "city_center",
+        "x": 750,
+        "y": 81,
+        "z": 750,
+        "rotation": 180
+      },
+      "townHall": {
+        "id": "town_hall",
+        "x": 750,
+        "y": 81,
+        "z": 789,
+        "rotation": 180
+      },
+      "managementAnchor": {
+        "id": "management",
+        "x": 750,
+        "y": 84,
+        "z": 773,
+        "rotation": 180
+      },
+      "buildingPlots": [
+        {
+          "id": "plot_1",
+          "x": 809,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_2",
+          "x": 691,
+          "y": 81,
+          "z": 788,
+          "rotation": 180
+        },
+        {
+          "id": "plot_3",
+          "x": 809,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_4",
+          "x": 691,
+          "y": 81,
+          "z": 748,
+          "rotation": 180
+        },
+        {
+          "id": "plot_5",
+          "x": 772,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        },
+        {
+          "id": "plot_6",
+          "x": 728,
+          "y": 81,
+          "z": 706,
+          "rotation": 180
+        }
+      ],
+      "defenseAnchors": [],
+      "siegeRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": 846
+      },
+      "restorationRegion": {
+        "minX": 654,
+        "minY": 79,
+        "minZ": 654,
+        "maxX": 846,
+        "maxY": 125,
+        "maxZ": 846
+      }
+    }
+  ],
+  "publicZones": [
+    {
+      "id": "central_objective_district",
+      "name": "Central Objective District",
+      "type": "public_objective",
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        {
+          "x": -100,
+          "z": -100
+        },
+        {
+          "x": 100,
+          "z": -100
+        },
+        {
+          "x": 100,
+          "z": 100
+        },
+        {
+          "x": -100,
+          "z": 100
+        }
+      ]
+    }
+  ],
+  "infrastructure": [
+    {
+      "id": "bridge_b1",
+      "name": "North Cross-Valley Bridge",
+      "type": "bridge",
+      "dimension": "minecraft:overworld",
+      "x": -16,
+      "y": 84,
+      "z": -561
+    },
+    {
+      "id": "bridge_b2",
+      "name": "Northeast Center Bridge",
+      "type": "bridge",
+      "dimension": "minecraft:overworld",
+      "x": 166,
+      "y": 84,
+      "z": -48
+    },
+    {
+      "id": "bridge_b3",
+      "name": "Southeast Center Bridge",
+      "type": "bridge",
+      "dimension": "minecraft:overworld",
+      "x": 181,
+      "y": 84,
+      "z": 54
+    },
+    {
+      "id": "bridge_b4",
+      "name": "South Cross-Valley Bridge",
+      "type": "bridge",
+      "dimension": "minecraft:overworld",
+      "x": 16,
+      "y": 84,
+      "z": 561
+    }
+  ],
+  "monuments": [
+    {
+      "id": "industrial",
+      "name": "Industrial Complex",
+      "type": "industrial_complex",
+      "dimension": "minecraft:overworld",
+      "x": -55,
+      "y": 83,
+      "z": 0,
+      "radius": 25
+    },
+    {
+      "id": "depot",
+      "name": "Military Depot",
+      "type": "military_depot",
+      "dimension": "minecraft:overworld",
+      "x": 0,
+      "y": 83,
+      "z": -55,
+      "radius": 25
+    },
+    {
+      "id": "refinery",
+      "name": "Refinery",
+      "type": "refinery",
+      "dimension": "minecraft:overworld",
+      "x": 55,
+      "y": 83,
+      "z": 0,
+      "radius": 25
+    }
+  ]
+}

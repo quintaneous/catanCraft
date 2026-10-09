@@ -5,14 +5,15 @@ import com.quin.catancraft.data.TerritoryBoundary;
 
 import javax.annotation.Nullable;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public final class TerritoryDefinition {
     public static final class BoundaryPoint {
         private int x;
         private int z;
-
         public int x() { return x; }
         public int z() { return z; }
     }
@@ -20,12 +21,18 @@ public final class TerritoryDefinition {
     private String id = "";
     private String name = "";
     private String specialty = "wood";
+    private List<String> resources = new ArrayList<>();
     private String dimension = "minecraft:overworld";
     private List<BoundaryPoint> boundary = new ArrayList<>();
     private List<String> neighbors = new ArrayList<>();
 
+    private int startSlot;
+    private boolean startsWithSettlement;
+    private String settlementTemplate = "";
+    @Nullable private MapAnchor settlementAnchor;
     @Nullable private MapAnchor cityCenter;
     @Nullable private MapAnchor townHall;
+    @Nullable private MapAnchor managementAnchor;
     @Nullable private MapAnchor resourceSite;
     private List<MapAnchor> buildingPlots = new ArrayList<>();
     private List<MapAnchor> defenseAnchors = new ArrayList<>();
@@ -47,8 +54,29 @@ public final class TerritoryDefinition {
         return clean.isEmpty() ? "minecraft:overworld" : clean;
     }
 
+    public List<ResourceType> resources() {
+        Set<ResourceType> result = new LinkedHashSet<>();
+        if (resources != null) {
+            for (String value : resources) {
+                if (value == null || value.isBlank()) continue;
+                result.add(ResourceType.parse(value));
+            }
+        }
+        if (result.isEmpty()) {
+            result.add(ResourceType.parse(specialty));
+        }
+        return List.copyOf(result);
+    }
+
     public ResourceType specialty() {
-        return ResourceType.parse(specialty);
+        return resources().get(0);
+    }
+
+    public int startSlot() { return Math.max(0, startSlot); }
+    public boolean startsWithSettlement() { return startsWithSettlement; }
+
+    public String settlementTemplate() {
+        return settlementTemplate == null ? "" : settlementTemplate.trim();
     }
 
     public List<String> neighbors() {
@@ -64,8 +92,10 @@ public final class TerritoryDefinition {
         return boundary == null ? List.of() : List.copyOf(boundary);
     }
 
+    @Nullable public MapAnchor settlementAnchor() { return settlementAnchor; }
     @Nullable public MapAnchor cityCenter() { return cityCenter; }
     @Nullable public MapAnchor townHall() { return townHall; }
+    @Nullable public MapAnchor managementAnchor() { return managementAnchor; }
     @Nullable public MapAnchor resourceSite() { return resourceSite; }
 
     public List<MapAnchor> buildingPlots() {
@@ -95,9 +125,11 @@ public final class TerritoryDefinition {
     public MapAnchor anchor(String anchorId) {
         if (anchorId == null) return null;
         String wanted = anchorId.trim().toLowerCase(Locale.ROOT);
-
+        if (wanted.equals("settlement") || wanted.equals("settlement_anchor")) return settlementAnchor;
         if (wanted.equals("city") || wanted.equals("city_center")) return cityCenter;
         if (wanted.equals("townhall") || wanted.equals("town_hall")) return townHall;
+        if (wanted.equals("management") || wanted.equals("management_anchor")
+                || wanted.equals("lectern")) return managementAnchor;
         if (wanted.equals("resource") || wanted.equals("resource_site")) return resourceSite;
 
         for (MapAnchor anchor : buildingPlots()) {
