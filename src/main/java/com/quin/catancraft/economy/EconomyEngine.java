@@ -101,7 +101,7 @@ public final class EconomyEngine {
         if (outputs.isEmpty()) return;
 
         int level = territory.producerLevel();
-        int production = EconomyBalance.rawProductionPerCycle(level);
+        int production = territory.rawProductionPerCycle();
         int upkeep = EconomyBalance.agricultureUpkeepPerCycle(level);
         long available = nation.resource(ResourceType.AGRICULTURE);
 

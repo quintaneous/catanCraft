@@ -239,7 +239,7 @@ public final class NationDashboard {
             TerritoryData territory,
             boolean leader
     ) {
-        int perCycle = EconomyBalance.rawProductionPerCycle(territory.producerLevel());
+        int perCycle = territory.rawProductionPerCycle();
         int perHour = perCycle * 4;
 
         lines.add("D|City L" + territory.cityLevel() +

@@ -140,7 +140,8 @@
         "y": 81,
         "z": -788,
         "rotation": 0
-      }
+      },
+      "productionPercent": 50
     },
     {
       "id": "b",
@@ -273,7 +274,8 @@
         "y": 81,
         "z": -788,
         "rotation": 0
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "c",
@@ -406,7 +408,8 @@
         "y": 81,
         "z": -788,
         "rotation": 0
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "d",
@@ -546,7 +549,8 @@
         "y": 81,
         "z": -788,
         "rotation": 0
-      }
+      },
+      "productionPercent": 50
     },
     {
       "id": "e",
@@ -679,7 +683,8 @@
         "y": 81,
         "z": -288,
         "rotation": 0
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "f",
@@ -814,7 +819,8 @@
         "y": 81,
         "z": -288,
         "rotation": 0
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "g",
@@ -949,7 +955,8 @@
         "y": 81,
         "z": -288,
         "rotation": 0
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "h",
@@ -1082,7 +1089,8 @@
         "y": 81,
         "z": -288,
         "rotation": 0
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "i",
@@ -1215,7 +1223,8 @@
         "y": 81,
         "z": 288,
         "rotation": 180
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "j",
@@ -1350,7 +1359,8 @@
         "y": 81,
         "z": 288,
         "rotation": 180
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "k",
@@ -1485,7 +1495,8 @@
         "y": 81,
         "z": 288,
         "rotation": 180
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "l",
@@ -1618,7 +1629,8 @@
         "y": 81,
         "z": 288,
         "rotation": 180
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "m",
@@ -1758,7 +1770,8 @@
         "y": 81,
         "z": 788,
         "rotation": 180
-      }
+      },
+      "productionPercent": 50
     },
     {
       "id": "n",
@@ -1891,7 +1904,8 @@
         "y": 81,
         "z": 788,
         "rotation": 180
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "o",
@@ -2024,7 +2038,8 @@
         "y": 81,
         "z": 788,
         "rotation": 180
-      }
+      },
+      "productionPercent": 100
     },
     {
       "id": "p",
@@ -2164,7 +2179,8 @@
         "y": 81,
         "z": 788,
         "rotation": 180
-      }
+      },
+      "productionPercent": 50
     }
   ],
   "publicZones": [
