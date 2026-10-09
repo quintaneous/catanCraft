@@ -102,13 +102,6 @@ public final class MapDefinitionManager {
         return reload(server);
     }
 
-    public static LoadResult installBundledDefault(MinecraftServer server)
-            throws IOException {
-        Files.createDirectories(MAP_PATH.getParent());
-        copyBundledDefault();
-        return reload(server);
-    }
-
     public static LoadResult reload(MinecraftServer server) throws IOException {
         Files.createDirectories(MAP_PATH.getParent());
         installDefaultMapIfNeeded();
