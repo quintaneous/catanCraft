@@ -4,13 +4,18 @@ import com.quin.catancraft.CatanCraft;
 import com.quin.catancraft.data.CatanSavedData;
 import com.quin.catancraft.data.MonumentData;
 import com.quin.catancraft.data.MonumentType;
+import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.NationData;
 import net.minecraft.network.chat.Component;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
+import java.text.NumberFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -164,6 +169,28 @@ public final class MonumentManager {
                 Component.literal("[CatanCraft] " + nation.name() + " secured " +
                         monument.name() + " and received its national reward."), false);
 
+        // Keep exact rewards private to the capturing nation, while the public
+        // capture announcement still informs the entire server.
+        StringBuilder rewards = new StringBuilder()
+                .append("+$")
+                .append(NumberFormat.getIntegerInstance(Locale.US).format(type.moneyReward()))
+                .append(" treasury");
+        type.resourceRewards().entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(reward -> rewards.append(", +")
+                        .append(reward.getValue())
+                        .append(" ")
+                        .append(displayResource(reward.getKey())));
+        Component payout = Component.literal(
+                "[CatanCraft] " + monument.name() + " capture rewards: " + rewards)
+                .withStyle(ChatFormatting.GREEN);
+        for (ServerPlayer player : server.getPlayerList().getPlayers()) {
+            NationData playerNation = data.nationForPlayer(player.getUUID());
+            if (playerNation != null && nation.id().equals(playerNation.id())) {
+                player.sendSystemMessage(payout);
+            }
+        }
+
         monument.resetCapture();
         data.setActiveMonumentId(null);
         data.setNextMonumentActivationGameTime(
@@ -172,6 +199,17 @@ public final class MonumentManager {
 
         CatanCraft.LOGGER.info("Nation {} captured monument {} ({})",
                 nation.name(), monument.id(), type.id());
+    }
+
+    private static String displayResource(ResourceType resource) {
+        String[] words = resource.id().split("_");
+        StringBuilder label = new StringBuilder();
+        for (String word : words) {
+            if (label.length() > 0) label.append(' ');
+            label.append(Character.toUpperCase(word.charAt(0)))
+                    .append(word.substring(1));
+        }
+        return label.toString();
     }
 
     private static void announceActivation(MinecraftServer server, MonumentData monument) {

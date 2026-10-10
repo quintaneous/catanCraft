@@ -2,6 +2,7 @@ package com.quin.catancraft;
 
 import com.mojang.logging.LogUtils;
 import com.quin.catancraft.command.CatanCommands;
+import com.quin.catancraft.command.AdminSpeedCommand;
 import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.map.MapDefinitionManager;
@@ -26,12 +27,14 @@ public final class CatanCraft {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(new WorldProtection());
         MinecraftForge.EVENT_BUS.register(new MapInteractionHandler());
+        MinecraftForge.EVENT_BUS.register(new AdminSpeedCommand());
         LOGGER.info("CatanCraft 0.1 foundation loading");
     }
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         CatanCommands.register(event.getDispatcher());
+        AdminSpeedCommand.register(event.getDispatcher());
     }
 
     @SubscribeEvent
