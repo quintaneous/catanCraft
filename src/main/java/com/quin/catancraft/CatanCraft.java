@@ -33,7 +33,7 @@ public final class CatanCraft {
         MinecraftForge.EVENT_BUS.register(new NationVehicleProtection());
         MinecraftForge.EVENT_BUS.register(new AdminSpeedCommand());
         MinecraftForge.EVENT_BUS.register(new TerritoryHudSync());
-        LOGGER.info("CatanCraft 0.1.2 loading");
+        LOGGER.info("CatanCraft 0.1.3 loading");
     }
 
     @SubscribeEvent
