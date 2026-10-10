@@ -311,6 +311,12 @@ public final class NationDashboard {
         } else {
             lines.add("G|Producer max level");
         }
+        int logisticsBonus = EconomyEngine.logisticsBonusPercent(territory);
+        if (logisticsBonus > 0) {
+            lines.add("G|Logistics Center: +" + logisticsBonus +
+                    "% processor output in this city");
+            lines.add("D|Raw resources, other cities and input costs are unchanged.");
+        }
         lines.add("Q|" + territory.id() + "|economy");
 
         lines.add("N|" + territory.id() + "|buildings|BUILDINGS • " +
@@ -328,7 +334,7 @@ public final class NationDashboard {
 
                 if (type.isProcessor()) {
                     EconomyEngine.ProcessorPreview preview =
-                            EconomyEngine.processorPreview(nation, building);
+                            EconomyEngine.processorPreview(nation, territory, building);
                     detail += switch (preview.status()) {
                         case PAUSED_TARGET -> " • Paused " +
                                 preview.currentOutput() + "/" +
@@ -399,6 +405,10 @@ public final class NationDashboard {
             }
             for (BuildingType type : BuildingType.values()) {
                 if (type.minCityLevel() > territory.cityLevel()) continue;
+                if ((type == BuildingType.LOGISTICS_CENTER ||
+                        type == BuildingType.COMMERCIAL_DISTRICT)
+                        && territory.buildings().stream().anyMatch(b -> b.type() == type))
+                    continue;
                 EconomyCost cost = EconomyCatalog.buildingCost(type);
 
                 if (IndustrialPlotService.isIndustry(type)) {
@@ -417,9 +427,13 @@ public final class NationDashboard {
                         }
                     }
                 } else {
+                    String purpose = type == BuildingType.LOGISTICS_CENTER
+                            ? " • +10% factory output (data-only)"
+                            : type == BuildingType.COMMERCIAL_DISTRICT
+                                    ? " • +$500/hour (data-only)" : "";
                     if (leader) {
                         lines.add(action("nation build " + territory.id() + " " +
-                                type.id(), type.displayName() +
+                                type.id(), type.displayName() + purpose +
                                 " • " + cost.describe()));
                     } else {
                         lines.add("D|" + type.displayName() + " • " + cost.describe());

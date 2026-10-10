@@ -50,8 +50,34 @@ public final class EconomyEngine {
         return rawOutputPerCycle(territory, resource) * 4;
     }
 
+    /**
+     * Processor efficiency applies only in this territory; no free national
+     * resource multiplication and no additional raw-resource production.
+     */
+    public static int logisticsBonusPercent(TerritoryData territory) {
+        int level = territory.buildings().stream()
+                .filter(b -> b.type() == BuildingType.LOGISTICS_CENTER)
+                .mapToInt(BuildingInstance::level)
+                .max().orElse(0);
+        return switch (level) {
+            case 1 -> 10;
+            case 2 -> 15;
+            case 3 -> 20;
+            case 4 -> 25;
+            case 5 -> 30;
+            default -> 0;
+        };
+    }
+
+    public static int boostedOutput(int baseOutput, int bonusPercent) {
+        if (baseOutput <= 0) return 0;
+        // Round up the additional output: a L1 mill's eight items should
+        // actually increase to nine when Logistics L1 grants +10%.
+        return baseOutput + (int) (((long) baseOutput * bonusPercent + 99L) / 100L);
+    }
+
     public static ProcessorPreview processorPreview(
-            NationData nation,
+            NationData nation, TerritoryData territory,
             BuildingInstance building
     ) {
         BuildingType type = building.type();
@@ -101,7 +127,8 @@ public final class EconomyEngine {
                 ProcessorStatus.READY,
                 desiredBatches,
                 runnable,
-                type.outputPerBatch() * runnable,
+                boostedOutput(type.outputPerBatch() * runnable,
+                        logisticsBonusPercent(territory)),
                 current,
                 building.targetStock()
         );
@@ -224,7 +251,7 @@ public final class EconomyEngine {
             BuildingType type = building.type();
             if (!type.isProcessor() || type.processingTier() != tier) continue;
 
-            ProcessorPreview preview = processorPreview(nation, building);
+            ProcessorPreview preview = processorPreview(nation, territory, building);
             if (preview.status() != ProcessorStatus.READY
                     || preview.runnableBatches() <= 0) {
                 continue;

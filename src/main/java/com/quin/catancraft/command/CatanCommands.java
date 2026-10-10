@@ -1267,6 +1267,25 @@ public final class CatanCommands {
             return 0;
         }
 
+        // Civic services exist without schematics. Keep exactly one
+        // Logistics Center and one Commercial District per city until dedicated
+        // civic sockets are approved; never charge for duplicate purchases.
+        if ((type == BuildingType.LOGISTICS_CENTER ||
+                type == BuildingType.COMMERCIAL_DISTRICT)
+                && territory.buildings().stream().anyMatch(b -> b.type() == type)) {
+            source.sendFailure(Component.literal(
+                    "This city already has a " + type.displayName() +
+                    ". Upgrade the existing building instead."));
+            return 0;
+        }
+        if (!IndustrialPlotService.isIndustry(type)
+                && requestedPlot != null) {
+            source.sendFailure(Component.literal(
+                    "Civic buildings have no approved physical plot yet. " +
+                    "Use /nation build " + territoryId + " " + type.id()));
+            return 0;
+        }
+
         if (IndustrialPlotService.isIndustry(type)) {
             return IndustrialPurchaseService.purchase(
                     source, player, data, nation, territory, type, requestedPlot);

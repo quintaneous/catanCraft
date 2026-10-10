@@ -2,6 +2,7 @@ package com.quin.catancraft;
 
 import com.mojang.logging.LogUtils;
 import com.quin.catancraft.command.CatanCommands;
+import com.quin.catancraft.command.DefenseSurveyCommand;
 import com.quin.catancraft.command.AdminSpeedCommand;
 import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
@@ -33,12 +34,13 @@ public final class CatanCraft {
         MinecraftForge.EVENT_BUS.register(new NationVehicleProtection());
         MinecraftForge.EVENT_BUS.register(new AdminSpeedCommand());
         MinecraftForge.EVENT_BUS.register(new TerritoryHudSync());
-        LOGGER.info("CatanCraft 0.1.3 loading");
+        LOGGER.info("CatanCraft 0.1.4 loading");
     }
 
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         CatanCommands.register(event.getDispatcher());
+        DefenseSurveyCommand.register(event.getDispatcher());
         AdminSpeedCommand.register(event.getDispatcher());
     }
 
