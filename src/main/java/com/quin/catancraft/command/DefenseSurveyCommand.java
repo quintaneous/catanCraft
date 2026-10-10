@@ -3,6 +3,7 @@ package com.quin.catancraft.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.quin.catancraft.map.MapAnchor;
+import com.quin.catancraft.world.R4APreflight;
 import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.map.MapRegion;
 import com.quin.catancraft.map.TerritoryDefinition;
@@ -58,16 +59,64 @@ public final class DefenseSurveyCommand {
                         .requires(source -> source.hasPermission(2))
                         .then(Commands.literal("status")
                                 .executes(ctx -> status(ctx.getSource())))
+                        .then(Commands.literal("list")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .executes(ctx -> listR4A(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "territory")))))
+                        .then(Commands.literal("preflight")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .then(Commands.argument("socket", StringArgumentType.word())
+                                                .executes(ctx -> preflightR4A(ctx.getSource(),
+                                                        StringArgumentType.getString(ctx, "territory"),
+                                                        StringArgumentType.getString(ctx, "socket"))))))
                         .then(Commands.literal("survey")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .executes(ctx -> survey(ctx.getSource(),
                                                 StringArgumentType.getString(ctx, "territory")))))));
     }
 
+    private static int listR4A(CommandSourceStack source, String territoryId) {
+        try {
+            R4APreflight.SocketSummary summary = R4APreflight.socketSummary(territoryId);
+            if (summary.total() == 0) {
+                source.sendFailure(Component.literal("No R4-A sockets for city " + territoryId));
+                return 0;
+            }
+            source.sendSuccess(() -> Component.literal(
+                    "R4-A authored survey city " + territoryId.toUpperCase() +
+                    ": " + summary.candidates() + " R4-A candidates, " +
+                    summary.rejected() + " blocked or R4-B gate options. " +
+                    "NO PURCHASES OR PLACEMENT ENABLED."), false);
+            source.sendSuccess(() -> Component.literal(
+                    "Example sockets: " + String.join(", ", summary.candidatesPreview()) +
+                    ". Use /catan defense preflight " + territoryId + " <socket_id>."), false);
+            return 1;
+        } catch (Exception ex) {
+            source.sendFailure(Component.literal("R4-A list failed: " + ex.getMessage()));
+            return 0;
+        }
+    }
+
+    private static int preflightR4A(CommandSourceStack source,
+                                   String territoryId, String socketId) {
+        R4APreflight.Report result = R4APreflight.inspect(
+                source.getServer(), territoryId, socketId);
+        source.sendSuccess(() -> Component.literal(result.headline()), false);
+        for (String detail : result.details())
+            source.sendSuccess(() -> Component.literal("  REVIEW: " + detail), false);
+        if (result.eligible()) {
+            source.sendSuccess(() -> Component.literal(
+                    "All checked states currently matched. This is NOT a placement " +
+                    "approval: ownership, dependency/overlap locks, entities during " +
+                    "the final transaction and rollback must be implemented first."), false);
+        }
+        return result.eligible() ? 1 : 0;
+    }
+
     private static int status(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
                 "R4 defenses: candidate reconnaissance only. No structures may be " +
-                "purchased or pasted in this release. Run /catan defense survey <a-p>. " +
+                "purchased or pasted in this release. Run /catan defense list <a-p>, then preflight <city> <socket>. " +
                 "Results are NOT placement approvals."), false);
         return 1;
     }
