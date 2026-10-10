@@ -7,6 +7,7 @@ import com.quin.catancraft.economy.EconomyEngine;
 import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.network.NationNetwork;
+import com.quin.catancraft.network.TerritoryHudSync;
 import com.quin.catancraft.world.WorldProtection;
 import com.quin.catancraft.world.MapInteractionHandler;
 import com.quin.catancraft.world.NationVehicleProtection;
@@ -30,7 +31,8 @@ public final class CatanCraft {
         MinecraftForge.EVENT_BUS.register(new MapInteractionHandler());
         MinecraftForge.EVENT_BUS.register(new NationVehicleProtection());
         MinecraftForge.EVENT_BUS.register(new AdminSpeedCommand());
-        LOGGER.info("CatanCraft 0.1 foundation loading");
+        MinecraftForge.EVENT_BUS.register(new TerritoryHudSync());
+        LOGGER.info("CatanCraft 0.1.1 loading");
     }
 
     @SubscribeEvent

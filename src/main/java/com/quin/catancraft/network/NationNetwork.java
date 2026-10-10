@@ -10,7 +10,7 @@ import net.minecraftforge.network.simple.SimpleChannel;
 import java.util.List;
 
 public final class NationNetwork {
-    private static final String PROTOCOL = "2";
+    private static final String PROTOCOL = "3";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(CatanCraft.MOD_ID, "main"))
@@ -28,6 +28,15 @@ public final class NationNetwork {
                 NationDashboardPacket::encode,
                 NationDashboardPacket::decode,
                 NationDashboardPacket::handle);
+        CHANNEL.registerMessage(nextId++, TerritoryHudPacket.class,
+                TerritoryHudPacket::encode,
+                TerritoryHudPacket::decode,
+                TerritoryHudPacket::handle);
+    }
+
+    public static void sendTerritoryHud(ServerPlayer player, String label) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player),
+                new TerritoryHudPacket(label));
     }
 
     public static void openDashboard(ServerPlayer player, List<String> lines) {
