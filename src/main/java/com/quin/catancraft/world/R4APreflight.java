@@ -15,7 +15,7 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
-import net.phys.AABB;
+import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fml.loading.FMLPaths;
 
 import java.io.InputStream;
@@ -109,7 +109,8 @@ public final class R4APreflight {
                     continue;
                 count++;
                 boolean suitable = "PASS".equals(row.get("condition").getAsString())
-                        && row.get("module_id").getAsString().startsWith("r4a_");
+                        && row.get("module_id").getAsString().startsWith("r4a_")
+                        && !row.get("module_id").getAsString().equals("r4a_gate_wing");
                 if (suitable) {
                     passed++;
                     if (examples.size() < 20)
@@ -140,8 +141,9 @@ public final class R4APreflight {
                 if (!"PASS".equals(row.get("condition").getAsString()))
                     throw new IllegalStateException("Offline authored-world survey rejected " +
                             socket + " (" + row.get("condition").getAsString() + ")");
-                if (!row.get("module_id").getAsString().startsWith("r4a_"))
-                    throw new IllegalStateException("Gate/R4-B socket is not part of R4-A live preflight");
+                if (!row.get("module_id").getAsString().startsWith("r4a_") ||
+                        row.get("module_id").getAsString().equals("r4a_gate_wing"))
+                    throw new IllegalStateException("R4-B gate or gate-wing socket is not part of R4-A live preflight");
                 if (row.get("blocked_pending_survey").getAsBoolean())
                     throw new IllegalStateException("Socket blocked pending survey");
                 if (row.get("live_install_authorized").getAsBoolean())

@@ -23,7 +23,7 @@ This is **separate from** `config/catancraft/schematics_bundle.zip` (which remai
 Use:
 
 - `/catan defense status` — no defense installation is enabled.
-- `/catan defense list a` — shows example socket IDs, 43 supported R4-A candidates + 25 blocked/future gate items (the Blender survey's 44 PASS counts include one R4-B gate candidate per city).
+- `/catan defense list a` — shows example socket IDs, 41 immediately R4-A-preflight-eligible candidates + 27 blocked/future gate items (the Blender survey's 44 PASS counts include one R4-B gate and two R4-B-dependent gate-wing candidates per city).
 - `/catan defense preflight a access_checkpoint` — uses Blender per-city **already-rotated sparse delta** to compare the currently loaded server's exact block properties, support profiles, road surface, road clearance and a conservative above-grade empty envelope, plus entity intersection with intended solids. Does NOT rotate that delta a second time.
 - `/catan defense preflight a tower_nw` — checks a candidate tower.
 - `/catan defense preflight i access_checkpoint` — validates 180° south-facing city I.
