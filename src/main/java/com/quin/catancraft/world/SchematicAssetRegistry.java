@@ -164,6 +164,29 @@ public final class SchematicAssetRegistry {
                 31, 47, 31, 15, 2, 1, true,
                 Set.of(0, 180), 22, 44));
 
+        // R3 six selectable industrial masters, designed for any of the
+        // three approved city industrial plots (1, 3 and 4).
+        // The asset.plot field is a default compatibility anchor only:
+        // IndustrialPlotService chooses the actual purchased slot and rotation.
+        add(new Asset("textile_mill", "textile_mill", "plot_1", 1,
+                31, 47, 31, 29, 2, 15, true,
+                Set.of(0, 180), -45, -24));
+        add(new Asset("fuel_refinery", "fuel_refinery", "plot_1", 1,
+                31, 47, 31, 29, 2, 15, true,
+                Set.of(0, 180), -45, -24));
+        add(new Asset("concrete_plant", "concrete_plant", "plot_1", 1,
+                31, 47, 31, 29, 2, 15, true,
+                Set.of(0, 180), -45, -24));
+        add(new Asset("machine_shop", "machine_shop", "plot_1", 1,
+                31, 47, 31, 29, 2, 15, true,
+                Set.of(0, 180), -45, -24));
+        add(new Asset("chemical_plant", "chemical_plant", "plot_1", 1,
+                31, 47, 31, 29, 2, 15, true,
+                Set.of(0, 180), -45, -24));
+        add(new Asset("electronics_factory", "electronics_factory", "plot_1", 1,
+                31, 47, 31, 29, 2, 15, true,
+                Set.of(0, 180), -45, -24));
+
         // Strategic-site schematics are byte-identical to the accepted V3 set.
         add(new Asset(
                 "iron_oil_site", "iron_oil_site", "strategic_resource_anchor", 3,
@@ -217,6 +240,12 @@ public final class SchematicAssetRegistry {
             case VEHICLE_FACTORY -> "vehicle_factory";
             case WEAPONS_FACTORY -> "weapons_factory";
             case STEEL_MILL -> "steel_mill";
+            case TEXTILE_MILL -> "textile_mill";
+            case REFINERY -> "fuel_refinery";
+            case CONCRETE_PLANT -> "concrete_plant";
+            case MACHINE_SHOP -> "machine_shop";
+            case CHEMICAL_PLANT -> "chemical_plant";
+            case ELECTRONICS_FACTORY -> "electronics_factory";
             default -> null;
         };
     }

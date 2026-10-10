@@ -18,6 +18,8 @@ import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.network.NationNetwork;
 import net.minecraft.server.level.ServerPlayer;
 
+import com.quin.catancraft.world.IndustrialPlotService;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -321,7 +323,8 @@ public final class NationDashboard {
                 BuildingType type = building.type();
 
                 String detail = "[" + i + "] " + type.displayName() +
-                        " L" + building.level();
+                        " L" + building.level() +
+                        (building.plotId().isBlank() ? "" : " • " + building.plotId());
 
                 if (type.isProcessor()) {
                     EconomyEngine.ProcessorPreview preview =
@@ -386,31 +389,52 @@ public final class NationDashboard {
         lines.add("N|" + territory.id() + "|construction|CONSTRUCTION • " +
                 openSlots + (openSlots == 1 ? " slot open" : " slots open"));
         if (openSlots > 0) {
+            TerritoryDefinition city = MapDefinitionManager.territory(territory.id());
+            List<String> industrySlots = city == null ? List.of()
+                    : IndustrialPlotService.vacantPlots(territory, city);
+            boolean legacyBlock =
+                    IndustrialPlotService.hasUnassignedLegacyIndustry(territory);
+            if (legacyBlock) {
+                lines.add("Y|Unassigned legacy industry: new industrial placement requires review.");
+            }
             for (BuildingType type : BuildingType.values()) {
                 if (type.minCityLevel() > territory.cityLevel()) continue;
-
                 EconomyCost cost = EconomyCatalog.buildingCost(type);
-                if (leader) {
-                    lines.add(action(
-                            "nation build " + territory.id() + " " + type.id(),
-                            type.displayName() + " • " + cost.describe()
-                    ));
+
+                if (IndustrialPlotService.isIndustry(type)) {
+                    if (legacyBlock || industrySlots.isEmpty()
+                            || territory.buildings().stream().anyMatch(b -> b.type() == type))
+                        continue;
+                    for (String plot : industrySlots) {
+                        String command = "nation build " + territory.id() + " " +
+                                type.id() + " " + plot;
+                        if (leader) {
+                            lines.add(action(command, type.displayName() +
+                                    " @ " + plot + " • " + cost.describe()));
+                        } else {
+                            lines.add("D|" + type.displayName() + " @ " + plot +
+                                    " • " + cost.describe());
+                        }
+                    }
                 } else {
-                    lines.add("D|" + type.displayName() + " • " + cost.describe());
+                    if (leader) {
+                        lines.add(action("nation build " + territory.id() + " " +
+                                type.id(), type.displayName() +
+                                " • " + cost.describe()));
+                    } else {
+                        lines.add("D|" + type.displayName() + " • " + cost.describe());
+                    }
                 }
             }
         } else {
-            lines.add("Y|No open development slots. Upgrade the city to expand.");
+            lines.add("Y|No city development slots. Upgrade the city.");
         }
         lines.add("Q|" + territory.id() + "|construction");
     }
 
     private static int developmentSlotCap(TerritoryData territory) {
         int economyCap = EconomyCatalog.maxBuildingSlots(territory.cityLevel());
-        TerritoryDefinition definition =
-                MapDefinitionManager.territory(territory.id());
-        if (definition == null) return economyCap;
-        return Math.min(economyCap, definition.availableBuildingPlots().size());
+        return economyCap;
     }
 
     private static String recipeText(BuildingType type) {

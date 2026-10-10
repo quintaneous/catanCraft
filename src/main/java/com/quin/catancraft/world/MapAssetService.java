@@ -215,6 +215,30 @@ public final class MapAssetService {
         return new Result(true, placement.message(), placement.changedBlocks());
     }
 
+    public static Result placeBuilding(MinecraftServer server, CatanSavedData data,
+            TerritoryDefinition territory, BuildingType type, String selectedPlot) {
+        String assetId = SchematicAssetRegistry.buildingAsset(type);
+        SchematicAssetRegistry.Asset asset = SchematicAssetRegistry.asset(assetId);
+        if (asset == null || !IndustrialPlotService.INDUSTRIAL_PLOTS.contains(selectedPlot))
+            return new Result(false, "Unknown factory or industrial plot.", 0);
+        MapAnchor anchor = IndustrialPlotService.anchorFor(type, selectedPlot, territory);
+        if (anchor == null) return new Result(false, "Missing factory plot anchor.", 0);
+        String key = territoryKey(territory.id(), selectedPlot);
+        String existing = data.placedMapAsset(key);
+        if (existing != null)
+            return new Result(false, "Plot already occupied: " + existing, 0);
+        SchematicPlacementService.Result validation =
+                SchematicPlacementService.validateAsset(assetId, anchor);
+        if (!validation.success())
+            return new Result(false, validation.message(), 0);
+        SchematicPlacementService.Result placed =
+                SchematicPlacementService.placeAsset(server, territory.dimension(), assetId, anchor);
+        if (!placed.success()) return new Result(false, placed.message(), placed.changedBlocks());
+        data.setPlacedMapAsset(key, asset.placementToken());
+        data.setDirty();
+        return new Result(true, placed.message(), placed.changedBlocks());
+    }
+
     public static Result upgradeTownHall(
             MinecraftServer server,
             CatanSavedData data,
@@ -358,10 +382,12 @@ public final class MapAssetService {
             }
 
             for (BuildingInstance building : state.buildings()) {
-                String assetId =
-                        SchematicAssetRegistry.buildingAsset(building.type());
-                if (assetId != null) {
-                    addTerritoryTask(tasks, definition, assetId);
+                String assetId = SchematicAssetRegistry.buildingAsset(building.type());
+                String slot = IndustrialPlotService.occupiedPlot(building);
+                if (assetId != null && IndustrialPlotService.INDUSTRIAL_PLOTS.contains(slot)) {
+                    tasks.add(new Task(assetId,
+                            IndustrialPlotService.anchorFor(building.type(), slot, definition),
+                            territoryKey(definition.id(), slot)));
                 }
             }
 
@@ -370,7 +396,7 @@ public final class MapAssetService {
                     data,
                     definition.dimension(),
                     tasks,
-                    true
+                    false
             );
             if (!result.success()) {
                 return new Result(

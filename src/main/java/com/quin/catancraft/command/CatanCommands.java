@@ -26,6 +26,7 @@ import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
 import com.quin.catancraft.world.MapAssetService;
+import com.quin.catancraft.world.IndustrialPlotService;
 import com.quin.catancraft.world.SchematicAssetRegistry;
 import com.quin.catancraft.world.SchematicPlacementService;
 import com.quin.catancraft.world.WorldMapVerifier;
@@ -103,10 +104,14 @@ public final class CatanCommands {
         node.then(Commands.literal("build")
                 .then(Commands.argument("territory", StringArgumentType.word())
                         .then(Commands.argument("type", StringArgumentType.word())
-                                .executes(ctx -> buildIndustry(
-                                        ctx.getSource(),
+                                .executes(ctx -> buildIndustry(ctx.getSource(),
                                         StringArgumentType.getString(ctx, "territory"),
-                                        StringArgumentType.getString(ctx, "type"))))));
+                                        StringArgumentType.getString(ctx, "type"), null))
+                                .then(Commands.argument("plot", StringArgumentType.word())
+                                        .executes(ctx -> buildIndustry(ctx.getSource(),
+                                                StringArgumentType.getString(ctx, "territory"),
+                                                StringArgumentType.getString(ctx, "type"),
+                                                StringArgumentType.getString(ctx, "plot")))))));
 
         LiteralArgumentBuilder<CommandSourceStack> upgrade = Commands.literal("upgrade");
         upgrade.then(Commands.literal("city")
@@ -1241,7 +1246,8 @@ public final class CatanCommands {
     private static int buildIndustry(
             CommandSourceStack source,
             String territoryId,
-            String typeName
+            String typeName,
+            String requestedPlot
     ) throws CommandSyntaxException {
         ServerPlayer player = source.getPlayerOrException();
         CatanSavedData data = CatanSavedData.get(source.getServer());
@@ -1259,6 +1265,11 @@ public final class CatanCommands {
             source.sendFailure(Component.literal(
                     "Unknown building type: " + typeName));
             return 0;
+        }
+
+        if (IndustrialPlotService.isIndustry(type)) {
+            return IndustrialPurchaseService.purchase(
+                    source, player, data, nation, territory, type, requestedPlot);
         }
 
         if (territory.cityLevel() < type.minCityLevel()) {
