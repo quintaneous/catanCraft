@@ -2313,7 +2313,7 @@ public final class CatanCommands {
         for (BuildingInstance building : processors) {
             BuildingType type = building.type();
             EconomyEngine.ProcessorPreview preview =
-                    EconomyEngine.processorPreview(owner, building);
+                    EconomyEngine.processorPreview(owner, territory, building);
 
             String status = switch (preview.status()) {
                 case READY -> "READY";
