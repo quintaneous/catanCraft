@@ -174,6 +174,7 @@ public final class CatanCommands {
                                 StringArgumentType.getString(ctx, "id")))));
 
         node.then(trade);
+        node.then(NationProcurement.node());
 
         return node;
     }
