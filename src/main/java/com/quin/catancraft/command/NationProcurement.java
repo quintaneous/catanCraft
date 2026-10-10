@@ -15,7 +15,6 @@ import com.quin.catancraft.map.MapDefinitionManager;
 import com.quin.catancraft.map.TerritoryDefinition;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
@@ -23,8 +22,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.levelgen.Heightmap;
-import net.minecraft.world.phys.AABB;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
@@ -231,38 +228,17 @@ public final class NationProcurement {
                     "Cannot initialize vehicle entity. No funds charged."));
             return 0;
         }
-        double x = player.getX() + player.getLookAngle().x * 8.0;
-        double z = player.getZ() + player.getLookAngle().z * 8.0;
-        int ix = (int) Math.floor(x);
-        int iz = (int) Math.floor(z);
-        int surfaceY = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
-                ix, iz);
-        if (Math.abs(surfaceY - player.getY()) > 4.0) {
+        VehicleSpawnFinder.Placement placement =
+                VehicleSpawnFinder.find(level, player, entity, standing);
+        if (placement == null) {
             source.sendFailure(Component.literal(
-                    "Stand on level ground near a clear deployment yard, not above a roof."));
+                    "No flat, clear vehicle bay found 7-15 blocks away inside your territory. " +
+                    "Stand near an open road or apron and face toward it. No funds charged."));
             return 0;
         }
-        entity.setPos(x, surfaceY + 0.15, z);
-        entity.setYRot(player.getYRot());
-        AABB bounds = entity.getBoundingBox();
-        for (int xx : new int[] { (int) Math.floor(bounds.minX), (int) Math.floor(bounds.maxX) }) {
-            for (int zz : new int[] { (int) Math.floor(bounds.minZ), (int) Math.floor(bounds.maxZ) }) {
-                TerritoryDefinition corner = MapDefinitionManager.territoryAt(level,
-                        new BlockPos(xx, surfaceY, zz));
-                if (corner == null || !standing.id().equals(corner.id())) {
-                    source.sendFailure(Component.literal(
-                            "The entire vehicle must fit inside your territory."));
-                    return 0;
-                }
-            }
-        }
-        if (!level.getFluidState(new BlockPos(ix, surfaceY - 1, iz)).isEmpty()
-                || !level.noCollision(entity, bounds.inflate(0.35, 0.25, 0.35))
-                || !level.getEntities(entity, bounds.inflate(0.4)).isEmpty()) {
-            source.sendFailure(Component.literal(
-                    "Deployment blocked by obstacles, other entities, or water. No funds charged."));
-            return 0;
-        }
+        int ix = placement.x();
+        int iz = placement.z();
+        int surfaceY = placement.y();
         entity.getPersistentData().putBoolean(PURCHASED_TAG, true);
         entity.getPersistentData().putString(NATION_TAG, nation.id().toString());
         if (!level.addFreshEntity(entity)) {
