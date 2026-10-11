@@ -18,6 +18,8 @@ import com.quin.catancraft.data.TradeProposal;
 import com.quin.catancraft.economy.EconomyCatalog;
 import com.quin.catancraft.economy.EconomyCost;
 import com.quin.catancraft.economy.EconomyEngine;
+import com.quin.catancraft.economy.EconomyAuditReport;
+import com.quin.catancraft.CatanCraft;
 import com.quin.catancraft.monument.MonumentManager;
 import com.quin.catancraft.map.MapAnchor;
 import com.quin.catancraft.map.MapDefinitionManager;
@@ -34,6 +36,8 @@ import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
 
 import javax.annotation.Nullable;
@@ -420,7 +424,12 @@ public final class CatanCommands {
                 .then(Commands.argument("territory", StringArgumentType.word())
                         .executes(ctx -> debugProduction(
                                 ctx.getSource(),
-                                StringArgumentType.getString(ctx, "territory")))));
+                                StringArgumentType.getString(ctx, "territory"), 1))
+                        .then(Commands.argument("page", IntegerArgumentType.integer(1))
+                                .executes(ctx -> debugProduction(
+                                        ctx.getSource(),
+                                        StringArgumentType.getString(ctx, "territory"),
+                                        IntegerArgumentType.getInteger(ctx, "page"))))));
 
         return node;
     }
@@ -2251,110 +2260,69 @@ public final class CatanCommands {
     }
 
     private static int debugProduction(
-            CommandSourceStack source,
-            String territoryId
+            CommandSourceStack source, String territoryId, int requestedPage
     ) {
         CatanSavedData data = CatanSavedData.get(source.getServer());
-        TerritoryData territory = data.territory(territoryId);
+        TerritoryData territory = data.territory(territoryId.toLowerCase(java.util.Locale.ROOT));
         if (territory == null) {
-            source.sendFailure(Component.literal(
-                    "Unknown territory: " + territoryId));
+            source.sendFailure(Component.literal("Unknown territory: " + territoryId));
             return 0;
         }
 
+        EconomyAuditReport.Report report = EconomyAuditReport.build(data, territory);
+        final int PAGE_LINES = 8;
+        int totalPages = Math.max(1, (report.lines().size() + PAGE_LINES - 1) / PAGE_LINES);
+        if (requestedPage > totalPages) {
+            source.sendFailure(Component.literal("Only " + totalPages +
+                    " pages available. Use /catan debug production " +
+                    report.territoryId() + " " + totalPages));
+            return 0;
+        }
+
+        String auditId = report.territoryId() + " [" + report.title() + "]";
+        if (requestedPage == 1) {
+            // Output full breakdown once to server latest.log so testers
+            // need not take many overlapping Minecraft chat screenshots.
+            CatanCraft.LOGGER.info("ECONOMY AUDIT BEGIN {} next 15m (READ ONLY)", auditId);
+            for (String line : report.lines())
+                CatanCraft.LOGGER.info("ECONOMY AUDIT {} | {}", auditId, line);
+            CatanCraft.LOGGER.info("ECONOMY AUDIT END {} (READ ONLY)", auditId);
+        }
+
+        final int page = requestedPage;
         source.sendSuccess(() -> Component.literal(
-                "=== " + territory.name() + " production preview ==="), false);
-        source.sendSuccess(() -> Component.literal(
-                "Raw Producer Level " + territory.producerLevel()), false);
+                "=== Economy ledger " + report.title() +
+                " (page " + page + "/" + totalPages + ") ==="),false);
 
-        for (ResourceType resource : territory.rawResources()) {
-            int perCycle = EconomyEngine.rawOutputPerCycle(territory, resource);
-            int perHour = EconomyEngine.rawOutputPerHour(territory, resource);
-            int percent = territory.rawResourceYieldPercent(resource);
-
-            source.sendSuccess(() -> Component.literal(
-                    resource.id() + ": +" + perCycle + "/15m • +" +
-                            perHour + "/hr • " + percent + "% yield"), false);
+        int first = (page - 1) * PAGE_LINES;
+        int last = Math.min(first + PAGE_LINES, report.lines().size());
+        for (int i = first; i < last; i++) {
+            String line = report.lines().get(i);
+            source.sendSuccess(() -> Component.literal(line),false);
         }
 
-        boolean hasNonFood = territory.rawResources().stream()
-                .anyMatch(resource -> resource != ResourceType.AGRICULTURE);
-        if (hasNonFood) {
-            int upkeep = com.quin.catancraft.economy.EconomyBalance
-                    .agricultureUpkeepPerCycle(territory.producerLevel());
-            source.sendSuccess(() -> Component.literal(
-                    "Territory Agriculture upkeep: -" + upkeep +
-                            "/15m • -" + (upkeep * 4) + "/hr"), false);
-        } else {
-            source.sendSuccess(() -> Component.literal(
-                    "Territory Agriculture upkeep: none"), false);
+        Component navigation = Component.literal("Pages:");
+        if (page > 1) {
+            String cmd = "/catan debug production " + report.territoryId() + " " + (page - 1);
+            navigation = navigation.copy().append(
+                    Component.literal(" [Prev]").withStyle(style -> style
+                            .withColor(ChatFormatting.AQUA)
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,cmd))));
         }
-
-        java.util.List<BuildingInstance> processors = territory.buildings().stream()
-                .filter(building -> building.type().isProcessor())
-                .toList();
-
-        if (processors.isEmpty()) {
-            source.sendSuccess(() -> Component.literal(
-                    "Processors: none installed."), false);
-            return 1;
+        if (page < totalPages) {
+            String cmd = "/catan debug production " + report.territoryId() + " " + (page + 1);
+            navigation = navigation.copy().append(
+                    Component.literal(" [Next]").withStyle(style -> style
+                            .withColor(ChatFormatting.AQUA)
+                            .withClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,cmd))));
         }
-
-        NationData owner = territory.ownerNationId() == null
-                ? null
-                : data.nation(territory.ownerNationId());
-        if (owner == null) {
+        final Component links = navigation;
+        source.sendSuccess(() -> links,false);
+        if (page == 1) {
             source.sendSuccess(() -> Component.literal(
-                    "Processors installed, but territory has no valid owning nation."), false);
-            return 1;
-        }
-
-        source.sendSuccess(() -> Component.literal("=== Processors ==="), false);
-        for (BuildingInstance building : processors) {
-            BuildingType type = building.type();
-            EconomyEngine.ProcessorPreview preview =
-                    EconomyEngine.processorPreview(owner, territory, building);
-
-            String status = switch (preview.status()) {
-                case READY -> "READY";
-                case WAITING_INPUTS -> "WAITING FOR INPUTS";
-                case PAUSED_TARGET -> "PAUSED AT TARGET " +
-                        preview.currentOutput() + "/" + preview.targetStock();
-            };
-
-            String rate = preview.status() == EconomyEngine.ProcessorStatus.READY
-                    ? "+" + preview.outputPerCycle() + " " +
-                            type.output().id() + "/15m • +" +
-                            (preview.outputPerCycle() * 4) + "/hr"
-                    : "+0 " + type.output().id() + "/15m";
-
-            int batches = preview.status() == EconomyEngine.ProcessorStatus.READY
-                    ? preview.runnableBatches()
-                    : preview.desiredBatches();
-
-            String inputs = processorInputsText(type, Math.max(1, batches));
-
-            source.sendSuccess(() -> Component.literal(
-                    type.displayName() + " L" + building.level() +
-                            ": " + rate + " • " + status), false);
-            source.sendSuccess(() -> Component.literal(
-                    "  Inputs at shown rate: " + inputs +
-                            " • target " + building.targetStock()), false);
+                    "Full report also written to server latest.log as ECONOMY AUDIT."),false);
         }
         return 1;
-    }
-
-    private static String processorInputsText(BuildingType type, int batches) {
-        StringBuilder result = new StringBuilder();
-        type.inputs().entrySet().stream()
-                .sorted(Comparator.comparing(entry -> entry.getKey().id()))
-                .forEach(entry -> {
-                    if (!result.isEmpty()) result.append(" + ");
-                    result.append(entry.getValue() * batches)
-                            .append(" ")
-                            .append(entry.getKey().id());
-                });
-        return result.isEmpty() ? "none" : result.toString();
     }
 
     private static int debugCycles(

@@ -263,7 +263,7 @@ public final class EconomyEngine {
         }
     }
 
-    private static long commercialIncomePerCycle(int level) {
+    public static long commercialIncomePerCycle(int level) {
         return switch (Math.max(1, Math.min(5, level))) {
             case 1 -> 125L;
             case 2 -> 225L;
