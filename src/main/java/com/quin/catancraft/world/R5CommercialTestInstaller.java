@@ -258,6 +258,26 @@ public final class R5CommercialTestInstaller {
         }
         return true;
     }
+    /**
+     * Narrow runtime rollback allowance: players can open the installed
+     * spruce shop doors without losing the right to revert this civic.
+     * Facing, hinge, half, powered, block ID and every other property must
+     * remain identical. This is NOT a generic fuzzy block-state comparison.
+     */
+    private static boolean matchesRollbackInstalled(BlockState actual,BlockState desired) {
+        if(sameOrKnown(actual,desired)) return true;
+        if(actual.getBlock()!=Blocks.SPRUCE_DOOR ||
+                desired.getBlock()!=Blocks.SPRUCE_DOOR) return false;
+        for(Property<?> property:desired.getProperties()) {
+            if("open".equals(property.getName()))continue;
+            if(!property(actual,property).equals(property(desired,property)))
+                return false;
+        }
+        return true;
+    }
+    private static String diag(BlockState state) {
+        return canonical(state);
+    }
     private static <T extends Comparable<T>> String property(BlockState state,Property<T> p) {
         return p.getName()+"="+p.getName(state.getValue(p));
     }
@@ -566,6 +586,69 @@ public final class R5CommercialTestInstaller {
         }
         return allowed;
     }
+    /**
+     * Read-only classification of every journal cell before the user attempts
+     * to recover the installed building. Reports up to six unsafe cells.
+     * Does not write a file, change a block or mark any journal phase.
+     */
+    public static synchronized Result diagnose(MinecraftServer server) {
+        try {
+            Path file=record(server);
+            JsonObject journal=readJournal(file);
+            if(!save(server).toString().equals(journal.get("world_root").getAsString())||
+                    !"minecraft:overworld".equals(journal.get("dimension").getAsString()))
+                throw new IllegalStateException("Journal belongs to another world/dimension.");
+            TerritoryDefinition definition=city(server,false);
+            ServerLevel world=level(server,definition);
+            Map<Long,Union> originals=loadOriginals(journal,definition,world);
+            Map<Long,List<BlockState>> allowed=allowedStages(journal,originals);
+            boolean committed="COMMITTED".equals(journal.get("phase").getAsString());
+            int before=0,expected=0,opened=0,unsafe=0,tiles=0;
+            List<String> details=new ArrayList<>();
+            for(Union cell:originals.values()) {
+                BlockState live=world.getBlockState(cell.pos());
+                if(sameOrKnown(live,cell.before()))before++;
+                else if(sameOrKnown(live,cell.after()))expected++;
+                else if(matchesRollbackInstalled(live,cell.after())) {
+                    opened++;
+                    if(details.size()<6)
+                        details.add("NORMAL_OPEN_SPRUCE_DOOR "+cell.pos()+
+                                " installed="+canonical(cell.after())+
+                                " current="+canonical(live));
+                } else {
+                    boolean intermediate=false;
+                    for(BlockState step:allowed.get(cell.pos().asLong()))
+                        if(matchesRollbackInstalled(live,step)) {
+                            intermediate=true;
+                            break;
+                        }
+                    if(!committed && intermediate)expected++;
+                    else {
+                        unsafe++;
+                        if(details.size()<6)
+                            details.add("UNSAFE_THIRD_STATE "+cell.pos()+
+                                    " installed="+canonical(cell.after())+
+                                    " original="+canonical(cell.before())+
+                                    " current="+canonical(live));
+                    }
+                }
+                if(world.getBlockEntity(cell.pos())!=null)tiles++;
+            }
+            String outcome="R5 City A COMMERCIAL JOURNAL DIAGNOSIS phase="+
+                    journal.get("phase").getAsString()+
+                    "; original="+before+"; installed/intermediate="+expected+
+                    "; normal-open-doors="+opened+"; unsafe-third-states="+unsafe+
+                    "; current-block-entities="+tiles+
+                    ". READ-ONLY; NO ROLLBACK EXECUTED.";
+            CatanCraft.LOGGER.info("{} details={}",outcome,String.join(" | ",details));
+            return new Result(unsafe==0,outcome+
+                    (details.isEmpty()?"":" | "+String.join(" | ",details)));
+        } catch(Exception problem) {
+            return new Result(false,"R5 Commercial journal diagnosis REFUSED: "+
+                    problem.getMessage()+". No world changes made.");
+        }
+    }
+
     public static synchronized Result rollback(MinecraftServer server) {
         try {
             Path file=record(server);
@@ -592,10 +675,13 @@ public final class R5CommercialTestInstaller {
                 List<BlockState> allowable=expected.get(voxel.pos().asLong());
                 boolean matches=false;
                 for(BlockState known:allowable)
-                    if(sameOrKnown(actual,known)) {matches=true;break;}
-                if(!matches || (committed&&!sameOrKnown(actual,voxel.after())))
+                    if(matchesRollbackInstalled(actual,known)) {matches=true;break;}
+                if(!matches || (committed&&!matchesRollbackInstalled(actual,voxel.after())))
                     throw new IllegalStateException("ROLLBACK REFUSED: third-state drift at "+
-                            voxel.pos()+". Keep journal and investigate.");
+                            voxel.pos()+"; expected-installed="+diag(voxel.after())+
+                            "; original="+diag(voxel.before())+
+                            "; current="+diag(actual)+
+                            ". Keep journal and investigate.");
                 BlockEntity tile=level.getBlockEntity(voxel.pos());
                 if(actual.getBlock()==Blocks.BARREL) {
                     String key=Long.toString(voxel.pos().asLong());
@@ -628,9 +714,11 @@ public final class R5CommercialTestInstaller {
                     // Recheck first due to possible prior Minecraft block updates.
                     boolean known=false;
                     for(BlockState expectedState:expected.get(voxel.pos().asLong()))
-                        if(sameOrKnown(actual,expectedState)){known=true;break;}
+                        if(matchesRollbackInstalled(actual,expectedState)){known=true;break;}
                     if(!known)
-                        throw new IllegalStateException("New drift during rollback at "+voxel.pos());
+                        throw new IllegalStateException("New drift during rollback at "+voxel.pos()+
+                                "; expected="+diag(voxel.after())+
+                                "; current="+diag(actual));
                     if(actual.getBlock()==Blocks.BARREL)
                         clearBarrel(level,voxel,
                                 barrelNbt.has(Long.toString(voxel.pos().asLong()))?
