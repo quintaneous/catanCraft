@@ -57,9 +57,9 @@ public final class R5CivicStagedPreview {
         void fail(String text) {
             mismatches++;
             if(details.size()<MAX_DETAILS)details.add("REVIEW "+text);
-            if(mismatches>=MAX_DETAILS)
-                throw new IllegalStateException("At least "+MAX_DETAILS+
-                        " mismatches. Stop and review the first reported cells.");
+            // Keep scanning read-only to count all mismatches. Only the first
+            // MAX_DETAILS are emitted to chat; do not throw from the recorder,
+            // including when handling an unrelated exception.
         }
         void note(String text) {
             if(details.size()<MAX_DETAILS) details.add(text);
