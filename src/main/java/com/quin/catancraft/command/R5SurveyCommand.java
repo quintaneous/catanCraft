@@ -3,6 +3,7 @@ package com.quin.catancraft.command;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.quin.catancraft.world.R5ReadOnlyPreflight;
+import com.quin.catancraft.world.R5PilotInstaller;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -19,6 +20,22 @@ public final class R5SurveyCommand {
                         .requires(source -> source.hasPermission(2))
                         .then(Commands.literal("status")
                                 .executes(ctx -> status(ctx.getSource())))
+                        .then(Commands.literal("apply")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .then(Commands.argument("group", StringArgumentType.word())
+                                                .then(Commands.literal("confirm")
+                                                        .executes(ctx -> pilotResult(ctx.getSource(),
+                                                                R5PilotInstaller.apply(ctx.getSource().getServer(),
+                                                                        StringArgumentType.getString(ctx,"territory"),
+                                                                        StringArgumentType.getString(ctx,"group"))))))))
+                        .then(Commands.literal("rollback")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .then(Commands.argument("group", StringArgumentType.word())
+                                                .then(Commands.literal("confirm")
+                                                        .executes(ctx -> pilotResult(ctx.getSource(),
+                                                                R5PilotInstaller.rollback(ctx.getSource().getServer(),
+                                                                        StringArgumentType.getString(ctx,"territory"),
+                                                                        StringArgumentType.getString(ctx,"group"))))))))
                         .then(Commands.literal("city")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .executes(ctx -> overview(ctx.getSource(),
@@ -37,10 +54,19 @@ public final class R5SurveyCommand {
                                                         StringArgumentType.getString(ctx, "group"))))))));
     }
 
+    private static int pilotResult(CommandSourceStack source,R5PilotInstaller.Result result) {
+        if(result.success()) {
+            source.sendSuccess(() -> Component.literal(result.message()),true);
+            return 1;
+        }
+        source.sendFailure(Component.literal(result.message()));
+        return 0;
+    }
+
     private static int status(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
-                "R5-1 city rework: READ-ONLY assessment mode. Civic builds, " +
-                "city cosmetic writes and migration are NOT enabled. " +
+                "R5-2: Civic builds and house migration DISABLED; " +
+                "only three opt-in test-world streetscape groups can be applied. " +
                 "Use /catan r5 city a, /catan r5 civic a commercial, or " +
                 "/catan r5 group a front_public_park."),false);
         return 1;
