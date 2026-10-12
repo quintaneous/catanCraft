@@ -6,6 +6,7 @@ import com.quin.catancraft.world.R5ReadOnlyPreflight;
 import com.quin.catancraft.world.R5PilotInstaller;
 import com.quin.catancraft.world.R5CivicStagedPreview;
 import com.quin.catancraft.world.R5CivicConstructionAudit;
+import com.quin.catancraft.world.R5CivicJournalDryRun;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -50,6 +51,12 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> constructionAudit(ctx.getSource(),
                                                         StringArgumentType.getString(ctx,"territory"),
                                                         StringArgumentType.getString(ctx,"kind"))))))
+                        .then(Commands.literal("journalplan")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .then(Commands.argument("kind", StringArgumentType.word())
+                                                .executes(ctx -> journalModel(ctx.getSource(),
+                                                        StringArgumentType.getString(ctx,"territory"),
+                                                        StringArgumentType.getString(ctx,"kind"))))))
                         .then(Commands.literal("city")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .executes(ctx -> overview(ctx.getSource(),
@@ -66,6 +73,15 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> group(ctx.getSource(),
                                                         StringArgumentType.getString(ctx, "territory"),
                                                         StringArgumentType.getString(ctx, "group"))))))));
+    }
+
+    private static int journalModel(CommandSourceStack source,String city,String kind) {
+        R5CivicJournalDryRun.Result plan=R5CivicJournalDryRun.preview(
+                source.getServer(),city,kind);
+        source.sendSuccess(() -> Component.literal(plan.headline()),false);
+        for(String message:plan.messages())
+            source.sendSuccess(() -> Component.literal("  "+message),false);
+        return plan.modeled()?1:0;
     }
 
     private static int constructionAudit(CommandSourceStack source,String city,String kind) {
