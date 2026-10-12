@@ -19,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -271,12 +272,12 @@ public final class R5PilotInstaller {
                     if(!level.setBlock(c.pos(),c.after(),2))
                         throw new IllegalStateException("Could not set block "+c.pos());
                     writes++;
-                    if(!level.getBlockState(c.pos()).equals(c.after()))
+                    if(!matchesInstalled(level.getBlockState(c.pos()),c.after()))
                         throw new IllegalStateException("Post-write block drift at "+c.pos());
                 }
                 // Detect same-mask physics/neighbor mutations before committing.
                 for(Change c:cells)
-                    if(!level.getBlockState(c.pos()).equals(c.after()))
+                    if(!matchesInstalled(level.getBlockState(c.pos()),c.after()))
                         throw new IllegalStateException("Post-apply group drift at "+c.pos());
                 snapshot.addProperty("state","COMMITTED");
                 persist(record,snapshot);
@@ -344,9 +345,11 @@ public final class R5PilotInstaller {
             // Fully validate EVERY current cell before touching any.
             for(Change c:cells) {
                 BlockState current=level.getBlockState(c.pos());
-                if(!current.equals(c.before())&&!current.equals(c.after()))
-                    throw new IllegalStateException("Rollback drift; unchanged blocks "+
-                            "required at "+c.pos());
+                if(!current.equals(c.before())&&!matchesInstalled(current,c.after()))
+                    throw new IllegalStateException("Rollback drift at "+c.pos()+
+                            "; current="+canonical(current)+
+                            "; before="+canonical(c.before())+
+                            "; installed="+canonical(c.after()));
             }
             verifyEntitiesForRollback(level,cells);
             int restored=0;
@@ -378,6 +381,26 @@ public final class R5PilotInstaller {
                 throw new IllegalStateException("Entity inside rollback footprint "+c.pos());
         }
     }
+    /**
+     * Persistent oak leaves retain the intended block and all non-distance
+     * properties, but vanilla Minecraft recomputes their "distance" after
+     * neighboring logs/leaves update. R5 authoring encoded distance=1 even at
+     * positions multiple blocks from trunks. Allow ONLY this engine-managed
+     * property to drift for an already-installed oak-leaves cell.
+     * Everything else (block type, persistent, waterlogged, all other states)
+     * must still match, and expected-before snapshots remain exact.
+     */
+    private static boolean matchesInstalled(BlockState actual,BlockState intended) {
+        if(actual.equals(intended)) return true;
+        if(intended.getBlock()!=Blocks.OAK_LEAVES ||
+                actual.getBlock()!=Blocks.OAK_LEAVES) return false;
+        for(Property<?> p:intended.getProperties()) {
+            if("distance".equals(p.getName())) continue;
+            if(!property(actual,p).equals(property(intended,p))) return false;
+        }
+        return true;
+    }
+
     private static BlockState parse(String descriptor) throws Exception {
         int start=descriptor.indexOf('[');
         String name=start<0?descriptor:descriptor.substring(0,start);
