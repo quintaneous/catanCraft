@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.quin.catancraft.CatanCraft;
 import com.quin.catancraft.data.CatanSavedData;
 import com.quin.catancraft.data.TerritoryData;
 import com.quin.catancraft.map.MapAnchor;
@@ -59,9 +60,23 @@ public final class R5ReadOnlyPreflight {
         long examined;
         long mismatches;
         final List<String> issues = new ArrayList<>();
+        final Map<String, Integer> kinds = new java.util.LinkedHashMap<>();
+        String auditName = "r5";
+        void title(String name) { auditName = name; }
+        void logStart() { CatanCraft.LOGGER.info("R5 DIAGNOSTIC BEGIN {} (read-only)", auditName); }
+        void logFinish() { CatanCraft.LOGGER.info("R5 DIAGNOSTIC SUMMARY {} checked={} mismatches={} reasons={}",auditName,examined,mismatches,kinds); CatanCraft.LOGGER.info("R5 DIAGNOSTIC END {}",auditName); }
         void fail(String description) {
             mismatches++;
             if (issues.size() < MAX_ISSUES) issues.add(description);
+            String kind = description.startsWith("source-air clearance") ? "source-air"
+                    : description.startsWith("civic write") ? "civic-write"
+                    : description.startsWith("support") ? "support"
+                    : description.startsWith("R5 group") ? "group-write"
+                    : description.contains("UNLOADED") ? "unloaded"
+                    : description.startsWith("Civic requires") ? "prerequisite" : "other";
+            kinds.merge(kind, 1, Integer::sum);
+            CatanCraft.LOGGER.info("R5 DIAGNOSTIC {} | #{} [{}] {}",
+                    auditName, mismatches, kind, description);
         }
         Report report(String prefix) {
             String message = prefix + " — " + examined + " checks, " + mismatches +
@@ -201,6 +216,8 @@ public final class R5ReadOnlyPreflight {
     public static Report civic(MinecraftServer server, String territory, String requestedKind) {
         Stats stats = new Stats();
         String label = territory + "/" + requestedKind;
+        stats.title("civic/" + label);
+        stats.logStart();
         try {
             String id = canonicalId(territory);
             String kind = switch (requestedKind.toLowerCase(Locale.ROOT)) {
@@ -297,16 +314,20 @@ public final class R5ReadOnlyPreflight {
                 else if (current.buildings().stream().filter(b -> b.type().name().equals(kind))
                         .count() > 1)
                     stats.fail("Duplicate legacy civic purchases require save reconciliation.");
+                stats.logFinish();
                 return stats.report("R5 CIVIC " + id.toUpperCase(Locale.ROOT) + "/" + kind);
             }
         } catch (Exception ex) {
             stats.fail("Preflight refused: " + ex.getMessage());
+            stats.logFinish();
             return stats.report("R5 CIVIC " + label);
         }
     }
 
     public static Report group(MinecraftServer server, String territory, String requestedGroup) {
         Stats stats = new Stats();
+        stats.title("group/" + territory + "/" + requestedGroup);
+        stats.logStart();
         try {
             String id = canonicalId(territory);
             String groupId = requestedGroup.trim().toLowerCase(Locale.ROOT);
@@ -349,10 +370,12 @@ public final class R5ReadOnlyPreflight {
                             cell.get("expected_before_blockstate").getAsString(),
                             "R5 group",stats);
                 }
+                stats.logFinish();
                 return stats.report("R5 GROUP " + id.toUpperCase(Locale.ROOT)+"/"+groupId);
             }
         } catch (Exception ex) {
             stats.fail("Preflight refused: "+ex.getMessage());
+            stats.logFinish();
             return stats.report("R5 GROUP " + territory+"/"+requestedGroup);
         }
     }
