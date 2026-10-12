@@ -5,6 +5,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.quin.catancraft.world.R5ReadOnlyPreflight;
 import com.quin.catancraft.world.R5PilotInstaller;
 import com.quin.catancraft.world.R5CivicStagedPreview;
+import com.quin.catancraft.world.R5CivicConstructionAudit;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -43,6 +44,12 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> stagedPlan(ctx.getSource(),
                                                         StringArgumentType.getString(ctx,"territory"),
                                                         StringArgumentType.getString(ctx,"kind"))))))
+                        .then(Commands.literal("constructioncheck")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .then(Commands.argument("kind", StringArgumentType.word())
+                                                .executes(ctx -> constructionAudit(ctx.getSource(),
+                                                        StringArgumentType.getString(ctx,"territory"),
+                                                        StringArgumentType.getString(ctx,"kind"))))))
                         .then(Commands.literal("city")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .executes(ctx -> overview(ctx.getSource(),
@@ -59,6 +66,16 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> group(ctx.getSource(),
                                                         StringArgumentType.getString(ctx, "territory"),
                                                         StringArgumentType.getString(ctx, "group"))))))));
+    }
+
+    private static int constructionAudit(CommandSourceStack source,String city,String kind) {
+        R5CivicConstructionAudit.Report report=R5CivicConstructionAudit.inspect(
+                source.getServer(),city,kind);
+        source.sendSuccess(() -> Component.literal(report.headline()),false);
+        for(String line:report.details())
+            source.sendSuccess(() -> Component.literal("  "+line),false);
+        // A read-only report is never a world-building approval.
+        return report.staticReady()?1:0;
     }
 
     private static int stagedPlan(CommandSourceStack source,String city,String kind) {
