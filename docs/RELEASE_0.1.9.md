@@ -9,7 +9,7 @@ User tested read-only R5 group contracts on live server:
 - `/catan r5 group a logistics_service_connection`: **158 checks, 0 mismatches**;
 - `/catan r5 group a cleanup_tree_16_10`: **92 checks, 0 mismatches**.
 
-Read-only validation alone cannot demonstrate the installation and rollback path. This release introduces a tightly gated, operator-only proof of the *write-mask* transaction, intended for a separate disposable test-world COPY; **not for your active server world**. The R5 house differences (R1/R2), 94 Commercial District conflicts (92 planned tree removal + 2 unresolved), civic physical buildings, R6 casemates/walls, R4 gates and siege restoration are NOT enabled by this installer.
+Read-only validation alone cannot demonstrate the installation and rollback path. This release introduces a tightly gated, operator-only proof of the *write-mask* transaction, intended for a separate disposable test-world COPY; **not for your active server world**. The R5 house differences (R1/R2), 94 Commercial District preflight issues (92 expected tree-mask cells + 2 missing prerequisites), civic physical buildings, R6 casemates/walls, R4 gates and siege restoration are NOT enabled by this installer.
 
 ## What the pilot can modify
 
@@ -68,7 +68,7 @@ Without the one-shot file, all commands remain read-only or refuse.
 
 - Purchased Superb Warfare vehicles still can be packed with a crowbar despite denial message. **Open issue #6**; not fixed in this patch. Do not give players crowbars.
 - The R5 house façade baseline issue remains; house changes are not eligible for pilot.
-- The R5 Commercial District still has 2 unidentified non-tree conflicts; Commercial and Logistics schematic installations are NOT enabled.
+- All 92 Commercial block conflicts match the tree cleanup mask; the remaining 2 issues were uninstalled prerequisite flags. Commercial and Logistics schematic installations are NOT enabled.
 - Blender R6 delivered 272 offline-valid new candidate placements but has **0 live worlds verified**. R6 is not packaged into server placement runtime here.
 - Server currently uses Java 25.0.1, not the Java 17 target. Recommend Java 17 before further extended testing.
 

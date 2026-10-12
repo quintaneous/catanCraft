@@ -19,6 +19,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.world.phys.AABB;
@@ -197,15 +198,18 @@ public final class R5PilotInstaller {
                 throw new IllegalStateException("Entity occupies proposed structure: "+c.pos());
         }
     }
-    private static JsonObject makeJournal(String city,String group,ServerLevel level,
-                                          List<Change> cells) {
+    private static JsonObject makeJournal(MinecraftServer server,String city,String group,
+                                          ServerLevel level,List<Change> cells) throws IOException {
         JsonObject doc=new JsonObject();
-        doc.addProperty("schema",1);
+        doc.addProperty("schema",2);
         doc.addProperty("revision","R5-1");
         doc.addProperty("transaction_id",UUID.randomUUID().toString());
         doc.addProperty("city",city);
         doc.addProperty("group",group);
         doc.addProperty("dimension",level.dimension().location().toString());
+        // Config files outlive world copies. Bind each rollback to the exact save path.
+        doc.addProperty("world_root",server.getWorldPath(LevelResource.ROOT)
+                .toRealPath().toString());
         doc.addProperty("state","PENDING");
         JsonArray writes=new JsonArray();
         for(Change c:cells) {
@@ -258,7 +262,7 @@ public final class R5PilotInstaller {
                         "WORLD COPY only, create "+approval+" containing exactly "+
                         APPROVAL_TEXT+". This file is consumed on the next apply.");
             Files.delete(approval);
-            JsonObject snapshot=makeJournal(id,local,level,cells);
+            JsonObject snapshot=makeJournal(server,id,local,level,cells);
             persist(record,snapshot); // Durable pending before first voxel
             int writes=0;
             try {
@@ -267,7 +271,13 @@ public final class R5PilotInstaller {
                     if(!level.setBlock(c.pos(),c.after(),2))
                         throw new IllegalStateException("Could not set block "+c.pos());
                     writes++;
+                    if(!level.getBlockState(c.pos()).equals(c.after()))
+                        throw new IllegalStateException("Post-write block drift at "+c.pos());
                 }
+                // Detect same-mask physics/neighbor mutations before committing.
+                for(Change c:cells)
+                    if(!level.getBlockState(c.pos()).equals(c.after()))
+                        throw new IllegalStateException("Post-apply group drift at "+c.pos());
                 snapshot.addProperty("state","COMMITTED");
                 persist(record,snapshot);
                 CatanCraft.LOGGER.warn("R5 PILOT COMMIT {}:{} {}, {} writes; journal {}",
@@ -297,8 +307,13 @@ public final class R5PilotInstaller {
             JsonObject doc=JsonParser.parseString(Files.readString(record)).getAsJsonObject();
             if(!id.equals(doc.get("city").getAsString()) ||
                     !local.equals(doc.get("group").getAsString()) ||
-                    doc.get("schema").getAsInt()!=1)
+                    doc.get("schema").getAsInt()!=2)
                 throw new IllegalStateException("Journal identity mismatch");
+            // Fail closed for legacy schema-1 journals without world identity.
+            // Those can be recovered with the older pilot on a disposable copy.
+            if(!doc.has("world_root") || !doc.get("world_root").getAsString().equals(
+                    server.getWorldPath(LevelResource.ROOT).toRealPath().toString()))
+                throw new IllegalStateException("Journal belongs to a different world save.");
             String phase=doc.get("state").getAsString();
             if(!phase.equals("COMMITTED")&&!phase.equals("PENDING"))
                 return new Result(false,"Cannot rollback transaction state "+phase);
@@ -307,9 +322,15 @@ public final class R5PilotInstaller {
             if(!doc.get("dimension").getAsString().equals(city.dimension()))
                 throw new IllegalStateException("Journal dimension mismatch");
             List<Change> cells=new ArrayList<>();
-            for(JsonElement element:doc.getAsJsonArray("writes")) {
+            JsonArray snapshotWrites=doc.getAsJsonArray("writes");
+            if(snapshotWrites==null||snapshotWrites.size()<1||snapshotWrites.size()>2500)
+                throw new IllegalStateException("Invalid rollback journal size.");
+            Set<Long> seenPositions=new HashSet<>();
+            for(JsonElement element:snapshotWrites) {
                 JsonObject w=element.getAsJsonObject();
                 BlockPos p=pos(w.getAsJsonArray("world_xyz"));
+                if(!seenPositions.add(p.asLong()))
+                    throw new IllegalStateException("Duplicate journal coordinate "+p);
                 if(!city.restorationRegion().contains(p)||!city.siegeRegion().contains(p)||
                         !level.hasChunkAt(p))
                     throw new IllegalStateException("Unknown/ unloaded rollback cell "+p);
@@ -334,7 +355,12 @@ public final class R5PilotInstaller {
                 if(!level.setBlock(c.pos(),c.before(),2))
                     throw new IllegalStateException("Rollback interrupted at "+c.pos());
                 restored++;
+                if(!level.getBlockState(c.pos()).equals(c.before()))
+                    throw new IllegalStateException("Post-rollback block drift at "+c.pos());
             }
+            for(Change c:cells)
+                if(!level.getBlockState(c.pos()).equals(c.before()))
+                    throw new IllegalStateException("Post-rollback group drift at "+c.pos());
             doc.addProperty("state","ROLLED_BACK");
             persist(record,doc);
             CatanCraft.LOGGER.warn("R5 PILOT ROLLBACK {}:{} restored={} journal={}",
