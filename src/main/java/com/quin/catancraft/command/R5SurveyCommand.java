@@ -53,6 +53,8 @@ public final class R5SurveyCommand {
                                                         StringArgumentType.getString(ctx,"territory"),
                                                         StringArgumentType.getString(ctx,"kind"))))))
                         .then(Commands.literal("commercialpilot")
+                                .then(Commands.literal("diagnose")
+                                        .executes(ctx -> commercialDiagnose(ctx.getSource())))
                                 .then(Commands.literal("apply")
                                         .then(Commands.literal("confirm")
                                                 .executes(ctx -> commercialPilot(ctx.getSource(),true))))
@@ -81,6 +83,13 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> group(ctx.getSource(),
                                                         StringArgumentType.getString(ctx, "territory"),
                                                         StringArgumentType.getString(ctx, "group"))))))));
+    }
+
+    private static int commercialDiagnose(CommandSourceStack source) {
+        R5CommercialTestInstaller.Result result=
+                R5CommercialTestInstaller.diagnose(source.getServer());
+        source.sendSuccess(() -> Component.literal(result.text()),false);
+        return result.success()?1:0;
     }
 
     private static int commercialPilot(CommandSourceStack source,boolean apply) {
