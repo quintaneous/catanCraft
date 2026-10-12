@@ -4,6 +4,7 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.quin.catancraft.world.R5ReadOnlyPreflight;
 import com.quin.catancraft.world.R5PilotInstaller;
+import com.quin.catancraft.world.R5CivicStagedPreview;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
 import net.minecraft.network.chat.Component;
@@ -36,6 +37,12 @@ public final class R5SurveyCommand {
                                                                 R5PilotInstaller.rollback(ctx.getSource().getServer(),
                                                                         StringArgumentType.getString(ctx,"territory"),
                                                                         StringArgumentType.getString(ctx,"group"))))))))
+                        .then(Commands.literal("plan")
+                                .then(Commands.argument("territory", StringArgumentType.word())
+                                        .then(Commands.argument("kind", StringArgumentType.word())
+                                                .executes(ctx -> stagedPlan(ctx.getSource(),
+                                                        StringArgumentType.getString(ctx,"territory"),
+                                                        StringArgumentType.getString(ctx,"kind"))))))
                         .then(Commands.literal("city")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .executes(ctx -> overview(ctx.getSource(),
@@ -54,6 +61,15 @@ public final class R5SurveyCommand {
                                                         StringArgumentType.getString(ctx, "group"))))))));
     }
 
+    private static int stagedPlan(CommandSourceStack source,String city,String kind) {
+        R5CivicStagedPreview.Report plan=R5CivicStagedPreview.preview(
+                source.getServer(),city,kind);
+        source.sendSuccess(() -> Component.literal(plan.headline()),false);
+        for(String line:plan.details())
+            source.sendSuccess(() -> Component.literal("  "+line),false);
+        return plan.matched()?1:0;
+    }
+
     private static int pilotResult(CommandSourceStack source,R5PilotInstaller.Result result) {
         if(result.success()) {
             source.sendSuccess(() -> Component.literal(result.message()),true);
@@ -66,7 +82,7 @@ public final class R5SurveyCommand {
     private static int status(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
                 "R5-2: Civic builds and house migration DISABLED; " +
-                "only three opt-in test-world streetscape groups can be applied. " +
+                "only three opt-in test-world streetscape groups can be applied. READ-ONLY /catan r5 plan a commercial|logistics simulates prerequisite writes. " +
                 "Use /catan r5 city a, /catan r5 civic a commercial, or " +
                 "/catan r5 group a front_public_park."),false);
         return 1;

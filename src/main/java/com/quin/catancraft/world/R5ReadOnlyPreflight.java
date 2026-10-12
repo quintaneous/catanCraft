@@ -96,7 +96,7 @@ public final class R5ReadOnlyPreflight {
         return FMLPaths.CONFIGDIR.get().resolve("catancraft").resolve(INDEX_NAME);
     }
 
-    private static void verifyIndex() throws Exception {
+    static void verifyIndex() throws Exception {
         Path file = indexPath();
         if (!Files.isRegularFile(file))
             throw new IllegalStateException("Missing R5 read-only probe index at " + file);
@@ -113,7 +113,7 @@ public final class R5ReadOnlyPreflight {
             throw new IllegalStateException("R5 probe index SHA-256 mismatch.");
     }
 
-    private static void verifyArchive() throws Exception {
+    static void verifyArchive() throws Exception {
         Path path = archivePath();
         if (!Files.isRegularFile(path))
             throw new IllegalStateException("Missing R5 sidecar ZIP at " + path);
