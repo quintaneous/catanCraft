@@ -46,7 +46,7 @@ public final class R5ReadOnlyPreflight {
     public static final String ARCHIVE_NAME = "CatanCraft_R5_City_Rework_And_Civic_Assets.zip";
     private static final String ARCHIVE_SHA256 =
             "679b9d94d2f96175705e2e85f2e36aa0146cd8dd28a71826e25998c6c9755521";
-    private static final String INDEX_NAME = "R5_READ_ONLY_PROBE_INDEX.zip";
+    static final String INDEX_NAME = "R5_READ_ONLY_PROBE_INDEX.zip";
     private static final String INDEX_SHA256 =
             "4f5a445347adbb62e73d1c38bfab5ff850c7307733a619847d9eeac9245834ba";
     private static final int MAX_ISSUES = 9;
