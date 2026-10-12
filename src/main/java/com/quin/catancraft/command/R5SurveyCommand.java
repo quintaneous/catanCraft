@@ -6,6 +6,7 @@ import com.quin.catancraft.world.R5ReadOnlyPreflight;
 import com.quin.catancraft.world.R5PilotInstaller;
 import com.quin.catancraft.world.R5CivicStagedPreview;
 import com.quin.catancraft.world.R5CivicConstructionAudit;
+import com.quin.catancraft.world.R5CommercialTestInstaller;
 import com.quin.catancraft.world.R5CivicJournalDryRun;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -51,6 +52,13 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> constructionAudit(ctx.getSource(),
                                                         StringArgumentType.getString(ctx,"territory"),
                                                         StringArgumentType.getString(ctx,"kind"))))))
+                        .then(Commands.literal("commercialpilot")
+                                .then(Commands.literal("apply")
+                                        .then(Commands.literal("confirm")
+                                                .executes(ctx -> commercialPilot(ctx.getSource(),true))))
+                                .then(Commands.literal("rollback")
+                                        .then(Commands.literal("confirm")
+                                                .executes(ctx -> commercialPilot(ctx.getSource(),false)))))
                         .then(Commands.literal("journalplan")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .then(Commands.argument("kind", StringArgumentType.word())
@@ -73,6 +81,18 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> group(ctx.getSource(),
                                                         StringArgumentType.getString(ctx, "territory"),
                                                         StringArgumentType.getString(ctx, "group"))))))));
+    }
+
+    private static int commercialPilot(CommandSourceStack source,boolean apply) {
+        R5CommercialTestInstaller.Result result=apply
+                ?R5CommercialTestInstaller.apply(source.getServer())
+                :R5CommercialTestInstaller.rollback(source.getServer());
+        if(result.success()) {
+            source.sendSuccess(() -> Component.literal(result.text()),true);
+            return 1;
+        }
+        source.sendFailure(Component.literal(result.text()));
+        return 0;
     }
 
     private static int journalModel(CommandSourceStack source,String city,String kind) {
