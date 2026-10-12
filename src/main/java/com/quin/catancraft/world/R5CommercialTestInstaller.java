@@ -142,16 +142,23 @@ public final class R5CommercialTestInstaller {
         if(p.getX() < -828 || p.getX()>-794 ||
                 p.getY()<80||p.getY()>95||p.getZ() < -831||p.getZ()>-800)
             return false;
-        // Preserve every six R3 factory/resource plot envelopes, including a
-        // 1-block breathing margin. The source has a disjoint footprint.
-        for(var plot:city.buildingPlots())
-            if(Math.abs(p.getX()-plot.x())<=16&&
-                    Math.abs(p.getZ()-plot.z())<=16)
+        // The JSON 'buildingPlots' markers are NOT schematic paste anchors.
+        // Use actual registered V4/R3 source transforms, or innocent public
+        // sidewalk cells are incorrectly flagged as overlapping a factory.
+        // Includes 1-block margin and ALL six fixed city envelopes. Alternative
+        // industry types share their corresponding licensed plot geometry.
+        for(String id:List.of("vehicle_factory","quarry","weapons_factory",
+                "steel_mill","farm","lumberyard","th1","th2","th3")) {
+            var asset=SchematicAssetRegistry.asset(id);
+            var anchor=SchematicAssetRegistry.territoryAnchor(id,city);
+            if(asset==null||anchor==null)return false;
+            var bounds=asset.boundsAt(anchor);
+            if(p.getX()>=bounds.min().getX()-1 &&
+                    p.getX()<=bounds.max().getX()+1 &&
+                    p.getZ()>=bounds.min().getZ()-1 &&
+                    p.getZ()<=bounds.max().getZ()+1)
                 return false;
-        if(city.townHall()!=null &&
-                Math.abs(p.getX()-city.townHall().x())<=20 &&
-                Math.abs(p.getZ()-city.townHall().z())<=20)
-            return false;
+        }
         return true;
     }
     private static Prepared prepare(MinecraftServer server,TerritoryDefinition city,
