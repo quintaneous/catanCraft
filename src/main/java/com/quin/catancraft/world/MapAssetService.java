@@ -18,6 +18,10 @@ public final class MapAssetService {
             "CatanCraft Environment V4";
     public static final String MONUMENT_GAMEPLAY_R1_LEVEL_NAME =
             "CatanCraft Environment V4 - Monument Gameplay R1";
+    // Exact internal LevelName in the canonical authored V4 Monument R2
+    // Anvil baseline; do not paste 193x193 environment air masks over it.
+    public static final String VISUAL_POLISH_R2_LEVEL_NAME =
+            "CatanCraft Environment V4 - Visual Polish R2";
 
     public record Result(boolean success, String message, int changedBlocks) {}
 
@@ -40,7 +44,8 @@ public final class MapAssetService {
         if (levelName == null) return false;
         String normalized = levelName.trim();
         return ENVIRONMENT_V4_LEVEL_NAME.equalsIgnoreCase(normalized)
-                || MONUMENT_GAMEPLAY_R1_LEVEL_NAME.equalsIgnoreCase(normalized);
+                || MONUMENT_GAMEPLAY_R1_LEVEL_NAME.equalsIgnoreCase(normalized)
+                || VISUAL_POLISH_R2_LEVEL_NAME.equalsIgnoreCase(normalized);
     }
 
     public static int environmentMarkerCount(CatanSavedData data) {
