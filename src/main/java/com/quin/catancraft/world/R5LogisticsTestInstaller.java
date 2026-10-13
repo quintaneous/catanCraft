@@ -18,6 +18,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -649,6 +650,23 @@ public final class R5LogisticsTestInstaller {
         }
     }
 
+    // Deliberately avoid transient neighbor/shape updates while reversing an
+    // exact, journal-verified sparse install. In particular, removing a door
+    // half must not pop its other half into a collectible item.
+    private static final int ROLLBACK_WRITE_FLAGS =
+            Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS;
+
+    private static AABB observationBox(Map<Long,Union> originals) {
+        int x0=Integer.MAX_VALUE,y0=Integer.MAX_VALUE,z0=Integer.MAX_VALUE;
+        int x1=Integer.MIN_VALUE,y1=Integer.MIN_VALUE,z1=Integer.MIN_VALUE;
+        for(Union u:originals.values()) {
+            BlockPos p=u.pos();
+            x0=Math.min(x0,p.getX()); y0=Math.min(y0,p.getY()); z0=Math.min(z0,p.getZ());
+            x1=Math.max(x1,p.getX()); y1=Math.max(y1,p.getY()); z1=Math.max(z1,p.getZ());
+        }
+        return new AABB(x0-2,y0-2,z0-2,x1+3,y1+3,z1+3);
+    }
+
     public static synchronized Result rollback(MinecraftServer server) {
         try {
             Path file=record(server);
@@ -668,10 +686,13 @@ public final class R5LogisticsTestInstaller {
             if(barrelNbt==null)
                 throw new IllegalStateException("Barrel NBT journal is missing.");
             boolean committed=phase.equals("COMMITTED");
+            Set<Long> initiallyOriginal=new HashSet<>();
             // STRICT all-cell preflight before restoring a single block. On
             // PENDING interrupted installs, any known stage-state is allowed.
             for(Union voxel:originals.values()) {
                 BlockState actual=level.getBlockState(voxel.pos());
+                if(sameOrKnown(actual,voxel.before()))
+                    initiallyOriginal.add(voxel.pos().asLong());
                 List<BlockState> allowable=expected.get(voxel.pos().asLong());
                 boolean matches=false;
                 for(BlockState known:allowable)
@@ -700,6 +721,12 @@ public final class R5LogisticsTestInstaller {
                                 .isEmpty())
                     throw new IllegalStateException("Entity blocks restoring "+voxel.pos());
             }
+            // Observe any item entities before rollback to detect accidental
+            // collectible door drops rather than silently declaring PASS.
+            AABB observed=observationBox(originals);
+            Set<UUID> priorItems=new HashSet<>();
+            for(ItemEntity item:level.getEntitiesOfClass(ItemEntity.class,observed))
+                priorItems.add(item.getUUID());
             j.addProperty("phase","ROLLING_BACK");
             persist(file,j);
             // Restore every actual BEFORE snapshot. Reverse order is based on
@@ -707,10 +734,15 @@ public final class R5LogisticsTestInstaller {
             List<Union> reverse=new ArrayList<>(originals.values());
             java.util.Collections.reverse(reverse);
             int restored=0;
+            int becameOriginalDuringRollback=0;
             try {
                 for(Union voxel:reverse) {
                     BlockState actual=level.getBlockState(voxel.pos());
-                    if(sameOrKnown(actual,voxel.before()))continue;
+                    if(sameOrKnown(actual,voxel.before())) {
+                        if(!initiallyOriginal.contains(voxel.pos().asLong()))
+                            becameOriginalDuringRollback++;
+                        continue;
+                    }
                     // Recheck first due to possible prior Minecraft block updates.
                     boolean known=false;
                     for(BlockState expectedState:expected.get(voxel.pos().asLong()))
@@ -724,7 +756,7 @@ public final class R5LogisticsTestInstaller {
                                 barrelNbt.has(Long.toString(voxel.pos().asLong()))?
                                 barrelNbt.get(Long.toString(voxel.pos().asLong())).getAsString():null,
                                 committed&&barrelNbt.has(Long.toString(voxel.pos().asLong())));
-                    if(!level.setBlock(voxel.pos(),voxel.before(),2))
+                    if(!level.setBlock(voxel.pos(),voxel.before(),ROLLBACK_WRITE_FLAGS))
                         throw new IllegalStateException("Minecraft refused rollback "+voxel.pos());
                     if(!sameOrKnown(level.getBlockState(voxel.pos()),voxel.before()))
                         throw new IllegalStateException("After-rollback drift "+voxel.pos());
@@ -733,10 +765,24 @@ public final class R5LogisticsTestInstaller {
                 for(Union voxel:originals.values())
                     if(!sameOrKnown(level.getBlockState(voxel.pos()),voxel.before()))
                         throw new IllegalStateException("Final restored mask drift at "+voxel.pos());
+                int newItemEntities=0;
+                for(ItemEntity item:level.getEntitiesOfClass(ItemEntity.class,observed))
+                    if(!priorItems.contains(item.getUUID()))newItemEntities++;
+                if(newItemEntities>0)
+                    throw new IllegalStateException("Rollback spawned "+newItemEntities+
+                            " unexpected item entities. Block states may already be restored; "+
+                            "PRESERVE JOURNAL, do not collect/destroy items, send diagnostics.");
+                if(becameOriginalDuringRollback>0)
+                    CatanCraft.LOGGER.warn("R5 {} rollback: {} positions became original "+
+                            "without an explicit restoration write. Investigate neighbor physics.",
+                            CIVIC,becameOriginalDuringRollback);
                 j.addProperty("phase","ROLLED_BACK");
                 persist(file,j);
                 return new Result(true,"R5 City A Logistics rollback COMPLETE: restored "+
-                        restored+" unique positions; journal retained "+file+
+                        restored+" direct restoration writes (of "+originals.size()+
+                        " journal cells, "+initiallyOriginal.size()+" originally restored, "+
+                        becameOriginalDuringRollback+" auto-restored, 0 spawned item entities); "+
+                        "journal retained "+file+
                         ". No purchase or economy state changed.");
             } catch(Exception e) {
                 CatanCraft.LOGGER.error("R5 City A rollback interrupted; ROLLING_BACK journal",e);
