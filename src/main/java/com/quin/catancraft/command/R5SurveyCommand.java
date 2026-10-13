@@ -7,6 +7,7 @@ import com.quin.catancraft.world.R5PilotInstaller;
 import com.quin.catancraft.world.R5CivicStagedPreview;
 import com.quin.catancraft.world.R5CivicConstructionAudit;
 import com.quin.catancraft.world.R5CommercialTestInstaller;
+import com.quin.catancraft.world.R5LogisticsTestInstaller;
 import com.quin.catancraft.world.R5CivicJournalDryRun;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.commands.Commands;
@@ -61,6 +62,15 @@ public final class R5SurveyCommand {
                                 .then(Commands.literal("rollback")
                                         .then(Commands.literal("confirm")
                                                 .executes(ctx -> commercialPilot(ctx.getSource(),false)))))
+                        .then(Commands.literal("logisticspilot")
+                                .then(Commands.literal("diagnose")
+                                        .executes(ctx -> logisticsDiagnose(ctx.getSource())))
+                                .then(Commands.literal("apply")
+                                        .then(Commands.literal("confirm")
+                                                .executes(ctx -> logisticsPilot(ctx.getSource(),true))))
+                                .then(Commands.literal("rollback")
+                                        .then(Commands.literal("confirm")
+                                                .executes(ctx -> logisticsPilot(ctx.getSource(),false)))))
                         .then(Commands.literal("journalplan")
                                 .then(Commands.argument("territory", StringArgumentType.word())
                                         .then(Commands.argument("kind", StringArgumentType.word())
@@ -83,6 +93,25 @@ public final class R5SurveyCommand {
                                                 .executes(ctx -> group(ctx.getSource(),
                                                         StringArgumentType.getString(ctx, "territory"),
                                                         StringArgumentType.getString(ctx, "group"))))))));
+    }
+
+    private static int logisticsDiagnose(CommandSourceStack source) {
+        R5LogisticsTestInstaller.Result result=
+                R5LogisticsTestInstaller.diagnose(source.getServer());
+        source.sendSuccess(() -> Component.literal(result.text()),false);
+        return result.success()?1:0;
+    }
+
+    private static int logisticsPilot(CommandSourceStack source,boolean apply) {
+        R5LogisticsTestInstaller.Result result=apply
+                ?R5LogisticsTestInstaller.apply(source.getServer())
+                :R5LogisticsTestInstaller.rollback(source.getServer());
+        if(result.success()) {
+            source.sendSuccess(() -> Component.literal(result.text()),true);
+            return 1;
+        }
+        source.sendFailure(Component.literal(result.text()));
+        return 0;
     }
 
     private static int commercialDiagnose(CommandSourceStack source) {
