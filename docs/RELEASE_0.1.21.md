@@ -1,0 +1,25 @@
+# CatanCraft v0.1.21 — R7 permanent civic auto-construction candidate
+
+**Status: COMPILED SOURCE CANDIDATE, runtime NOT accepted; disposable R7 world ONLY.** This release replaces repeated City A manual test-pastes for newly bought Commercial District and Logistics Center with one purchase-time construction engine shared by **all 16 cities A–P**. It is hard-gated to a separately copied R7 world root containing an explicit one-time opt-in marker, NOT any existing live, v0.1.18, v0.1.19, or historically journaled world. Existing City A pilot commands remain available for recovery/history only, not part of the normal future purchase flow.
+
+## Blender terrain baseline
+New R7 world ZIP **CatanCraft_Season1_R7_Development_World.zip** verified downloaded SHA-256 `e4199c247e220976e8ffb3fdeece577e8c3bfe753673c866207ae136e0ecd5f8`, 17 ZIP members, all CRC PASS. R7 repaired core SHA `6144aab8b3715b3eebad341ae871236b0a0f1c376f17d4ade441b0a8cdf96051`, 618 members, CRC PASS. 57 environmental features, 39,837 modified world voxels per Blender's validation. R7 world kept original V4 R2 LevelName, recognized by previous v0.1.19 mod fix.
+
+Independent actual R7 world blockstate audit against original pinned R5 index + delta archives for **all 16 cities × two civics = 32 stage plans**: **101,536 ordered writes, zero expected-before blockstate mismatches, zero Commercial/Logistics mask overlaps**. Full audit: `CatanCraft_R7_vs_R5_All_16_Cities_Offline_Compatibility_Audit.json`. This is offline compatibility, NOT a simulated in-game purchase.
+
+## v0.1.21 changes
+- New class `R5CivicAutomaticInstaller.java` reads pinned SHA-verified R5 stages and applies them automatically during purchase (through `/nation build`, also used by GUI). No separate per-building approvals or operator install/rollback in the normal development workflow.
+- Supports 16 city source transforms, exact expected-before states (no adapted terrain guesses), old stage dependency order, duplicate/protected block rejection, server-loaded chunks, fluid/container/occupancy refusal, final block and new barrel count, item-drop guard, native Minecraft door-safe block flags.
+- **One distinct SHA-256-sealed on-disk transaction journal per city and type** in `world/data/catancraft_r5_auto_<city>_<type>_v1.json`, with original block snapshots and all economy balances, written and forced to disk before the first world block changes. Phase `PHYSICAL_COMPLETE_ECONOMY_PENDING` is persisted before the nation is charged.
+- When physical verification passes, charges the nation exactly once, adds one saved building, marks data dirty, requests synchronous server save, then seals journal `COMMITTED`. On an interruption, the non-overwritable journal causes any duplicate attempt to refuse; **this release deliberately fails closed and DOES NOT automatically erase an incomplete journal or silently invent a recovery/payment choice**.
+- **No automatic older-purchase retrofit**, no City A old-world journal clearing, no schematics/civic edits to the Blender R7 world; all saves remain separate. TH4/TH5 registered in v0.1.20 but full physical upgrades still disabled. R7 world not changed by source commit.
+- **R7 TEST-WORLD OPT-IN:** requires actual server world root folder EXACTLY `CatanCraft_Season1_R7_Development`, original V4/R2 internal LevelName, and the one-time marker file `CATANCRAFT_R7_AUTOBUILD_DISPOSABLE_TEST_ONLY.txt` with exact content `I_ACCEPT_AUTOMATIC_R5_CIVIC_CONSTRUCTION_ON_THIS_BACKED_UP_DISPOSABLE_R7_WORLD_ONLY`. The validated release kit will include the marker in its *separate disposable copy*. No automatic build on other worlds. This is a development safety boundary, not a production deployment recommendation.
+
+## Known limits before final acceptance
+- Forge CI compilation does not prove in-game balances, new-world starting resources, 16 cities/runtime orientations, chunk updates, GUI, gameplay or custom mod side effects; all require **one combined new-world acceptance**.
+- Journal mismatch or interrupted process needs a specialized safe reconciliation tool before calling it production/crash-recoverable. Do not delete journal, repay, reimport schematics or use rollback pilot commands to overwrite an auto-build transaction.
+- R5 Commercial left storefront roof visual asymmetry remains OPEN; roof refinement source has not arrived. R7 terrain is static verified, but actual clients/servers, lighting, leaf decay, restart and vehicle access are UNTESTED.
+- Superb Warfare crowbar packing retrieval exploit issue #6 remains OPEN, unrelated.
+
+## Recommendation
+Do not add any more temporary City A imports. Test v0.1.21 on a single brand-new, backed-up R7 world after full server-side bootstrap. Purchase Commercial at City L1 and Logistics at City L2 normally; both should physically appear with their purchase. Restart and audit persisted economy/buildings. Also verify Town Hall remains TH2, region geometry, 40 asset readiness (with staged TH4/TH5 files), and two separate COMMITTED auto journals. Avoid live or previously developed worlds.

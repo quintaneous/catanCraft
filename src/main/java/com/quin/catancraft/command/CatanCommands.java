@@ -28,6 +28,7 @@ import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
 import com.quin.catancraft.world.MapAssetService;
+import com.quin.catancraft.world.R5CivicAutomaticInstaller;
 import com.quin.catancraft.world.IndustrialPlotService;
 import com.quin.catancraft.world.SchematicAssetRegistry;
 import com.quin.catancraft.world.SchematicPlacementService;
@@ -1346,6 +1347,23 @@ public final class CatanCommands {
                     "Cannot afford " + type.displayName() +
                             ". Need: " + cost.describe()));
             return 0;
+        }
+
+        // New R7 world: permanent, purchase-driven physical civic construction.
+        // This path owns BOTH the durable block journal and the single economic
+        // charge. No separate pilot paste, no invisible data-only purchase.
+        // Existing saves are not retrofitted/charged by this branch.
+        if (R5CivicAutomaticInstaller.isCivic(type)) {
+            R5CivicAutomaticInstaller.Result outcome =
+                    R5CivicAutomaticInstaller.purchase(source.getServer(),
+                            data, nation, territory, type, cost);
+            if (!outcome.success()) {
+                source.sendFailure(Component.literal(outcome.message()));
+                return 0;
+            }
+            source.sendSuccess(() -> Component.literal(outcome.message()), true);
+            NationDashboard.open(player);
+            return 1;
         }
 
         if (mapDefinition != null
