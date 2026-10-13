@@ -138,6 +138,19 @@ public final class SchematicAssetRegistry {
                 "th3", "thall3", "town_hall", 4,
                 75, 47, 65, 37, 2, 1, true,
                 Set.of(0, 180), 0, -39));
+        // TH4/TH5 prestige schematics: registered for read-only contract checks
+        // ONLY. CatanCommands/MapAssetService intentionally continue to show TH3
+        // at economic levels 4/5 until a separately journaled, fail-closed
+        // management-lectern-NBT-safe world replacement is implemented.
+        // Release package supplies matching optional external schematics.
+        add(new Asset(
+                "th4", "thall4", "town_hall", 1,
+                75, 47, 65, 37, 2, 1, true,
+                Set.of(0, 180), 0, -39));
+        add(new Asset(
+                "th5", "thall5", "town_hall", 1,
+                75, 47, 65, 37, 2, 1, true,
+                Set.of(0, 180), 0, -39));
 
         add(new Asset(
                 "vehicle_factory", "vehiclefactory", "plot_1", 4,
