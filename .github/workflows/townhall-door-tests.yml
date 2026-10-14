@@ -1,4 +1,4 @@
-name: Town Hall door regression
+name: Town Hall state regression
 on:
   push:
     branches: [v0.1-foundation]
@@ -18,6 +18,13 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.8'
+      - name: Stage unchanged approved TH4 and TH5 test fixtures
+        shell: bash
+        run: |
+          echo '39f2fda6a74d0d891d45b37d111079905a6f67e4261b591c13902b4215342c4b  tests/fixtures/thall4.schem' | sha256sum -c -
+          echo '1ea2fd544c32ed5506a553bf6c56628ecd4b7ac8d29257009e7bd84a427bbc06  tests/fixtures/thall5.schem' | sha256sum -c -
+          mkdir -p build/gametest-run/config/catancraft/schematics
+          cp tests/fixtures/thall*.schem build/gametest-run/config/catancraft/schematics/
       - name: Compile and run actual Forge GameTests
         shell: bash
         run: |
@@ -28,11 +35,16 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: townhall-door-regression-evidence
+          name: townhall-state-regression-evidence
           path: |
             build/townhall-gametest-console.log
             build/gametest-run/logs/
+            build.gradle
+            .github/workflows/townhall-door-tests.yml
             src/main/java/com/quin/catancraft/world/TownHallInteractionPolicy.java
             src/main/java/com/quin/catancraft/world/TownHallPrestigeUpgradeService.java
             src/main/java/com/quin/catancraft/gametest/TownHallDoorTests.java
+            src/main/java/com/quin/catancraft/gametest/TownHallStateTests.java
+            src/main/resources/data/catancraft/structures/townhall_state_empty.nbt
+            tests/fixtures/
           if-no-files-found: error
