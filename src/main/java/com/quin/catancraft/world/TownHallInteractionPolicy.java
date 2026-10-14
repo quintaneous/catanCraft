@@ -54,7 +54,9 @@ public final class TownHallInteractionPolicy {
             if (other == null || other.getBlock() != state.getBlock()
                     || other.getValue(DoorBlock.HALF) == state.getValue(DoorBlock.HALF)
                     || other.getValue(DoorBlock.FACING) != state.getValue(DoorBlock.FACING)
-                    || other.getValue(DoorBlock.HINGE) != state.getValue(DoorBlock.HINGE))
+                    || other.getValue(DoorBlock.HINGE) != state.getValue(DoorBlock.HINGE)
+                    || other.getValue(DoorBlock.OPEN) != state.getValue(DoorBlock.OPEN)
+                    || other.getValue(DoorBlock.POWERED) != state.getValue(DoorBlock.POWERED))
                 throw new IllegalStateException("Malformed authored Town Hall door pair at " + e.getKey());
         }
     }
@@ -75,8 +77,14 @@ public final class TownHallInteractionPolicy {
         return Set.copyOf(missing);
     }
 
-    /** Keep an open/closed state when that same fixture survives an upgrade. */
+    /**
+     * New doors initialize both halves from the validated target pair. Retaining
+     * just one old open half when its other half is missing would create an
+     * inconsistent new pair. No old door needs closing before the purchase.
+     * One-block gates/trapdoors can retain their compatible interaction state.
+     */
     public static BlockState targetFor(BlockState actual, BlockState target) {
+        if (target.getBlock() instanceof DoorBlock) return target;
         return isInteractive(target) && matches(actual, target, false) ? actual : target;
     }
 

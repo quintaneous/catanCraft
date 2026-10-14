@@ -98,11 +98,24 @@ public final class TownHallDoorTests {
         h.succeed();
     }
     @GameTest(template="door_policy_empty")
-    public static void surviving_door_keeps_interaction(GameTestHelper h) {
-        BlockState closed=pair(Direction.NORTH).get(LOW), open=closed.setValue(DoorBlock.OPEN,true);
-        h.assertTrue(TownHallInteractionPolicy.targetFor(open,closed).equals(open),"Surviving door was closed");
-        h.assertTrue(TownHallInteractionPolicy.targetFor(Blocks.AIR.defaultBlockState(),closed).equals(closed),"Missing door target was lost");
-        h.assertTrue(TownHallInteractionPolicy.targetFor(open,Blocks.STONE.defaultBlockState()).is(Blocks.STONE),"Old door prevented authored redesign");
+    public static void target_halves_are_consistent_without_manual_closing(GameTestHelper h) {
+        for(Direction d:new Direction[]{Direction.NORTH,Direction.SOUTH}) {
+            Map<BlockPos,BlockState> target=pair(d);
+            for(int missing=0;missing<=3;missing++) {
+                BlockState lower=(missing&1)!=0?Blocks.AIR.defaultBlockState():
+                        target.get(LOW).setValue(DoorBlock.OPEN,true).setValue(DoorBlock.POWERED,true);
+                BlockState upper=(missing&2)!=0?Blocks.AIR.defaultBlockState():
+                        target.get(LOW.above()).setValue(DoorBlock.OPEN,true).setValue(DoorBlock.POWERED,true);
+                Map<BlockPos,BlockState> result=Map.of(
+                        LOW,TownHallInteractionPolicy.targetFor(lower,target.get(LOW)),
+                        LOW.above(),TownHallInteractionPolicy.targetFor(upper,target.get(LOW.above())));
+                TownHallInteractionPolicy.validateDoorPairs(result);
+                h.assertTrue(result.equals(target),"Target pair diverged with missing mask "+missing);
+            }
+        }
+        BlockState gate=Blocks.OAK_FENCE_GATE.defaultBlockState();
+        BlockState opened=gate.setValue(FenceGateBlock.OPEN,true);
+        h.assertTrue(TownHallInteractionPolicy.targetFor(opened,gate).equals(opened),"Single-block gate unexpectedly closed");
         h.succeed();
     }
     @GameTest(template="door_policy_empty",timeoutTicks=80)
