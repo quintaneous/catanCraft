@@ -28,6 +28,7 @@ import com.quin.catancraft.map.TerritoryDefinition;
 import com.quin.catancraft.ui.NationDashboard;
 import com.quin.catancraft.world.CityRestorationService;
 import com.quin.catancraft.world.MapAssetService;
+import com.quin.catancraft.world.TownHallPrestigeUpgradeService;
 import com.quin.catancraft.world.R5CivicAutomaticInstaller;
 import com.quin.catancraft.world.IndustrialPlotService;
 import com.quin.catancraft.world.SchematicAssetRegistry;
@@ -1431,6 +1432,21 @@ public final class CatanCommands {
         TerritoryDefinition mapDefinition =
                 MapDefinitionManager.territory(territory.id());
 
+        if (nextLevel >= 4) {
+            // Prestige transaction owns both the physical replacement and the
+            // exactly-once charge/level save. Never charge a second time below.
+            TownHallPrestigeUpgradeService.Result prestige =
+                    TownHallPrestigeUpgradeService.upgrade(source.getServer(),
+                            data, nation, territory, cost, nextLevel);
+            if (!prestige.success()) {
+                source.sendFailure(Component.literal(prestige.message()));
+                return 0;
+            }
+            source.sendSuccess(() -> Component.literal(prestige.message()), true);
+            NationDashboard.open(player);
+            return 1;
+        }
+
         if (nextLevel <= 3 && mapDefinition != null) {
             MapAssetService.Result placement =
                     MapAssetService.upgradeTownHall(
@@ -1451,9 +1467,7 @@ public final class CatanCommands {
         territory.setCityLevel(nextLevel);
         data.setDirty();
 
-        String visualNote = nextLevel <= 3
-                ? " Town Hall upgraded in-world."
-                : " TH3 remains the current visual tier while the economy level increases.";
+        String visualNote = " Town Hall upgraded in-world.";
 
         source.sendSuccess(() -> Component.literal(
                 territory.name() + " upgraded to City Level " +

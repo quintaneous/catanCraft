@@ -29,6 +29,42 @@ import java.util.Optional;
 
 public final class SchematicPlacementService {
     public record Result(boolean success, String message, int changedBlocks) {}
+    /** Read-only deterministic full-envelope voxel plan, including air. */
+    public record PlanCell(int localX, int localY, int localZ,
+                           BlockPos position, BlockState state) {}
+
+    public static java.util.List<PlanCell> plannedCells(
+            String assetId, MapAnchor anchor) throws IOException {
+        Result validation = validateAsset(assetId, anchor);
+        if (!validation.success()) throw new IOException(validation.message());
+        SchematicAssetRegistry.Asset asset = SchematicAssetRegistry.asset(assetId);
+        SchematicData schematic = load(asset.template());
+        Rotation rotation = rotation(anchor.rotation());
+        java.util.ArrayList<PlanCell> cells =
+                new java.util.ArrayList<>(schematic.width()*schematic.height()*schematic.length());
+        int index = 0;
+        for (int y = 0; y < schematic.height(); y++)
+            for (int z = 0; z < schematic.length(); z++)
+                for (int x = 0; x < schematic.width(); x++) {
+                    int paletteIndex = schematic.states()[index++];
+                    if (paletteIndex < 0 || paletteIndex >= schematic.palette().length)
+                        throw new IOException("Invalid schematic palette index");
+                    int dx = x - schematic.anchorX();
+                    int dz = z - schematic.anchorZ();
+                    int rx, rz;
+                    switch (rotation) {
+                        case CLOCKWISE_90 -> { rx = -dz; rz = dx; }
+                        case CLOCKWISE_180 -> { rx = -dx; rz = -dz; }
+                        case COUNTERCLOCKWISE_90 -> { rx = dz; rz = -dx; }
+                        default -> { rx = dx; rz = dz; }
+                    }
+                    BlockPos world = new BlockPos(anchor.x()+rx,
+                            anchor.y()+(y-schematic.anchorY()),anchor.z()+rz);
+                    cells.add(new PlanCell(x,y,z,world,
+                            schematic.palette()[paletteIndex].rotate(rotation)));
+                }
+        return java.util.List.copyOf(cells);
+    }
 
     public record LocalExclusion(
             int minX,

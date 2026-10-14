@@ -375,11 +375,15 @@ public final class MapAssetService {
 
             List<Task> tasks = new ArrayList<>();
 
-            addTerritoryTask(
-                    tasks,
-                    definition,
-                    hallAsset(state.cityLevel())
-            );
+            // Prestige TH4/TH5 are protected by their dedicated journal.
+            // Never issue a blind TH3 fallback re-paste through visual refresh.
+            if (state.cityLevel() <= 3) {
+                addTerritoryTask(
+                        tasks,
+                        definition,
+                        hallAsset(state.cityLevel())
+                );
+            }
 
             for (String assetId
                     : SchematicAssetRegistry.rawProducerAssets(definition)) {
