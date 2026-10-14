@@ -37,6 +37,11 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import net.minecraft.nbt.NbtUtils;
+import net.minecraft.world.entity.item.ItemEntity;
 import java.util.List;
 import java.util.Map;
 import java.util.Locale;
@@ -59,7 +64,7 @@ public final class TownHallPrestigeUpgradeService {
     private static final String R7_WORLD_ROOT = "CatanCraft_Season1_R7_Development";
 
     public record Result(boolean success, String message) {}
-    private record Delta(BlockPos pos, BlockState before, BlockState after) {}
+    private record Delta(BlockPos pos, BlockState before, BlockState after, CompoundTag beforeNbt) {}
     private TownHallPrestigeUpgradeService() {}
 
     public static synchronized Result upgrade(MinecraftServer server, CatanSavedData data,
@@ -127,6 +132,22 @@ public final class TownHallPrestigeUpgradeService {
             List<SchematicPlacementService.PlanCell> after = SchematicPlacementService.plannedCells(targetId,dstAnchor);
             if(before.size()!=TOTAL_CELLS||after.size()!=TOTAL_CELLS)
                 throw new IllegalStateException("Town Hall full envelope size changed");
+            // A door is ordinary building interaction, not a requirement that
+            // the entire Town Hall remain an untouched, closed schematic.
+            Map<BlockPos, BlockState> sourceDoors = new HashMap<>();
+            Map<BlockPos, BlockState> targetDoors = new HashMap<>();
+            for (var cell : before) if (cell.state().getBlock() instanceof DoorBlock)
+                sourceDoors.put(cell.position(), cell.state());
+            for (var cell : after) if (cell.state().getBlock() instanceof DoorBlock)
+                targetDoors.put(cell.position(), cell.state());
+            TownHallInteractionPolicy.validateDoorPairs(targetDoors);
+            final ServerLevel liveLevel = level;
+            for (BlockPos p : sourceDoors.keySet())
+                if (!level.hasChunkAt(p)) throw new IllegalStateException("Unloaded Town Hall door at " + p);
+            Set<BlockPos> missingDoors = TownHallInteractionPolicy.missingDoorCells(
+                    sourceDoors, liveLevel::getBlockState);
+            BlockState[] finalStates = new BlockState[TOTAL_CELLS];
+            int normalInteractions = 0;
             ArrayList<Delta> changes = new ArrayList<>();
             BlockPos manager = null;
             CompoundTag managerNbt = null;
@@ -148,7 +169,9 @@ public final class TownHallPrestigeUpgradeService {
                 boolean managementCell=old.localX()==LOCAL_MANAGER_X &&
                         old.localY()==LOCAL_MANAGER_Y && old.localZ()==LOCAL_MANAGER_Z;
                 BlockState current = level.getBlockState(p);
-                if(!matchesSource(current,old.state(),managementCell))
+                boolean compatible = matchesSource(current,old.state(),managementCell);
+                if (!current.equals(old.state()) && compatible) normalInteractions++;
+                if(!compatible && !missingDoors.contains(p))
                     throw new IllegalStateException("Town Hall modified at "+p+": required "+old.state()+
                             ", found "+current+". Refusing to overwrite player structures");
                 if(!level.getFluidState(p).isEmpty())
@@ -164,6 +187,7 @@ public final class TownHallPrestigeUpgradeService {
                     // The lectern block itself is NEVER touched; this preserves
                     // books and the existing block-entity/UI data exactly.
                     managerNbt=be.saveWithFullMetadata().copy();
+                    finalStates[i]=current;
                     managedEntities++;
                     continue;
                 }
@@ -175,7 +199,10 @@ public final class TownHallPrestigeUpgradeService {
                 }
                 if(replacement.state().hasBlockEntity() && replacement.state().getBlock()!=Blocks.LECTERN)
                     throw new IllegalStateException("Unapproved new Town Hall block entity at "+p);
-                if(!current.equals(replacement.state()))changes.add(new Delta(p,current,replacement.state()));
+                BlockState target = TownHallInteractionPolicy.targetFor(current,replacement.state());
+                finalStates[i]=target;
+                if(!current.equals(target))changes.add(new Delta(p,current,target,
+                        be==null?null:be.saveWithFullMetadata().copy()));
             }
             if(manager==null || managedEntities!=1 || managerNbt==null)
                 throw new IllegalStateException("Exactly one preserved management lectern required");
@@ -185,6 +212,11 @@ public final class TownHallPrestigeUpgradeService {
                     upper.getX()+1,upper.getY()+1,upper.getZ()+1);
             if(!level.getEntities((Entity)null,occupied,entity->!entity.isRemoved()).isEmpty())
                 throw new IllegalStateException("Town Hall occupied by an entity; everyone must leave the building before upgrade");
+
+            Set<UUID> previousItems = new HashSet<>();
+            AABB observed = occupied.inflate(2.0);
+            for(ItemEntity item:level.getEntitiesOfClass(ItemEntity.class,observed))
+                previousItems.add(item.getUUID());
 
             // Real source preimage, original lectern NBT and all economic
             // balances are journaled DURABLY before modifying any block.
@@ -206,15 +238,27 @@ public final class TownHallPrestigeUpgradeService {
             txn.put("resources",resources);
             txn.putInt("managerX",manager.getX());txn.putInt("managerY",manager.getY());txn.putInt("managerZ",manager.getZ());
             txn.put("managerNbt",managerNbt);
+            txn.putString("interactionPolicy","KNOWN_DOOR_PAIRS_AND_NORMAL_USE_V1");
+            txn.putInt("acceptedMissingDoorCells",missingDoors.size());
+            txn.putInt("acceptedNormalInteractionCells",normalInteractions);
             ListTag deltas=new ListTag();
             for(Delta delta:changes) {
                 CompoundTag cell=new CompoundTag();cell.putLong("pos",delta.pos().asLong());
                 cell.putString("before",delta.before().toString());
                 cell.putString("after",delta.after().toString());
+                // Structured actual preimages include AIR for a missing old door.
+                // Never fabricate the old closed door as the recovery source.
+                cell.put("beforeState",NbtUtils.writeBlockState(delta.before()));
+                cell.put("afterState",NbtUtils.writeBlockState(delta.after()));
+                if(delta.beforeNbt()!=null)cell.put("beforeBlockEntity",delta.beforeNbt());
                 deltas.add(cell);
             }
             txn.put("blocks",deltas);
             writeJournal(journal,txn);journalWritten=true;
+            try (java.io.InputStream in=Files.newInputStream(journal)) {
+                if(!txn.equals(NbtIo.readCompressed(in)))
+                    throw new IllegalStateException("Town Hall before-image journal read-back failed");
+            }
             // Client updates + suppress drops and intermediate survival checks.
             // Preserved manager stays at its exact original world position.
             for(Delta delta:changes) {
@@ -224,10 +268,14 @@ public final class TownHallPrestigeUpgradeService {
                     throw new IllegalStateException("Town Hall placement refused at "+delta.pos());
                 physicalWritten=true;
             }
-            for(Delta delta:changes) {
-                if(!level.getBlockState(delta.pos()).equals(delta.after()))
-                    throw new IllegalStateException("Final Town Hall placement mismatch at "+delta.pos());
+            for(int i=0;i<TOTAL_CELLS;i++) {
+                BlockPos p=after.get(i).position();
+                if(!level.getBlockState(p).equals(finalStates[i]))
+                    throw new IllegalStateException("Final Town Hall full-envelope mismatch at "+p);
             }
+            for(ItemEntity item:level.getEntitiesOfClass(ItemEntity.class,observed))
+                if(!previousItems.contains(item.getUUID()))
+                    throw new IllegalStateException("Unexpected item drop during Town Hall upgrade at "+item.blockPosition());
             BlockEntity afterManager=level.getBlockEntity(manager);
             if(afterManager==null||!afterManager.saveWithFullMetadata().equals(managerNbt))
                 throw new IllegalStateException("Management lectern NBT changed; journal retained");
@@ -241,10 +289,11 @@ public final class TownHallPrestigeUpgradeService {
             data.setDirty();economyChanged=true;
             server.saveEverything(true,true,true);
             txn.putString("phase","COMMITTED");writeJournal(journal,txn);
-            CatanCraft.LOGGER.info("TH prestige City {} level {} COMMITTED {} writes, preserved lectern, journal {}",
-                    cityId,nextLevel,changes.size(),journal);
+            CatanCraft.LOGGER.info("TH prestige City {} level {} COMMITTED {} writes; {} normal-use cells, {} missing door cells accepted; preserved lectern, journal {}",
+                    cityId,nextLevel,changes.size(),normalInteractions,missingDoors.size(),journal);
             return new Result(true,"Town Hall upgraded automatically to Level "+nextLevel+
-                    " ("+changes.size()+" guarded block changes). Management lectern preserved; charged once.");
+                    " ("+changes.size()+" guarded block changes; "+missingDoors.size()+
+                    " missing source door cells accepted). Management lectern preserved; charged once.");
         }catch(Exception error) {
             CatanCraft.LOGGER.error("Guarded TH prestige upgrade REFUSED city {} to level {}; journal={} written={} physical={} economy={}",
                     territory.id(),nextLevel,journal,journalWritten,physicalWritten,economyChanged,error);
@@ -255,19 +304,7 @@ public final class TownHallPrestigeUpgradeService {
     }
 
     private static boolean matchesSource(BlockState actual,BlockState expected,boolean manager) {
-        if(actual.equals(expected))return true;
-        if(actual.getBlock()!=expected.getBlock())return false;
-        for(Property<?> p:expected.getProperties()) {
-            if(manager && (p==LecternBlock.HAS_BOOK || p==LecternBlock.POWERED))continue;
-            if(expected.getBlock() instanceof DoorBlock && p==DoorBlock.OPEN)continue;
-            if(expected.getBlock() instanceof LeavesBlock && p==LeavesBlock.DISTANCE)continue;
-            if(!sameProperty(actual,expected,p))return false;
-        }
-        return true;
-    }
-    @SuppressWarnings({"rawtypes","unchecked"})
-    private static boolean sameProperty(BlockState a,BlockState b,Property p) {
-        return a.getValue(p).equals(b.getValue(p));
+        return TownHallInteractionPolicy.matches(actual,expected,manager);
     }
     private static void writeJournal(Path file,CompoundTag tag) throws IOException {
         Files.createDirectories(file.getParent());
