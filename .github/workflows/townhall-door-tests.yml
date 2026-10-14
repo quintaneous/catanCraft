@@ -1,4 +1,4 @@
-name: Town Hall state regression
+name: Town Hall state and access regression
 on:
   push:
     branches: [v0.1-foundation]
@@ -45,6 +45,8 @@ jobs:
             src/main/java/com/quin/catancraft/world/TownHallPrestigeUpgradeService.java
             src/main/java/com/quin/catancraft/gametest/TownHallDoorTests.java
             src/main/java/com/quin/catancraft/gametest/TownHallStateTests.java
+            src/main/java/com/quin/catancraft/gametest/TownHallAccessTests.java
             src/main/resources/data/catancraft/structures/townhall_state_empty.nbt
             tests/fixtures/
+            docs/TH45_ACCESS_REPAIR_READINESS.md
           if-no-files-found: error
