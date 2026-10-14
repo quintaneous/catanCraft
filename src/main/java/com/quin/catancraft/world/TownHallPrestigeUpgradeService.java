@@ -106,7 +106,10 @@ public final class TownHallPrestigeUpgradeService {
                 throw new IllegalStateException("Missing protected city geometry");
             MapAnchor srcAnchor = SchematicAssetRegistry.territoryAnchor(sourceId,definition);
             MapAnchor dstAnchor = SchematicAssetRegistry.territoryAnchor(targetId,definition);
-            if (srcAnchor==null||dstAnchor==null || !srcAnchor.equals(dstAnchor) ||
+            if (srcAnchor==null||dstAnchor==null ||
+                    srcAnchor.x()!=dstAnchor.x() || srcAnchor.y()!=dstAnchor.y() ||
+                    srcAnchor.z()!=dstAnchor.z() ||
+                    srcAnchor.rotation()!=dstAnchor.rotation() ||
                     (srcAnchor.rotation()!=0 && srcAnchor.rotation()!=180))
                 throw new IllegalStateException("Prestige source and destination placement contracts differ");
             SchematicPlacementService.Result validSrc = SchematicPlacementService.validateAsset(sourceId,srcAnchor);
@@ -154,6 +157,7 @@ public final class TownHallPrestigeUpgradeService {
                 if(managementCell) {
                     manager=p;
                     if(old.state().getBlock()!=Blocks.LECTERN || replacement.state().getBlock()!=Blocks.LECTERN ||
+                            !matchesSource(old.state(),replacement.state(),true) ||
                             current.getBlock()!=Blocks.LECTERN ||
                             !(be instanceof LecternBlockEntity))
                         throw new IllegalStateException("Management lectern is missing at "+p);
