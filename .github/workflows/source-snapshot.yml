@@ -1,0 +1,26 @@
+name: Integration source snapshot
+on:
+  push:
+    branches: [v0.1-foundation]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Archive exact tracked source (no credentials or working-world data)
+        shell: bash
+        run: |
+          mkdir -p source-evidence
+          git rev-parse HEAD > source-evidence/COMMIT.txt
+          git archive --format=zip HEAD > source-evidence/source.zip
+          sha256sum source-evidence/source.zip > source-evidence/SHA256SUMS.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: catancraft-source-snapshot
+          path: source-evidence/
+          if-no-files-found: error
+          retention-days: 30
