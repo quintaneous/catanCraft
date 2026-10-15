@@ -46,12 +46,19 @@ jobs:
           echo '1ea2fd544c32ed5506a553bf6c56628ecd4b7ac8d29257009e7bd84a427bbc06  tests/fixtures/thall5.schem' | sha256sum -c -
           mkdir -p build/gametest-run/config/catancraft/schematics
           cp tests/fixtures/thall*.schem build/gametest-run/config/catancraft/schematics/
+          # Collect BOTH suites on a failing attempt, while keeping publication fail-closed.
+          set +e
           gradle build runGameTestServer --no-daemon 2>&1 | tee build/public27/console.log
-          grep -F '50 GAME TESTS COMPLETE' build/public27/console.log
-          grep -F 'All 50 required tests passed' build/public27/console.log
+          retained_status=${PIPESTATUS[0]}
           mkdir -p build/public-gametest-run/config/catancraft/schematics
           cp tests/fixtures/thall*.schem build/public-gametest-run/config/catancraft/schematics/
           gradle runGameTestServer -PgameTestNamespace=catancraft_public27 --no-daemon 2>&1 | tee build/public27/public-console.log
+          public_status=${PIPESTATUS[0]}
+          set -e
+          test "$retained_status" -eq 0
+          test "$public_status" -eq 0
+          grep -F '50 GAME TESTS COMPLETE' build/public27/console.log
+          grep -F 'All 50 required tests passed' build/public27/console.log
           grep -F '11 GAME TESTS COMPLETE' build/public27/public-console.log
           grep -F 'All 11 required tests passed' build/public27/public-console.log
       - name: Publish only verified candidate source
