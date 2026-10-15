@@ -1,6 +1,6 @@
 # CatanCraft v0.1.26 — verified producer integration
 
-Date: 2026-10-15. Status: source integrated; native validation passed; owner in-world acceptance pending.
+Date: 2026-10-15. Status: source integrated; native validation passed; owner-reported City A smoke/visual acceptance passed on 2026-10-15.
 
 ## Exact release baseline
 
@@ -28,7 +28,7 @@ Applicable Farm/Lumberyard/Quarry plots now evolve with the territory's producer
 
 This does not give every territory all three resource types. Strategic producers, economy formulas, Town Hall repair, other accepted buildings, map layout and defenses are not changed. Producer schematics are bundled; no loose asset installation is required. Startup may reconcile an existing incomplete transaction, but does not initiate a new purchase or retrofit.
 
-## Developed City A acceptance
+## Developed City A acceptance — original test steps
 
 1. Stop the server/world cleanly. Back up the entire existing developed world, including its data, journals and authorization marker. Preserve its existing folder name and location. Replace the old CatanCraft mod with catancraft-0.1.26.jar wherever the mod is installed, with no duplicate old JAR. Keep the current Forge/modpack/configuration and existing world.
 2. Load the same authorized R7 development world. Record City A's producer level, resource balances and representative producer-barrel contents. Leave all applicable producer plots, including their structures and interiors, unoccupied; collect nearby dropped items. Do not delete markers or alter blocks to force acceptance.
@@ -39,6 +39,28 @@ This does not give every territory all three resource types. Strategic producers
 
 Operator /catan producer resume a confirm and /catan producer rollback a confirm are recovery tools, not routine smoke tests. On a refusal, retain all blocks and journals and report the exact message. Do not reset the city, rename the world, delete receipts or force a schematic paste. Do not roll back the mod alone after a world-changing test; restore a consistent stopped-world backup when reverting.
 
-## Limits and next gate
+## Owner acceptance recorded — 2026-10-15
 
-No owner world was opened or modified for this validation. Injected interruption and serialized reload tests do not establish separate-process power-loss behavior or owner visual/modpack acceptance. Authorization remains restricted to the existing backed-up R7 development world. No multiplayer exercise or repeat of accepted Town Hall tests is requested. Crowbar #6 and general older prestige-purchase recovery remain outside this release. Owner producer smoke/visual acceptance is the next gate before expanding scope.
+The owner reported: "everything worked according to plan, then upgraded. I was in the area by accident and it worked after" and supplied an in-game command-output screenshot in this conversation. This is accepted as the owner's overall City A smoke/visual pass for the preceding checklist; individual checks not visible in the screenshot were not independently observed by the developer.
+
+The screenshot directly records this sequence:
+
+| Step | Visible result |
+| --- | --- |
+| Read-only status | Paid L3; 135501 cells checked; 5942 design changes; no transaction; read-only. |
+| Already-paid L3 retrofit | Completed; 5942 block changes; paid L3; zero charge. |
+| Purchase L4 | Completed; 4775 block changes; paid L4; one territory charge; receipt verified. |
+| Attempt while inside a producer plot | Refused because the plot was occupied by entity.minecraft.player. |
+| Purchase L5 after leaving | Completed; 3371 block changes; paid L5; one territory charge; receipt verified. |
+
+The occupancy refusal is expected protection, not a failed integration. Inspection of ProducerTransaction.run at the rechecked head 8b2d0891ac11affb0e06ba1685b253c86c230d86 confirms that, for a fresh upgrade, the occupancy guard runs before journal creation, upgrade block writes and settlement. Leaving the plot and retrying a fresh request after this refusal is distinct from replaying a purchase to recover an existing incomplete transaction. The screenshot shows completed purchase receipts; it does not provide an independent before/after balance audit.
+
+The City A owner-acceptance gate is now closed. Preserve this pass and the already-accepted Town Hall results; do not request a repeat of the same checklist without a relevant change or contradictory evidence. Keep the existing v0.1.26 JAR as the accepted development baseline for this producer integration. This acceptance update changes documentation only: no new JAR, asset change, world write, authorization expansion, main merge or deployment.
+
+### Nonblocking wording follow-up
+
+The ordinary occupancy refusal is followed by generic instructions about preserving journals and recovery. That makes a safely refused fresh request look like an interrupted transaction and obscures when a normal retry is appropriate. In a later consolidated code change, distinguish a positively identified fresh preflight refusal from a retained pending transaction. For the former, explain that no upgrade blocks or payment changed and ask the player to leave the producer plots and retry. For a pending or uncertain transaction, retain the conservative resume/rollback guidance. Do not weaken the occupancy guard or infer transaction safety only from an exception-message string. This follow-up is recorded, not implemented in v0.1.26.
+
+## Validation scope and remaining exclusions
+
+The automated validation did not open or modify the owner's world. The subsequent owner report above adds City A in-world acceptance, not an independent all-territory, multiplayer or separate-process power-loss test. Injected interruption and serialized reload tests do not establish separate-process power-loss behavior. Authorization remains restricted to the existing backed-up R7 development world. No multiplayer exercise or repeat of accepted Town Hall tests is requested. Crowbar #6 and general older prestige-purchase recovery remain outside this release; neither is resolved by this producer acceptance.
