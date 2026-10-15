@@ -1,4 +1,4 @@
-name: Town Hall state access and repair regression
+name: Town Hall and producer transaction regression
 on:
   push:
     branches: [v0.1-foundation]
@@ -38,6 +38,11 @@ jobs:
           name: townhall-state-regression-evidence
           path: |
             build/townhall-gametest-console.log
+            src/main/java/com/quin/catancraft/world/Producer*.java
+            src/main/resources/data/catancraft/producer_revisions/
+            tests/producer_asset_pins.json
+            docs/PRODUCER_R1_TRANSACTION.md
+            build/gametest-run/world/data/producer26-tests/
             build/gametest-run/logs/
             build.gradle
             .github/workflows/townhall-door-tests.yml

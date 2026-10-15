@@ -1,0 +1,87 @@
+name: Validate and publish producer integration
+on:
+  push:
+    branches: [v0.1-foundation]
+    paths: ['.integration/producer26/**', '.github/workflows/producer-integration.yml']
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: producer26-publish
+  cancel-in-progress: false
+jobs:
+  validate-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Check candidate is still current
+        id: candidate
+        shell: bash
+        run: |
+          if [ ! -f .integration/producer26/packet-00.txt ]; then
+            echo 'present=false' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          test "$(git ls-remote origin refs/heads/v0.1-foundation | cut -f1)" = "$GITHUB_SHA"
+          echo 'present=true' >> "$GITHUB_OUTPUT"
+          python .integration/producer26/apply.py
+      - uses: actions/setup-java@v4
+        if: steps.candidate.outputs.present == 'true'
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        if: steps.candidate.outputs.present == 'true'
+        with:
+          gradle-version: '8.8'
+      - name: Compile and run all 50 native tests
+        if: steps.candidate.outputs.present == 'true'
+        shell: bash
+        run: |
+          set -o pipefail
+          echo '39f2fda6a74d0d891d45b37d111079905a6f67e4261b591c13902b4215342c4b  tests/fixtures/thall4.schem' | sha256sum -c -
+          echo '1ea2fd544c32ed5506a553bf6c56628ecd4b7ac8d29257009e7bd84a427bbc06  tests/fixtures/thall5.schem' | sha256sum -c -
+          mkdir -p build/gametest-run/config/catancraft/schematics
+          cp tests/fixtures/thall*.schem build/gametest-run/config/catancraft/schematics/
+          gradle build runGameTestServer --no-daemon 2>&1 | tee build/producer26/console.log
+          grep -Eq '50 (tests are now done|tests completed|tests finished)' build/producer26/console.log
+          grep -F 'All 50 required tests passed' build/producer26/console.log
+      - name: Publish only verified candidate source
+        if: steps.candidate.outputs.present == 'true'
+        shell: bash
+        run: |
+          test "$(git ls-remote origin refs/heads/v0.1-foundation | cut -f1)" = "$GITHUB_SHA"
+          python - <<'PY'
+          import hashlib,json,pathlib,subprocess
+          m=json.loads(pathlib.Path('build/producer26/candidate-manifest.json').read_text())
+          for name,meta in m['files'].items():
+              assert hashlib.sha256(pathlib.Path(name).read_bytes()).hexdigest()==meta['after'],name
+              subprocess.run(['git','add','--',name],check=True)
+          PY
+          git rm -r .integration/producer26
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'v0.1.26: integrate pinned producer tiers with grouped journaled upgrades and native regressions'
+          git push origin HEAD:refs/heads/v0.1-foundation
+          git rev-parse HEAD > build/producer26/PUBLISHED_COMMIT.txt
+          test "$(git ls-remote origin refs/heads/v0.1-foundation | cut -f1)" = "$(cat build/producer26/PUBLISHED_COMMIT.txt)"
+          git archive --format=zip -o build/producer26/published-source.zip HEAD
+          sha256sum build/libs/*.jar build/producer26/published-source.zip > build/producer26/SHA256SUMS.txt
+      - name: Retain candidate evidence even on failure
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: producer26-validation
+          if-no-files-found: warn
+          path: |
+            build/producer26/
+            build/libs/*.jar
+            build/gametest-run/logs/
+            build/gametest-run/world/data/producer26-tests/
+            build/gametest-run/world/data/th25-tests/
+            src/main/java/com/quin/catancraft/world/Producer*.java
+            src/main/resources/data/catancraft/producer_revisions/
+            tests/producer_asset_pins.json
