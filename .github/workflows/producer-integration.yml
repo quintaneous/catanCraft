@@ -47,7 +47,7 @@ jobs:
           mkdir -p build/gametest-run/config/catancraft/schematics
           cp tests/fixtures/thall*.schem build/gametest-run/config/catancraft/schematics/
           gradle build runGameTestServer --no-daemon 2>&1 | tee build/producer26/console.log
-          grep -Eq '50 (tests are now done|tests completed|tests finished)' build/producer26/console.log
+          grep -F '50 GAME TESTS COMPLETE' build/producer26/console.log
           grep -F 'All 50 required tests passed' build/producer26/console.log
       - name: Publish only verified candidate source
         if: steps.candidate.outputs.present == 'true'
