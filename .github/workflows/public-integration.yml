@@ -47,8 +47,13 @@ jobs:
           mkdir -p build/gametest-run/config/catancraft/schematics
           cp tests/fixtures/thall*.schem build/gametest-run/config/catancraft/schematics/
           gradle build runGameTestServer --no-daemon 2>&1 | tee build/public27/console.log
-          grep -F '61 GAME TESTS COMPLETE' build/public27/console.log
-          grep -F 'All 61 required tests passed' build/public27/console.log
+          grep -F '50 GAME TESTS COMPLETE' build/public27/console.log
+          grep -F 'All 50 required tests passed' build/public27/console.log
+          mkdir -p build/public-gametest-run/config/catancraft/schematics
+          cp tests/fixtures/thall*.schem build/public-gametest-run/config/catancraft/schematics/
+          gradle runGameTestServer -PgameTestNamespace=catancraft_public27 --no-daemon 2>&1 | tee build/public27/public-console.log
+          grep -F '11 GAME TESTS COMPLETE' build/public27/public-console.log
+          grep -F 'All 11 required tests passed' build/public27/public-console.log
       - name: Publish only verified candidate source
         if: steps.candidate.outputs.present == 'true'
         shell: bash
@@ -80,6 +85,9 @@ jobs:
             build/public27/
             build/libs/*.jar
             build/gametest-run/logs/
+            build/public-gametest-run/logs/
+            build/public-gametest-run/world/data/public27-tests/
+            build/public-gametest-run/world/data/producer26-tests/
             build/gametest-run/world/data/public27-tests/
             build/gametest-run/world/data/th25-tests/
             build/gametest-run/world/data/producer26-tests/

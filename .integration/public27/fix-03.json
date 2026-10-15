@@ -1,0 +1,51 @@
+[
+  {
+    "path": "src/main/java/com/quin/catancraft/world/StreetscapeTests.java",
+    "before": "cb9c1eac0940828a8027780e6f465e1bee805b291d16c1e0fb93aff27d515210",
+    "old": "@GameTestHolder(\"catancraft\")",
+    "new": "@GameTestHolder(\"catancraft_public27\")",
+    "after": "1a9da1dd729940f973bc4486c953b400db2436e7efa75fb2dbc2dbc253961a01"
+  },
+  {
+    "path": "src/main/java/com/quin/catancraft/world/ProducerOccupancyTests.java",
+    "before": "68911cda715e14126d856aca855dd3a1065fd6b1903d5a9a2238fc3a6b7205d1",
+    "old": "@GameTestHolder(\"catancraft\")",
+    "new": "@GameTestHolder(\"catancraft_public27\")",
+    "after": "058293474af2ea9c6c74964e767dae1bad4f47efe2e46be604a377ce2be45e95"
+  },
+  {
+    "path": "src/main/java/com/quin/catancraft/world/ProducerOccupancyTests.java",
+    "before": "058293474af2ea9c6c74964e767dae1bad4f47efe2e46be604a377ce2be45e95",
+    "old": "            e.prepare(1);e.select(1,2);CompoundTag ledger=e.ledger().copy();",
+    "new": "            // Keep the dedicated native fixture accessible; getChunk alone is not a\n            // ticking/visible-entity ticket. Only this GameTestServer fixture is forced.\n            for(var entry:e.anchors.entrySet()) {\n                var bounds=TownHallRepairTransaction.bounds(ProducerRevisions.plan(entry.getKey(),1,entry.getValue()));\n                for(int x=((int)bounds.minX-2)>>4;x<=((int)bounds.maxX+2)>>4;x++)\n                    for(int z=((int)bounds.minZ-2)>>4;z<=((int)bounds.maxZ+2)>>4;z++)e.level().setChunkForced(x,z,true);\n            }\n            e.prepare(1);e.select(1,2);CompoundTag ledger=e.ledger().copy();",
+    "after": "e3186693c95929f3ab65829b6b42dd071f326135749956501a2e7080a8a626ce"
+  },
+  {
+    "path": "build.gradle",
+    "before": "135c05dd287b5b8efaf4142a84e26e1e1c3dd003bb2cf7539707ea3654642f6a",
+    "old": "minecraft {\n",
+    "new": "def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()\n\nminecraft {\n",
+    "after": "88d2ece27b3ac14fd7c7c7742ed82b20093798accc41dd6f50cd9b7f61584783"
+  },
+  {
+    "path": "build.gradle",
+    "before": "88d2ece27b3ac14fd7c7c7742ed82b20093798accc41dd6f50cd9b7f61584783",
+    "old": "            workingDirectory project.file('build/gametest-run')\n            property 'forge.enabledGameTestNamespaces', 'catancraft'",
+    "new": "            workingDirectory project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : 'build/public-gametest-run')\n            property 'forge.enabledGameTestNamespaces', gameTestNamespace",
+    "after": "f5ce1580c1e6cbcb8111ee4b16084069c0eeb2718d00e0c6694481b447172097"
+  },
+  {
+    "path": "build.gradle",
+    "before": "f5ce1580c1e6cbcb8111ee4b16084069c0eeb2718d00e0c6694481b447172097",
+    "old": "// Immutable prestige revisions are bundled independently of user configuration.",
+    "new": "// New integration tests use a separate namespace/world so old test-batch geometry\n// and entity state cannot contaminate unrelated fixtures. Template bytes are identical.\ntasks.named('processResources', ProcessResources).configure {\n    from('src/main/resources/data/catancraft/structures') {\n        include 'townhall_state_empty.nbt'\n        into 'data/catancraft_public27/structures'\n    }\n}\n\n// Immutable prestige revisions are bundled independently of user configuration.",
+    "after": "58b2e3f235cd7bc707574c57689572d919a65f6f2139b851c99c9a6be2c8e8c3"
+  },
+  {
+    "path": "docs/R5_PUBLIC_INTEGRATION.md",
+    "before": "df77d0b5c6eb8efadf8e84b6d629350126e3f39ff352de178a182723a5114dff",
+    "old": "Native CI must pass all 61 tests: retained 50, ten streetscape tests, one targeted\nproducer occupancy classification test. Candidate publication must stop on failure.",
+    "new": "Native CI must pass 61 tests in two isolated runs/worlds: all retained 50 in the\noriginal catancraft namespace, then ten streetscape tests plus the targeted producer\noccupancy classification test in catancraft_public27. All original test methods and\nassets remain unchanged. Separate worlds avoid inter-batch structure/entity cleanup\ncontaminating other fixtures. The new occupancy fixture explicitly holds its chunks\naccessible and proves its entity is visible to the native query before testing denial.\nCandidate publication must stop if either run fails.",
+    "after": "0ed783c6356e13925eabadbff586f025e396256f277f51498a82b1c067fc5ffc"
+  }
+]
