@@ -1486,6 +1486,15 @@ public final class CatanCommands {
         TerritoryData territory = requireOwnedTerritory(source, data, nation, territoryId);
         if (territory == null) return 0;
 
+        TerritoryDefinition producerDefinition = MapDefinitionManager.territory(territory.id());
+        if (com.quin.catancraft.world.ProducerService.hasVisuals(producerDefinition)) {
+            MapAssetService.Result result = com.quin.catancraft.world.ProducerService.upgrade(source.getServer(), territory.id());
+            if (!result.success()) { source.sendFailure(Component.literal(result.message())); return 0; }
+            source.sendSuccess(() -> Component.literal(result.message()), true);
+            NationDashboard.open(player);
+            return 1;
+        }
+
         EconomyCost cost = EconomyCatalog.producerUpgradeCost(territory.producerLevel());
         if (cost == null) {
             source.sendFailure(Component.literal("Resource producer is already Level 5."));

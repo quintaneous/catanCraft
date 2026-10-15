@@ -95,6 +95,10 @@ public final class MapAssetService {
             TerritoryDefinition territory,
             boolean prebuiltStartingCity
     ) {
+        if (prebuiltStartingCity) {
+            Result adoption = ProducerService.adoptPrebuilt(server, data, territory);
+            if (!adoption.success()) return adoption;
+        }
         List<Task> tasks = new ArrayList<>();
 
         String environmentAssetId =
@@ -137,6 +141,10 @@ public final class MapAssetService {
 
         for (String assetId
                 : SchematicAssetRegistry.rawProducerAssets(territory)) {
+            // Never reset an adopted or upgraded producer to its original L1 art.
+            var producerAsset = SchematicAssetRegistry.asset(assetId);
+            if (ProducerRevisions.managed(assetId) && data.placedMapAsset(
+                    territoryKey(territory.id(), producerAsset.plot())) != null) continue;
             addTerritoryTask(tasks, territory, assetId);
         }
 
@@ -373,6 +381,11 @@ public final class MapAssetService {
                     MapDefinitionManager.territory(state.id());
             if (definition == null) continue;
 
+            if (ProducerService.hasVisuals(definition)) {
+                Result producers = ProducerService.retrofit(server, state.id());
+                if (!producers.success()) return new Result(false, producers.message(), changed);
+                changed += producers.changedBlocks();
+            }
             List<Task> tasks = new ArrayList<>();
 
             // Prestige TH4/TH5 are protected by their dedicated journal.
@@ -387,7 +400,7 @@ public final class MapAssetService {
 
             for (String assetId
                     : SchematicAssetRegistry.rawProducerAssets(definition)) {
-                addTerritoryTask(tasks, definition, assetId);
+                if (!ProducerRevisions.managed(assetId)) addTerritoryTask(tasks, definition, assetId);
             }
 
             for (BuildingInstance building : state.buildings()) {
@@ -498,6 +511,10 @@ public final class MapAssetService {
             }
 
             String existing = data.placedMapAsset(task.stateKey());
+            if (ProducerRevisions.managed(asset.id()) && existing != null
+                    && (force || !asset.placementToken().equals(existing))) {
+                return new Result(false, "Producer visuals require their guarded upgrade/retrofit transaction, not a generic paste.", 0);
+            }
             if (!force && asset.placementToken().equals(existing)) continue;
 
             if (!force && existing != null
