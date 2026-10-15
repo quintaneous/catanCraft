@@ -1,0 +1,30 @@
+[
+  {
+    "path": "src/main/java/com/quin/catancraft/world/StreetscapeService.java",
+    "before": "606a436f8c69ed2623ec9b9c5d69dddc0817817f16374fc1af73560bde744116",
+    "old": "        return new StreetscapeTransaction.Environment() {",
+    "new": "        if(load)requireLoadedEntities(level,plan.boxes());\n        return new StreetscapeTransaction.Environment() {",
+    "after": "47429e9dfd4da8dc1a56d28ae2848e79edc770ea4ca66233c2af870b414a9736"
+  },
+  {
+    "path": "src/main/java/com/quin/catancraft/world/StreetscapeService.java",
+    "before": "47429e9dfd4da8dc1a56d28ae2848e79edc770ea4ca66233c2af870b414a9736",
+    "old": "    /** Discovery only: a restart never initiates a migration or guesses that mixed blocks are safe. */",
+    "new": "    /** A loaded block chunk is not proof that its saved entities have finished loading. */\n    static void requireLoadedEntities(ServerLevel level,List<net.minecraft.world.phys.AABB> boxes)throws IOException {\n        for(var box:boxes)for(int x=((int)box.minX-1)>>4;x<=((int)box.maxX+1)>>4;x++)\n            for(int z=((int)box.minZ-1)>>4;z<=((int)box.maxZ+1)>>4;z++)\n                if(!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(x,z)))\n                    throw new IOException(\"Public-feature entities are still loading; wait near the city, then check status and retry. No blocks written by this request\");\n    }\n    /** Discovery only: a restart never initiates a migration or guesses that mixed blocks are safe. */",
+    "after": "57ff7cc7dd663b8239fe303fc69285e4adaa9f0727afc5ecb1514ac1feabd8db"
+  },
+  {
+    "path": "src/main/java/com/quin/catancraft/world/StreetscapeTests.java",
+    "before": "19b904955c14c9339921e70b9fd0621baed63c63783f13386aa4139547b5374a",
+    "old": "        try{refuse(h,()->StreetscapeService.context(h.getLevel().getServer(),\"a\",true));h.succeed();}catch(Exception ex){throw new RuntimeException(ex);}",
+    "new": "        try {\n            refuse(h,()->StreetscapeService.context(h.getLevel().getServer(),\"a\",true));\n            var distant=new net.minecraft.world.phys.AABB(15000000,80,15000000,15000002,82,15000002);\n            refuse(h,()->StreetscapeService.requireLoadedEntities(h.getLevel(),java.util.List.of(distant)));\n            h.assertTrue(!h.getLevel().hasChunkAt(new BlockPos(15000000,81,15000000)),\"Readiness guard loaded a remote chunk\");h.succeed();\n        }catch(Exception ex){throw new RuntimeException(ex);}",
+    "after": "cb9c1eac0940828a8027780e6f465e1bee805b291d16c1e0fb93aff27d515210"
+  },
+  {
+    "path": "docs/R5_PUBLIC_INTEGRATION.md",
+    "before": "8ff84f501089ca7af6fd6b939c19a299b57f72656e5d5bf0dff2396d3c4d889c",
+    "old": "Apply loads only bounded affected chunks and validates the entire ten-feature set.",
+    "new": "Apply loads only bounded affected chunks and validates the entire ten-feature set.\nThe service additionally refuses writes while any affected chunk's saved entities\nare still loading; loaded blocks alone are not evidence of a clear occupancy query.\nAfter this preflight refusal, wait near the city and check status before retrying.",
+    "after": "df77d0b5c6eb8efadf8e84b6d629350126e3f39ff352de178a182723a5114dff"
+  }
+]
