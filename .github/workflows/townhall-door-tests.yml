@@ -1,4 +1,4 @@
-name: Town Hall state and access regression
+name: Town Hall state access and repair regression
 on:
   push:
     branches: [v0.1-foundation]
@@ -41,12 +41,14 @@ jobs:
             build/gametest-run/logs/
             build.gradle
             .github/workflows/townhall-door-tests.yml
-            src/main/java/com/quin/catancraft/world/TownHallInteractionPolicy.java
-            src/main/java/com/quin/catancraft/world/TownHallPrestigeUpgradeService.java
+            src/main/java/com/quin/catancraft/world/TownHall*.java
             src/main/java/com/quin/catancraft/gametest/TownHallDoorTests.java
             src/main/java/com/quin/catancraft/gametest/TownHallStateTests.java
             src/main/java/com/quin/catancraft/gametest/TownHallAccessTests.java
             src/main/resources/data/catancraft/structures/townhall_state_empty.nbt
             tests/fixtures/
             docs/TH45_ACCESS_REPAIR_READINESS.md
+            docs/RELEASE_0.1.25.md
+            docs/TEST_CHECKLIST_0.1.25.md
+            build/gametest-run/world/data/th25-tests/
           if-no-files-found: error

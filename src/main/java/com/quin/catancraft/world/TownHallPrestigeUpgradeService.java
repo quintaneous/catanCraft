@@ -89,6 +89,7 @@ public final class TownHallPrestigeUpgradeService {
                 throw new IllegalStateException("Nation owner or resources changed");
 
             String cityId = territory.id().toLowerCase(Locale.ROOT);
+            TownHallRepairService.requireNoPending(server,cityId);
             String sourceId = "th" + (nextLevel-1);
             String targetId = "th" + nextLevel;
             SchematicAssetRegistry.Asset sourceAsset = SchematicAssetRegistry.asset(sourceId);
@@ -97,7 +98,10 @@ public final class TownHallPrestigeUpgradeService {
                 throw new IllegalStateException("Missing Town Hall tier asset contracts");
             String stateKey = "territory:"+cityId+":town_hall";
             String installed = data.placedMapAsset(stateKey);
-            if (!sourceAsset.placementToken().equals(installed))
+            int sourceRevision = nextLevel==5 ? TownHallRevisions.revision(4,installed) : 4;
+            String sourceToken = nextLevel==4 ? sourceAsset.placementToken() : TownHallRevisions.token(4,sourceRevision);
+            String targetToken = TownHallRevisions.token(nextLevel,2);
+            if (!sourceToken.equals(installed))
                 throw new IllegalStateException("Unexpected existing Town Hall visual token: "+installed+
                         "; cannot replace this building without migration");
 
@@ -117,10 +121,12 @@ public final class TownHallPrestigeUpgradeService {
                     srcAnchor.rotation()!=dstAnchor.rotation() ||
                     (srcAnchor.rotation()!=0 && srcAnchor.rotation()!=180))
                 throw new IllegalStateException("Prestige source and destination placement contracts differ");
-            SchematicPlacementService.Result validSrc = SchematicPlacementService.validateAsset(sourceId,srcAnchor);
-            SchematicPlacementService.Result validDst = SchematicPlacementService.validateAsset(targetId,dstAnchor);
-            if(!validSrc.success()||!validDst.success())
-                throw new IllegalStateException("Town Hall schematics invalid: "+validSrc.message()+"; "+validDst.message());
+            if(nextLevel==4) {
+                SchematicPlacementService.Result validSrc = SchematicPlacementService.validateAsset(sourceId,srcAnchor);
+                if(!validSrc.success())throw new IllegalStateException("TH3 source invalid: "+validSrc.message());
+            }
+            // TH4/TH5 R1 and R2 come from separately hash-pinned bundled bytes,
+            // never an overwritten loose expected-before template.
 
             ServerLevel level = null;
             for(ServerLevel candidate:server.getAllLevels())
@@ -128,8 +134,10 @@ public final class TownHallPrestigeUpgradeService {
                     level=candidate;break;
                 }
             if(level==null)throw new IllegalStateException("Town Hall dimension is unloaded");
-            List<SchematicPlacementService.PlanCell> before = SchematicPlacementService.plannedCells(sourceId,srcAnchor);
-            List<SchematicPlacementService.PlanCell> after = SchematicPlacementService.plannedCells(targetId,dstAnchor);
+            List<SchematicPlacementService.PlanCell> before = nextLevel==4
+                    ? SchematicPlacementService.plannedCells(sourceId,srcAnchor)
+                    : TownHallRevisions.plan(4,sourceRevision,srcAnchor);
+            List<SchematicPlacementService.PlanCell> after = TownHallRevisions.plan(nextLevel,2,dstAnchor);
             if(before.size()!=TOTAL_CELLS||after.size()!=TOTAL_CELLS)
                 throw new IllegalStateException("Town Hall full envelope size changed");
             // A door is ordinary building interaction, not a requirement that
@@ -226,8 +234,9 @@ public final class TownHallPrestigeUpgradeService {
             txn.putString("worldRoot",world.toString());txn.putString("city",cityId);
             txn.putString("ownerNation",nation.id().toString());
             txn.putInt("fromLevel",territory.cityLevel());txn.putInt("toLevel",nextLevel);
-            txn.putString("sourceToken",sourceAsset.placementToken());
-            txn.putString("targetToken",targetAsset.placementToken());
+            txn.putString("sourceToken",sourceToken);
+            txn.putString("targetToken",targetToken);
+            txn.putString("targetSHA256",TownHallRevisions.hash(nextLevel,2));
             txn.putLong("treasuryBefore",nation.treasury());txn.putLong("treasuryCost",cost.money());
             CompoundTag resources=new CompoundTag();
             for(ResourceType r:ResourceType.values()) {
@@ -281,18 +290,18 @@ public final class TownHallPrestigeUpgradeService {
                 throw new IllegalStateException("Management lectern NBT changed; journal retained");
             txn.putString("phase","PHYSICAL_COMPLETE_ECONOMY_PENDING");writeJournal(journal,txn);
             if(!cost.canAfford(nation)||territory.cityLevel()!=nextLevel-1 ||
-                    !sourceAsset.placementToken().equals(data.placedMapAsset(stateKey)))
+                    !sourceToken.equals(data.placedMapAsset(stateKey)))
                 throw new IllegalStateException("Economic eligibility changed after physical Town Hall placement");
             cost.charge(nation);
             territory.setCityLevel(nextLevel);
-            data.setPlacedMapAsset(stateKey,targetAsset.placementToken());
+            data.setPlacedMapAsset(stateKey,targetToken);
             data.setDirty();economyChanged=true;
-            server.saveEverything(true,true,true);
+            if(!server.saveEverything(true,true,true))throw new IOException("Town Hall save incomplete; retain journal");
             txn.putString("phase","COMMITTED");writeJournal(journal,txn);
             CatanCraft.LOGGER.info("TH prestige City {} level {} COMMITTED {} writes; {} normal-use cells, {} missing door cells accepted; preserved lectern, journal {}",
                     cityId,nextLevel,changes.size(),normalInteractions,missingDoors.size(),journal);
             return new Result(true,"Town Hall upgraded automatically to Level "+nextLevel+
-                    " ("+changes.size()+" guarded block changes; "+missingDoors.size()+
+                     " R2 ("+changes.size()+" guarded block changes; "+missingDoors.size()+
                     " missing source door cells accepted). Management lectern preserved; charged once.");
         }catch(Exception error) {
             CatanCraft.LOGGER.error("Guarded TH prestige upgrade REFUSED city {} to level {}; journal={} written={} physical={} economy={}",
