@@ -1,0 +1,83 @@
+plugins {
+    id 'eclipse'
+    id 'idea'
+    id 'maven-publish'
+    id 'net.minecraftforge.gradle' version '[6.0,6.2)'
+}
+
+version = '0.1.27'
+group = 'com.quin.catancraft'
+
+base {
+    archivesName = 'catancraft'
+}
+
+java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()
+
+minecraft {
+    mappings channel: 'official', version: '1.20.1'
+    copyIdeResources = true
+
+    runs {
+        configureEach {
+            workingDirectory project.file('run')
+            property 'forge.logging.console.level', 'info'
+            mods {
+                catancraft {
+                    source sourceSets.main
+                }
+            }
+        }
+        client {}
+        server {
+            args '--nogui'
+        }
+        gameTestServer {
+            workingDirectory project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : 'build/public-gametest-run')
+            property 'forge.enabledGameTestNamespaces', gameTestNamespace
+        }
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    minecraft 'net.minecraftforge:forge:1.20.1-47.4.10'
+}
+
+tasks.named('processResources', ProcessResources).configure {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/mods.toml') {
+        expand version: project.version
+    }
+}
+
+// Tell Forge ModLauncher to apply the optional Superb Warfare compatibility mixin.
+tasks.named('jar', Jar).configure {
+    manifest {
+        attributes('MixinConfigs': 'catancraft.mixins.json')
+    }
+}
+
+
+// New integration tests use a separate namespace/world so old test-batch geometry
+// and entity state cannot contaminate unrelated fixtures. Template bytes are identical.
+tasks.named('processResources', ProcessResources).configure {
+    from('src/main/resources/data/catancraft/structures') {
+        include 'townhall_state_empty.nbt'
+        into 'data/catancraft_public27/structures'
+    }
+}
+
+// Immutable prestige revisions are bundled independently of user configuration.
+// R1 fixtures remain unchanged; R2 voxel plans are verified against the delivered full-state fingerprints.
+tasks.named('processResources', ProcessResources).configure {
+    from('tests/fixtures') {
+        include 'thall4.schem', 'thall5.schem'
+        into 'data/catancraft/townhall_revisions'
+    }
+}

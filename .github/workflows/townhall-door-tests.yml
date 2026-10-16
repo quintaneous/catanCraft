@@ -1,0 +1,59 @@
+name: Town Hall and producer transaction regression
+on:
+  push:
+    branches: [v0.1-foundation]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  gametest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Stage unchanged approved TH4 and TH5 test fixtures
+        shell: bash
+        run: |
+          echo '39f2fda6a74d0d891d45b37d111079905a6f67e4261b591c13902b4215342c4b  tests/fixtures/thall4.schem' | sha256sum -c -
+          echo '1ea2fd544c32ed5506a553bf6c56628ecd4b7ac8d29257009e7bd84a427bbc06  tests/fixtures/thall5.schem' | sha256sum -c -
+          mkdir -p build/gametest-run/config/catancraft/schematics
+          cp tests/fixtures/thall*.schem build/gametest-run/config/catancraft/schematics/
+      - name: Compile and run actual Forge GameTests
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build
+          gradle build runGameTestServer --no-daemon 2>&1 | tee build/townhall-gametest-console.log
+      - name: Save test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: townhall-state-regression-evidence
+          path: |
+            build/townhall-gametest-console.log
+            src/main/java/com/quin/catancraft/world/Producer*.java
+            src/main/resources/data/catancraft/producer_revisions/
+            tests/producer_asset_pins.json
+            docs/PRODUCER_R1_TRANSACTION.md
+            build/gametest-run/world/data/producer26-tests/
+            build/gametest-run/logs/
+            build.gradle
+            .github/workflows/townhall-door-tests.yml
+            src/main/java/com/quin/catancraft/world/TownHall*.java
+            src/main/java/com/quin/catancraft/gametest/TownHallDoorTests.java
+            src/main/java/com/quin/catancraft/gametest/TownHallStateTests.java
+            src/main/java/com/quin/catancraft/gametest/TownHallAccessTests.java
+            src/main/resources/data/catancraft/structures/townhall_state_empty.nbt
+            tests/fixtures/
+            docs/TH45_ACCESS_REPAIR_READINESS.md
+            docs/RELEASE_0.1.25.md
+            docs/TEST_CHECKLIST_0.1.25.md
+            build/gametest-run/world/data/th25-tests/
+          if-no-files-found: error

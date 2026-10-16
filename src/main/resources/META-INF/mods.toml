@@ -1,0 +1,26 @@
+modLoader="javafml"
+loaderVersion="[47,)"
+license="MIT"
+
+[[mods]]
+modId="catancraft"
+version="${version}"
+displayName="CatanCraft"
+authors="Quin"
+description='''
+Catan-inspired nation, territory, tycoon economy, and warfare framework for Forge 1.20.1.
+'''
+
+[[dependencies.catancraft]]
+modId="forge"
+mandatory=true
+versionRange="[47.4.10,)"
+ordering="NONE"
+side="BOTH"
+
+[[dependencies.catancraft]]
+modId="minecraft"
+mandatory=true
+versionRange="[1.20.1,1.20.2)"
+ordering="NONE"
+side="BOTH"

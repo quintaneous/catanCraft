@@ -1,0 +1,36 @@
+{
+  "archive_sha256": "679b9d94d2f96175705e2e85f2e36aa0146cd8dd28a71826e25998c6c9755521",
+  "contract_sha256": "7cbbf0c9cc38d9971e12e1b20fdba37aba630fd41d83c8819f2fdaa2d70c50cd",
+  "groups": [
+    "cleanup_tree_138_11",
+    "arrival_lamp_71",
+    "arrival_lamp_89",
+    "arrival_court_60",
+    "arrival_court_87",
+    "residential_shared_frontage",
+    "residential_garden_edges",
+    "industrial_public_link_6",
+    "industrial_public_link_124",
+    "rear_worker_garden"
+  ],
+  "group_writes": [
+    93,
+    12,
+    12,
+    231,
+    231,
+    224,
+    52,
+    165,
+    165,
+    476
+  ],
+  "total_writes": 1661,
+  "read_cells": 18766,
+  "read_runs": 919,
+  "all_16_exact_original_deltas": true,
+  "protected_writes": 0,
+  "r4_reservation_intersections": 0,
+  "civic_envelope_intersections": 0,
+  "owner_world_inspected": false
+}

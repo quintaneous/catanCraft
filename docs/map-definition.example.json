@@ -1,0 +1,50 @@
+{
+  "format": 1,
+  "territories": [
+    {
+      "id": "iron_valley",
+      "name": "Iron Valley",
+      "specialty": "iron",
+      "dimension": "minecraft:overworld",
+      "boundary": [
+        { "x": 100, "z": 100 },
+        { "x": 500, "z": 100 },
+        { "x": 500, "z": 500 },
+        { "x": 100, "z": 500 }
+      ],
+      "neighbors": ["green_fields", "stone_ridge"],
+      "cityCenter": { "id": "city_center", "x": 300, "y": 72, "z": 300, "rotation": 0 },
+      "townHall": { "id": "town_hall", "x": 300, "y": 72, "z": 285, "rotation": 0 },
+      "resourceSite": { "id": "iron_mine", "x": 430, "y": 68, "z": 390, "rotation": 90 },
+      "buildingPlots": [
+        { "id": "plot_1", "x": 250, "y": 72, "z": 330, "rotation": 0 },
+        { "id": "plot_2", "x": 300, "y": 72, "z": 330, "rotation": 0 },
+        { "id": "plot_3", "x": 350, "y": 72, "z": 330, "rotation": 0 }
+      ],
+      "defenseAnchors": [
+        { "id": "north_gate", "x": 300, "y": 72, "z": 220, "rotation": 180 },
+        { "id": "south_gate", "x": 300, "y": 72, "z": 380, "rotation": 0 }
+      ],
+      "siegeRegion": {
+        "minX": 210, "minY": 55, "minZ": 210,
+        "maxX": 390, "maxY": 150, "maxZ": 390
+      },
+      "restorationRegion": {
+        "minX": 200, "minY": 50, "minZ": 200,
+        "maxX": 400, "maxY": 160, "maxZ": 400
+      }
+    }
+  ],
+  "monuments": [
+    {
+      "id": "industrial",
+      "name": "Industrial Complex",
+      "type": "industrial_complex",
+      "dimension": "minecraft:overworld",
+      "x": 0,
+      "y": 70,
+      "z": 0,
+      "radius": 25
+    }
+  ]
+}
