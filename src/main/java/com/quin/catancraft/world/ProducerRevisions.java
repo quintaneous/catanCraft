@@ -47,7 +47,11 @@ public final class ProducerRevisions {
     }
     static int revision(String family,String token) throws IOException {
         for(int l=1;l<=5;l++)if(token(family,l).equals(token))return l;
+        for(int l=3;l<=5;l++)if(ProducerExteriorR2.token(family,l).equals(token))return l;
         throw new IOException("Unknown "+family+" source revision: "+token);
+    }
+    static boolean exterior(String family,String value)throws IOException {
+        int tier=revision(family,value);return tier>=3&&ProducerExteriorR2.token(family,tier).equals(value);
     }
     static List<SchematicPlacementService.PlanCell> plan(String family,int tier,MapAnchor a) throws IOException {
         if(a==null || (a.rotation()!=0 && a.rotation()!=180))throw new IOException("Invalid producer anchor");

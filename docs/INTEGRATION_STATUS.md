@@ -28,7 +28,7 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 | Subtask | Status | Dependencies | Files changed / validation |
 | --- | --- | --- | --- |
 | 1. Entity obstruction | Implemented; focused and retained regressions passed | Verified baseline | ConstructionHazards, ConstructionHazardTests, ProducerTransaction/Service/Tests/OccupancyTests, StreetscapeTransaction/Tests, build.gradle. Eight new native geometry tests: 8 executed / 8 passed / 0 failed (offline command exit 0); fresh retained 50/50 and public27 11/11 passed, both exit 0. Initial six-test attempt: 4 pass / 2 fail due unstationary item fixtures; fixed without weakening assertions. |
-| 2. Producer Exterior R2 | Implemented; focused native tests next | 1; immutable input verification | ProducerExteriorR2, ProducerRevisions/Transaction/Service, pinned resources, 9 tests; no pass claimed yet |
+| 2. Producer Exterior R2 | Implemented; focused native tests passed | 1; immutable input verification | ProducerExteriorR2, ProducerRevisions/Transaction/Service, pinned resources, 9 native tests executed/passed, 0 failed, exit0; full final regression pending |
 | 3. Six R5 houses | Implemented; focused native tests next | 1; whole-house R1/R2 route verification | R5HouseRevisions/Transaction/Service/Tests, PlannedWorld, full contexts; 11 tests pending |
 | 4. Initial defenses | Implemented; focused native tests next | 1; compatibility with 2/3/protected reservations | Defense registry/transaction/service/catalog/commands/tests; 8 tests pending |
 | 5. Combined validation/release | Pending | All four implemented and independently tested | Preserve both existing namespaces; add new native coverage; one JAR/package/checklist |
@@ -79,3 +79,11 @@ be recorded here with the exact next step; independently unblocked work continue
 | Compact R6 casemate | 4000 | 0 | 0 | 15 | 40 |
 
 Explicit mappings are in DefenseCostCatalog: authored wall6/7/end-cap/checkpoint-wing connector modules use the short band; wall14/straight16 the long band. Footing/support cells bundled within each module cost no extra. Unknown/unmapped IDs refuse. Cost is journaled; current price edits never reinterpret recovery/refund. Separate money and material shortage tests are pending.
+
+## Producer R2 verified checkpoint
+
+`/workspace/integration-evidence/producer-final-focus/native.log`: 9 executed / 9 passed / 0 failed, exit0, including 40-tick exact native geometry and inventory/payment checks on both future-upgrade sources. Command `gradle runGameTestServer -PgameTestNamespace=catancraft_producer_r2 --offline --no-daemon --max-workers=4`.
+
+Initial focused attempt6/9 passed: one test assumed all glass was clear (approved source also has light-blue stained glass), plus underground/boundary fixtures caused support checks. Fixtures moved to isolated sky contexts without modifying authored states. Retry7/9 passed but synthetic fence reconnection checks still refused future purchases: the unchanged original R1 L5 design has authored disconnected boundary fence states next to added andesite. The transaction's inherited UPDATE_KNOWN_SHAPE/no UPDATE_NEIGHBORS policy intentionally does not request those neighbor writes. PlannedWorld now models actual caller flags, keeps unconditional survival/gravity checks, and defaults strict otherwise. Assets/hashes/counts unchanged; delayed native targets passed. Additional flags-policy/support regressions are queued with combined validation. Ordinary later edits can recalculate vanilla connections and must still meet exact guarded source checks.
+
+New runtime R2 flags are absent from legacy journal descriptions, preserving old pins/tokens and pending R1 interpretation. New revisions and immutable source contexts are separate. Explicit `/catan producer exterior <city> confirm` performs a free correction at the actual paid tier; normal upgrades choose corrected targets and recognize either source revision. Existing current inventories and historical journals are preserved.

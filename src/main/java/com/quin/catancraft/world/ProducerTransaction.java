@@ -28,7 +28,22 @@ final class ProducerTransaction {
     }
     enum Action { STATUS, APPLY, RESUME, ROLLBACK }
     enum Phase { PREPARED, APPLYING, PHYSICAL_COMPLETE, COMMITTED, ROLLING_BACK, ROLLED_BACK }
-    record Plot(String family,int source,int target,MapAnchor anchor) {}
+    record Plot(String family,int source,int target,MapAnchor anchor,boolean sourceR2,boolean targetR2) {
+        // Legacy journals/tests retain exactly their original R1 interpretation.
+        Plot(String family,int source,int target,MapAnchor anchor){this(family,source,target,anchor,false,false);}
+    }
+    static String token(Plot p,boolean target)throws IOException {
+        int tier=target?p.target():p.source();boolean r2=target?p.targetR2():p.sourceR2();
+        return r2?ProducerExteriorR2.token(p.family(),tier):ProducerRevisions.token(p.family(),tier);
+    }
+    private static String hash(Plot p,boolean target)throws IOException {
+        int tier=target?p.target():p.source();return (target?p.targetR2():p.sourceR2())?
+            ProducerExteriorR2.schematicHash(p.family(),tier):ProducerRevisions.hash(p.family(),tier);
+    }
+    private static List<SchematicPlacementService.PlanCell> plan(Plot p,boolean target)throws IOException {
+        int tier=target?p.target():p.source();return (target?p.targetR2():p.sourceR2())?
+            ProducerExteriorR2.plan(p.family(),tier,p.anchor()):ProducerRevisions.plan(p.family(),tier,p.anchor());
+    }
     record Spec(int paidBefore,int paidAfter,List<Plot> plots) {
         Spec { plots=List.copyOf(plots); }
         EconomyCost cost() { return paidAfter==paidBefore?new EconomyCost(0,Map.of()):EconomyCatalog.producerUpgradeCost(paidBefore); }
@@ -57,10 +72,14 @@ final class ProducerTransaction {
         ListTag plots=new ListTag();Set<String> families=new HashSet<>();
         for(Plot p:s.plots()) {
             if(!families.add(p.family()) || !ProducerRevisions.managed(p.family()) || p.source()<1 || p.source()>s.paidBefore()
-                || p.target()!=s.paidAfter())throw new IOException("Invalid producer selection");
+                || p.target()!=s.paidAfter() || p.sourceR2()&&!ProducerExteriorR2.hasRevision(p.family(),p.source())
+                || p.targetR2()&&!ProducerExteriorR2.hasRevision(p.family(),p.target()))throw new IOException("Invalid producer selection");
             CompoundTag t=new CompoundTag();t.putString("family",p.family());t.putInt("source",p.source());t.putInt("target",p.target());
             t.putIntArray("anchor",new int[]{p.anchor().x(),p.anchor().y(),p.anchor().z(),p.anchor().rotation()});
-            t.putString("sourceHash",ProducerRevisions.hash(p.family(),p.source()));t.putString("targetHash",ProducerRevisions.hash(p.family(),p.target()));plots.add(t);
+            t.putString("sourceHash",hash(p,false));t.putString("targetHash",hash(p,true));
+            if(p.sourceR2())t.putBoolean("sourceExteriorR2",true);
+            if(p.targetR2())t.putBoolean("targetExteriorR2",true);
+            plots.add(t);
         }
         n.put("plots",plots);n.put("cost",costTag(s.cost()));return n;
     }
@@ -70,11 +89,11 @@ final class ProducerTransaction {
         for(var v:cost.resources().entrySet())n.putLong(v.getKey().id(),v.getValue());return n;
     }
     static Result run(Environment e,Action action,Fault fault) throws IOException {
-        Spec spec=e.spec();CompoundTag description=describe(spec);
+        Spec spec=e.spec();CompoundTag description=describe(spec),identity=e.identity().copy();
         List<Cell> cells=new ArrayList<>();List<Integer> mask=new ArrayList<>();List<AABB> boxes=new ArrayList<>();Set<BlockPos> unique=new HashSet<>();
         for(Plot plot:spec.plots()) {
-            var old=ProducerRevisions.plan(plot.family(),plot.source(),plot.anchor());
-            var next=ProducerRevisions.plan(plot.family(),plot.target(),plot.anchor());
+            var old=plan(plot,false);
+            var next=plan(plot,true);
             boxes.add(TownHallRepairTransaction.bounds(old));
             for(int i=0;i<old.size();i++) {
                 var a=old.get(i);var b=next.get(i);
@@ -102,7 +121,7 @@ final class ProducerTransaction {
         if(phase==Phase.COMMITTED && !paidReceipt || phase==Phase.ROLLED_BACK && !rolledReceipt)
             throw new IOException("Producer journal completion disagrees with saved receipt");
         for(Plot p:spec.plots()) {
-            String expected=ProducerRevisions.token(p.family(),paidReceipt?p.target():p.source());
+            String expected=token(p,paidReceipt);
             if(!expected.equals(e.token(p.family())))throw new IOException("Producer visual token mismatch for "+p.family());
         }
         ListTag saved=exists?j.getList("blocks",Tag.TAG_COMPOUND):new ListTag();
@@ -148,6 +167,13 @@ final class ProducerTransaction {
             int index=mask.get(rollback?mask.size()-1-k:k);Cell c=cells.get(index);
             hazardWrites.add(new ConstructionHazards.Write(c.pos(),rollback?before.get(index):c.next()));
         }
+        if(spec.plots().stream().anyMatch(p->p.sourceR2()||p.targetR2())) {
+            Map<BlockPos,BlockState> finalStates=new HashMap<>();
+            for(int i=0;i<cells.size();i++) {
+                Cell c=cells.get(i);finalStates.put(c.pos(),changed.contains(i)?(rollback?before.get(i):c.next()):live[i]);
+            }
+            PlannedWorld.verify(e.level(),finalStates,FLAGS);
+        }
         ConstructionHazards.Guard entities;
         try { entities=ConstructionHazards.inspect(e.level(),hazardWrites); }
         catch(IOException hazard) {
@@ -169,7 +195,8 @@ final class ProducerTransaction {
         CompoundTag ledger=e.ledger().copy();
         if(!exists) {
             e.save(); // Flush the unmodified source before durable ownership of any block write.
-            if(!e.ledger().equals(ledger))throw new IOException("Ledger changed during source save");
+            if(!e.ledger().equals(ledger)||!identity.equals(e.identity()))throw new IOException("Ledger/owner changed during source save");
+            entities.verify();
             j=new CompoundTag();j.putInt("schema",1);j.putUUID("id",UUID.randomUUID());j.put("identity",e.identity().copy());
             j.put("spec",description);j.putString("previousReceipt",previous);j.put("ledgerBefore",ledger.copy());
             ListTag nbt=new ListTag();for(var entry:inventories.entrySet()) {
@@ -187,6 +214,7 @@ final class ProducerTransaction {
         int writes=0;
         for(int k=0;k<mask.size();k++) {
             int index=mask.get(rollback?mask.size()-1-k:k);Cell c=cells.get(index);
+            e.allowWrite(c.pos());if(!identity.equals(e.identity()))throw new IOException("Producer owner changed after preflight");
             BlockState wanted=rollback?before.get(index):c.next();
             if(!e.level().getBlockState(c.pos()).equals(live[index]))throw new IOException("Producer changed after preflight");
             if(!live[index].equals(wanted)) {
@@ -197,9 +225,14 @@ final class ProducerTransaction {
         entities.verify();
         verify(e,cells,live,inventories,shell,shellNbt,ledger,items,boxes);
         advance(e.file(),j,rollback?Phase.ROLLING_BACK:Phase.PHYSICAL_COMPLETE);
-        e.save();entities.verify();fault.at("physical_saved",writes);
+        e.save();entities.verify();
+        if(!identity.equals(e.identity())||!ledger.equals(e.ledger()))throw new IOException("Producer identity/ledger changed during physical save");
+        fault.at("physical_saved",writes);
         // This method and its receipt are the only payment path, also used by native tests.
-        settle(e,j,rollback);e.dirty();e.save();entities.verify();fault.at("ledger_saved",writes);
+        if(!identity.equals(e.identity()))throw new IOException("Producer owner changed before settlement");
+        settle(e,j,rollback);e.dirty();CompoundTag settled=e.ledger().copy();e.save();entities.verify();
+        if(!identity.equals(e.identity())||!settled.equals(e.ledger()))throw new IOException("Producer settlement changed during save");
+        fault.at("ledger_saved",writes);
         verify(e,cells,live,inventories,shell,shellNbt,e.ledger(),items,boxes);
         advance(e.file(),j,rollback?Phase.ROLLED_BACK:Phase.COMMITTED);fault.at("committed",writes);
         return new Result((rollback?"Producer rollback":"Producer upgrade/retrofit")+" completed: "+writes+
@@ -218,14 +251,14 @@ final class ProducerTransaction {
                 e.nation().addTreasury(cost.money());cost.resources().forEach((type,amount)->e.nation().addResource(type,amount));
             } else if(!receipt.equals(previous))throw new IOException("Unrecognized payment receipt");
             e.territory().setProducerLevel(spec.paidBefore());
-            for(Plot p:spec.plots())e.token(p.family(),ProducerRevisions.token(p.family(),p.source()));
+            for(Plot p:spec.plots())e.token(p.family(),token(p,false));
             e.receipt(rolled);
         } else {
             if(receipt.equals(paid))return;
             if(!receipt.equals(previous) || e.territory().producerLevel()!=spec.paidBefore())throw new IOException("Ambiguous producer charge");
             if(!cost.canAfford(e.nation()))throw new IOException("Insufficient funds at completion; rollback remains available");
             cost.charge(e.nation());e.territory().setProducerLevel(spec.paidAfter());
-            for(Plot p:spec.plots())e.token(p.family(),ProducerRevisions.token(p.family(),p.target()));
+            for(Plot p:spec.plots())e.token(p.family(),token(p,true));
             e.receipt(paid);
         }
     }

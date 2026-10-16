@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "files": [
+    {
+      "file": "r5-house-contexts.json.gz",
+      "sha256": "2722756e24b1d647da167dcc4b78db0f6d4a559d297379c3887e2b89890734fb",
+      "jsonSha256": "5acbc2da675136f9453102ada82f241822c846d376bb0b405d13db54d02bd7aa"
+    },
+    {
+      "file": "producer-r2-contexts.json.gz",
+      "sha256": "1e47d1b8cd6c31a1065a8562efbce0db22a37a1fc7127ac5a1a56067f646ef09",
+      "jsonSha256": "629f0439dc166f9fe1f15aa9fc49d984b6390c864d79202bd20cb4ff5bff846c"
+    }
+  ],
+  "schematics": [
+    {
+      "file": "producer_exterior_r2/farm_l3.schem",
+      "sha256": "13adb8453b56d66ea529b6c010b6563e84afead8ebddcea05e4073a208982bb4"
+    },
+    {
+      "file": "producer_exterior_r2/farm_l4.schem",
+      "sha256": "c34bf82adee0e934d2e3de29fb31f54fd94700b53b5c20ee3f37a9c2b0310e28"
+    },
+    {
+      "file": "producer_exterior_r2/farm_l5.schem",
+      "sha256": "865b55434db75d480459d8ca4b4ddb63e23afdc492de7d59384028eac5ed1428"
+    },
+    {
+      "file": "producer_exterior_r2/lumberyard_l3.schem",
+      "sha256": "151ac77dcd1cd8a2be393ca5ec0e9ccb46f835659b34e0bb6577359e90ec7aef"
+    },
+    {
+      "file": "producer_exterior_r2/lumberyard_l4.schem",
+      "sha256": "fc4727fd85920b274a3e1e4179fde1cc5754a17f08700daef045c33f0e093c32"
+    },
+    {
+      "file": "producer_exterior_r2/lumberyard_l5.schem",
+      "sha256": "2e3233bb0e468798ba665bedda38a8b4025c641a50a0b0e563e43011518dd7a8"
+    },
+    {
+      "file": "producer_exterior_r2/quarry_l3.schem",
+      "sha256": "9e002d1608b13ea58b809255fd40ac8f12ddb9d1b725d9c5452d2a8a17c33fac"
+    },
+    {
+      "file": "producer_exterior_r2/quarry_l4.schem",
+      "sha256": "37092485f8d70e4d6eaca97c7d7f4b72b54e54427c357a0f4573dd1338edf4a9"
+    },
+    {
+      "file": "producer_exterior_r2/quarry_l5.schem",
+      "sha256": "888954a834cc74bbf1dd2bcf31383d6bd513d0a10af728340b153818e8a71a34"
+    }
+  ]
+}

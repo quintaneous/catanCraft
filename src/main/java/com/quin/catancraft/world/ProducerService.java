@@ -37,8 +37,8 @@ public final class ProducerService {
         var root=Commands.literal("producer").requires(s->s.hasPermission(2));
         root.then(Commands.literal("status").then(Commands.argument("city",StringArgumentType.word())
             .executes(c->command(c.getSource(),StringArgumentType.getString(c,"city"),"status",ProducerTransaction.Action.STATUS))));
-        for(String name:List.of("retrofit","resume","rollback")) {
-            ProducerTransaction.Action action=name.equals("retrofit")?ProducerTransaction.Action.APPLY:
+        for(String name:List.of("retrofit","exterior","resume","rollback")) {
+            ProducerTransaction.Action action=(name.equals("retrofit")||name.equals("exterior"))?ProducerTransaction.Action.APPLY:
                 name.equals("resume")?ProducerTransaction.Action.RESUME:ProducerTransaction.Action.ROLLBACK;
             root.then(Commands.literal(name).then(Commands.argument("city",StringArgumentType.word()).then(Commands.literal("confirm")
                 .executes(c->command(c.getSource(),StringArgumentType.getString(c,"city"),name,action)))));
@@ -81,15 +81,17 @@ public final class ProducerService {
                 if(pending!=null)throw new IOException("Incomplete producer transaction: use /catan producer resume "+city+" confirm");
                 int paid=t.producerLevel(),target=kind.equals("upgrade")?paid+1:paid;
                 if(target>5)throw new IOException("Resource producer is already Level 5");
-                path=root.resolve("data/catancraft_producer_"+city+"_"+kind+"_l"+target+"_r1.dat");
+                String revision=target>=3?"r2":"r1";
+                path=root.resolve("data/catancraft_producer_"+city+"_"+kind+"_l"+target+"_"+revision+".dat");
                 if(Files.exists(path,LinkOption.NOFOLLOW_LINKS)
                     && ProducerTransaction.phase(ProducerJournal.read(path))==ProducerTransaction.Phase.ROLLED_BACK)
-                    path=root.resolve("data/catancraft_producer_"+city+"_"+kind+"_l"+target+"_"+UUID.randomUUID()+"_r1.dat");
+                    path=root.resolve("data/catancraft_producer_"+city+"_"+kind+"_l"+target+"_"+UUID.randomUUID()+"_"+revision+".dat");
                 if(Files.exists(path,LinkOption.NOFOLLOW_LINKS))spec=readSpec(ProducerJournal.read(path).getCompound("spec"),def);
                 else {
                     List<ProducerTransaction.Plot> plots=new ArrayList<>();
                     for(String f:ProducerRevisions.applicable(def))plots.add(new ProducerTransaction.Plot(f,
-                        ProducerRevisions.revision(f,data.placedMapAsset(key(city,f))),target,SchematicAssetRegistry.territoryAnchor(f,def)));
+                        ProducerRevisions.revision(f,data.placedMapAsset(key(city,f))),target,SchematicAssetRegistry.territoryAnchor(f,def),
+                        ProducerRevisions.exterior(f,data.placedMapAsset(key(city,f))),ProducerExteriorR2.hasRevision(f,target)));
                     spec=new ProducerTransaction.Spec(paid,target,plots);
                 }
             }
@@ -124,7 +126,7 @@ public final class ProducerService {
     }
     private static List<Path> histories(Path root,String city) throws IOException {
         Path dir=root.resolve("data");if(!Files.isDirectory(dir))return List.of();
-        try(var stream=Files.newDirectoryStream(dir,"catancraft_producer_"+city+"_*_r1.dat")) {
+        try(var stream=Files.newDirectoryStream(dir,"catancraft_producer_"+city+"_*_r{1,2}.dat")) {
             List<Path> paths=new ArrayList<>();for(Path p:stream){if(paths.size()>=128)throw new IOException("Unexpected producer history count");paths.add(p);}
             return paths;
         }
@@ -137,7 +139,7 @@ public final class ProducerService {
             CompoundTag p=tags.getCompound(i);String f=families.get(i);MapAnchor a=SchematicAssetRegistry.territoryAnchor(f,def);
             if(!f.equals(p.getString("family")) || !Arrays.equals(p.getIntArray("anchor"),new int[]{a.x(),a.y(),a.z(),a.rotation()}))
                 throw new IOException("Producer selection/anchor changed");
-            plots.add(new ProducerTransaction.Plot(f,p.getInt("source"),p.getInt("target"),a));
+            plots.add(new ProducerTransaction.Plot(f,p.getInt("source"),p.getInt("target"),a,p.getBoolean("sourceExteriorR2"),p.getBoolean("targetExteriorR2")));
         }
         var result=new ProducerTransaction.Spec(n.getInt("paidBefore"),n.getInt("paidAfter"),plots);
         if(!ProducerTransaction.describe(result).equals(n))throw new IOException("Producer source/cost contract changed");return result;
