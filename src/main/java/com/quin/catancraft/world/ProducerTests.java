@@ -40,6 +40,17 @@ public final class ProducerTests {
         for(var item:stale)item.discard();
         CatanCraft.LOGGER.info("PRODUCER_TEST_ISOLATION priorFixtureItemsRemoved={}",stale.size());
     }
+    // GameTest clears/reuses template areas between batches. Only remove stale drops
+    // BEFORE the next batch starts; its deliberate occupancy entities do not exist yet.
+    @BeforeBatch(batch="repair") public static void isolateRetained0(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="repair_recovery") public static void isolateRetained1(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="repair_routes") public static void isolateRetained2(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="producer_lifecycle") public static void isolateRetained3(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="producer_retrofit") public static void isolateRetained4(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="producer_recovery") public static void isolateRetained5(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="producer_receipts") public static void isolateRetained6(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="producer_guards") public static void isolateRetained7(ServerLevel level) { isolateRepairGuards(level); }
+    @BeforeBatch(batch="producer_ticks") public static void isolateRetained8(ServerLevel level) { isolateRepairGuards(level); }
     @GameTest(template="townhall_state_empty",batch="producer_contract",timeoutTicks=600)
     public static void all_delivered_assets_deltas_and_applicability(GameTestHelper h) {
         try {
@@ -183,7 +194,17 @@ public final class ProducerTests {
     private static void corruption(GameTestHelper h) {
         try {
             Env e=new Env(h,180,1);e.prepare(1);e.select(1,2);
-            refuse(h,()->ProducerTransaction.run(e,APPLY,(stage,n)->{if(stage.equals("prepared"))throw new IOException("stop");}));
+            boolean[] reachedPrepared={false};
+            try {
+                ProducerTransaction.run(e,APPLY,(stage,n)->{
+                    if(stage.equals("prepared")){reachedPrepared[0]=true;throw new IOException("intentional prepared interruption");}
+                });
+                h.fail("Prepared fault did not interrupt the transaction");
+            } catch(IOException expected) {
+                h.assertTrue(reachedPrepared[0],"Fixture refused before durable preparation: "+expected.getMessage());
+                h.assertTrue(expected.getMessage().equals("intentional prepared interruption"),"Unexpected setup failure: "+expected);
+            }
+            h.assertTrue(Files.isRegularFile(e.file()),"Prepared transaction did not persist its journal");
             byte[] journal=Files.readAllBytes(e.file());CompoundTag ledger=e.ledger();e.identitySuffix="wrong-world";
             refuse(h,()->ProducerTransaction.run(e,RESUME));e.identitySuffix="";
             byte[] damaged=journal.clone();damaged[damaged.length-4]^=1;Files.write(e.file(),damaged);refuse(h,()->ProducerTransaction.run(e,RESUME));
@@ -236,12 +257,21 @@ public final class ProducerTests {
         void prepare(int visual) throws IOException {
             for(String f:ProducerRevisions.FAMILIES) {
                 var plan=ProducerRevisions.plan(f,visual,anchors.get(f));var box=TownHallRepairTransaction.bounds(plan);
-                for(int x=((int)box.minX-2)>>4;x<=((int)box.maxX+2)>>4;x++)for(int z=((int)box.minZ-2)>>4;z<=((int)box.maxZ+2)>>4;z++)level().getChunk(x,z);
+                if(!(level().getServer() instanceof GameTestServer))throw new IOException("Fixture preparation requires GameTestServer");
+                // getChunk alone does not retain the fixture. Keep the full read/boundary
+                // chunks accessible while synchronous transaction and delayed checks run.
+                for(int x=((int)box.minX-2)>>4;x<=((int)box.maxX+2)>>4;x++)for(int z=((int)box.minZ-2)>>4;z<=((int)box.maxZ+2)>>4;z++) {
+                    level().setChunkForced(x,z,true);level().getChunk(x,z);
+                }
                 for(var c:plan) {
                     BlockState state=c.state();
                     if(state.is(Blocks.WHEAT)||state.is(Blocks.CARROTS))state=state.setValue(CropBlock.AGE,c.localX()%8);
                     if(state.is(Blocks.FARMLAND))state=state.setValue(FarmBlock.MOISTURE,c.localX()%8);
                     if(state.getBlock() instanceof DoorBlock)state=state.setValue(DoorBlock.OPEN,true);
+                    // Source-fixture replacement can eject an earlier test's inventory.
+                    // Clear only during setup, never in transaction or recovery code.
+                    var previous=level().getBlockEntity(c.position());
+                    if(previous instanceof net.minecraft.world.Container container)container.clearContent();
                     level().setBlock(c.position(),state,FLAGS);
                     if(state.is(Blocks.BARREL)) {
                         var barrel=(BarrelBlockEntity)level().getBlockEntity(c.position());ItemStack stack=new ItemStack(Items.DIAMOND,17);
@@ -250,6 +280,18 @@ public final class ProducerTests {
                 }
                 token(f,ProducerRevisions.token(f,visual));
             }
+            // Template clearing runs after BeforeBatch. Remove only stale setup drops
+            // in this fixture, BEFORE any test adds deliberate occupancy or starts writes.
+            int staleCount=0;
+            for(String f:ProducerRevisions.FAMILIES) {
+                var bounds=TownHallRepairTransaction.bounds(ProducerRevisions.plan(f,visual,anchors.get(f))).inflate(2);
+                var stale=new ArrayList<ItemEntity>();
+                for(var entity:level().getAllEntities())
+                    if(entity instanceof ItemEntity item && item.getBoundingBox().intersects(bounds))stale.add(item);
+                for(var item:stale)item.discard();
+                staleCount+=stale.size();
+            }
+            CatanCraft.LOGGER.info("PRODUCER_FIXTURE_SOURCE_READY rotation={} priorFixtureDrops={}",rotation,staleCount);
             save();
         }
         void assertGeometry(int visual) throws IOException {for(String f:ProducerRevisions.FAMILIES)for(var c:ProducerRevisions.plan(f,visual,anchors.get(f)))h.assertTrue(ProducerRevisions.matches(level().getBlockState(c.position()),c.state()),"Producer geometry mismatch at "+c.position());}

@@ -182,7 +182,7 @@ public final class TownHallRepairTests {
     }
     interface Check { void run() throws Exception; }
     private static void refuse(GameTestHelper h,Check c) throws Exception {
-        boolean refused=false;try{c.run();}catch(IOException|IllegalStateException expected){refused=true;}
+        boolean refused=false;try{c.run();}catch(IOException|IllegalStateException expected){refused=true;CatanCraft.LOGGER.info("TH_REPAIR_EXPECTED_REFUSAL {}",expected.getMessage());}
         h.assertTrue(refused,"Expected fail-closed refusal");
     }
     private static BlockState[] snapshot(Env e,List<SchematicPlacementService.PlanCell> plan) {
@@ -211,7 +211,28 @@ public final class TownHallRepairTests {
         }
         void prepare(int revision) throws IOException {
             var cells=TownHallRevisions.plan(tier,revision,anchor);
-            for(var c:cells)level().setBlock(c.position(),c.state(),FLAGS);
+            if(!(level().getServer() instanceof GameTestServer))throw new IOException("Town Hall fixture requires GameTestServer");
+            var bounds=TownHallRepairTransaction.bounds(cells);
+            for(int x=((int)bounds.minX-2)>>4;x<=((int)bounds.maxX+2)>>4;x++)
+                for(int z=((int)bounds.minZ-2)>>4;z<=((int)bounds.maxZ+2)>>4;z++) {
+                    level().setChunkForced(x,z,true);level().getChunk(x,z);
+                }
+            // Native template clearing can drop inventory items AFTER a BeforeBatch hook.
+            // This is source-fixture construction, not a transaction or recovery path.
+            for(var c:cells) {
+                var previous=level().getBlockEntity(c.position());
+                if(previous instanceof net.minecraft.world.Container container)container.clearContent();
+                if(previous instanceof LecternBlockEntity lectern)lectern.setBook(ItemStack.EMPTY);
+                level().setBlock(c.position(),c.state(),FLAGS);
+            }
+            // Only stale item drops within this fixture are removed, before the test adds
+            // any deliberate occupancy entity. Transaction-created drops remain test failures.
+            var stale=new ArrayList<net.minecraft.world.entity.item.ItemEntity>();
+            for(var entity:level().getAllEntities())
+                if(entity instanceof net.minecraft.world.entity.item.ItemEntity item
+                    && item.getBoundingBox().intersects(bounds.inflate(2)))stale.add(item);
+            for(var item:stale)item.discard();
+            CatanCraft.LOGGER.info("TH_FIXTURE_SOURCE_READY tier={} rotation={} priorFixtureDrops={}",tier,anchor.rotation(),stale.size());
             BlockPos p=cells.get(TownHallRevisions.managerIndex()).position();
             ItemStack book=new ItemStack(Items.WRITABLE_BOOK);CompoundTag n=new CompoundTag();
             ListTag pages=new ListTag();pages.add(StringTag.valueOf("Preserve this management book"));

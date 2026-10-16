@@ -23,6 +23,9 @@ import java.util.*;
  * Recovery reconciles that receipt, never guesses payment from the current balance.
  */
 final class ProducerTransaction {
+    static final class FreshOccupancyRefusal extends IOException {
+        FreshOccupancyRefusal(String message){super(message);}
+    }
     enum Action { STATUS, APPLY, RESUME, ROLLBACK }
     enum Phase { PREPARED, APPLYING, PHYSICAL_COMPLETE, COMMITTED, ROLLING_BACK, ROLLED_BACK }
     record Plot(String family,int source,int target,MapAnchor anchor) {}
@@ -139,8 +142,11 @@ final class ProducerTransaction {
         if(action!=Action.ROLLBACK && phase==Phase.ROLLING_BACK)throw new IOException("Rollback started; finish rollback");
         if(!exists && mask.isEmpty() && spec.paidBefore()==spec.paidAfter())return new Result("Producer visuals already match paid level; zero writes and zero charge.",0);
         if(!paidReceipt && action!=Action.ROLLBACK && !spec.cost().canAfford(e.nation()))throw new IOException("Cannot afford producer upgrade: "+spec.cost().describe());
-        for(AABB box:boxes)for(Entity entity:e.level().getEntities((Entity)null,box))
-            throw new IOException("Producer plot occupied by "+entity.getType()+"; leave the plots before upgrading");
+        for(AABB box:boxes)for(Entity entity:e.level().getEntities((Entity)null,box)) {
+            String message="Producer plot occupied by "+entity.getType()+"; leave the plots before upgrading";
+            if(!exists)throw new FreshOccupancyRefusal(message);
+            throw new IOException(message);
+        }
         // Guard shell readback and current inventories, including on recovery after legitimate use.
         Map<BlockPos,BlockState> shell=new HashMap<>();Map<BlockPos,CompoundTag> shellNbt=new HashMap<>();
         for(AABB box:boxes) {

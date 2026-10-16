@@ -97,6 +97,9 @@ public final class ProducerService {
             var result=ProducerTransaction.run(env,action);
             CatanCraft.LOGGER.info("PRODUCER_R1 city={} kind={} writes={} {}",city,kind,result.writes(),result.message());
             return new MapAssetService.Result(true,result.message(),result.writes());
+        }catch(ProducerTransaction.FreshOccupancyRefusal ex) {
+            return new MapAssetService.Result(false,"Producer upgrade not started: "+ex.getMessage()+
+                ". No upgrade blocks changed and no payment taken. Leave the producer plots, then retry.",0);
         }catch(Exception ex) {
             CatanCraft.LOGGER.error("Producer operation refused city={} kind={}",input,kind,ex);
             return new MapAssetService.Result(false,"Producer operation stopped: "+ex.getMessage()+

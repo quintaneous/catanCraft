@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '0.1.26'
+version = '0.1.27'
 group = 'com.quin.catancraft'
 
 base {
@@ -13,6 +13,8 @@ base {
 }
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+
+def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()
 
 minecraft {
     mappings channel: 'official', version: '1.20.1'
@@ -33,8 +35,8 @@ minecraft {
             args '--nogui'
         }
         gameTestServer {
-            workingDirectory project.file('build/gametest-run')
-            property 'forge.enabledGameTestNamespaces', 'catancraft'
+            workingDirectory project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : 'build/public-gametest-run')
+            property 'forge.enabledGameTestNamespaces', gameTestNamespace
         }
     }
 }
@@ -61,6 +63,15 @@ tasks.named('jar', Jar).configure {
     }
 }
 
+
+// New integration tests use a separate namespace/world so old test-batch geometry
+// and entity state cannot contaminate unrelated fixtures. Template bytes are identical.
+tasks.named('processResources', ProcessResources).configure {
+    from('src/main/resources/data/catancraft/structures') {
+        include 'townhall_state_empty.nbt'
+        into 'data/catancraft_public27/structures'
+    }
+}
 
 // Immutable prestige revisions are bundled independently of user configuration.
 // R1 fixtures remain unchanged; R2 voxel plans are verified against the delivered full-state fingerprints.
