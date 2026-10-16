@@ -41,8 +41,9 @@ public final class ProducerOccupancyTests {
             }
             e.prepare(1);e.select(1,2);CompoundTag ledger=e.ledger().copy();
             var farm=TownHallRepairTransaction.bounds(ProducerRevisions.plan("farm",1,e.anchors.get("farm")));
-            var center=farm.getCenter();
-            ItemEntity item=new ItemEntity(e.level(),center.x,center.y,center.z,new ItemStack(Items.STICK));item.setNoGravity(true);
+            var p=ProducerTests.hazardPosition(e);
+            var center=new net.minecraft.world.phys.Vec3(p.getX()+.5,p.getY()+.25,p.getZ()+.5);
+            ItemEntity item=new ItemEntity(e.level(),center.x,center.y,center.z,new ItemStack(Items.STICK));item.setNoGravity(true);item.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
             h.assertTrue(e.level().addFreshEntity(item),"Fixture entity was not added");
             // Newly synchronously loaded chunks do not immediately expose their entities to
             // getEntities. Wait for native chunk/entity accessibility, then prove occupancy.
@@ -57,16 +58,29 @@ public final class ProducerOccupancyTests {
                     try{ProducerTransaction.run(isolated,ProducerTransaction.Action.APPLY,(s,n)->{if(s.equals("prepared"))throw new IOException("injected interruption");});}
                     catch(IOException expected){interrupted=expected.getMessage().equals("injected interruption");}
                     h.assertTrue(interrupted,"Prepared interruption was not reached");byte[] journal=Files.readAllBytes(e.file());
-                    ItemEntity next=new ItemEntity(e.level(),center.x,center.y,center.z,new ItemStack(Items.STICK));next.setNoGravity(true);
+                    ItemEntity next=new ItemEntity(e.level(),center.x,center.y,center.z,new ItemStack(Items.STICK));next.setNoGravity(true);next.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
                     h.assertTrue(e.level().addFreshEntity(next),"Recovery fixture entity not added");
                     try {
                         h.assertTrue(e.level().getEntities((net.minecraft.world.entity.Entity)null,farm).contains(next),"Recovery fixture not visible");
                         boolean recovery=false;try{ProducerTransaction.run(isolated,ProducerTransaction.Action.RESUME);}
                         catch(ProducerTransaction.FreshOccupancyRefusal wrong){throw new IllegalStateException("Pending journal misclassified as fresh retry",wrong);}
-                        catch(IOException expected){recovery=expected.getMessage().startsWith("Producer plot occupied by ");}
+                        catch(IOException expected){recovery=expected.getMessage().startsWith("Construction hazard:");}
                         h.assertTrue(recovery&&Arrays.equals(journal,Files.readAllBytes(e.file()))&&ledger.equals(e.ledger()),"Pending occupancy changed journal/ledger or wrong refusal");
                     }finally{next.discard();}
-                    CatanCraft.LOGGER.info("PRODUCER_OCCUPANCY_CLASSIFICATION nativeQuery=PASS freshNoWritesNoCharge=PASS pendingRetained=PASS isolatedFixture=PASS");h.succeed();
+                    ProducerTransaction.run(isolated,ProducerTransaction.Action.RESUME);
+                    byte[] completed=Files.readAllBytes(e.file());CompoundTag paidLedger=e.ledger().copy();
+                    ItemEntity standing=new ItemEntity(e.level(),p.getX()+.5,p.getY()+1,p.getZ()+.5,new ItemStack(Items.DIAMOND,7));
+                    standing.setNoGravity(true);standing.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+                    h.assertTrue(e.level().addFreshEntity(standing),"Reverse support fixture spawn failed");
+                    h.runAfterDelay(5,()->{try {
+                        h.assertTrue(e.level().getEntities((net.minecraft.world.entity.Entity)null,farm.inflate(2)).contains(standing),"Reverse support fixture invisible");
+                        boolean refused=false;try{ProducerTransaction.run(isolated,ProducerTransaction.Action.ROLLBACK);}
+                        catch(IOException hazard){refused=hazard.getMessage().startsWith("Construction hazard:");}
+                        h.assertTrue(refused&&Arrays.equals(completed,Files.readAllBytes(e.file()))&&paidLedger.equals(e.ledger()),"Reverse hazard changed history/paid level/refund");
+                        h.assertTrue(!standing.isRemoved()&&standing.getItem().getCount()==7,"Reverse refusal lost entity/item");
+                        CatanCraft.LOGGER.info("PRODUCER_OCCUPANCY_CLASSIFICATION nativeQuery=PASS freshNoWritesNoCharge=PASS pendingRetained=PASS reverseSupport=PASS isolatedFixture=PASS");h.succeed();
+                    }catch(Exception ex){throw new RuntimeException(ex);}finally{standing.discard();}});
+
                 }catch(Exception ex){item.discard();throw new RuntimeException(ex);}
             });
         }catch(Exception ex){throw new RuntimeException(ex);}

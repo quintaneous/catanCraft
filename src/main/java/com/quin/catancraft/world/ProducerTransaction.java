@@ -142,10 +142,18 @@ final class ProducerTransaction {
         if(action!=Action.ROLLBACK && phase==Phase.ROLLING_BACK)throw new IOException("Rollback started; finish rollback");
         if(!exists && mask.isEmpty() && spec.paidBefore()==spec.paidAfter())return new Result("Producer visuals already match paid level; zero writes and zero charge.",0);
         if(!paidReceipt && action!=Action.ROLLBACK && !spec.cost().canAfford(e.nation()))throw new IOException("Cannot afford producer upgrade: "+spec.cost().describe());
-        for(AABB box:boxes)for(Entity entity:e.level().getEntities((Entity)null,box)) {
-            String message="Producer plot occupied by "+entity.getType()+"; leave the plots before upgrading";
-            if(!exists)throw new FreshOccupancyRefusal(message);
-            throw new IOException(message);
+        boolean rollback=action==Action.ROLLBACK;
+        List<ConstructionHazards.Write> hazardWrites=new ArrayList<>();
+        for(int k=0;k<mask.size();k++) {
+            int index=mask.get(rollback?mask.size()-1-k:k);Cell c=cells.get(index);
+            hazardWrites.add(new ConstructionHazards.Write(c.pos(),rollback?before.get(index):c.next()));
+        }
+        ConstructionHazards.Guard entities;
+        try { entities=ConstructionHazards.inspect(e.level(),hazardWrites); }
+        catch(IOException hazard) {
+            if(!exists && hazard.getMessage().startsWith("Construction hazard:"))
+                throw new FreshOccupancyRefusal(hazard.getMessage()+"; no upgrade writes or charge occurred.");
+            throw hazard;
         }
         // Guard shell readback and current inventories, including on recovery after legitimate use.
         Map<BlockPos,BlockState> shell=new HashMap<>();Map<BlockPos,CompoundTag> shellNbt=new HashMap<>();
@@ -174,7 +182,7 @@ final class ProducerTransaction {
             }
             j.put("blocks",saved);j.putString("phase",Phase.PREPARED.name());ProducerJournal.write(e.file(),j,false);fault.at("prepared",0);
         }
-        boolean rollback=action==Action.ROLLBACK;
+        entities.verify();
         advance(e.file(),j,rollback?Phase.ROLLING_BACK:Phase.APPLYING);
         int writes=0;
         for(int k=0;k<mask.size();k++) {
@@ -186,11 +194,12 @@ final class ProducerTransaction {
                 live[index]=wanted;writes++;fault.at(rollback?"rollback_write":"write",writes);
             }
         }
+        entities.verify();
         verify(e,cells,live,inventories,shell,shellNbt,ledger,items,boxes);
         advance(e.file(),j,rollback?Phase.ROLLING_BACK:Phase.PHYSICAL_COMPLETE);
-        e.save();fault.at("physical_saved",writes);
+        e.save();entities.verify();fault.at("physical_saved",writes);
         // This method and its receipt are the only payment path, also used by native tests.
-        settle(e,j,rollback);e.dirty();e.save();fault.at("ledger_saved",writes);
+        settle(e,j,rollback);e.dirty();e.save();entities.verify();fault.at("ledger_saved",writes);
         verify(e,cells,live,inventories,shell,shellNbt,e.ledger(),items,boxes);
         advance(e.file(),j,rollback?Phase.ROLLED_BACK:Phase.COMMITTED);fault.at("committed",writes);
         return new Result((rollback?"Producer rollback":"Producer upgrade/retrofit")+" completed: "+writes+

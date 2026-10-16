@@ -27,7 +27,7 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 
 | Subtask | Status | Dependencies | Files changed / validation |
 | --- | --- | --- | --- |
-| 1. Entity obstruction | In progress: native geometry/transaction inspection | Verified baseline | None yet; implementation and new tests next |
+| 1. Entity obstruction | In progress: native geometry/transaction inspection | Verified baseline | ConstructionHazards, ConstructionHazardTests, ProducerTransaction/Service/Tests/OccupancyTests, StreetscapeTransaction/Tests, build.gradle. Eight new native geometry tests: 8 executed / 8 passed / 0 failed (offline command exit 0); retained/public27 regressions now running. Initial six-test attempt: 4 pass / 2 fail due unstationary item fixtures; fixed without weakening assertions. |
 | 2. Producer Exterior R2 | Asset/contract audit | 1; immutable input verification | None yet; no implementation claimed |
 | 3. Six R5 houses | Asset/contract audit | 1; whole-house R1/R2 route verification | None yet; no implementation claimed |
 | 4. Initial defenses | Asset/economy/socket audit | 1; compatibility with 2/3/protected reservations | None yet; no implementation claimed |
@@ -35,7 +35,7 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 
 ## Checkpoints and next step
 
-Initial status checkpoint: recorded in Git history with this document; subsequent
+Initial status checkpoint: `1dcc316` (verified inputs and tracked subtasks); subsequent
 checkpoints will identify tested changes, exact commands, counts and commit IDs.
 Next: implement reusable precise construction hazards and revise only deliberately
 broad occupancy assertions with stronger preservation and real-obstruction coverage.
@@ -50,5 +50,12 @@ gate-dependent wings, trenches, rejected bunkers, orientation pavilion, terrain
 rollout, siege restoration or automatic all-city installation. No reset, live
 world access, merge to main, force-push, deployment or multiplayer testing.
 
-No feature blocker established yet. Any unresolved contract/design question will
+Defense pricing is unresolved: no price schedule in supplied contracts or existing economy; concise asynchronous question sent. Backend and safety tests can proceed with injected fixture costs, but real purchases must remain disabled until the owner supplies a schedule. Network proxy again denies Forge/Minecraft hosts; offline cached compilation and eight native tests passed, so this currently does not block implementation. Any unresolved contract/design question will
 be recorded here with the exact next step; independently unblocked work continues.
+
+## Current focused validation
+
+- `gradle compileJava --offline --no-daemon --max-workers=4`: exit 0.
+- `gradle runGameTestServer -PgameTestNamespace=catancraft_integration --offline --no-daemon --max-workers=4`: 8 executed, 8 passed, 0 failed; exit 0. Logs `/workspace/integration-evidence/entity-retry/`.
+- Original retained 50 and public27 11 namespaces are running sequentially with strengthened real-obstruction/recovery assertions; no result yet. Logs `/workspace/integration-evidence/entity-regression/`.
+- Independent input audits: Producer R2 186/186 internal hashes, R5 333/333 hashes, all 18 house signatures and 12 branch routes passed. New pinned resource loaders/exports are staged separately in working files; no feature implementation completion claimed.

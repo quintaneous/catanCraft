@@ -83,8 +83,9 @@ public final class StreetscapeTests {
     @GameTest(template="townhall_state_empty",batch="public27_07",timeoutTicks=1000)
     public static void public_occupancy_fluid_and_missing_support_refuse(GameTestHelper h) {
         try {
-            Env e=new Env(h,0);e.prepare();var c=e.plan().cells().stream().filter(StreetscapeR5.Cell::changes).findFirst().orElseThrow();
-            ItemEntity item=new ItemEntity(e.level(),c.pos().getX()+0.5,c.pos().getY()+0.5,c.pos().getZ()+0.5,new ItemStack(Items.STICK));
+            Env e=new Env(h,0);e.prepare();var c=e.plan().cells().stream().filter(x->x.changes()&&x.before().isAir()&&x.after().isCollisionShapeFullBlock(e.level(),x.pos())).findFirst().orElseThrow();
+            // Replace blanket read-envelope occupancy with a real introduced collision.
+            ItemEntity item=new ItemEntity(e.level(),c.pos().getX()+0.5,c.pos().getY()+0.25,c.pos().getZ()+0.5,new ItemStack(Items.STICK));
             e.level().addFreshEntity(item);try{refuse(h,()->StreetscapeTransaction.run(e,APPLY));}finally{item.discard();}
             h.assertTrue(!Files.exists(e.file()),"Occupancy wrote journal");
             var support=e.plan().cells().stream().filter(x->!x.changes()&&!x.before().isAir()).findFirst().orElseThrow();

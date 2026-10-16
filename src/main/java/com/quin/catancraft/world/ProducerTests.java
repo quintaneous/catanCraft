@@ -217,12 +217,22 @@ public final class ProducerTests {
         try {
             Env e=new Env(h,0,1);e.prepare(1);e.select(1,2);long cash=e.nation().treasury();e.nation().addTreasury(-cash);
             refuse(h,()->ProducerTransaction.run(e,APPLY));h.assertTrue(!Files.exists(e.file()),"Unaffordable journal");e.nation().addTreasury(cash);
-            BlockPos p=e.anchors.get("farm")==null?BlockPos.ZERO:new BlockPos(e.anchors.get("farm").x(),e.anchors.get("farm").y()+3,e.anchors.get("farm").z()+2);
-            ItemEntity item=new ItemEntity(e.level(),p.getX()+.5,p.getY(),p.getZ()+.5,new ItemStack(Items.STICK));e.level().addFreshEntity(item);
+            // Former blanket occupancy assertion: use an actual new-solid collision instead.
+            BlockPos p=hazardPosition(e);
+            ItemEntity item=new ItemEntity(e.level(),p.getX()+.5,p.getY()+.25,p.getZ()+.5,new ItemStack(Items.STICK));e.level().addFreshEntity(item);
             refuse(h,()->ProducerTransaction.run(e,APPLY));h.assertTrue(!Files.exists(e.file()),"Occupied plot mutated");item.discard();
             h.assertTrue(!ProducerService.upgrade(e.level().getServer(),"a").success(),"Unapproved world enabled");
             CatanCraft.LOGGER.info("PRODUCER_REFUSALS funds=PASS occupied=PASS worldAuthorization=PASS");h.succeed();
         }catch(Exception x){throw new RuntimeException(x);}
+    }
+    static BlockPos hazardPosition(Env e)throws IOException {
+        var old=ProducerRevisions.plan("farm",1,e.anchors.get("farm"));
+        var next=ProducerRevisions.plan("farm",2,e.anchors.get("farm"));
+        Map<BlockPos,net.minecraft.world.level.block.state.BlockState> targets=new HashMap<>();for(var cell:next)targets.put(cell.position(),cell.state());
+        for(int i=0;i<old.size();i++)if(old.get(i).state().isAir()
+            && targets.getOrDefault(next.get(i).position().above(),net.minecraft.world.level.block.Blocks.AIR.defaultBlockState()).isAir()
+            && next.get(i).state().isCollisionShapeFullBlock(e.level(),next.get(i).position()))return next.get(i).position();
+        throw new IOException("No native new-solid producer hazard fixture");
     }
     private static void delayed(GameTestHelper h,int rotation) {
         try {

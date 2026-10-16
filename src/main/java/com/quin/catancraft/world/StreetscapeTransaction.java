@@ -68,8 +68,18 @@ final class StreetscapeTransaction {
             throw new IOException("Rolled-back streetscape history retained; do not delete or replay");
         }
         if(phase==Phase.ROLLING_BACK&&action!=Action.ROLLBACK)throw new IOException("Finish the started streetscape rollback");
-        for(var box:e.plan().boxes())for(Entity entity:e.level().getEntities((Entity)null,box))
-            throw new IOException("Public feature occupied by "+entity.getType()+"; leave the affected paths/gardens");
+        boolean rollback=action==Action.ROLLBACK;
+        List<ConstructionHazards.Write> hazardWrites=new ArrayList<>();
+        for(int k=0;k<mask.size();k++) {
+            int index=mask.get(rollback?mask.size()-1-k:k);var c=cells.get(index);
+            hazardWrites.add(new ConstructionHazards.Write(c.pos(),rollback?before.get(index):c.after()));
+        }
+        ConstructionHazards.Guard entities;
+        try { entities=ConstructionHazards.inspect(e.level(),hazardWrites); }
+        catch(IOException hazard) {
+            if(!exists)throw new IOException(hazard.getMessage()+"; no public-space writes or charge occurred.",hazard);
+            throw hazard;
+        }
         // Preserve neighboring state AND actual current inventory NBT, even during a later recovery.
         Map<BlockPos,BlockState> shell=new HashMap<>();
         for(var c:cells)for(Direction d:Direction.values()) {
@@ -91,7 +101,7 @@ final class StreetscapeTransaction {
             }
             j.put("blocks",saved);j.putString("phase",Phase.PREPARED.name());StreetscapeJournal.write(e.file(),j,false);fault.at("prepared",0);
         }
-        boolean rollback=action==Action.ROLLBACK;advance(e.file(),j,rollback?Phase.ROLLING_BACK:Phase.APPLYING);
+        entities.verify();advance(e.file(),j,rollback?Phase.ROLLING_BACK:Phase.APPLYING);
         int writes=0;
         for(int k=0;k<mask.size();k++) {
             int index=mask.get(rollback?mask.size()-1-k:k);var c=cells.get(index);
@@ -103,6 +113,7 @@ final class StreetscapeTransaction {
                 writes++;fault.at(rollback?"rollback_write":"write",writes);
             }
         }
+        entities.verify();
         for(int i=0;i<cells.size();i++) {
             var c=cells.get(i);BlockState wanted=c.changes()?(rollback?before.get(i):c.after()):live.get(c.pos());
             BlockState actual=e.level().getBlockState(c.pos());
@@ -115,7 +126,7 @@ final class StreetscapeTransaction {
         }
         for(var box:e.plan().boxes())for(ItemEntity it:e.level().getEntitiesOfClass(ItemEntity.class,box.inflate(2)))if(!items.contains(it.getUUID()))throw new IOException("Unexpected streetscape item drop");
         if(!e.ledger().equals(ledger))throw new IOException("Unexpected economy/purchase change");
-        e.save();fault.at("world_saved",writes);
+        e.save();entities.verify();fault.at("world_saved",writes);
         if(!e.ledger().equals(ledger)||!e.identity().equals(identity))throw new IOException("Unexpected saved-state change");
         advance(e.file(),j,rollback?Phase.ROLLED_BACK:Phase.COMMITTED);
         return new Result((rollback?"R5 public spaces rolled back: ":"R5 public spaces completed: ")+writes+" block changes; zero charge; purchases and levels unchanged.",writes);

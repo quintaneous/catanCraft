@@ -99,7 +99,7 @@ public final class ProducerService {
             return new MapAssetService.Result(true,result.message(),result.writes());
         }catch(ProducerTransaction.FreshOccupancyRefusal ex) {
             return new MapAssetService.Result(false,"Producer upgrade not started: "+ex.getMessage()+
-                ". No upgrade blocks changed and no payment taken. Leave the producer plots, then retry.",0);
+                ". No upgrade blocks changed and no payment taken. Clear only the reported construction hazard, then retry.",0);
         }catch(Exception ex) {
             CatanCraft.LOGGER.error("Producer operation refused city={} kind={}",input,kind,ex);
             return new MapAssetService.Result(false,"Producer operation stopped: "+ex.getMessage()+
@@ -160,6 +160,11 @@ public final class ProducerService {
             var b=SchematicAssetRegistry.asset(p.family()).boundsAt(p.anchor());
             for(int x=(b.min().getX()-2)>>4;x<=(b.max().getX()+2)>>4;x++)
                 for(int z=(b.min().getZ()-2)>>4;z<=(b.max().getZ()+2)>>4;z++)level.getChunk(x,z);
+        }
+        if(loadChunks) {
+            List<net.minecraft.world.phys.AABB> boxes=new ArrayList<>();
+            for(var plot:spec.plots())boxes.add(TownHallRepairTransaction.bounds(ProducerRevisions.plan(plot.family(),plot.source(),plot.anchor())).inflate(1));
+            StreetscapeService.requireLoadedEntities(level,boxes);
         }
         UUID owner=t.ownerNationId();NationData nation=data.nation(owner);
         return new ProducerTransaction.Environment() {

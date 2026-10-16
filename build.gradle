@@ -35,7 +35,7 @@ minecraft {
             args '--nogui'
         }
         gameTestServer {
-            workingDirectory project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : 'build/public-gametest-run')
+            workingDirectory project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : gameTestNamespace == 'catancraft_public27' ? 'build/public-gametest-run' : "build/${gameTestNamespace}-run")
             property 'forge.enabledGameTestNamespaces', gameTestNamespace
         }
     }
@@ -79,5 +79,15 @@ tasks.named('processResources', ProcessResources).configure {
     from('tests/fixtures') {
         include 'thall4.schem', 'thall5.schem'
         into 'data/catancraft/townhall_revisions'
+    }
+}
+
+// Integration native tests run in a third disposable namespace/world, retaining both suites.
+tasks.named('processResources', ProcessResources).configure {
+    ['catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses'].each { ns ->
+        from('src/main/resources/data/catancraft/structures') {
+            include 'townhall_state_empty.nbt'
+            into "data/${ns}/structures"
+        }
     }
 }
