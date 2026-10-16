@@ -86,12 +86,18 @@ public final class StreetscapeTests {
             Env e=new Env(h,0);e.prepare();var c=e.plan().cells().stream().filter(x->x.changes()&&x.before().isAir()&&x.after().isCollisionShapeFullBlock(e.level(),x.pos())).findFirst().orElseThrow();
             // Replace blanket read-envelope occupancy with a real introduced collision.
             ItemEntity item=new ItemEntity(e.level(),c.pos().getX()+0.5,c.pos().getY()+0.25,c.pos().getZ()+0.5,new ItemStack(Items.STICK));
-            e.level().addFreshEntity(item);try{refuse(h,()->StreetscapeTransaction.run(e,APPLY));}finally{item.discard();}
-            h.assertTrue(!Files.exists(e.file()),"Occupancy wrote journal");
-            var support=e.plan().cells().stream().filter(x->!x.changes()&&!x.before().isAir()).findFirst().orElseThrow();
-            e.level().setBlock(support.pos(),Blocks.AIR.defaultBlockState(),FLAGS);refuse(h,()->StreetscapeTransaction.run(e,APPLY));
-            e.level().setBlock(support.pos(),Blocks.WATER.defaultBlockState(),FLAGS);refuse(h,()->StreetscapeTransaction.run(e,APPLY));
-            h.assertTrue(!Files.exists(e.file()),"Missing support/fluid passed");h.succeed();
+            item.setNoGravity(true);item.setDeltaMovement(net.minecraft.world.phys.Vec3.ZERO);
+            h.assertTrue(e.level().addFreshEntity(item),"Public obstruction fixture spawn failed");
+            h.runAfterDelay(5,()->{try {
+                h.assertTrue(e.level().getEntities((net.minecraft.world.entity.Entity)null,new net.minecraft.world.phys.AABB(c.pos()).inflate(2)).contains(item),"Public obstruction fixture not visible to native query");
+                try{refuse(h,()->StreetscapeTransaction.run(e,APPLY));}finally{item.discard();}
+                h.assertTrue(!Files.exists(e.file()),"Real obstruction wrote journal");
+                var support=e.plan().cells().stream().filter(x->!x.changes()&&!x.before().isAir()).findFirst().orElseThrow();
+                e.level().setBlock(support.pos(),Blocks.AIR.defaultBlockState(),FLAGS);refuse(h,()->StreetscapeTransaction.run(e,APPLY));
+                e.level().setBlock(support.pos(),Blocks.WATER.defaultBlockState(),FLAGS);refuse(h,()->StreetscapeTransaction.run(e,APPLY));
+                h.assertTrue(!Files.exists(e.file()),"Missing support/fluid passed");h.succeed();
+            }catch(Exception ex){item.discard();throw new RuntimeException(ex);}});
+
         }catch(Exception ex){throw new RuntimeException(ex);}
     }
     @GameTest(template="townhall_state_empty",batch="public27_08",timeoutTicks=1000)
@@ -138,7 +144,7 @@ public final class StreetscapeTests {
             if(!(level().getServer() instanceof GameTestServer))throw new IOException("Fixture outside GameTest server");
             // Dedicated off-template area; no owner worlds and no interference with retained tests.
             for(var b:plan.boxes()) {
-                for(int x=((int)b.minX-2)>>4;x<=((int)b.maxX+2)>>4;x++)for(int z=((int)b.minZ-2)>>4;z<=((int)b.maxZ+2)>>4;z++)level().getChunk(x,z);
+                for(int x=((int)b.minX-2)>>4;x<=((int)b.maxX+2)>>4;x++)for(int z=((int)b.minZ-2)>>4;z<=((int)b.maxZ+2)>>4;z++)level().setChunkForced(x,z,true);
                 for(ItemEntity item:level().getEntitiesOfClass(ItemEntity.class,b.inflate(2)))item.discard();
                 for(BlockPos p:BlockPos.betweenClosed((int)b.minX-1,(int)b.minY-1,(int)b.minZ-1,(int)b.maxX+1,(int)b.maxY+2,(int)b.maxZ+1)) {
                     if(level().getBlockEntity(p) instanceof net.minecraft.world.Container c)c.clearContent();level().setBlock(p,Blocks.AIR.defaultBlockState(),FLAGS);

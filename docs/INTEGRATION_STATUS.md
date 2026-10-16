@@ -27,10 +27,10 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 
 | Subtask | Status | Dependencies | Files changed / validation |
 | --- | --- | --- | --- |
-| 1. Entity obstruction | In progress: native geometry/transaction inspection | Verified baseline | ConstructionHazards, ConstructionHazardTests, ProducerTransaction/Service/Tests/OccupancyTests, StreetscapeTransaction/Tests, build.gradle. Eight new native geometry tests: 8 executed / 8 passed / 0 failed (offline command exit 0); retained/public27 regressions now running. Initial six-test attempt: 4 pass / 2 fail due unstationary item fixtures; fixed without weakening assertions. |
-| 2. Producer Exterior R2 | Asset/contract audit | 1; immutable input verification | None yet; no implementation claimed |
-| 3. Six R5 houses | Asset/contract audit | 1; whole-house R1/R2 route verification | None yet; no implementation claimed |
-| 4. Initial defenses | Asset/economy/socket audit | 1; compatibility with 2/3/protected reservations | None yet; no implementation claimed |
+| 1. Entity obstruction | Implemented; focused and retained regressions passed | Verified baseline | ConstructionHazards, ConstructionHazardTests, ProducerTransaction/Service/Tests/OccupancyTests, StreetscapeTransaction/Tests, build.gradle. Eight new native geometry tests: 8 executed / 8 passed / 0 failed (offline command exit 0); fresh retained 50/50 and public27 11/11 passed, both exit 0. Initial six-test attempt: 4 pass / 2 fail due unstationary item fixtures; fixed without weakening assertions. |
+| 2. Producer Exterior R2 | Implemented; focused native tests next | 1; immutable input verification | ProducerExteriorR2, ProducerRevisions/Transaction/Service, pinned resources, 9 tests; no pass claimed yet |
+| 3. Six R5 houses | Implemented; focused native tests next | 1; whole-house R1/R2 route verification | R5HouseRevisions/Transaction/Service/Tests, PlannedWorld, full contexts; 11 tests pending |
+| 4. Initial defenses | Implemented; focused native tests next | 1; compatibility with 2/3/protected reservations | Defense registry/transaction/service/catalog/commands/tests; 8 tests pending |
 | 5. Combined validation/release | Pending | All four implemented and independently tested | Preserve both existing namespaces; add new native coverage; one JAR/package/checklist |
 
 ## Checkpoints and next step
@@ -50,7 +50,7 @@ gate-dependent wings, trenches, rejected bunkers, orientation pavilion, terrain
 rollout, siege restoration or automatic all-city installation. No reset, live
 world access, merge to main, force-push, deployment or multiplayer testing.
 
-Defense pricing is unresolved: no price schedule in supplied contracts or existing economy; concise asynchronous question sent. Backend and safety tests can proceed with injected fixture costs, but real purchases must remain disabled until the owner supplies a schedule. Network proxy again denies Forge/Minecraft hosts; offline cached compilation and eight native tests passed, so this currently does not block implementation. Any unresolved contract/design question will
+Owner supplied provisional defense prices; explicit centralized catalog and pre-confirmation quote now implemented. No recurring upkeep or new resources/technology. Network proxy again denies Forge/Minecraft hosts; offline cached compilation and eight native tests passed, so this currently does not block implementation. Any unresolved contract/design question will
 be recorded here with the exact next step; independently unblocked work continues.
 
 ## Current focused validation
@@ -59,3 +59,23 @@ be recorded here with the exact next step; independently unblocked work continue
 - `gradle runGameTestServer -PgameTestNamespace=catancraft_integration --offline --no-daemon --max-workers=4`: 8 executed, 8 passed, 0 failed; exit 0. Logs `/workspace/integration-evidence/entity-retry/`.
 - Original retained 50 and public27 11 namespaces are running sequentially with strengthened real-obstruction/recovery assertions; no result yet. Logs `/workspace/integration-evidence/entity-regression/`.
 - Independent input audits: Producer R2 186/186 internal hashes, R5 333/333 hashes, all 18 house signatures and 12 branch routes passed. New pinned resource loaders/exports are staged separately in working files; no feature implementation completion claimed.
+
+## Entity checkpoint and retained reruns
+
+- Checkpoint `d32b625`: precise shape/support/attachment hazards, unchanged entity/item NBT checks, focused 8/8 pass; retained regressions were pending then.
+- Reusing prior native worlds produced 46/50 retained passes (falling gravel/stale occupancy) and 10/11 public27 (new obstruction fixture lacked entity visibility wait). Failed evidence/worlds preserved, assertions retained. Fresh disposable directories and explicit entity query/ticket readiness fixed fixture isolation.
+- Fresh runs `/workspace/integration-evidence/entity-regression-fresh`: retained50 executed/50passed/0failed exit0; public27 11/11/0 exit0, with real collision and pending/reverse hazard checks intact.
+- Exact commands: `gradle build runGameTestServer --offline --no-daemon --max-workers=4`; `gradle runGameTestServer -PgameTestNamespace=catancraft_public27 --offline --no-daemon --max-workers=4`. Same Java17/Gradle8.8 activation as setup report.
+
+## Provisional defense costs (nation currency/stockpile only)
+
+| Explicit price band | Money | Wood | Stone | Steel | Concrete |
+| --- | ---: | ---: | ---: | ---: | ---: |
+| 8-block/short wall | 500 | 5 | 15 | 0 | 0 |
+| 16-block/long wall | 1000 | 10 | 30 | 0 | 0 |
+| Compatible corner (registry still controls availability) | 750 | 10 | 20 | 0 | 0 |
+| Checkpoint | 2000 | 20 | 40 | 0 | 0 |
+| Guard tower | 3000 | 20 | 50 | 10 | 0 |
+| Compact R6 casemate | 4000 | 0 | 0 | 15 | 40 |
+
+Explicit mappings are in DefenseCostCatalog: authored wall6/7/end-cap/checkpoint-wing connector modules use the short band; wall14/straight16 the long band. Footing/support cells bundled within each module cost no extra. Unknown/unmapped IDs refuse. Cost is journaled; current price edits never reinterpret recovery/refund. Separate money and material shortage tests are pending.
