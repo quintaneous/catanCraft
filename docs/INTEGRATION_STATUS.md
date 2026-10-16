@@ -1,5 +1,8 @@
 # Combined integration status
 
+**Final automated result: build PASS; 101 native tests executed, 101 passed, 0 failed.**
+All five subtasks are implemented and locally verified. Manual modpack acceptance remains pending; no deployment/publication occurred.
+
 Development branch: `codex/combined-integration`, based on verified remote
 `v0.1-foundation` at `d09f3544babeb2602261ddc2aeb90c34b8ff966e`.
 Existing checkout was clean; original branches and prepared environment retained.
@@ -28,10 +31,10 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 | Subtask | Status | Dependencies | Files changed / validation |
 | --- | --- | --- | --- |
 | 1. Entity obstruction | Implemented; focused and retained regressions passed | Verified baseline | ConstructionHazards, ConstructionHazardTests, ProducerTransaction/Service/Tests/OccupancyTests, StreetscapeTransaction/Tests, build.gradle. Eight new native geometry tests: 8 executed / 8 passed / 0 failed (offline command exit 0); fresh retained 50/50 and public27 11/11 passed, both exit 0. Initial six-test attempt: 4 pass / 2 fail due unstationary item fixtures; fixed without weakening assertions. |
-| 2. Producer Exterior R2 | Implemented; focused native tests passed | 1; immutable input verification | ProducerExteriorR2, ProducerRevisions/Transaction/Service, pinned resources, 9 native tests executed/passed, 0 failed, exit0; full final regression pending |
-| 3. Six R5 houses | Implemented; focused native tests passed | 1; whole-house R1/R2 route verification | R5HouseRevisions/Transaction/Service/Tests, PlannedWorld, full contexts; 11 native tests executed/passed, 0 failed, exit0; combined validation pending |
-| 4. Initial defenses | Implemented; focused native tests passed | 1; compatibility with 2/3/protected reservations | Defense registry/transaction/service/catalog/commands/tests; 8 executed/passed, 0 failed; final regression pending |
-| 5. Combined validation/release | Pending | All four implemented and independently tested | Preserve both existing namespaces; add new native coverage; one JAR/package/checklist |
+| 2. Producer Exterior R2 | Implemented; focused native tests passed | 1; immutable input verification | ProducerExteriorR2, ProducerRevisions/Transaction/Service, pinned resources, 9 native tests executed/passed, 0 failed, exit0; final regression passed |
+| 3. Six R5 houses | Implemented; focused native tests passed | 1; whole-house R1/R2 route verification | R5HouseRevisions/Transaction/Service/Tests, PlannedWorld, full contexts; 11 native tests executed/passed, 0 failed, exit0; combined validation passed |
+| 4. Initial defenses | Implemented; focused native tests passed | 1; compatibility with 2/3/protected reservations | Defense registry/transaction/service/catalog/commands/tests; 8 executed/passed, 0 failed; final regression passed |
+| 5. Combined validation/release | Verified locally; packaging/review | All four implemented and independently tested | Preserve both existing namespaces; add new native coverage; one JAR/package/checklist |
 
 ## Checkpoints and next step
 
@@ -44,10 +47,9 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 | `ad06058` | Six houses and 11/11 focused native tests |
 | `622156a` | Initial defenses and 8/8 focused native tests |
 
-Next: finish strict canonical-city composition fixtures, run complete six-namespace
-validation against the committed combined source, then package one release. Only
-root runs native worlds; agent changes are limited to assigned independent files.
-Historical failed attempts remain preserved, with corrections described below.
+Combined checkpoint `c1097d3` contains the complete tested runtime source. Final evidence checkpoint updates this status document only; release/runtime hash comparison is retained in the release manifest. `7dca159` introduced the all-suite runner, read-only CI, checklist and historical-cost lookup improvement.
+
+Next: review the one packaged release and perform the single focused checklist on an isolated development copy. No owner/live-world acceptance is claimed. Only root ran native worlds; independent agents reviewed/audited assigned files.
 
 ## Exclusions and unresolved issues
 
@@ -91,7 +93,7 @@ Explicit mappings are in DefenseCostCatalog: authored wall6/7/end-cap/checkpoint
 
 `/workspace/integration-evidence/producer-final-focus/native.log`: 9 executed / 9 passed / 0 failed, exit0, including 40-tick exact native geometry and inventory/payment checks on both future-upgrade sources. Command `gradle runGameTestServer -PgameTestNamespace=catancraft_producer_r2 --offline --no-daemon --max-workers=4`.
 
-Initial focused attempt6/9 passed: one test assumed all glass was clear (approved source also has light-blue stained glass), plus underground/boundary fixtures caused support checks. Fixtures moved to isolated sky contexts without modifying authored states. Retry7/9 passed but synthetic fence reconnection checks still refused future purchases: the unchanged original R1 L5 design has authored disconnected boundary fence states next to added andesite. The transaction's inherited UPDATE_KNOWN_SHAPE/no UPDATE_NEIGHBORS policy intentionally does not request those neighbor writes. PlannedWorld now models actual caller flags, keeps unconditional survival/gravity checks, and defaults strict otherwise. Assets/hashes/counts unchanged; delayed native targets passed. Additional flags-policy/support regressions are queued with combined validation. Ordinary later edits can recalculate vanilla connections and must still meet exact guarded source checks.
+Initial focused attempt6/9 passed: one test assumed all glass was clear (approved source also has light-blue stained glass), plus underground/boundary fixtures caused support checks. Fixtures moved to isolated sky contexts without modifying authored states. Retry7/9 passed but synthetic fence reconnection checks still refused future purchases: the unchanged original R1 L5 design has authored disconnected boundary fence states next to added andesite. The transaction's inherited UPDATE_KNOWN_SHAPE/no UPDATE_NEIGHBORS policy intentionally does not request those neighbor writes. PlannedWorld now models actual caller flags, keeps unconditional survival/gravity checks, and defaults strict otherwise. Assets/hashes/counts unchanged; delayed native targets passed. Flags-policy/support regressions passed within the final 12-test integration namespace. Ordinary later edits can recalculate vanilla connections and must still meet exact guarded source checks.
 
 New runtime R2 flags are absent from legacy journal descriptions, preserving old pins/tokens and pending R1 interpretation. New revisions and immutable source contexts are separate. Explicit `/catan producer exterior <city> confirm` performs a free correction at the actual paid tier; normal upgrades choose corrected targets and recognize either source revision. Existing current inventories and historical journals are preserved.
 
@@ -105,7 +107,7 @@ Files: R5HouseRevisions/Transaction/Service/Tests.java and pinned `r5-house-cont
 
 `components-retry/catancraft_defense.log`: 8 executed / 8 passed / 0 failed, exit0. Command `gradle runGameTestServer -PgameTestNamespace=catancraft_defense --offline --no-daemon --max-workers=4`. Covers the full explicit catalog/864 plans, original-cost recovery and exactly-once accounting, command owner policy, separate money/material shortages, support/read refusal, interrupted application, UUID repurchase history and missing-journal refusal. Commands and price mapping are documented in DEFENSE_INITIAL_INTEGRATION.md.
 
-Producer checkpoint `d83e0dd`; house checkpoint `ad06058`. Remote development head rechecked unchanged at `d09f3544babeb2602261ddc2aeb90c34b8ff966e`. Combined focus executed12:10 passed,2 canonical-city composition fixtures refused unsupported gravity blocks. Logs retained in `/workspace/integration-evidence/combined-focus/`; fixing test fixture boundary support, with strict runtime checks retained. Final regression and release are pending.
+Producer checkpoint `d83e0dd`; house checkpoint `ad06058`. Remote development head rechecked unchanged at `d09f3544babeb2602261ddc2aeb90c34b8ff966e`. Combined focus executed12:10 passed,2 canonical-city composition fixtures refused unsupported gravity blocks. Logs retained in `/workspace/integration-evidence/combined-focus/`; fixing test fixture boundary support, with strict runtime checks retained. Final fresh regression subsequently passed; see final results below.
 
 ## Release validation preparation
 
@@ -113,7 +115,7 @@ Release target: 0.1.28, Minecraft1.20.1/Forge47.4.10, Java17/Gradle8.8 unchanged
 `tools/validate_combined.sh` builds, checks original fixture hashes, stages fixtures,
 archives previous disposable test directories, runs all six namespaces sequentially,
 requires exact completion/pass counts and preserves logs/exit codes/source status.
-Expected retained50 + public27 11 + integration12 + producer9 + houses11 + defense8 =101.
+Observed retained50 + public27 11 + integration12 + producer9 + houses11 + defense8 =101, all passed.
 New CI runs the same script with read-only repository permissions and no publication;
 it has not run remotely. `docs/COMBINED_INGAME_CHECKLIST.md` is the single manual checklist.
 Independent final defense review found no blocker; its historical-price ordering
@@ -121,3 +123,85 @@ recommendation is implemented: service recovery and commands do not require a cu
 catalog entry to interpret an existing journal's recorded cost.
 
 Independent final Producer/house read-only review: no concrete blocker. Original15 producer resources byte-identical to baseline;11 runtime manifest pins matched (two contexts+nine corrected schematics). Reviewed actual-tier free corrections, both upgrade source revisions, legacy describe/hash/token compatibility, exact12 house routes, current inventory/book NBT and durable forward/reverse recovery. This review is separate from native results and is not owner in-game acceptance.
+
+## Final source, exact commands and actual results
+
+Native tests ran against clean commit `c1097d38bd384135873b9375b0d21837dafad4a6`, based on remote `v0.1-foundation` `d09f3544babeb2602261ddc2aeb90c34b8ff966e` (fetched/rechecked unchanged before final validation). Prepared Java17/Gradle8.8 and actual cached dependencies were reused without changing Minecraft/Forge versions, bypassing the proxy, or disabling TLS. Conventional Gradle `test` is NO-SOURCE; the counts below are actual native GameTests.
+
+```bash
+export JAVA_HOME=/workspace/toolchains/jdk-17.0.16+8
+export PATH="$JAVA_HOME/bin:/workspace/toolchains/gradle-8.8/bin:$PATH"
+export GRADLE_USER_HOME=/workspace/gradle-cache
+bash tools/validate_combined.sh /workspace/integration-evidence/final --offline
+```
+
+Runner command capture `final/commands.log` contains these exact Gradle invocations (all with `--offline --no-daemon --max-workers=4`): `gradle build`, then `gradle runGameTestServer -PgameTestNamespace=<namespace>` for each row below, in order. Original thall4/thall5 fixture hashes were verified and fixtures staged in each namespace's isolated directory. Prior test directories were moved to `build/test-world-history`, never used as live worlds.
+
+| Namespace | Executed | Passed | Failed | Exit |
+| --- | ---: | ---: | ---: | ---: |
+| catancraft | 50 | 50 | 0 | 0 |
+| catancraft_public27 | 11 | 11 | 0 | 0 |
+| catancraft_integration | 12 | 12 | 0 | 0 |
+| catancraft_producer_r2 | 9 | 9 | 0 | 0 |
+| catancraft_houses | 11 | 11 | 0 | 0 |
+| catancraft_defense | 8 | 8 | 0 | 0 |
+
+Baseline build exit0; overall runner exit0. Full console logs, fixture checksums, source status and runtime/build/test pins are in `/workspace/integration-evidence/final/`; all earlier failed and successful attempts remain alongside it. Original28 resources/fixtures were byte-compared with baseline, all unchanged. Exact changed-file and checkpoint lists are also packaged.
+
+Both canonical-city A/I composition tests passed at native coordinates: public1661 writes; six mixed-branch houses2161; producer A424/I212;54 compatible defense candidates per city and3 actual purchases each with duplicate accounting, guarded reverse/refund, disk-ledger reload, current inventory/book preservation and40-tick geometry/item checks. First retry's A delayed failure was a stale-world item merge (old+new7-stack became14); fresh worlds passed without altering assertions. Earlier partial-file compilation failure in the first component attempt executed no house/defense tests and remains in logs.
+
+## Remaining blockers, scope and exact next step
+
+No automated build/release blocker remains. Cached offline dependency validation passed; fresh online dependency restoration was not recertified in this integration after proxy denials. Optional Forge update/authentication warnings did not prevent native completion. Remote GitHub CI has not run; the new workflow is reviewable source only.
+
+Actual TaCZ aperture behavior, Superb Warfare vehicle clearance and visual lighting require the single isolated in-game checklist `docs/COMBINED_INGAME_CHECKLIST.md`. Native fault injection and saved-journal reload are not a claim of exhaustive arbitrary-crash certification. Crowbar exploit remains **UNRESOLVED / HIGH PRIORITY**. Preserve all exclusions above. Exact next step: owner reviews the release package/source/evidence, then performs that one checklist on an isolated copy; no merge, push, publication, deployment or live-world action is authorized here.
+
+## Complete changed-file inventory
+
+- `.github/workflows/combined-validation.yml`
+- `build.gradle`
+- `docs/COMBINED_INGAME_CHECKLIST.md`
+- `docs/DEFENSE_INITIAL_INTEGRATION.md`
+- `docs/INTEGRATION_STATUS.md`
+- `src/main/java/com/quin/catancraft/world/CombinedIntegrationTests.java`
+- `src/main/java/com/quin/catancraft/world/ConstructionHazardTests.java`
+- `src/main/java/com/quin/catancraft/world/ConstructionHazards.java`
+- `src/main/java/com/quin/catancraft/world/DefenseCommandTests.java`
+- `src/main/java/com/quin/catancraft/world/DefenseCommands.java`
+- `src/main/java/com/quin/catancraft/world/DefenseCostCatalog.java`
+- `src/main/java/com/quin/catancraft/world/DefenseRevisions.java`
+- `src/main/java/com/quin/catancraft/world/DefenseService.java`
+- `src/main/java/com/quin/catancraft/world/DefenseTests.java`
+- `src/main/java/com/quin/catancraft/world/DefenseTransaction.java`
+- `src/main/java/com/quin/catancraft/world/PlannedWorld.java`
+- `src/main/java/com/quin/catancraft/world/PlannedWorldTests.java`
+- `src/main/java/com/quin/catancraft/world/ProducerExteriorR2.java`
+- `src/main/java/com/quin/catancraft/world/ProducerExteriorR2Tests.java`
+- `src/main/java/com/quin/catancraft/world/ProducerOccupancyTests.java`
+- `src/main/java/com/quin/catancraft/world/ProducerRevisions.java`
+- `src/main/java/com/quin/catancraft/world/ProducerService.java`
+- `src/main/java/com/quin/catancraft/world/ProducerTests.java`
+- `src/main/java/com/quin/catancraft/world/ProducerTransaction.java`
+- `src/main/java/com/quin/catancraft/world/R5HouseRevisions.java`
+- `src/main/java/com/quin/catancraft/world/R5HouseService.java`
+- `src/main/java/com/quin/catancraft/world/R5HouseTests.java`
+- `src/main/java/com/quin/catancraft/world/R5HouseTransaction.java`
+- `src/main/java/com/quin/catancraft/world/StreetscapeTests.java`
+- `src/main/java/com/quin/catancraft/world/StreetscapeTransaction.java`
+- `src/main/resources/assets/catancraft/defense/contracts.json.gz`
+- `src/main/resources/data/catancraft/integration/producer-r2-contexts.json.gz`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/farm_l3.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/farm_l4.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/farm_l5.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/lumberyard_l3.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/lumberyard_l4.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/lumberyard_l5.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/quarry_l3.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/quarry_l4.schem`
+- `src/main/resources/data/catancraft/integration/producer_exterior_r2/quarry_l5.schem`
+- `src/main/resources/data/catancraft/integration/r5-house-contexts.json.gz`
+- `tests/tools/integration_inputs/MANIFEST.json`
+- `tests/tools/integration_inputs/README.md`
+- `tests/tools/integration_inputs/export_runtime.py`
+- `tools/prepare_defense_inputs.py`
+- `tools/validate_combined.sh`
