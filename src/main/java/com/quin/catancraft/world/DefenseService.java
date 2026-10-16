@@ -35,13 +35,14 @@ public final class DefenseService {
             ProducerService.validateMap(def);UUID owner=territory.ownerNationId();NationData nation=data.nation(owner);
             final Path file=chooseHistory(root,data,city,socket,action);
             // Recovery uses the historical immutable price, never a newly chosen catalog entry.
-            EconomyCost cost=DefenseCostCatalog.cost(plan.module());
-            if(!Files.exists(file,LinkOption.NOFOLLOW_LINKS)&&approvedCost!=null&&!DefenseTransaction.cost(approvedCost).equals(DefenseTransaction.cost(cost)))throw new IOException("Defense service price override differs from approved catalog");
-            if(Files.exists(file,LinkOption.NOFOLLOW_LINKS)){
+            final EconomyCost cost;
+            if(Files.exists(file,LinkOption.NOFOLLOW_LINKS)) {
                 cost=historicalCost(ProducerJournal.read(file).getCompound("cost"));
+            } else {
+                cost=DefenseCostCatalog.cost(plan.module());
+                if(approvedCost!=null&&!DefenseTransaction.cost(approvedCost).equals(DefenseTransaction.cost(cost)))
+                    throw new IOException("Defense service price override differs from approved catalog");
             }
-            if(cost==null&&action==DefenseTransaction.Action.STATUS)cost=new EconomyCost(0,Map.of());
-            if(cost==null)throw new IOException("Defense purchase prices have not been approved; no changes or charge");
             ServerLevel level=null;for(ServerLevel l:server.getAllLevels())if(l.dimension().location().toString().equals(def.dimension()))level=l;
             if(level==null)throw new IOException("Defense dimension unavailable");final ServerLevel world=level;final EconomyCost actualCost=cost;
             // No broad chunk loading; an unknown/unloaded authored location remains a refusal.

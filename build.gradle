@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '0.1.27'
+version = '0.1.28'
 group = 'com.quin.catancraft'
 
 base {
@@ -60,6 +60,9 @@ tasks.named('processResources', ProcessResources).configure {
 tasks.named('jar', Jar).configure {
     manifest {
         attributes('MixinConfigs': 'catancraft.mixins.json')
+        if (providers.gradleProperty('releaseCommit').isPresent()) {
+            attributes('CatanCraft-Source-Commit': providers.gradleProperty('releaseCommit').get())
+        }
     }
 }
 
@@ -90,4 +93,10 @@ tasks.named('processResources', ProcessResources).configure {
             into "data/${ns}/structures"
         }
     }
+}
+
+// Stable archive ordering makes release checksums independently reviewable.
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
 }

@@ -11,14 +11,14 @@ Both ordinary handoff ZIPs were safely extracted together into
 `/workspace/catancraft-inputs/CatanCraft-Dev`, without extracting the source snapshot
 over the checkout. `python3 handoff/verify_inputs.py` from that directory exited 0:
 `TRANSFER CHECK PASS: 23 files`. AGENTS.md, START_HERE.md, and working instructions
-read. Individual asset contracts are being audited independently, read-only.
+read. Individual asset contracts were audited independently; runtime exports were reproduced deterministically.
 
 Outer ZIP SHA-256:
 - Part 1: `0bd7c0c6c957ea11d020dee7fb668155695ed716791d2104cad26b7fb0f5336e`
 - Part 2: `5871f1cd217dbbba9176719c840e1c22c868210fd634b7ab27fc0d29f1fb653d`
 
 Reusable baseline evidence at `/workspace/setup-evidence/SETUP_REPORT.md` matches
-the exact current source: Java 17 / Gradle 8.8, baseline build exit 0; retained
+the unchanged original baseline source: Java 17 / Gradle 8.8, baseline build exit 0; retained
 namespace 50 executed / 50 passed / 0 failed, public27 namespace 11 / 11 / 0,
 both command exits 0. Conventional Gradle test is NO-SOURCE. These are baseline
 results, not validation of upcoming changes. Full logs and evidence checksums retained.
@@ -35,12 +35,19 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 
 ## Checkpoints and next step
 
-Initial status checkpoint: `1dcc316` (verified inputs and tracked subtasks); subsequent
-checkpoints will identify tested changes, exact commands, counts and commit IDs.
-Next: implement reusable precise construction hazards and revise only deliberately
-broad occupancy assertions with stronger preservation and real-obstruction coverage.
-Only one agent edits shared transaction/command files or runs writable native worlds.
-Independent agents audit assets and review code without editing the checkout.
+| Checkpoint | Scope |
+| --- | --- |
+| `1dcc316` | Verified handoff and tracked subtasks |
+| `d32b625` | Entity hazards and focused native tests |
+| `27760c3` | Fresh retained/public regression evidence |
+| `d83e0dd` | Producer R2 and 9/9 focused native tests |
+| `ad06058` | Six houses and 11/11 focused native tests |
+| `622156a` | Initial defenses and 8/8 focused native tests |
+
+Next: finish strict canonical-city composition fixtures, run complete six-namespace
+validation against the committed combined source, then package one release. Only
+root runs native worlds; agent changes are limited to assigned independent files.
+Historical failed attempts remain preserved, with corrections described below.
 
 ## Exclusions and unresolved issues
 
@@ -57,8 +64,8 @@ be recorded here with the exact next step; independently unblocked work continue
 
 - `gradle compileJava --offline --no-daemon --max-workers=4`: exit 0.
 - `gradle runGameTestServer -PgameTestNamespace=catancraft_integration --offline --no-daemon --max-workers=4`: 8 executed, 8 passed, 0 failed; exit 0. Logs `/workspace/integration-evidence/entity-retry/`.
-- Original retained 50 and public27 11 namespaces are running sequentially with strengthened real-obstruction/recovery assertions; no result yet. Logs `/workspace/integration-evidence/entity-regression/`.
-- Independent input audits: Producer R2 186/186 internal hashes, R5 333/333 hashes, all 18 house signatures and 12 branch routes passed. New pinned resource loaders/exports are staged separately in working files; no feature implementation completion claimed.
+- Retained50/public27 initial and fresh reruns are recorded below; both fresh suites passed.
+- Independent input audits: Producer R2 186/186 internal hashes, R5 333/333 hashes, all 18 house signatures and 12 branch routes passed. Pinned loaders/exports are now implemented and committed.
 
 ## Entity checkpoint and retained reruns
 
@@ -99,3 +106,18 @@ Files: R5HouseRevisions/Transaction/Service/Tests.java and pinned `r5-house-cont
 `components-retry/catancraft_defense.log`: 8 executed / 8 passed / 0 failed, exit0. Command `gradle runGameTestServer -PgameTestNamespace=catancraft_defense --offline --no-daemon --max-workers=4`. Covers the full explicit catalog/864 plans, original-cost recovery and exactly-once accounting, command owner policy, separate money/material shortages, support/read refusal, interrupted application, UUID repurchase history and missing-journal refusal. Commands and price mapping are documented in DEFENSE_INITIAL_INTEGRATION.md.
 
 Producer checkpoint `d83e0dd`; house checkpoint `ad06058`. Remote development head rechecked unchanged at `d09f3544babeb2602261ddc2aeb90c34b8ff966e`. Combined focus executed12:10 passed,2 canonical-city composition fixtures refused unsupported gravity blocks. Logs retained in `/workspace/integration-evidence/combined-focus/`; fixing test fixture boundary support, with strict runtime checks retained. Final regression and release are pending.
+
+## Release validation preparation
+
+Release target: 0.1.28, Minecraft1.20.1/Forge47.4.10, Java17/Gradle8.8 unchanged.
+`tools/validate_combined.sh` builds, checks original fixture hashes, stages fixtures,
+archives previous disposable test directories, runs all six namespaces sequentially,
+requires exact completion/pass counts and preserves logs/exit codes/source status.
+Expected retained50 + public27 11 + integration12 + producer9 + houses11 + defense8 =101.
+New CI runs the same script with read-only repository permissions and no publication;
+it has not run remotely. `docs/COMBINED_INGAME_CHECKLIST.md` is the single manual checklist.
+Independent final defense review found no blocker; its historical-price ordering
+recommendation is implemented: service recovery and commands do not require a current
+catalog entry to interpret an existing journal's recorded cost.
+
+Independent final Producer/house read-only review: no concrete blocker. Original15 producer resources byte-identical to baseline;11 runtime manifest pins matched (two contexts+nine corrected schematics). Reviewed actual-tier free corrections, both upgrade source revisions, legacy describe/hash/token compatibility, exact12 house routes, current inventory/book NBT and durable forward/reverse recovery. This review is separate from native results and is not owner in-game acceptance.

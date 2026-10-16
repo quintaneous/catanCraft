@@ -50,7 +50,7 @@ public final class DefenseCommands {
             ServerPlayer player=source.getPlayerOrException();var data=CatanSavedData.get(source.getServer());
             NationData owner=requireLeaderOwner(data,player.getUUID(),city);var plan=DefenseRevisions.plan(city,socket);
             Key key=new Key(player.getUUID(),city,socket);long tick=source.getServer().getTickCount();
-            EconomyCost price=DefenseCostCatalog.cost(plan.module());
+            EconomyCost price=(verb.equals("quote")||verb.equals("buy"))?DefenseCostCatalog.cost(plan.module()):null;
             if(verb.equals("quote")) {
                 QUOTES.entrySet().removeIf(e->tick-e.getValue().tick()>1200);
                 QUOTES.put(key,new Quote(owner.id(),tick,plan.module(),DefenseTransaction.cost(price)));
