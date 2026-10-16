@@ -30,7 +30,7 @@ results, not validation of upcoming changes. Full logs and evidence checksums re
 | 1. Entity obstruction | Implemented; focused and retained regressions passed | Verified baseline | ConstructionHazards, ConstructionHazardTests, ProducerTransaction/Service/Tests/OccupancyTests, StreetscapeTransaction/Tests, build.gradle. Eight new native geometry tests: 8 executed / 8 passed / 0 failed (offline command exit 0); fresh retained 50/50 and public27 11/11 passed, both exit 0. Initial six-test attempt: 4 pass / 2 fail due unstationary item fixtures; fixed without weakening assertions. |
 | 2. Producer Exterior R2 | Implemented; focused native tests passed | 1; immutable input verification | ProducerExteriorR2, ProducerRevisions/Transaction/Service, pinned resources, 9 native tests executed/passed, 0 failed, exit0; full final regression pending |
 | 3. Six R5 houses | Implemented; focused native tests passed | 1; whole-house R1/R2 route verification | R5HouseRevisions/Transaction/Service/Tests, PlannedWorld, full contexts; 11 native tests executed/passed, 0 failed, exit0; combined validation pending |
-| 4. Initial defenses | Implemented; focused native tests next | 1; compatibility with 2/3/protected reservations | Defense registry/transaction/service/catalog/commands/tests; 8 tests pending |
+| 4. Initial defenses | Implemented; focused native tests passed | 1; compatibility with 2/3/protected reservations | Defense registry/transaction/service/catalog/commands/tests; 8 executed/passed, 0 failed; final regression pending |
 | 5. Combined validation/release | Pending | All four implemented and independently tested | Preserve both existing namespaces; add new native coverage; one JAR/package/checklist |
 
 ## Checkpoints and next step
@@ -78,7 +78,7 @@ be recorded here with the exact next step; independently unblocked work continue
 | Guard tower | 3000 | 20 | 50 | 10 | 0 |
 | Compact R6 casemate | 4000 | 0 | 0 | 15 | 40 |
 
-Explicit mappings are in DefenseCostCatalog: authored wall6/7/end-cap/checkpoint-wing connector modules use the short band; wall14/straight16 the long band. Footing/support cells bundled within each module cost no extra. Unknown/unmapped IDs refuse. Cost is journaled; current price edits never reinterpret recovery/refund. Separate money and material shortage tests are pending.
+Explicit mappings are in DefenseCostCatalog: authored wall6/7/end-cap/checkpoint-wing connector modules use the short band; wall14/straight16 the long band. Footing/support cells bundled within each module cost no extra. Unknown/unmapped IDs refuse. Cost is journaled; current price edits never reinterpret recovery/refund. Separate money and material shortage tests passed.
 
 ## Producer R2 verified checkpoint
 
@@ -93,3 +93,9 @@ New runtime R2 flags are absent from legacy journal descriptions, preserving old
 House namespace `/workspace/integration-evidence/components-retry/catancraft_houses.log`: 11 executed / 11 passed / 0 failed, exit0. Command `gradle runGameTestServer -PgameTestNamespace=catancraft_houses --offline --no-daemon --max-workers=4`. All12 routes exercised, both orientations, mixed recognized whole-house branches, exact source signatures, actual current book/inventory NBT through resumed/reversed recovery, corrupt/drift/foreign source refusal, pendingAPPLY refusal, durable physical-save window, native delayed targets. No current server/player world was used.
 
 Files: R5HouseRevisions/Transaction/Service/Tests.java and pinned `r5-house-contexts.json.gz`. Full13x47x11 YZX canonical contexts, strict R1/R2 sources, one independent free six-house history. Existing R5 public groups/civics unchanged. Source snapshot never pasted over checkout.
+
+## Initial-defense verified checkpoint
+
+`components-retry/catancraft_defense.log`: 8 executed / 8 passed / 0 failed, exit0. Command `gradle runGameTestServer -PgameTestNamespace=catancraft_defense --offline --no-daemon --max-workers=4`. Covers the full explicit catalog/864 plans, original-cost recovery and exactly-once accounting, command owner policy, separate money/material shortages, support/read refusal, interrupted application, UUID repurchase history and missing-journal refusal. Commands and price mapping are documented in DEFENSE_INITIAL_INTEGRATION.md.
+
+Producer checkpoint `d83e0dd`; house checkpoint `ad06058`. Remote development head rechecked unchanged at `d09f3544babeb2602261ddc2aeb90c34b8ff966e`. Combined focus executed12:10 passed,2 canonical-city composition fixtures refused unsupported gravity blocks. Logs retained in `/workspace/integration-evidence/combined-focus/`; fixing test fixture boundary support, with strict runtime checks retained. Final regression and release are pending.
