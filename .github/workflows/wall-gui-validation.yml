@@ -1,0 +1,118 @@
+name: Wall GUI recovery and validation
+on:
+  push:
+    branches: [chatgpt/wall-gui-0.1.30]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore exact uploaded 0.1.29 source and apply GUI patch once
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if test -f docs/WALL_GUI_SOURCE_PROVENANCE.json; then
+            echo 'Continuing materialized GUI-fix branch without restoring older source.'
+          else
+            gh api -H 'Accept: application/octet-stream' repos/quintaneous/catanCraft/releases/assets/657373099 > "$RUNNER_TEMP/catancraft-source.zip"
+            echo "e1b966cf28bbce0da51fc2e25f688b9321574e2bb129becab7050a23a9ef73e5  $RUNNER_TEMP/catancraft-source.zip" | sha256sum -c -
+            python3 - <<'PY'
+          import base64,gzip,hashlib,json,os,subprocess,zipfile
+          from pathlib import Path
+          root=Path.cwd(); payload=''.join((root/'.github/wall-gui'/n).read_text().strip() for n in ['patch.b64.01','patch.b64.02'])
+          patch=gzip.decompress(base64.b64decode(payload,validate=True))
+          assert hashlib.sha256(patch).hexdigest()=='07d81a4651a7d34c9ca2dd8aedc3a8bf8028a031db8a8fd3990ec1d8047dd76a'
+          patch_path=Path(os.environ['RUNNER_TEMP'])/'wall-gui.patch';patch_path.write_bytes(patch)
+          tracked=subprocess.check_output(['git','ls-files','-z']).decode().split('\0')
+          for name in tracked:
+            if not name or name.startswith('.github/wall-gui/') or name=='.github/workflows/wall-gui-validation.yml':continue
+            path=root/name
+            if path.is_file():path.unlink()
+          with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'catancraft-source.zip') as archive:
+            assert archive.testzip() is None
+            for member in archive.infolist():
+              path=root/member.filename
+              assert path.resolve().is_relative_to(root) and '.git' not in Path(member.filename).parts
+            archive.extractall(root)
+            immutable={n:hashlib.sha256(archive.read(n)).hexdigest() for n in archive.namelist() if (n.startswith('src/main/resources/') or n.startswith('tests/fixtures/')) and not n.endswith('/')}
+          subprocess.run(['git','apply','--check',str(patch_path)],check=True)
+          subprocess.run(['git','apply',str(patch_path)],check=True)
+          assert all(hashlib.sha256((root/n).read_bytes()).hexdigest()==sha for n,sha in immutable.items())
+          record={'base_archive_sha256':'e1b966cf28bbce0da51fc2e25f688b9321574e2bb129becab7050a23a9ef73e5','declared_base_commit':'538e3ffaff9a0fe180d8fe2aa09b556e05783558','patch_sha256':hashlib.sha256(patch).hexdigest(),'unchanged_resources_and_fixtures':immutable,'scope':'DEF-02/UI-01 GUI only; no art, economy, world or installation changes'}
+          (root/'docs/WALL_GUI_SOURCE_PROVENANCE.json').write_text(json.dumps(record,indent=2)+'\n')
+          PY
+            git config user.name 'CatanCraft validation'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add -A
+            git commit -m 'Recover exact 0.1.29 snapshot and wire whole-sector GUI with one-use confirmations'
+            git push origin HEAD:refs/heads/chatgpt/wall-gui-0.1.30 || echo 'Source commit retained in artifact; remote publication failed.'
+          fi
+          mkdir -p build/wall-gui-evidence
+          git rev-parse HEAD | tee build/wall-gui-evidence/SOURCE_COMMIT.txt
+          git status --porcelain > build/wall-gui-evidence/WORKTREE.txt
+          git archive --format=zip HEAD -o build/wall-gui-evidence/source.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile exact recovered source
+        shell: bash
+        run: |
+          set -o pipefail
+          gradle build -PreleaseCommit="$(git rev-parse HEAD)" --no-daemon --max-workers=4 2>&1 | tee build/wall-gui-evidence/build.log
+      - name: Retained Python checks without unavailable external P3 attachment
+        shell: bash
+        run: |
+          set -o pipefail
+          python3 -m unittest discover -s tests -p 'test_*demo.py' -v 2>&1 | tee build/wall-gui-evidence/demo-python.log
+          python3 -m unittest discover -s tests -p 'test_sector_economy.py' -v 2>&1 | tee build/wall-gui-evidence/economy-python.log
+          echo 'test_sector_p3.py requires the original 11 MB Blender archive and was NOT executed by this workflow; it is preserved unchanged.' > build/wall-gui-evidence/P3_OFFLINE_LIMIT.txt
+      - name: New GUI and retained native regression namespaces
+        shell: bash
+        run: |
+          set -uo pipefail
+          failed=0
+          for spec in catancraft_wall_gui:8 catancraft:50 catancraft_sectors:22 catancraft_sectors_service:15 catancraft_sector_prices:7 catancraft_city_a_group:4 catancraft_sector_connections:4 catancraft_public27:11 catancraft_integration:12 catancraft_producer_r2:9 catancraft_houses:11 catancraft_defense:8 catancraft_sectors_p1:4 catancraft_north_p2:4 catancraft_reservation_verifier:4 catancraft_city_a_p3:5 catancraft_sectors_natural:7 catancraft_sectors_group_proof:2; do
+            ns=${spec%:*}; count=${spec#*:}
+            case "$ns" in
+              catancraft) dir=build/gametest-run;;
+              catancraft_public27) dir=build/public-gametest-run;;
+              *) dir="build/$ns-run";;
+            esac
+            mkdir -p "$dir/config/catancraft/schematics"
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$dir/config/catancraft/schematics/"
+            status=0
+            gradle runGameTestServer "-PgameTestNamespace=$ns" --daemon --max-workers=4 > "build/wall-gui-evidence/$ns.log" 2>&1 || status=$?
+            echo "$status" > "build/wall-gui-evidence/$ns.exit"
+            if ((status)) || ! grep -Fq "$count GAME TESTS COMPLETE" "build/wall-gui-evidence/$ns.log" || ! grep -Fq "All $count required tests passed" "build/wall-gui-evidence/$ns.log"; then
+              failed=1; echo "FAILED $ns"; tail -90 "build/wall-gui-evidence/$ns.log"
+            else echo "PASSED $ns $count"; fi
+          done
+          echo "$failed" > build/wall-gui-evidence/native.exit
+          exit "$failed"
+      - name: Record output hashes
+        if: always()
+        shell: bash
+        run: |
+          find build/libs -maxdepth 1 -name '*.jar' -type f -exec sha256sum {} \; > build/wall-gui-evidence/JAR_SHA256.txt || true
+          java -version 2> build/wall-gui-evidence/JAVA.txt
+          cp docs/WALL_GUI_SOURCE_PROVENANCE.json build/wall-gui-evidence/ || true
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: catancraft-wall-gui-validation
+          path: |
+            build/libs/*.jar
+            build/wall-gui-evidence/
+          if-no-files-found: error
