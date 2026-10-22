@@ -1,0 +1,58 @@
+name: Wall GUI focused delivery
+on:
+  push:
+    branches: [chatgpt/wall-gui-delivery-0.1.30]
+permissions:
+  contents: read
+jobs:
+  gui:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: 61ceb9537a99f825e2693b8860da7b7a364d9565
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact GUI source
+        run: |
+          set -o pipefail
+          mkdir -p build/gui-delivery-evidence
+          git rev-parse HEAD | tee build/gui-delivery-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/gui-delivery-evidence/source.zip
+          gradle build -PreleaseCommit=61ceb9537a99f825e2693b8860da7b7a364d9565 --no-daemon --max-workers=4 2>&1 | tee build/gui-delivery-evidence/build.log
+          sha256sum build/libs/*.jar > build/gui-delivery-evidence/JAR_SHA256.txt
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wall-gui-compiled-candidate-not-runtime-certified
+          path: |
+            build/libs/*.jar
+            build/gui-delivery-evidence/
+      - name: Focused GUI and unchanged price/service coverage
+        run: |
+          set -uo pipefail
+          failed=0
+          for spec in catancraft_wall_gui:8 catancraft_sector_prices:7 catancraft_sectors_service:15; do
+            ns=${spec%:*}; count=${spec#*:}; status=0
+            mkdir -p build/$ns-run/config/catancraft/schematics
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem build/$ns-run/config/catancraft/schematics/
+            gradle runGameTestServer -PgameTestNamespace=$ns --daemon --max-workers=4 > build/gui-delivery-evidence/$ns.log 2>&1 || status=$?
+            echo $status > build/gui-delivery-evidence/$ns.exit
+            if (( status )) || ! grep -Fq "$count GAME TESTS COMPLETE" build/gui-delivery-evidence/$ns.log || ! grep -Fq "All $count required tests passed" build/gui-delivery-evidence/$ns.log; then
+              failed=1; tail -100 build/gui-delivery-evidence/$ns.log
+            else echo "PASS $ns $count"; fi
+          done
+          echo $failed > build/gui-delivery-evidence/native.exit
+          exit $failed
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: wall-gui-focused-validation
+          path: |
+            build/libs/*.jar
+            build/gui-delivery-evidence/
