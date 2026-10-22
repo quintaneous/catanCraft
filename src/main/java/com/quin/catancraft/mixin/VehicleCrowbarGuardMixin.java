@@ -1,10 +1,7 @@
 package com.quin.catancraft.mixin;
 
 import com.quin.catancraft.CatanCraft;
-import com.quin.catancraft.command.NationProcurement;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.ItemTags;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -26,11 +23,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
  * @Pseudo allows CatanCraft to run when Superb Warfare is not installed.
  */
 @Pseudo
-@Mixin(targets = "com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity", remap = false)
+@Mixin(targets = {
+        "com.atsuishio.superbwarfare.entity.vehicle.base.VehicleEntity",
+        "com.atsuishio.superbwarfare.entity.vehicle.base.AutoAimableEntity",
+        "com.atsuishio.superbwarfare.entity.vehicle.MortarEntity",
+        "com.atsuishio.superbwarfare.entity.vehicle.AnnihilatorEntity"
+}, remap = false)
 public abstract class VehicleCrowbarGuardMixin {
-    private static final net.minecraft.tags.TagKey<net.minecraft.world.item.Item> CROWBAR =
-            ItemTags.create(new ResourceLocation("forge", "tools/crowbar"));
-
     @Inject(method = "onCrowbarInteract", at = @At("HEAD"), cancellable = true, remap = false, require = 0)
     private void catancraft$denyPurchasedVehiclePacking(
             ItemStack stack,
@@ -38,8 +37,7 @@ public abstract class VehicleCrowbarGuardMixin {
             InteractionHand hand,
             CallbackInfoReturnable<InteractionResult> cir) {
         Entity vehicle = (Entity) (Object) this;
-        if (!vehicle.getPersistentData().getBoolean(NationProcurement.PURCHASED_TAG)) return;
-        if (!player.isShiftKeyDown() || !stack.is(CROWBAR)) return;
+        if (!com.quin.catancraft.world.NationVehicleProtection.denyRetrieval(vehicle, player)) return;
 
         // Deny before Superb Warfare returns a portable container or discards
         // the vehicle. Handle both client and server to avoid interaction flicker.

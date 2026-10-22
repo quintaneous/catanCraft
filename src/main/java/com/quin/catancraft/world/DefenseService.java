@@ -78,6 +78,7 @@ public final class DefenseService {
                 }
                 public void requirements(boolean rollback) throws IOException {
                     if(!owner.equals(territory.ownerNationId()))throw new IOException("Defense territory owner changed");
+                    DefenseCityReservations.requireAvailable(root,selectedCity,file);
                     Path journalDir=root.resolve("data");
                     if(Files.isDirectory(journalDir))try(var paths=Files.newDirectoryStream(journalDir,"catancraft_defense_"+selectedCity+"_*_r4a_r6_1.dat")){
                         int count=0;for(Path other:paths){

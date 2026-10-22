@@ -1,5 +1,7 @@
 # Initial compatible R4-A / R6 defenses
 
+**Historical 0.1.28 socket implementation.** The owner's 2026-10-18 direction is recorded in [INTEGRATION_PRIORITIES.md](INTEGRATION_PRIORITIES.md). The per-socket commands and prices below are not the newly requested player-facing compass-sector system. Retain safe transactions, histories and test input; R4-A/R6 artwork is not visually accepted as the final sector design. Sector prices, grouped accounting, levels, corners and road ownership require the revised implementation contract.
+
 The immutable defense registry contains the reviewed 37-piece R4-A assembly and 17 R6 successors for each of cities A–P (864 individually selectable socket plans). It is not an automatic city installation. Gate controllers, gate-dependent wings, trenches, rejected large bunkers/adapters, siege rollout and unapproved terrain work are excluded.
 
 `tools/prepare_defense_inputs.py <audited-inputs-root> <output>` creates the compact registry from the verified R4-A/R6 packages. Only sparse writes, exact support/clearance/road reads, module IDs and dependency/exclusion edges are included. No world saves, screenshots or authoring archives are bundled. The compressed resource digest is pinned in `DefenseRevisions`. Coordinates and target block properties are already world-rotated and never rotated again.

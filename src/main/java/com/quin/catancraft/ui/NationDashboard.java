@@ -27,7 +27,18 @@ import java.util.List;
 public final class NationDashboard {
     private NationDashboard() {}
 
-    public static boolean open(ServerPlayer player) {
+    public static boolean open(ServerPlayer player) { return open(player, ""); }
+
+    public static boolean open(ServerPlayer player, String notice) {
+        return send(player, notice, false);
+    }
+
+    /** A completion packet updates an already-open menu; the client ignores it while playing. */
+    public static void refreshDefenses(ServerPlayer player, String notice) {
+        send(player, notice, true);
+    }
+
+    private static boolean send(ServerPlayer player, String notice, boolean refreshOnly) {
         CatanSavedData data = CatanSavedData.get(player.server);
         NationData nation = data.nationForPlayer(player.getUUID());
         if (nation == null) return false;
@@ -49,6 +60,8 @@ public final class NationDashboard {
                 .toList();
 
         List<String> lines = new ArrayList<>();
+        if(refreshOnly)lines.add("V|defense_refresh");
+        if(!notice.isBlank())lines.add("M|"+DefenseMenuRows.safe(notice));
         lines.add("H|" + nation.name());
         lines.add("G|Treasury: $" + nation.treasury());
         lines.add("B|Members: " + nation.members().size());
@@ -218,6 +231,8 @@ public final class NationDashboard {
                         " • City L" + territory.cityLevel() +
                         " • Producer L" + territory.producerLevel());
                 addTerritory(lines, nation, territory, leader);
+                lines.addAll(DefenseMenuRows.rows(territory.id(), leader, nation,
+                        com.quin.catancraft.world.SectorService.menuStates(player.server, player.getUUID(), territory.id())));
                 lines.add("E|" + territory.id());
             }
         }

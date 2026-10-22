@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '0.1.28'
+version = '0.1.30-wall-gui'
 group = 'com.quin.catancraft'
 
 base {
@@ -87,7 +87,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Integration native tests run in a third disposable namespace/world, retaining both suites.
 tasks.named('processResources', ProcessResources).configure {
-    ['catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses'].each { ns ->
+    ['catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
         from('src/main/resources/data/catancraft/structures') {
             include 'townhall_state_empty.nbt'
             into "data/${ns}/structures"

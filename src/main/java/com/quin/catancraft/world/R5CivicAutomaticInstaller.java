@@ -78,7 +78,11 @@ public final class R5CivicAutomaticInstaller {
     private static Path journal(Path root,String city,String kind) {
         return root.resolve("data").resolve("catancraft_r5_auto_"+city+"_"+kind+"_v1.json");
     }
-    private static void ensureTargetWorld(MinecraftServer server,Path root) throws IOException {
+    static void ensureTargetWorld(MinecraftServer server,Path root) throws IOException {
+        if(Files.exists(root.resolve(FreshDemoAuthorization.MARKER),java.nio.file.LinkOption.NOFOLLOW_LINKS)) {
+            if(!FreshDemoAuthorization.authorize(server).equals(root))throw new IOException("Foreign fresh civic world");
+            return;
+        }
         if(!ROOT_NAME.equals(root.getFileName().toString()) ||
                 !WORLD_LEVEL_NAME.equals(server.getWorldData().getLevelName()))
             throw new IllegalStateException("Auto-build disabled outside the exact new R7 development-world folder and LevelName. No purchase was charged.");

@@ -49,7 +49,7 @@ import java.util.UUID;
 
 /**
  * One-shot, purchase-driven TH3->TH4 and TH4->TH5 on an explicitly marked,
- * BACKED UP disposable R7 development world only. No blind schematic paste.
+ * Bound fresh authored demo or backed-up disposable R7 development world only. No blind schematic paste.
  * Unknown edited buildings, occupied interiors, or stale saved placement tokens
  * stop BEFORE any charge or writes. Historical transactions remain immutable.
  *
@@ -76,14 +76,7 @@ public final class TownHallPrestigeUpgradeService {
         try {
             if(nextLevel != 4 && nextLevel != 5 || territory.cityLevel() != nextLevel - 1)
                 throw new IllegalStateException("Invalid Town Hall prestige tier transition");
-            Path world = server.getWorldPath(LevelResource.ROOT).toRealPath();
-            if (!R7_WORLD_ROOT.equals(world.getFileName().toString()) ||
-                    !LEVEL_NAME.equals(server.getWorldData().getLevelName()))
-                throw new IllegalStateException("Town Hall prestige upgrades are test-only on the exact R7 development world");
-            Path marker = world.resolve(R5CivicAutomaticInstaller.MARKER_NAME);
-            if (!Files.isRegularFile(marker) || Files.size(marker)>250 ||
-                    !R5CivicAutomaticInstaller.MARKER_VALUE.equals(Files.readString(marker).trim()))
-                throw new IllegalStateException("Missing R7 disposable test-world authorization marker");
+            Path world = ConstructionWorldAuthorization.authorize(server);
             if (!nation.id().equals(territory.ownerNationId()) || data.nation(nation.id()) == null ||
                     !cost.canAfford(nation))
                 throw new IllegalStateException("Nation owner or resources changed");

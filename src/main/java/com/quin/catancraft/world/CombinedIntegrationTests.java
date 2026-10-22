@@ -108,6 +108,59 @@ public final class CombinedIntegrationTests {
             Map<BlockPos,BlockState> boundary=new HashMap<>();for(BlockPos outside:shell)boundary.put(outside,outside.getY()<=bedY?Blocks.STONE.defaultBlockState():Blocks.AIR.defaultBlockState());
             List<Map<BlockPos,BlockState>> scenes=List.of(source,publicWrites,houseWrites,producerWrites,defenseWrites);
             for(var scene:scenes)for(var e:scene.entrySet())if(e.getValue().getBlock() instanceof FallingBlock&&!source.containsKey(e.getKey().below()))boundary.put(e.getKey().below(),Blocks.STONE.defaultBlockState());
+            // A one-cell air shell is not a fluid barrier. In the south fixture, generated
+            // source water just beyond a diagonal/upper shell flowed into an exact public
+            // read during the entity-readiness delay. Enclose this artificial scene two
+            // cells beyond its complete source bounds, leaving its original adjacent air
+            // shell intact. Remove only unspecified generated fluids inside the enclosure;
+            // every explicit source/read cell, including authored Farm water, is preserved. Glass blocks
+            // incoming fluids without adding an opaque ceiling over grass/light-sensitive reads.
+            int isolationMinX=source.keySet().stream().mapToInt(BlockPos::getX).min().orElseThrow()-2;
+            int isolationMaxX=source.keySet().stream().mapToInt(BlockPos::getX).max().orElseThrow()+2;
+            int isolationMinY=source.keySet().stream().mapToInt(BlockPos::getY).min().orElseThrow()-2;
+            int isolationMaxY=source.keySet().stream().mapToInt(BlockPos::getY).max().orElseThrow()+2;
+            int isolationMinZ=source.keySet().stream().mapToInt(BlockPos::getZ).min().orElseThrow()-2;
+            int isolationMaxZ=source.keySet().stream().mapToInt(BlockPos::getZ).max().orElseThrow()+2;
+            // The source is fixed at canonical coordinates. An unrelated generated animal
+            // below that source must not be buried by our artificial glass floor.
+            // Move only that synthetic face downward; never move an entity or authored cell.
+            int initialIsolationMinY=isolationMinY;
+            while(true){
+                var floor=new net.minecraft.world.phys.AABB(isolationMinX,isolationMinY,isolationMinZ,isolationMaxX+1,isolationMinY+1,isolationMaxZ+1);
+                net.minecraft.world.entity.Entity conflict=null;
+                for(var entity:level.getAllEntities())if(entity.getBoundingBox().intersects(floor)){conflict=entity;break;}
+                if(conflict==null)break;
+                int lowered=Math.min(isolationMinY-1,(int)Math.floor(conflict.getBoundingBox().minY)-2);
+                if(initialIsolationMinY-lowered>32||lowered<level.getMinBuildHeight())throw new IOException("Fixture synthetic floor cannot safely clear entity within bounded 32-cell expansion: type="+net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(conflict.getType())+" uuid="+conflict.getUUID()+" pos="+conflict.position()+" box="+conflict.getBoundingBox());
+                for(var scene:scenes)for(BlockPos p:scene.keySet())if(p.getY()==lowered&&p.getX()>=isolationMinX&&p.getX()<=isolationMaxX&&p.getZ()>=isolationMinZ&&p.getZ()<=isolationMaxZ)throw new IOException("Synthetic floor expansion enters immutable source/ownership at "+p);
+                CatanCraft.LOGGER.info("COMBINED_FIXTURE_FLOOR_CLEARANCE city={} oldY={} newY={} entityType={} uuid={} pos={} box={}",city,isolationMinY,lowered,net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(conflict.getType()),conflict.getUUID(),conflict.position(),conflict.getBoundingBox());
+                isolationMinY=lowered;
+            }
+            for(int x=isolationMinX>>4;x<=isolationMaxX>>4;x++)for(int z=isolationMinZ>>4;z<=isolationMaxZ>>4;z++){
+                level.setChunkForced(x,z,true);level.getChunk(x,z);
+            }
+            int enclosureCells=0,unspecifiedFluids=0;
+            for(BlockPos mutable:BlockPos.betweenClosed(isolationMinX,isolationMinY,isolationMinZ,isolationMaxX,isolationMaxY,isolationMaxZ)){
+                BlockPos position=mutable.immutable();if(source.containsKey(position))continue;
+                boolean face=position.getX()==isolationMinX||position.getX()==isolationMaxX
+                    ||position.getY()==isolationMinY||position.getY()==isolationMaxY
+                    ||position.getZ()==isolationMinZ||position.getZ()==isolationMaxZ;
+                if(face){boundary.put(position,Blocks.GLASS.defaultBlockState());enclosureCells++;}
+                else if(!level.getFluidState(position).isEmpty()){boundary.put(position,Blocks.AIR.defaultBlockState());unspecifiedFluids++;}
+            }
+            // An artificial barrier must not bury or relocate an existing entity. The
+            // deliberately preserved item is created later, inside the immutable scene.
+            List<net.minecraft.world.phys.AABB> enclosureFaces=List.of(
+                new net.minecraft.world.phys.AABB(isolationMinX,isolationMinY,isolationMinZ,isolationMinX+1,isolationMaxY+1,isolationMaxZ+1),
+                new net.minecraft.world.phys.AABB(isolationMaxX,isolationMinY,isolationMinZ,isolationMaxX+1,isolationMaxY+1,isolationMaxZ+1),
+                new net.minecraft.world.phys.AABB(isolationMinX,isolationMinY,isolationMinZ,isolationMaxX+1,isolationMinY+1,isolationMaxZ+1),
+                new net.minecraft.world.phys.AABB(isolationMinX,isolationMaxY,isolationMinZ,isolationMaxX+1,isolationMaxY+1,isolationMaxZ+1),
+                new net.minecraft.world.phys.AABB(isolationMinX,isolationMinY,isolationMinZ,isolationMaxX+1,isolationMaxY+1,isolationMinZ+1),
+                new net.minecraft.world.phys.AABB(isolationMinX,isolationMinY,isolationMaxZ,isolationMaxX+1,isolationMaxY+1,isolationMaxZ+1));
+            for(var entity:level.getAllEntities())for(var face:enclosureFaces)
+                if(entity.getBoundingBox().intersects(face))throw new IOException("Fixture enclosure intersects existing entity type="+net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(entity.getType())+" uuid="+entity.getUUID()+" pos="+entity.position()+" box="+entity.getBoundingBox()+" face="+face);
+            CatanCraft.LOGGER.info("COMBINED_FIXTURE_FLUID_ISOLATION city={} min=[{},{},{}] max=[{},{},{}] enclosureCells={} unspecifiedFluidsRemoved={} authoredCellsPreserved={}",
+                city,isolationMinX,isolationMinY,isolationMinZ,isolationMaxX,isolationMaxY,isolationMaxZ,enclosureCells,unspecifiedFluids,source.size());
             for(var e:boundary.entrySet()){
                 if(source.containsKey(e.getKey()))throw new IOException("Boundary fixture would modify immutable context");
                 level.getChunkAt(e.getKey());var previous=level.getBlockEntity(e.getKey());if(previous instanceof Container inventory)inventory.clearContent();level.setBlock(e.getKey(),e.getValue(),FLAGS);

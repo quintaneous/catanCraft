@@ -30,19 +30,34 @@ public final class NationVehicleProtection {
         protect(event, event.getTarget());
     }
 
+    /** Resolve Forge parts without a hard dependency on any optional vehicle mod. */
+    public static Entity purchasedRoot(Entity target) {
+        Entity current = target;
+        for (int depth = 0; current != null && depth < 16; depth++) {
+            if (current.getPersistentData().getBoolean(NationProcurement.PURCHASED_TAG)) return current;
+            if (!(current instanceof net.minecraftforge.entity.PartEntity<?> part)) return null;
+            Entity parent = part.getParent();
+            if (parent == current) return null;
+            current = parent;
+        }
+        return null;
+    }
+
+    /** Only retrieval paths call this; never changes combat/death/removal behavior. */
+    public static boolean denyRetrieval(Entity target, net.minecraft.world.entity.player.Player player) {
+        return purchasedRoot(target) != null && player.isShiftKeyDown();
+    }
+
     private static void protect(PlayerInteractEvent event, Entity target) {
-        if (!target.getPersistentData().getBoolean(NationProcurement.PURCHASED_TAG)) return;
-        if (!event.getEntity().isShiftKeyDown()) return;
-
-        ItemStack main = event.getEntity().getMainHandItem();
-        if (!main.is(CROWBAR)) return;
-
+        if (!denyRetrieval(target, event.getEntity())) return;
+        // SBW 0.8.9.2 artillery processes offhand IVehicleInteract before its base interaction.
+        if (!event.getEntity().getMainHandItem().is(CROWBAR)
+                && !event.getEntity().getOffhandItem().is(CROWBAR)) return;
         event.setCancellationResult(InteractionResult.FAIL);
         event.setCanceled(true);
         if (!event.getLevel().isClientSide()) {
             event.getEntity().displayClientMessage(
-                    Component.literal("Nation-purchased vehicles cannot be packed with a crowbar."),
-                    true);
+                    Component.literal("Nation-purchased vehicles cannot be packed with a crowbar."), true);
         }
     }
 }

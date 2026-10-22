@@ -62,7 +62,7 @@ public final class TownHallRepairService {
         return world;
     }
     public static void requireNoPending(MinecraftServer server,String city) throws IOException {
-        Path world=authorize(server);
+        Path world=ConstructionWorldAuthorization.authorize(server);
         if(!city.matches("[a-p]"))throw new IOException("Unknown city");
         for(int tier:new int[]{4,5}) {
             Path p=path(world,city,tier);

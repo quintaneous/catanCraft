@@ -25,19 +25,23 @@ public final class NationDashboardScreen extends Screen {
     private static final Set<String> OPEN_TERRITORIES = new HashSet<>();
     private static final Set<String> OPEN_TERRITORY_SECTIONS = new HashSet<>();
 
-    private final List<String> lines;
+    private List<String> lines;
     private final List<HitTarget> hitTargets = new ArrayList<>();
 
     private Page page;
     private double scroll;
     private int lastContentHeight;
     private int lastVisibleHeight;
+    private boolean awaitingDefenseQuote;
 
     public NationDashboardScreen(List<String> lines) {
         super(Component.literal("Nation Dashboard"));
         this.lines = List.copyOf(lines);
         this.page = LAST_PAGE;
     }
+
+    /** Preserve selected page, expanded territories/sections and scroll on server refresh. */
+    public void updateLines(List<String> fresh) { this.lines=List.copyOf(fresh); awaitingDefenseQuote=false; }
 
     @Override
     public void render(
@@ -72,6 +76,13 @@ public final class NationDashboardScreen extends Screen {
         renderTabs(graphics, mouseX, mouseY, left, right, tabsTop);
 
         int contentTop = tabsTop + TAB_HEIGHT + 7;
+        String notice=lines.stream().filter(line->line.startsWith("M|")).map(line->line.substring(2)).findFirst().orElse("");
+        if(!notice.isBlank()) {
+            var wrapped=font.split(Component.literal(notice),panelWidth-32);
+            int shown=Math.min(3,wrapped.size());
+            for(int i=0;i<shown;i++)graphics.drawString(font,wrapped.get(i),left+16,contentTop+i*11,0xFFD166,false);
+            contentTop+=shown*11+6;
+        }
         int contentBottom = bottom - 8;
         lastVisibleHeight = Math.max(1, contentBottom - contentTop);
 
@@ -563,8 +574,10 @@ public final class NationDashboardScreen extends Screen {
             }
         }
 
-        graphics.drawString(font, text, x, y, color, false);
-        return y + LINE_HEIGHT;
+        for(var wrapped:font.split(Component.literal(text),Math.max(40,right-22-x))) {
+            graphics.drawString(font,wrapped,x,y,color,false);y+=LINE_HEIGHT;
+        }
+        return y;
     }
 
     private List<String> sectionLines(String id) {
@@ -716,6 +729,14 @@ public final class NationDashboardScreen extends Screen {
                     minecraft.setScreen(new TradeProposalScreen(this));
                 } else if (minecraft.player != null
                         && minecraft.player.connection != null) {
+                    if(command.startsWith("nation defense review ")) {
+                        if(awaitingDefenseQuote)return true;
+                        awaitingDefenseQuote=true;
+                        List<String> pending=new ArrayList<>(lines);
+                        pending.removeIf(line->line.startsWith("M|"));
+                        pending.add(0,"M|Checking the whole-side quote and placement contract...");
+                        lines=List.copyOf(pending);
+                    }
                     minecraft.player.connection.sendCommand(command);
                 }
                 return true;

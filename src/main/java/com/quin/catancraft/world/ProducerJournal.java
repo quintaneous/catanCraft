@@ -12,7 +12,14 @@ final class ProducerJournal {
     static CompoundTag read(Path p) throws IOException {
         if(Files.isSymbolicLink(p) || !Files.isRegularFile(p,LinkOption.NOFOLLOW_LINKS) || Files.size(p)>LIMIT+40)
             throw new IOException("Invalid producer journal file");
-        try(DataInputStream in=new DataInputStream(Files.newInputStream(p))) {
+        try(DataInputStream in=new DataInputStream(Files.newInputStream(p))) {return decode(in);}
+    }
+    /** Validate the exact captured sealed bytes, avoiding path re-open/ABA ambiguity. */
+    static CompoundTag read(byte[] sealed)throws IOException {
+        if(sealed==null||sealed.length>LIMIT+40)throw new IOException("Invalid captured producer journal length");
+        try(DataInputStream in=new DataInputStream(new ByteArrayInputStream(sealed))){return decode(in);}
+    }
+    private static CompoundTag decode(DataInputStream in)throws IOException {
             if(in.readInt()!=MAGIC)throw new IOException("Wrong producer journal format");
             int size=in.readInt();if(size<1 || size>LIMIT)throw new IOException("Invalid producer length");
             byte[] digest=in.readNBytes(32),bytes=in.readNBytes(size);
@@ -24,7 +31,6 @@ final class ProducerJournal {
                 if(decoded.length>64*1024*1024)throw new IOException("Oversized producer NBT");
                 return NbtIo.read(new DataInputStream(new ByteArrayInputStream(decoded)));
             }
-        }
     }
     static void write(Path p,CompoundTag n,boolean replace) throws IOException {
         Files.createDirectories(p.getParent());

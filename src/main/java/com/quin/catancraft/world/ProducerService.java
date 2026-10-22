@@ -19,7 +19,7 @@ import java.nio.file.*;
 import java.util.*;
 
 /** Existing resource-upgrade action plus explicit zero-price retrofit and recovery.
- * Only the authorized developed R7 test-world is enabled. No source-world imports.
+ * Only a bound fresh authored demo or the historical authorized R7 test-world is enabled. No source-world imports.
  */
 @Mod.EventBusSubscriber(modid=CatanCraft.MOD_ID)
 public final class ProducerService {
@@ -52,7 +52,7 @@ public final class ProducerService {
     }
     private static synchronized MapAssetService.Result operation(MinecraftServer server,String input,String kind,ProducerTransaction.Action action) {
         try {
-            String city=input.toLowerCase(Locale.ROOT);Path root=TownHallRepairService.authorize(server);
+            String city=input.toLowerCase(Locale.ROOT);Path root=ConstructionWorldAuthorization.authorize(server);
             if(!city.matches("[a-p]"))throw new IOException("Unknown city");
             CatanSavedData data=CatanSavedData.get(server);TerritoryData t=data.territory(city);
             TerritoryDefinition def=MapDefinitionManager.territory(city);
@@ -111,7 +111,7 @@ public final class ProducerService {
     /** Only reconcile existing incomplete owned journals, never initiate an upgrade on startup. */
     @SubscribeEvent(priority=EventPriority.LOWEST) public static void recoverStarted(ServerStartedEvent event) {
         MinecraftServer server=event.getServer();Path root;
-        try {root=TownHallRepairService.authorize(server);}catch(IOException notAuthorized){return;}
+        try {root=ConstructionWorldAuthorization.authorize(server);}catch(IOException notAuthorized){return;}
         for(char c='a';c<='p';c++)try {
             String city=String.valueOf(c);
             for(Path p:histories(root,city)) {
@@ -191,7 +191,7 @@ public final class ProducerService {
     /** Adopt prebuilt L1 without replacing a barrel, crop, or any world block. All plots preflight first. */
     public static MapAssetService.Result adoptPrebuilt(MinecraftServer server,CatanSavedData data,TerritoryDefinition def) {
         try {
-            TownHallRepairService.authorize(server);validateMap(def);ServerLevel level=server.overworld();List<String> adopt=new ArrayList<>();
+            ConstructionWorldAuthorization.authorize(server);validateMap(def);ServerLevel level=server.overworld();List<String> adopt=new ArrayList<>();
             for(String f:ProducerRevisions.applicable(def)) {
                 String token=data.placedMapAsset(key(def.id(),f));
                 if(token!=null){ProducerRevisions.revision(f,token);continue;}

@@ -21,8 +21,20 @@ run_gradle() {
     echo "$status" > "$evidence/$name.exit"
     if ((status)); then failed=1; fi
 }
+python_status=0
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*demo.py' -v > "$evidence/demo-python.log" 2>&1 || python_status=$?
+echo "$python_status" > "$evidence/demo-python.exit"
+if ((python_status)); then failed=1; fi
+economy_status=0
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_sector_economy.py' -v > "$evidence/economy-python.log" 2>&1 || economy_status=$?
+echo "$economy_status" > "$evidence/economy-python.exit"
+if ((economy_status)); then failed=1; fi
+p3_status=0
+PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_sector_p3.py' -v > "$evidence/p3-python.log" 2>&1 || p3_status=$?
+echo "$p3_status" > "$evidence/p3-python.exit"
+if ((p3_status)); then failed=1; fi
 run_gradle build build
-for spec in catancraft:50 catancraft_public27:11 catancraft_integration:12 catancraft_producer_r2:9 catancraft_houses:11 catancraft_defense:8; do
+for spec in catancraft_wall_gui:8 catancraft:50 catancraft_public27:11 catancraft_integration:12 catancraft_producer_r2:9 catancraft_houses:11 catancraft_defense:8 catancraft_sectors:22 catancraft_sectors_service:15 catancraft_sectors_p1:4 catancraft_north_p2:4 catancraft_reservation_verifier:4 catancraft_sector_prices:7 catancraft_city_a_p3:5 catancraft_sector_connections:4 catancraft_sectors_natural:7 catancraft_sectors_group_proof:2 catancraft_city_a_group:4; do
     ns=${spec%:*}; count=${spec#*:}
     case "$ns" in
         catancraft) dir=build/gametest-run;;

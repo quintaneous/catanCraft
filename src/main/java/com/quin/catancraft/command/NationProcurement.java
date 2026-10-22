@@ -251,7 +251,7 @@ public final class NationProcurement {
         source.sendSuccess(() -> Component.literal(
                 "Purchased and deployed " + offer.name() + " at " + ix +
                 " " + surfaceY + " " + iz + " for " + offer.cost().describe() +
-                ". This nation vehicle cannot be crowbar-retrieved."), false);
+                ". Nation ownership is recorded; retrieval protection remains under compatibility validation."), false);
         return 1;
     }
 }

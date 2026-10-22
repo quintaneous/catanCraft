@@ -1,0 +1,52 @@
+// Optional isolated native SBW audit only. Never applied to ordinary builds/releases.
+import groovy.json.JsonSlurper
+import java.security.MessageDigest
+beforeProject { project ->
+    if (project.findProperty('gameTestNamespace') != 'catancraft_sbw') {
+        throw new GradleException('SEC-01 init script requires -PgameTestNamespace=catancraft_sbw')
+    }
+    File auditRoot = project.file(project.findProperty('sbwAuditRoot') ?: '/workspace/sec01-audit')
+    File manifest = new File(auditRoot, 'runtime-artifacts.json')
+    def sha256 = { File file ->
+        if (!file.isFile()) throw new GradleException("Missing SEC-01 audit input: ${file}")
+        MessageDigest.getInstance('SHA-256').digest(file.bytes).encodeHex().toString()
+    }
+    // Pinned published-artifact inventory: do not silently test another runtime.
+    if (sha256(manifest) != 'c468a1e6bd77be2b15fe486085b2ea267410b04e201b8b975191f1b3f255c55c') {
+        throw new GradleException('SEC-01 runtime-artifacts.json does not match the reviewed inventory')
+    }
+    def artifacts = new JsonSlurper().parse(manifest)
+    artifacts.each { item ->
+        def coordinate = item.coordinate.split(':')
+        File original = new File(auditRoot, item.original)
+        File staged = new File(auditRoot, 'maven/' + coordinate[0].replace('.', '/') + '/' + coordinate[1] + '/' + coordinate[2] + '/' + coordinate[1] + '-' + coordinate[2] + '.jar')
+        if (sha256(original) != item.sha256 || sha256(staged) != item.sha256) {
+            throw new GradleException("SEC-01 artifact hash mismatch: ${item.coordinate}")
+        }
+    }
+    project.plugins.withId('net.minecraftforge.gradle') {
+        project.repositories.maven {
+            name = 'sec01PinnedAudit'
+            url = project.uri(new File(auditRoot, 'maven'))
+            content { includeGroup 'audit.catancraft.sec01' }
+        }
+        artifacts.each { item ->
+            project.dependencies.add('runtimeOnly', item.deobfuscate
+                ? project.extensions.getByName('fg').deobf(item.coordinate)
+                : item.coordinate)
+        }
+        project.afterEvaluate {
+            project.tasks.configureEach { task ->
+                if (task.name == 'runGameTestServer') task.dependsOn('createSrgToMcp')
+            }
+            project.minecraft.runs.gameTestServer {
+                args '--mixin', 'catancraft.mixins.json'
+                property 'mixin.debug.export', 'true'
+                property 'mixin.debug.verbose', 'true'
+                // Published SBW refmaps use SRG members; this isolated FG run uses named members.
+                property 'mixin.env.remapRefMap', 'true'
+                property 'mixin.env.refMapRemappingFile', project.file('build/createSrgToMcp/output.srg').absolutePath
+            }
+        }
+    }
+}
