@@ -1,0 +1,112 @@
+name: Base-city reliability validation
+on:
+  push:
+    branches: [chatgpt/base-reliability-0.1.32]
+    paths: ['.github/workflows/base-reliability.yml', 'tools/reliability-032.patch.b64']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Materialize exact checked patch as reviewable source
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, hashlib, subprocess, zlib
+          p=Path('tools/reliability-032.patch.b64')
+          if p.exists():
+              s=p.read_text().strip()
+              # Repair only known transport transcription errors, never source/test checks.
+              for old,new in [('L67ggeh2xX6','L67gkeh2xX6'),('EEsSTLjwzch','EEsSTLgzwch'),('fhel+U2Wz2B','fhel+U2z2B')]:
+                  s=s.replace(old,new)
+              patch=zlib.decompress(base64.b64decode(s,validate=True))
+              assert hashlib.sha256(patch).hexdigest()=='fcc600e2f76c13a16db9fc9b8cc799c4ee48b3e2fe95f5f32f3bc90e0f99a6fe', 'Transport hash mismatch; refusing edits'
+              target=Path('/tmp/reliability032.patch');target.write_bytes(patch)
+              subprocess.run(['git','apply','--check',str(target)],check=True)
+              subprocess.run(['git','apply',str(target)],check=True)
+              p.unlink()
+          PY
+          git config user.name 'quintaneous'
+          git config user.email '145784746+quintaneous@users.noreply.github.com'
+          git add build.gradle src tools/reliability-032.patch.b64
+          if ! git diff --cached --quiet; then
+            git commit -m 'Persist economy cycle receipts and complete guarded base-city initialization'
+            git push origin HEAD:refs/heads/chatgpt/base-reliability-0.1.32
+          fi
+      - id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_economy_clock, count: 9}
+          - {ns: catancraft_base_lifecycle, count: 8}
+          - {ns: catancraft_chunk_lifecycle, count: 6}
+          - {ns: catancraft_public27, count: 11}
+          - {ns: catancraft_houses, count: 11}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_wall_gui, count: 8}
+          - {ns: catancraft_sectors_service, count: 15}
+          - {ns: catancraft_sector_prices, count: 7}
+          - {ns: catancraft_integration, count: 12}
+          - {ns: catancraft_producer_r2, count: 9}
+          - {ns: catancraft_defense, count: 8}
+          - {ns: catancraft_sectors, count: 22}
+          - {ns: catancraft_sectors_natural, count: 7}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile exact committed source
+        run: |
+          set -o pipefail
+          mkdir -p build/reliability-evidence
+          git rev-parse HEAD > build/reliability-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/reliability-evidence/source.zip
+          gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/reliability-evidence/build.log
+          sha256sum build/libs/*.jar > build/reliability-evidence/JAR_SHA256.txt
+      - name: Run native suite and verify exact required count
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -uo pipefail
+          dest=build/$NS-run/config/catancraft/schematics
+          if [ "$NS" = catancraft ]; then dest=build/gametest-run/config/catancraft/schematics; fi
+          if [ "$NS" = catancraft_public27 ]; then dest=build/public-gametest-run/config/catancraft/schematics; fi
+          mkdir -p "$dest"
+          cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$dest/"
+          status=0
+          timeout 1000s gradle runGameTestServer -PgameTestNamespace="$NS" --daemon --max-workers=4 > build/reliability-evidence/$NS.log 2>&1 || status=$?
+          echo "$status" > build/reliability-evidence/$NS.exit
+          cat build/reliability-evidence/$NS.log
+          test "$status" = 0 && grep -Fq "$COUNT GAME TESTS COMPLETE" build/reliability-evidence/$NS.log && grep -Fq "All $COUNT required tests passed" build/reliability-evidence/$NS.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reliability-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/reliability-evidence/
+          if-no-files-found: error
