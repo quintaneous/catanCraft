@@ -1,0 +1,128 @@
+name: Reliability final checks
+on:
+  push:
+    branches: [chatgpt/base-reliability-0.1.32]
+    paths: ['.github/workflows/reliability-final.yml', 'tools/prepare_reliability_fixtures.py']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Commit test-only fixture corrections
+        run: |
+          set -euo pipefail
+          python3 tools/prepare_reliability_fixtures.py
+          git config user.name 'quintaneous'
+          git config user.email '145784746+quintaneous@users.noreply.github.com'
+          git add -A -- src tools
+          if ! git diff --cached --quiet; then
+            git commit -m 'Wait for fixture read boundaries and isolate generated test mobs'
+            git push origin HEAD:refs/heads/chatgpt/base-reliability-0.1.32
+          fi
+          python3 - <<'PY'
+          import subprocess
+          changed=subprocess.check_output(['git','diff','--name-only','a5f566a5772b628811a841e18339b605da66d314','HEAD','--','src','build.gradle'],text=True).splitlines()
+          allowed={'src/main/java/com/quin/catancraft/world/BaseCityLifecycleTests.java','src/main/java/com/quin/catancraft/world/CombinedIntegrationTests.java'}
+          assert set(changed)<=allowed, changed
+          print('All production source and resources identical to initial validation; only two test classes differ.')
+          PY
+      - id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 24
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_economy_clock, count: 9}
+          - {ns: catancraft_base_lifecycle, count: 8}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_integration, count: 12}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact committed source
+        run: |
+          set -o pipefail
+          mkdir -p build/reliability-final
+          git rev-parse HEAD > build/reliability-final/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/reliability-final/source.zip
+          gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/reliability-final/build.log
+          sha256sum build/libs/*.jar > build/reliability-final/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/reliability-final/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/reliability-final/assets-3.log
+          exit 1
+      - name: Native suite with exact count and no test retry
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -uo pipefail
+          dest=build/$NS-run/config/catancraft/schematics
+          if [ "$NS" = catancraft ]; then dest=build/gametest-run/config/catancraft/schematics; fi
+          mkdir -p "$dest"
+          cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$dest/"
+          status=0
+          timeout 1000s gradle runGameTestServer -PgameTestNamespace="$NS" --daemon --max-workers=4 > build/reliability-final/$NS.log 2>&1 || status=$?
+          echo "$status" > build/reliability-final/$NS.exit
+          cat build/reliability-final/$NS.log
+          test "$status" = 0 && grep -Fq "$COUNT GAME TESTS COMPLETE" build/reliability-final/$NS.log && grep -Fq "All $COUNT required tests passed" build/reliability-final/$NS.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: final-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/reliability-final/
+          if-no-files-found: error
+  collect:
+    needs: [prepare, validate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Collect current and retained exact-runtime test evidence
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: quintaneous/catanCraft
+          RUN: ${{ github.run_id }}
+        run: |
+          set -euo pipefail
+          mkdir -p evidence
+          for ns in catancraft_economy_clock catancraft_base_lifecycle catancraft catancraft_integration; do
+            gh run download "$RUN" -R "$REPO" -n "final-$ns" -D "evidence/final-$ns"
+          done
+          for ns in catancraft_chunk_lifecycle catancraft_public27 catancraft_houses catancraft_wall_gui catancraft_sectors_service catancraft_sector_prices catancraft_producer_r2 catancraft_defense catancraft_sectors catancraft_sectors_natural; do
+            gh run download 40039829821 -R "$REPO" -n "reliability-$ns" -D "evidence/retained-$ns"
+          done
+          gh api "repos/$REPO/actions/runs/$RUN/jobs?per_page=100" > evidence/final-jobs.json
+          gh api "repos/$REPO/actions/runs/40039829821/jobs?filter=all&per_page=100" > evidence/initial-jobs.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: reliability-consolidated-evidence
+          path: evidence/
+          if-no-files-found: error
