@@ -1,0 +1,9 @@
+# 0.1.31 sector readiness fix (2026-10-23)
+
+Owner reported a sliced sector stopping at unloaded chunk (-53,-41), and requires R5 public paths in base cities rather than a manual command. Source baseline 61ceb9537a99f825e2693b8860da7b7a364d9565 / 0.1.30. Preserve all existing transaction schemas, prices, immutable assets, source guards and journals.
+
+Changes: bounded temporary construction tickets cover source/read/support/entity envelopes through queue, placement and saves. Await entity load across ticks before new payment; release tickets on completion/error/stop; tickets expire as leak fallback. Existing pending recovery reuses its frozen cost and exact journal. GUI offers Resume (or finish rollback) for a known interrupted history even when another purchase cannot be afforded. No persistent forced-chunk list changes.
+
+Base streets: explicitly authorized disposable R7 worlds automatically initialize missing public paths when an owned city has been activated. The actual existing guarded R5 transaction supplies all ten public features, at zero charge. Existing public histories, including interrupted/rolled-back histories, are left untouched; unknown source edits refuse. An arbitrary/live unbound world is never initialized. This is runtime base-city initialization, not a sixteen-city terrain patch or a baked-world replacement. The current owner already applied City A's public paths; those are not applied again.
+
+Validation is recorded by the workflow, not asserted by this note. New native tests deliberately omit fixture forceloads and exercise ticket expiry/release, bounded area refusal, paused GUI recovery without funds, partial construction failure/reload/resume, real support-conflict refusal, automatic public paths and existing-history preservation. No real player or multiplayer test is claimed. Source resources and old tests stay unchanged. Live user files are never accessed.

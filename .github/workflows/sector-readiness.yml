@@ -1,0 +1,80 @@
+name: Sector residency and base-city readiness
+on:
+  push:
+    branches: [chatgpt/sector-readiness-0.1.31]
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Materialize exact reviewed source changes once
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! grep -q "0.1.31-sector-readiness" build.gradle; then
+            echo 'b82832a055582044b6668851e6ba7f1191041beb7530d0c27cef734de6d4b7dc  .github/readiness.patch' | sha256sum -c -
+            git apply --check .github/readiness.patch
+            git apply .github/readiness.patch
+            git config user.name 'CatanCraft validation'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add build.gradle src/main/java
+            git commit -m 'Hold bounded construction chunks and wire automatic city paths and retained recovery'
+            git push origin HEAD:chatgpt/sector-readiness-0.1.31
+          fi
+          mkdir -p build/readiness-evidence
+          git rev-parse HEAD > build/readiness-evidence/SOURCE_COMMIT.txt
+          git diff --exit-code 61ceb9537a99f825e2693b8860da7b7a364d9565 -- src/main/resources tests/fixtures
+          git archive --format=zip HEAD -o build/readiness-evidence/source.zip
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile exact candidate
+        run: |
+          set -o pipefail
+          gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/readiness-evidence/build.log
+          sha256sum build/libs/*.jar > build/readiness-evidence/JAR_SHA256.txt
+      - name: Native chunk lifecycle, public preparation and retained regressions
+        shell: bash
+        run: |
+          set -uo pipefail
+          failed=0
+          for spec in catancraft_chunk_lifecycle:6 catancraft_wall_gui:8 catancraft_sector_prices:7 catancraft_sectors_service:15 catancraft_public27:11 catancraft_sectors:22 catancraft_sectors_natural:7; do
+            ns=${spec%:*}; count=${spec#*:}; status=0
+            directory=build/$ns-run
+            if [ "$ns" = catancraft_public27 ]; then directory=build/public-gametest-run; fi
+            mkdir -p "$directory/config/catancraft/schematics"
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$directory/config/catancraft/schematics/"
+            timeout 600s gradle runGameTestServer -PgameTestNamespace=$ns --daemon --max-workers=4 > build/readiness-evidence/$ns.log 2>&1 || status=$?
+            echo "$status" > build/readiness-evidence/$ns.exit
+            if (( status )) || ! grep -Fq "$count GAME TESTS COMPLETE" build/readiness-evidence/$ns.log || ! grep -Fq "All $count required tests passed" build/readiness-evidence/$ns.log; then
+              failed=1; echo "FAIL $ns status=$status"; tail -100 build/readiness-evidence/$ns.log
+            else echo "PASS $ns $count"; fi
+          done
+          echo "$failed" > build/readiness-evidence/native.exit
+          exit "$failed"
+      - name: Retained independent Python checks
+        if: always()
+        run: |
+          set -o pipefail
+          python -m unittest discover -s tests -p 'test_prepare_fresh_demo.py' -v 2>&1 | tee build/readiness-evidence/python-prepare.log
+          python -m unittest discover -s tests -p 'test_package_authored_demo.py' -v 2>&1 | tee build/readiness-evidence/python-package.log
+          python -m unittest discover -s tests -p 'test_sector_economy.py' -v 2>&1 | tee build/readiness-evidence/python-economy.log
+          echo 'P3 external archive tests not run in this workflow; retained unchanged and require original attachment.' > build/readiness-evidence/SCOPE.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sector-readiness-evidence
+          path: |
+            build/libs/*.jar
+            build/readiness-evidence/
+          if-no-files-found: error
