@@ -22,7 +22,12 @@ public final class DefenseMenuRows {
             String side=label(state.side().name());
             String level=switch(state.level()){case 0->"Not built";case 1->"Basic";case 2->"Reinforced (maximum level)";default->"Needs review";};
             rows.add("P|"+side+" - "+level+(state.pending()?" - operation pending":""));
-            if(state.cost()!=null)rows.add("D|Cost: "+state.cost().describe());
+            if(state.cost()!=null&&state.recovery().isEmpty())rows.add("D|Cost: "+state.cost().describe());
+            if(leader&&!state.recovery().isEmpty()) {
+                rows.add("Y|An interrupted operation is retained. Continue it; do not buy again.");
+                rows.add("A|nation defense "+state.recovery()+" "+city+" "+state.side().name().toLowerCase(Locale.ROOT)+" confirm|"+(state.recovery().equals("resume")?"Resume existing construction - no repeat charge":"Finish existing rollback"));
+                rows.add("");continue;
+            }
             String unavailable=state.unavailable();
             if(!leader)unavailable="Only the owning nation's leader may purchase defenses.";
             String shortage=state.cost()==null?"":missing(nation,state.cost());

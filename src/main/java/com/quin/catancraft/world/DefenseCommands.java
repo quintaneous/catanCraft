@@ -74,7 +74,9 @@ public final class DefenseCommands {
             var action=switch(verb){case "buy"->SectorTransaction.Action.APPLY;case "resume"->SectorTransaction.Action.RESUME;case "rollback"->SectorTransaction.Action.ROLLBACK;default->SectorTransaction.Action.STATUS;};
             var result=verb.equals("quote")?SectorService.quote(source.getServer(),actor,city,direction):SectorService.operation(source.getServer(),actor,city,direction,action);
             if(!result.success()){source.sendFailure(Component.literal(result.message()));return 0;}
-            source.sendSuccess(()->Component.literal(result.message()),!verb.equals("status")&&!verb.equals("quote"));return 1;
+            source.sendSuccess(()->Component.literal(result.message()),!verb.equals("status")&&!verb.equals("quote"));
+            if(!verb.equals("status")&&!verb.equals("quote"))com.quin.catancraft.ui.NationDashboard.open(source.getPlayerOrException(),result.message());
+            return 1;
         }catch(Exception ex){source.sendFailure(Component.literal("Defense request refused: "+ex.getMessage()));return 0;}
     }
     private static int legacy(CommandSourceStack source,String verb,String city,String socket) {

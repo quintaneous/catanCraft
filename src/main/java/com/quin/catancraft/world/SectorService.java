@@ -25,15 +25,38 @@ public final class SectorService {
     private static final long QUOTE_TICKS=1200;
     private static boolean busy;
     private static final class Active {
-        private final Context context;private final SectorTransaction.Runner runner;private long maxSlice;private int slices,maxWrites;
-        Active(Context context,SectorTransaction.Runner runner){this.context=context;this.runner=runner;}
+        private final Context context;
+        private SectorTransaction.Runner runner;
+        private final SectorChunkLease lease;
+        private final SectorTransaction.Environment environment;
+        private final SectorTransaction.Action action;
+        private final SectorTransaction.Fault fault;
+        private long maxSlice;private int slices,maxWrites,loadingTicks;
+        Active(Context context,SectorTransaction.Runner runner,SectorChunkLease lease){
+            this.context=context;this.runner=runner;this.lease=lease;environment=null;action=null;fault=null;
+        }
+        Active(Context context,SectorTransaction.Environment environment,SectorTransaction.Action action,SectorTransaction.Fault fault,SectorChunkLease lease){
+            this.context=context;this.environment=environment;this.action=action;this.fault=fault;this.lease=lease;
+        }
         Context context(){return context;}SectorTransaction.Runner runner(){return runner;}
+        void close(){lease.close();}
     }
     private static Active active;
-    /** One main-thread slice per server tick; durable journals remain the recovery authority. */
+    static boolean hasActiveOperation(MinecraftServer server){return busy||active!=null&&active.context().server()==server;}
+    /** One main-thread slice per tick. Tickets live from preparation through durable settlement. */
     static void tick(MinecraftServer server){
         Active current=active;if(current==null||current.context().server()!=server)return;
         try{
+            current.lease.keepAlive();
+            if(!current.lease.ready()){
+                if(++current.loadingTicks>600)throw new IOException("Timed out loading the bounded construction area; retained history is unchanged and can be resumed");
+                return;
+            }
+            current.loadingTicks=0;
+            if(current.runner==null){
+                current.runner=SectorTransaction.begin(current.environment,current.action,current.fault);
+                if(current.runner.done()){active=null;current.close();notifyActor(current.context(),current.runner.result().message());return;}
+            }
             long start=System.nanoTime();int before=current.runner().writes();boolean done=current.runner().step(4,25_000_000L);
             current.maxWrites=Math.max(current.maxWrites,current.runner().writes()-before);
             if(current.maxWrites>4)throw new IllegalStateException("Sector runner exceeded four-write slice budget");
@@ -43,12 +66,15 @@ public final class SectorService {
                 return;
             }
             CatanCraft.LOGGER.info("Sector bounded placement: {} slices, {} writes, maximum {} writes/slice, maximum slice {} ms",current.slices,current.runner().writes(),current.maxWrites,current.maxSlice/1_000_000.0);
-            active=null;notifyActor(current.context(),current.runner().result().message());
+            active=null;current.close();notifyActor(current.context(),current.runner().result().message());
         }catch(Exception error){
-            active=null;notifyActor(current.context(),failure(error).message());
+            active=null;current.close();notifyActor(current.context(),failure(error).message());
         }
     }
-    static void stopped(MinecraftServer server){if(active!=null&&active.context().server()==server)active=null;}
+    static void stopped(MinecraftServer server){
+        if(active!=null&&active.context().server()==server){active.close();active=null;}
+        QUOTES.keySet().removeIf(k->k.root().equals(server.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize().toString()));
+    }
     private static void notifyActor(Context c,String message){
         CatanCraft.LOGGER.info("Sector operation: {}",message);
         var player=c.server().getPlayerList().getPlayer(c.actor());
@@ -94,7 +120,9 @@ public final class SectorService {
     }
     /** Cheap dashboard state: never resolve a complete voxel plan merely to open a menu. */
     public record MenuState(SectorContracts.Direction side, int level, EconomyCost cost,
-                            String unavailable, boolean pending) {}
+                            String unavailable, boolean pending, String recovery) {
+        public MenuState(SectorContracts.Direction side,int level,EconomyCost cost,String unavailable,boolean pending){this(side,level,cost,unavailable,pending,"");}
+    }
     public record MenuQuote(String token, String city, SectorContracts.Direction side,
                             int sourceLevel, int targetLevel, EconomyCost cost, String priceVersion) {}
 
@@ -119,7 +147,16 @@ public final class SectorService {
                 State state=savedState(data,id,side);
                 if(state.level()<0||state.level()>2)throw new IOException("Unsupported saved sector level; review retained history.");
                 EconomyCost cost=state.level()<2?SectorPriceCatalog.cost(side,state.level()):null;
-                out.add(new MenuState(side,state.level(),cost,reason,pending));
+                String recovery="";
+                if(!pending&&!reason.isEmpty()&&nation.isLeader(actor)) {
+                    try {
+                        Context c=production(server,actor,id);
+                        History interrupted=select(c,side).pending();
+                        if(interrupted!=null)recovery=interrupted.journal().getString("phase").equals("ROLLING_BACK")?"rollback":"resume";
+                    }catch(Exception invalidHistory){/* Existing reason remains fail-closed; never invent recovery. */}
+                }
+                String preparation=CityBasePreparation.reason(server,id);
+                out.add(new MenuState(side,state.level(),cost,preparation.isEmpty()?reason:preparation,pending,recovery));
             } catch(Exception e) {
                 out.add(new MenuState(side,-1,null,"Invalid sector state: "+e.getMessage(),pending));
             }
@@ -227,6 +264,7 @@ public final class SectorService {
     }
     private static synchronized MapAssetService.Result operate(Context c,SectorContracts.Direction side,SectorTransaction.Action action,Provider provider,SectorTransaction.Fault fault,boolean bounded)throws IOException {
         if(busy||active!=null)throw new IOException("Another defense operation is active; no reentrant sector purchase");busy=true;
+        SectorChunkLease lease=null;
         try{
             authority(c);State state=savedState(c.data(),c.city(),side);Selection selection=select(c,side);History selected=selection.pending()!=null?selection.pending():selection.selected();Path file;CompoundTag identity;SectorContracts.Contract contract;boolean terminalReadOnly=false;
             if(action==SectorTransaction.Action.APPLY){
@@ -245,18 +283,24 @@ public final class SectorService {
             }
             DefenseCityReservations.requireAvailable(c.root(),c.city(),file);
             if(terminalReadOnly&&!contract.cityGroup().isEmpty()){SectorCityAP3Group.verifyCurrentAssembly(c);return new MapAssetService.Result(true,"Current complete City A assembly and retained group lineage verified; zero writes and zero charge",0);}
-            if(action!=SectorTransaction.Action.STATUS)StreetscapeService.requireLoadedEntities(c.server().overworld(),List.of(entityBounds(contract.plan())));
+            if(CityBasePreparation.isRunning(c.server()))throw new IOException("Base city paths are being prepared automatically; retry after completion");
+            if(bounded&&action!=SectorTransaction.Action.STATUS)lease=SectorChunkLease.acquire(c.server().overworld(),entityBounds(contract.plan()));
             var env=environment(c,side,contract,identity,file,terminalReadOnly);
+            if(lease!=null&&!lease.ready()) {
+                active=new Active(c,env,action,fault,lease);lease=null;
+                return new MapAssetService.Result(true,"Loading the bounded wall area automatically. Do not repeat purchase; preparation and entity checks will finish before new payment or placement.",0);
+            }
+            if(action!=SectorTransaction.Action.STATUS)StreetscapeService.requireLoadedEntities(c.server().overworld(),List.of(entityBounds(contract.plan())));
             if(bounded&&action!=SectorTransaction.Action.STATUS){
                 long preparationStart=System.nanoTime();var runner=SectorTransaction.begin(env,action,fault);
                 CatanCraft.LOGGER.info("Sector bounded preparation: {} ms",(System.nanoTime()-preparationStart)/1_000_000.0);
                 if(runner.done())return new MapAssetService.Result(true,runner.result().message(),runner.result().writes());
-                active=new Active(c,runner);
+                active=new Active(c,runner,lease);lease=null;
                 return new MapAssetService.Result(true,"Whole-sector operation reserved and queued; placement proceeds in bounded server-tick slices. Completed level is unchanged until the entire side is saved. Do not repeat purchase; retained history supports resume/rollback after interruption.",0);
             }
             var result=SectorTransaction.run(env,action,fault);
             return new MapAssetService.Result(true,(selection.pending()!=null&&action==SectorTransaction.Action.STATUS?"PENDING; not a completed new sector. ":"")+result.message(),result.writes());
-        }finally{busy=false;}
+        }finally{if(lease!=null)lease.close();busy=false;}
     }
     /** Same bounds for production readiness and fixture preparation; no alternate test policy. */
     static AABB entityBounds(SectorTransaction.Plan plan)throws IOException {
