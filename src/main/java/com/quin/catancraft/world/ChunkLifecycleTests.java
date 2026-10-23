@@ -111,7 +111,7 @@ public final class ChunkLifecycleTests {
         f.level().setBlock(changed.pos(),Blocks.DIAMOND_BLOCK.defaultBlockState(),FLAGS);CityBasePreparation.queueFixture("public-conflict",f);
         awaitPublic(h,f,0,()->{h.assertTrue(!Files.exists(f.file())&&f.level().getBlockState(changed.pos()).is(Blocks.DIAMOND_BLOCK),"Conflict was overwritten");h.assertTrue(CityBasePreparation.reason(h.getLevel().getServer(),"public-conflict").contains("Streetscape conflict"),"Expected actual source conflict, not an unrelated setup failure: "+CityBasePreparation.reason(h.getLevel().getServer(),"public-conflict"));h.assertTrue(f.ledger().getInt("resources")==1234,"Refusal charged");h.succeed();});
     }
-    private static void awaitPublic(GameTestHelper h,PublicFixture f,int ticks,Runnable done){h.runAfterDelay(1,()->{h.assertTrue(ticks<8000,"Public initializer stuck");if(CityBasePreparation.isRunning(h.getLevel().getServer()))awaitPublic(h,f,ticks+1,done);else done.run();});}
+    private static void awaitPublic(GameTestHelper h,PublicFixture f,int ticks,Runnable done){h.runAfterDelay(1,()->{h.assertTrue(ticks<8000,"Public initializer stuck");if(CityBasePreparation.isRunning(h.getLevel().getServer()))awaitPublic(h,f,ticks+1,done);else {f.finish();done.run();}});}
     private static void ok(GameTestHelper h,MapAssetService.Result r){h.assertTrue(r.success(),r.message());}
     private static final class Fixture implements SectorService.Provider {
         final ServerLevel level;final BlockPos base=new BlockPos(22000,200,22000),support=base.offset(80,-1,80);
@@ -137,13 +137,20 @@ public final class ChunkLifecycleTests {
         }
     }
     private static final class PublicFixture implements StreetscapeTransaction.Environment {
-        final GameTestHelper helper;final StreetscapeR5.Plan plan;final Path path;final CompoundTag ledger=new CompoundTag();
+        final GameTestHelper helper;final StreetscapeR5.Plan plan;final Path path;final CompoundTag ledger=new CompoundTag();int previousRandomTickSpeed;
         PublicFixture(GameTestHelper h,int offset)throws IOException{helper=h;plan=StreetscapeR5.plan(new MapAnchor("base-test",offset,200,offset,0));path=h.getLevel().getServer().getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize().resolve("data/base-init-test/"+UUID.randomUUID()+".dat");Files.createDirectories(path.getParent());ledger.putInt("resources",1234);}
         void stage(){
+            if(!(level().getServer() instanceof GameTestServer))throw new IllegalStateException("Synthetic fixture outside GameTest server");
+            // The sparse authored sample contains preserved grass under existing masonry.
+            // Freeze random vegetation ticks in THIS synthetic test world while asynchronous
+            // entity IO runs; production source/state validation remains exact and unchanged.
+            previousRandomTickSpeed=level().getGameRules().getInt(net.minecraft.world.level.GameRules.RULE_RANDOMTICKING);
+            level().getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_RANDOMTICKING).set(0,level().getServer());
             var positions=new HashSet<BlockPos>();for(var c:plan.cells())positions.add(c.pos());
             for(var c:plan.cells())if(c.before().getBlock() instanceof net.minecraft.world.level.block.FallingBlock&&!positions.contains(c.pos().below())){level().getChunkAt(c.pos());level().setBlock(c.pos().below(),Blocks.STONE.defaultBlockState(),FLAGS);}
             for(var c:plan.cells()){level().getChunkAt(c.pos());level().setBlock(c.pos(),c.before(),FLAGS);}
         }
+        void finish(){level().getGameRules().getRule(net.minecraft.world.level.GameRules.RULE_RANDOMTICKING).set(previousRandomTickSpeed,level().getServer());}
         public ServerLevel level(){return helper.getLevel();}public Path file(){return path;}public StreetscapeR5.Plan plan(){return plan;}
         public CompoundTag identity(){var n=new CompoundTag();n.putString("isolated",path.toString());return n;}public CompoundTag ledger(){return ledger.copy();}
         public void save(){}public void allowWrite(BlockPos p)throws IOException{if(plan.cells().stream().noneMatch(c->c.pos().equals(p)&&c.changes()))throw new IOException("Outside public sparse delta");}
