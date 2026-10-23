@@ -27,7 +27,7 @@ public final class EconomyEngine {
             long targetStock
     ) {}
 
-    private static long lastProcessedCycle = Long.MIN_VALUE;
+    public enum ScheduledResult { INITIALIZED, UNCHANGED, POSTED }
 
     private EconomyEngine() {}
 
@@ -135,18 +135,63 @@ public final class EconomyEngine {
     }
 
     public static void tick(MinecraftServer server) {
-        long gameTime = server.overworld().getGameTime();
-        long cycle = gameTime / EconomyBalance.CYCLE_TICKS;
-        if (cycle == lastProcessedCycle) return;
-        lastProcessedCycle = cycle;
-
-        if (gameTime < EconomyBalance.CYCLE_TICKS) return;
-        runCycle(server);
+        if (!server.isSameThread()) throw new IllegalStateException("Economy requires the server thread");
+        try {
+            var result = scheduledCycle(CatanSavedData.get(server), server.overworld().getGameTime());
+            if (result == ScheduledResult.INITIALIZED)
+                CatanCraft.LOGGER.info("Economy clock initialized without a catch-up payment; next scheduled boundary will produce normally");
+            else if (result == ScheduledResult.POSTED)
+                CatanCraft.LOGGER.info("Scheduled CatanCraft production posted with its saved cycle checkpoint");
+        } catch (RuntimeException failure) {
+            // Unknown receipts never become an implicit fresh clock, and never flood each tick.
+            if (server.getTickCount() % 1200 == 0)
+                CatanCraft.LOGGER.error("Automatic economy paused; balances/checkpoint preserved for review", failure);
+        }
     }
 
-    public static void runCycle(MinecraftServer server) {
-        CatanSavedData data = CatanSavedData.get(server);
+    /** The tick entrypoint and native tests share this exact posting path.
+     * No catch-up minting and no wall-clock production. First adoption skips the
+     * ambiguous current interval of an older save. A rewound game clock cannot replay.
+     */
+    public static ScheduledResult scheduledCycle(CatanSavedData data, long gameTime) {
+        if (gameTime < 0) throw new IllegalArgumentException("Negative game time");
+        long cycle = gameTime / EconomyBalance.CYCLE_TICKS;
+        if (!data.hasEconomySchedule()) {
+            data.checkpointEconomyCycle(cycle);
+            return ScheduledResult.INITIALIZED;
+        }
+        if (cycle <= data.lastScheduledEconomyCycle()) return ScheduledResult.UNCHANGED;
 
+        // All fallible calculation runs on a detached NBT snapshot. No partial
+        // raw/processor/cash phase can escape to live balances if computation fails.
+        var staged = CatanSavedData.load(data.save(new net.minecraft.nbt.CompoundTag()));
+        applyCycle(staged);
+        for (NationData n : data.nations()) {
+            NationData after = staged.nation(n.id());
+            if (after == null || after.treasury() < 0)
+                throw new IllegalStateException("Invalid staged economy result");
+            for (ResourceType resource : ResourceType.values())
+                if (after.resource(resource) < 0) throw new IllegalStateException("Invalid staged stockpile");
+        }
+        // This is synchronous on the main server thread; no world/save callback
+        // occurs between balance publication and checkpoint in the same SavedData.
+        for (NationData n : data.nations()) {
+            NationData after = staged.nation(n.id());
+            n.setTreasury(after.treasury());
+            for (ResourceType resource : ResourceType.values())
+                n.addResource(resource, after.resource(resource) - n.resource(resource));
+        }
+        data.checkpointEconomyCycle(cycle);
+        return ScheduledResult.POSTED;
+    }
+
+    /** Explicit operator/demo cycle commands remain deliberate grants, separate
+     * from the scheduled checkpoint. They must not postpone or replay that clock. */
+    public static void runCycle(MinecraftServer server) {
+        applyCycle(CatanSavedData.get(server));
+    }
+
+    private static void applyCycle(CatanSavedData data) {
         // Phase 1: every territory that contains Agriculture produces it first.
         // This keeps upkeep deterministic even for multi-resource starter regions.
         for (TerritoryData territory : data.territories()) {

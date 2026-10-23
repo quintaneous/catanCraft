@@ -24,7 +24,7 @@ final class DefenseCityReservations {
                     if(!root.toString().equals(identity.getString("world"))||!city.equals(identity.getString("city"))||!journal.hasUUID("id")||!phases.contains(phase))
                         throw new IOException("Unknown or foreign defense city history: "+file.getFileName());
                     if(!file.equals(ownJournal)&&!Set.of("COMMITTED","ROLLED_BACK").contains(phase))
-                        throw new IOException("Pending "+kind+" city operation; recover retained history "+file.getFileName()+" first");
+                        throw new PreparationDeferred("Pending "+kind+" city operation; recover retained history "+file.getFileName()+" first");
                 }
             }
         }

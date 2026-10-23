@@ -48,7 +48,7 @@ final class ConstructionHazards {
         if(ordered.isEmpty())return new Guard(level,null,List.of());
         AABB bounds=null;
         for(Write w:ordered) {
-            if(!level.hasChunkAt(w.pos()))throw new IOException("Unloaded construction chunk at "+w.pos());
+            if(!level.hasChunkAt(w.pos()))throw new PreparationDeferred("Unloaded construction chunk at "+w.pos());
             AABB b=new AABB(w.pos()).inflate(2);bounds=bounds==null?b:bounds.minmax(b);
         }
         // Native query intersects full bounds, including vehicles whose center is outside.
@@ -69,7 +69,7 @@ final class ConstructionHazards {
                 if(!e.getBoundingBox().inflate(2).intersects(new AABB(w.pos())))continue;
                 Map<BlockPos,VoxelShape> shapes=new LinkedHashMap<>();
                 for(BlockPos p:probes) {
-                    if(!level.hasChunkAt(p))throw new IOException("Unloaded construction boundary at "+p);
+                    if(!level.hasChunkAt(p))throw new PreparationDeferred("Unloaded construction boundary at "+p);
                     shapes.put(p,shape(view,p,e));
                 }
                 previous.put(e,shapes);
@@ -116,7 +116,7 @@ final class ConstructionHazards {
         catch(RuntimeException ex){throw new IOException("Cannot prove safe native shape at "+p,ex);}
     }
     private static IOException hazard(Entity e,BlockPos p,String reason) {
-        return new IOException("Construction hazard: "+e.getType()+" "+e.getUUID()+" near "+p+": "+reason);
+        return new PreparationDeferred("Construction hazard: "+e.getType()+" "+e.getUUID()+" near "+p+": "+reason);
     }
     private static final class Overlay implements BlockGetter {
         final ServerLevel level;final Map<BlockPos,BlockState> states=new HashMap<>();

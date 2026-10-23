@@ -15,7 +15,7 @@ import net.minecraft.network.chat.Component;
 
 import java.util.List;
 
-/** Operator diagnostics only. All R5 edits/purchases remain disabled. */
+/** Read-only diagnostics and legacy explicit pilot controls; normal base setup is separate. */
 public final class R5SurveyCommand {
     private R5SurveyCommand() {}
 
@@ -172,8 +172,8 @@ public final class R5SurveyCommand {
 
     private static int status(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
-                "R5-2: Civic builds and house migration DISABLED; " +
-                "only three opt-in test-world streetscape groups can be applied. READ-ONLY /catan r5 plan a commercial|logistics simulates prerequisite writes. " +
+                "R5: guarded civic purchases and house/public transactions are implemented. " +
+                "Bound fresh-demo cities automatically prepare paths and houses. Legacy park pilots remain explicit. READ-ONLY /catan r5 plan a commercial|logistics simulates prerequisite writes. " +
                 "Use /catan r5 city a, /catan r5 civic a commercial, or " +
                 "/catan r5 group a front_public_park."),false);
         return 1;
@@ -216,8 +216,8 @@ public final class R5SurveyCommand {
         if (report.matched())
             source.sendSuccess(() -> Component.literal(
                     "All sampled/live expected-before cells currently match. " +
-                    "R5 world changes remain disabled pending saved-state migration, " +
-                    "terrain/entity checks and durable rollback."),false);
+                    "This diagnostic performed no writes and is not purchase authorization. " +
+                    "Normal construction uses guarded transactions with source, entity and journal checks."),false);
         return report.matched()?1:0;
     }
 }

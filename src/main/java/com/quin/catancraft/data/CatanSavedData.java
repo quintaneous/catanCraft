@@ -29,6 +29,28 @@ public final class CatanSavedData extends SavedData {
     @Nullable private String activeMonumentId;
     @Nullable private String lastActivatedMonumentId;
     private long nextMonumentActivationGameTime;
+    // Stored in the SAME NBT snapshot as balances. Preserve malformed/unknown tags
+    // verbatim and refuse automatic posting rather than silently resetting them.
+    @Nullable private Tag economySchedule;
+
+    public boolean hasEconomySchedule() { return economySchedule != null; }
+
+    public long lastScheduledEconomyCycle() {
+        if (!(economySchedule instanceof CompoundTag n)
+                || !n.contains("schema", Tag.TAG_INT) || n.getInt("schema") != 1
+                || !n.contains("cycle", Tag.TAG_LONG) || n.getLong("cycle") < 0)
+            throw new IllegalStateException("Unrecognized economy cycle checkpoint; automatic production paused, retain saved data");
+        return n.getLong("cycle");
+    }
+
+    public void checkpointEconomyCycle(long cycle) {
+        if (cycle < 0 || (hasEconomySchedule() && cycle < lastScheduledEconomyCycle()))
+            throw new IllegalArgumentException("Economy cycle checkpoint cannot move backwards");
+        CompoundTag n = new CompoundTag();
+        n.putInt("schema", 1); n.putLong("cycle", cycle);
+        economySchedule = n;
+        setDirty();
+    }
 
     public static CatanSavedData get(MinecraftServer server) {
         return server.overworld().getDataStorage().computeIfAbsent(
@@ -274,6 +296,7 @@ public final class CatanSavedData extends SavedData {
 
     @Override
     public CompoundTag save(CompoundTag tag) {
+        if (economySchedule != null) tag.put("economySchedule", economySchedule.copy());
         ListTag nationList = new ListTag();
         for (NationData nation : nations.values()) {
             nationList.add(nation.save());
@@ -312,6 +335,7 @@ public final class CatanSavedData extends SavedData {
 
     public static CatanSavedData load(CompoundTag tag) {
         CatanSavedData data = new CatanSavedData();
+        if (tag.contains("economySchedule")) data.economySchedule = tag.get("economySchedule").copy();
 
         ListTag nationList = tag.getList("nations", Tag.TAG_COMPOUND);
         for (int i = 0; i < nationList.size(); i++) {

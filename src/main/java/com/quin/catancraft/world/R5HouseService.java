@@ -17,7 +17,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-/** Explicit maintenance only; startup discovers pending journals without initiating writes. */
+/** Immutable house transactions shared by automatic base preparation and explicit maintenance. */
 @Mod.EventBusSubscriber(modid=CatanCraft.MOD_ID)
 public final class R5HouseService {
     private R5HouseService(){}
@@ -37,6 +37,14 @@ public final class R5HouseService {
     }
     static synchronized MapAssetService.Result operation(MinecraftServer server,String input,R5HouseTransaction.Action action) {
         try {
+            var environment=context(server,input,action,action!=R5HouseTransaction.Action.STATUS,false);
+            String city=input.toLowerCase(Locale.ROOT);
+            var result=R5HouseTransaction.run(environment,action);CatanCraft.LOGGER.info("R5_HOUSES city={} action={} writes={} {}",city,action,result.writes(),result.message());
+            return new MapAssetService.Result(true,result.message(),result.writes());
+        }catch(Exception ex){CatanCraft.LOGGER.error("R5 house operation refused",ex);return new MapAssetService.Result(false,"R5 house operation stopped: "+ex.getMessage()+". Zero charge. Preserve blocks and history; inspect status before recovery.",0);}
+    }
+    static R5HouseTransaction.Environment context(MinecraftServer server,String input,
+            R5HouseTransaction.Action action,boolean load,boolean automatic)throws IOException {
             Path root=TownHallRepairService.authorize(server);String city=input.toLowerCase(Locale.ROOT);
             if(!city.matches("[a-p]"))throw new IOException("Unknown city");
             var def=MapDefinitionManager.territory(city);ProducerService.validateMap(def);
@@ -44,14 +52,16 @@ public final class R5HouseService {
             if(t==null||t.ownerNationId()==null||data.nation(t.ownerNationId())==null||data.placedMapAsset("territory:"+city+":city_base")==null)throw new IOException("Owned activated city required");
             Path directory=root.resolve("data");Files.createDirectories(directory);List<Path> history=new ArrayList<>();
             try(var paths=Files.newDirectoryStream(directory,"catancraft_r5_houses_"+city+"_*.dat")){for(Path p:paths){if(history.size()>128)throw new IOException("Unexpected house history count");history.add(p);}}
-            Path active=null;List<Path> committed=new ArrayList<>();
+            Path active=null;List<Path> committed=new ArrayList<>();boolean rolledBack=false;
             for(Path p:history) {
                 CompoundTag journal=ProducerJournal.read(p),identity=journal.getCompound("identity");
                 if(!identity.getString("world").equals(root.toString())||!identity.getString("dimension").equals(def.dimension())||!identity.getString("city").equals(city)||!identity.getString("owner").equals(String.valueOf(t.ownerNationId())))throw new IOException("Foreign house history identity; retain for review");
                 var phase=R5HouseTransaction.phase(journal);
                 if(phase==R5HouseTransaction.Phase.COMMITTED)committed.add(p);
-                else if(phase!=R5HouseTransaction.Phase.ROLLED_BACK){if(active!=null)throw new IOException("Multiple pending house journals");active=p;}
+                else if(phase==R5HouseTransaction.Phase.ROLLED_BACK)rolledBack=true;
+                else{if(active!=null)throw new IOException("Multiple pending house journals");active=p;}
             }
+            if(automatic&&active==null&&committed.isEmpty()&&rolledBack)throw new IOException("House history was intentionally rolled back; automatic replay is disabled");
             if(committed.size()>1)throw new IOException("Multiple committed house histories require review");
             if(active!=null&&action==R5HouseTransaction.Action.APPLY)throw new IOException("Pending house operation; use status then resume or rollback");
             Path selected=active!=null?active:committed.isEmpty()?null:committed.get(0);
@@ -61,19 +71,16 @@ public final class R5HouseService {
             final var level=server.overworld();List<net.minecraft.world.phys.AABB> boxes=new ArrayList<>();
             for(String group:R5HouseRevisions.groups()) {
                 var plan=R5HouseRevisions.plan(group,R5HouseRevisions.Revision.R5,anchor);var box=TownHallRepairTransaction.bounds(plan);boxes.add(box);
-                if(action!=R5HouseTransaction.Action.STATUS)for(int x=((int)box.minX-2)>>4;x<=((int)box.maxX+2)>>4;x++)for(int z=((int)box.minZ-2)>>4;z<=((int)box.maxZ+2)>>4;z++)level.getChunk(x,z);
+                if(load)for(int x=((int)box.minX-2)>>4;x<=((int)box.maxX+2)>>4;x++)for(int z=((int)box.minZ-2)>>4;z<=((int)box.maxZ+2)>>4;z++)level.getChunk(x,z);
             }
-            if(action!=R5HouseTransaction.Action.STATUS)StreetscapeService.requireLoadedEntities(level,boxes);
-            var environment=new R5HouseTransaction.Environment() {
+            if(load)StreetscapeService.requireLoadedEntities(level,boxes);
+            return new R5HouseTransaction.Environment() {
                 public net.minecraft.server.level.ServerLevel level(){return level;}public Path file(){return file;}public MapAnchor anchor(){return anchor;}
                 public CompoundTag identity(){CompoundTag n=new CompoundTag();n.putString("world",root.toString());n.putString("dimension",def.dimension());n.putString("city",city);n.putString("owner",String.valueOf(t.ownerNationId()));n.putIntArray("anchor",new int[]{anchor.x(),anchor.y(),anchor.z(),anchor.rotation()});return n;}
                 public CompoundTag ledger(){return data.save(new CompoundTag());}
                 public void save()throws IOException{if(!server.saveEverything(true,true,true))throw new IOException("House world save incomplete");}
                 public void allowWrite(BlockPos p)throws IOException{if(!owner.equals(t.ownerNationId())||!def.siegeRegion().contains(p)||!def.restorationRegion().contains(p))throw new IOException("House mutation outside authorized ownership/bounds");}
             };
-            var result=R5HouseTransaction.run(environment,action);CatanCraft.LOGGER.info("R5_HOUSES city={} action={} writes={} {}",city,action,result.writes(),result.message());
-            return new MapAssetService.Result(true,result.message(),result.writes());
-        }catch(Exception ex){CatanCraft.LOGGER.error("R5 house operation refused",ex);return new MapAssetService.Result(false,"R5 house operation stopped: "+ex.getMessage()+". Zero charge. Preserve blocks and history; inspect status before recovery.",0);}
     }
     @SubscribeEvent public static void discoverPending(ServerStartedEvent event) {
         try {

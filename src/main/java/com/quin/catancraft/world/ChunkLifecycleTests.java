@@ -136,7 +136,7 @@ public final class ChunkLifecycleTests {
             return new SectorContracts.Contract(c.root().toString(),"a",side,plan,Map.of(SectorContracts.Corner.NORTH_WEST,NORTH,SectorContracts.Corner.NORTH_EAST,NORTH),neighbors,Set.of(),SectorPriceCatalog.cost(side,source));
         }
     }
-    private static final class PublicFixture implements StreetscapeTransaction.Environment {
+    static final class PublicFixture implements StreetscapeTransaction.Environment {
         final GameTestHelper helper;final StreetscapeR5.Plan plan;final Path path;final CompoundTag ledger=new CompoundTag();int previousRandomTickSpeed;
         PublicFixture(GameTestHelper h,int offset)throws IOException{helper=h;plan=StreetscapeR5.plan(new MapAnchor("base-test",offset,200,offset,0));path=h.getLevel().getServer().getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize().resolve("data/base-init-test/"+UUID.randomUUID()+".dat");Files.createDirectories(path.getParent());ledger.putInt("resources",1234);}
         void stage(){

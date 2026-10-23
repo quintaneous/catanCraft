@@ -18,7 +18,7 @@ import java.io.*;
 import java.nio.file.*;
 import java.util.*;
 
-/** Explicit OP maintenance on the already authorized R7 development world; no install on startup. */
+/** Guarded public transactions; maintenance commands and automatic base-city setup share this path. */
 @Mod.EventBusSubscriber(modid=CatanCraft.MOD_ID)
 public final class StreetscapeService {
     private StreetscapeService(){}
@@ -78,7 +78,7 @@ public final class StreetscapeService {
         for(var box:boxes)for(int x=((int)box.minX-1)>>4;x<=((int)box.maxX+1)>>4;x++)
             for(int z=((int)box.minZ-1)>>4;z<=((int)box.maxZ+1)>>4;z++)
                 if(!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(x,z)))
-                    throw new IOException("Public-feature entities are still loading; wait near the city, then check status and retry. No blocks written by this request");
+                    throw new PreparationDeferred("Public-feature entities are still loading; automatic preparation will wait. No blocks written by this request");
     }
     /** Discovery only: a restart never initiates a migration or guesses that mixed blocks are safe. */
     @SubscribeEvent public static void recoverNotice(ServerStartedEvent event) {
@@ -89,7 +89,7 @@ public final class StreetscapeService {
                 try {
                     var phase=StreetscapeTransaction.phase(StreetscapeJournal.read(p));
                     if(phase!=StreetscapeTransaction.Phase.COMMITTED&&phase!=StreetscapeTransaction.Phase.ROLLED_BACK)
-                        CatanCraft.LOGGER.warn("R5 public transaction {} retained in {}. Use /catan r5 public status {} then guarded resume/rollback; no automatic writes.",c,phase,c);
+                        CatanCraft.LOGGER.warn("R5 public transaction {} retained in {}. Authorized base-city initialization may resume the same journal; otherwise retain for guarded review. City {}.",c,phase,c);
                 }catch(Exception ex){CatanCraft.LOGGER.error("R5 public journal unreadable; retain history for city "+c,ex);}
             }
         }catch(IOException notAuthorized){/* Not an authorized development world: no changes. */}

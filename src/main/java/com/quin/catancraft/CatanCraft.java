@@ -35,7 +35,7 @@ public final class CatanCraft {
         MinecraftForge.EVENT_BUS.register(new NationVehicleProtection());
         MinecraftForge.EVENT_BUS.register(new AdminSpeedCommand());
         MinecraftForge.EVENT_BUS.register(new TerritoryHudSync());
-        LOGGER.info("CatanCraft 0.1.9 loading");
+        LOGGER.info("CatanCraft {} loading", net.minecraftforge.fml.ModList.get().getModContainerById(MOD_ID).map(c -> c.getModInfo().getVersion().toString()).orElse("unknown"));
     }
 
     @SubscribeEvent
