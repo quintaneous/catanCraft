@@ -1,87 +1,18 @@
-name: Sector residency and base-city readiness
+name: Sector readiness verified delivery
 on:
   push:
     branches: [chatgpt/sector-readiness-0.1.31]
   workflow_dispatch:
 permissions:
-  contents: write
+  contents: read
 jobs:
-  prepare:
-    runs-on: ubuntu-latest
-    timeout-minutes: 5
-    outputs:
-      source: ${{ steps.pin.outputs.sha }}
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: Record time-aware readiness changes as actual source
-        run: |
-          set -euo pipefail
-          python3 - <<'PY'
-          from pathlib import Path
-          root=Path('src/main/java/com/quin/catancraft/world')
-          p=root/'CityBasePreparation.java';s=p.read_text()
-          if 'long startNanos' not in s:
-              s=s.replace('int startTick,EnvironmentSource source','int startTick,long startNanos,EnvironmentSource source')
-              s=s.replace('server.getTickCount(),()->','server.getTickCount(),System.nanoTime(),()->')
-              s=s.replace('server.getTickCount()-work.startTick()>600','server.getTickCount()-work.startTick()>600&&System.nanoTime()-work.startNanos()>30_000_000_000L')
-              assert 'long startNanos' in s and s.count('System.nanoTime(),()->')==2
-              p.write_text(s)
-          p=root/'SectorService.java';s=p.read_text()
-          if 'loadingStartedNanos' not in s:
-              s=s.replace('private long maxSlice;private int slices,maxWrites,loadingTicks;','private long maxSlice,loadingStartedNanos;private int slices,maxWrites,loadingTicks;')
-              s=s.replace('if(++current.loadingTicks>600)throw', 'if(current.loadingTicks++==0)current.loadingStartedNanos=System.nanoTime();\n                if(current.loadingTicks>600&&System.nanoTime()-current.loadingStartedNanos>30_000_000_000L)throw')
-              assert s.count('loadingStartedNanos')==3
-              p.write_text(s)
-          p=root/'ChunkLifecycleTests.java';s=p.read_text()
-          if 'private static void waitReady' not in s:
-              s=s.replace('batch="load_01",timeoutTicks=1000','batch="load_01",timeoutTicks=10000')
-              s=s.replace('batch="load_05",timeoutTicks=1500','batch="load_05",timeoutTicks=10000').replace('batch="load_06",timeoutTicks=1500','batch="load_06",timeoutTicks=10000')
-              s=s.replace('keep(h,lease,0,()->{','waitReady(h,lease,0,()->keep(h,lease,0,()->{',1)
-              old='h.runAfterDelay(250,()->{h.assertTrue(lease.positions().stream().allMatch(p->level.getChunkSource().getChunkNow(p.x,p.z)==null),"Closed lease retained distant chunks");h.succeed();});'
-              assert old in s
-              s=s.replace(old,'waitUnloaded(h,lease,0);')
-              s=s.replace('        });\n    }\n    private static void keep','        }));\n    }\n    private static void keep',1)
-              at='    private static void keep'
-              insert='''    private static void waitReady(GameTestHelper h,SectorChunkLease lease,int ticks,Runnable done){h.runAfterDelay(1,()->{
-                  h.assertTrue(ticks<8000,"Entities did not become ready in isolated load fixture");
-                  try{lease.keepAlive();if(lease.ready())done.run();else waitReady(h,lease,ticks+1,done);}catch(IOException e){throw new RuntimeException(e);}
-              });}
-              private static void waitUnloaded(GameTestHelper h,SectorChunkLease lease,int ticks){h.runAfterDelay(1,()->{
-                  h.assertTrue(ticks<8000,"Closed lease retained distant chunks");
-                  if(lease.positions().stream().allMatch(p->h.getLevel().getChunkSource().getChunkNow(p.x,p.z)==null))h.succeed();else waitUnloaded(h,lease,ticks+1);
-              });}
-          '''
-              s=s.replace(at,insert+at,1)
-              s=s.replace('h.assertTrue(ticks<800,"Public initializer stuck")','h.assertTrue(ticks<8000,"Public initializer stuck")')
-              s=s.replace('"Conflict was overwritten");h.assertTrue(f.ledger()', '"Conflict was overwritten");h.assertTrue(CityBasePreparation.reason(h.getLevel().getServer(),"public-conflict").contains("Streetscape conflict"),"Expected actual source conflict, not an unrelated setup failure: "+CityBasePreparation.reason(h.getLevel().getServer(),"public-conflict"));h.assertTrue(f.ledger()')
-              assert 'private static void waitReady' in s and 'Expected actual source conflict' in s
-              p.write_text(s)
-          PY
-          git config user.name 'CatanCraft validation'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add src/main/java
-          if ! git diff --cached --quiet; then
-            git commit -m 'Await real entity readiness before residency assertions; bound runtime loading by elapsed time and ticks'
-            git push origin HEAD:chatgpt/sector-readiness-0.1.31
-          fi
-          git diff --exit-code 61ceb9537a99f825e2693b8860da7b7a364d9565 -- src/main/resources tests/fixtures
-      - id: pin
-        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
-  validate:
-    needs: prepare
+  delivery:
     runs-on: ubuntu-latest
     timeout-minutes: 14
-    strategy:
-      fail-fast: false
-      max-parallel: 7
-      matrix:
-        spec: [catancraft_chunk_lifecycle:6, catancraft_wall_gui:8, catancraft_sector_prices:7, catancraft_sectors_service:15, catancraft_public27:11, catancraft_sectors:22, catancraft_sectors_natural:7]
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: ${{ needs.prepare.outputs.source }}
+          ref: 16e20e9b03fcc184142bcd7e8393b15694753a47
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -89,7 +20,7 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.8'
-      - name: Build pinned final candidate
+      - name: Build exact source shared with parallel retained regressions
         run: |
           set -o pipefail
           mkdir -p build/readiness-evidence
@@ -97,29 +28,21 @@ jobs:
           git archive --format=zip HEAD -o build/readiness-evidence/source.zip
           gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/readiness-evidence/build.log
           sha256sum build/libs/*.jar > build/readiness-evidence/JAR_SHA256.txt
-      - name: Native test namespace with exact count
+      - name: Final lifecycle checks including true source-conflict refusal
         run: |
           set -uo pipefail
-          spec='${{ matrix.spec }}'; ns=${spec%:*}; count=${spec#*:}; status=0
-          directory=build/$ns-run
-          if [ "$ns" = catancraft_public27 ]; then directory=build/public-gametest-run; fi
-          mkdir -p "$directory/config/catancraft/schematics"
-          cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$directory/config/catancraft/schematics/"
+          ns=catancraft_chunk_lifecycle
+          mkdir -p build/$ns-run/config/catancraft/schematics
+          cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem build/$ns-run/config/catancraft/schematics/
+          status=0
           timeout 600s gradle runGameTestServer -PgameTestNamespace=$ns --daemon --max-workers=4 > build/readiness-evidence/$ns.log 2>&1 || status=$?
           echo "$status" > build/readiness-evidence/$ns.exit
           cat build/readiness-evidence/$ns.log
-          test "$status" = 0 && grep -Fq "$count GAME TESTS COMPLETE" build/readiness-evidence/$ns.log && grep -Fq "All $count required tests passed" build/readiness-evidence/$ns.log
-      - name: Retained Python packaging and economy checks
-        if: matrix.spec == 'catancraft_chunk_lifecycle:6' && always()
-        run: |
-          set -o pipefail
-          python -m unittest discover -s tests -p 'test_prepare_fresh_demo.py' -v 2>&1 | tee build/readiness-evidence/python-prepare.log
-          python -m unittest discover -s tests -p 'test_package_authored_demo.py' -v 2>&1 | tee build/readiness-evidence/python-package.log
-          python -m unittest discover -s tests -p 'test_sector_economy.py' -v 2>&1 | tee build/readiness-evidence/python-economy.log
+          test "$status" = 0 && grep -Fq '6 GAME TESTS COMPLETE' build/readiness-evidence/$ns.log && grep -Fq 'All 6 required tests passed' build/readiness-evidence/$ns.log
       - uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: readiness-${{ matrix.spec }}
+          name: sector-readiness-final
           path: |
             build/libs/*.jar
             build/readiness-evidence/
