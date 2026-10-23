@@ -18,7 +18,7 @@ final class CityBasePreparation {
     private static final Map<String,String> attempted=new HashMap<>();
     private static Pending pending;
     private interface EnvironmentSource { StreetscapeTransaction.Environment get() throws IOException; }
-    private record Pending(String city,SectorChunkLease lease,int startTick,EnvironmentSource source){}
+    private record Pending(String city,SectorChunkLease lease,int startTick,long startNanos,EnvironmentSource source){}
     private CityBasePreparation(){}
     static boolean isRunning(MinecraftServer server){return owner==server&&pending!=null;}
     static String reason(MinecraftServer server,String city){
@@ -41,7 +41,7 @@ final class CityBasePreparation {
         owner=server;AABB bounds=null;
         for(var cell:env.plan().cells()){AABB b=new AABB(cell.pos()).inflate(2);bounds=bounds==null?b:bounds.minmax(b);}
         if(bounds==null)throw new IOException("Empty public fixture");
-        pending=new Pending(key,SectorChunkLease.acquire(env.level(),bounds),server.getTickCount(),()->env);attempted.put(key,"");
+        pending=new Pending(key,SectorChunkLease.acquire(env.level(),bounds),server.getTickCount(),System.nanoTime(),()->env);attempted.put(key,"");
     }
     static void tick(MinecraftServer server){
         if(owner!=server){if(owner!=null)stopped(owner);owner=server;}
@@ -51,7 +51,7 @@ final class CityBasePreparation {
             try {
                 work.lease().keepAlive();
                 if(!work.lease().ready()){
-                    if(server.getTickCount()-work.startTick()>600)throw new IOException("City preparation timed out loading entities; restart/review required");
+                    if(server.getTickCount()-work.startTick()>600&&System.nanoTime()-work.startNanos()>30_000_000_000L)throw new IOException("City preparation timed out loading entities; restart/review required");
                     return;
                 }
                 // Reauthorize at the actual write boundary, not only when the job was queued.
@@ -84,7 +84,7 @@ final class CityBasePreparation {
                 for(var cell:plan.cells()){AABB b=new AABB(cell.pos()).inflate(2);bounds=bounds==null?b:bounds.minmax(b);}
                 for(var b:plan.boxes())bounds=bounds==null?b:bounds.minmax(b);
                 if(bounds==null)throw new IOException("Empty city public contract");
-                pending=new Pending(city,SectorChunkLease.acquire(server.overworld(),bounds),server.getTickCount(),()->{
+                pending=new Pending(city,SectorChunkLease.acquire(server.overworld(),bounds),server.getTickCount(),System.nanoTime(),()->{
                     FreshDemoAuthorization.authorize(server);
                     return StreetscapeService.context(server,city,true);
                 });

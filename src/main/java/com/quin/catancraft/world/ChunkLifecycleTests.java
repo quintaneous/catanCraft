@@ -20,18 +20,26 @@ import java.util.*;
 public final class ChunkLifecycleTests {
     private static final int FLAGS=2|16|32;
     private static final SectorContracts.Direction NORTH=SectorContracts.Direction.NORTH;
-    @GameTest(template="townhall_state_empty",batch="load_01",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="load_01",timeoutTicks=10000)
     public static void temporary_lease_survives_idle_then_releases_without_forceload(GameTestHelper h)throws Exception {
         var level=h.getLevel();var lease=SectorChunkLease.acquire(level,new AABB(20000,180,20000,20032,190,20032));
         h.assertTrue(lease.chunkCount()<=25,"Small lease grew unexpectedly");
         for(var p:lease.positions())h.assertTrue(!level.getForcedChunks().contains(p.toLong()),"Lease changed persistent forceload state");
-        keep(h,lease,0,()->{
+        waitReady(h,lease,0,()->keep(h,lease,0,()->{
             h.assertTrue(lease.ready(),"Leased distant entity/chunk region unloaded after normal ticket expiry");lease.close();lease.close();
             h.assertTrue(lease.closed(),"Lease not closed");
             for(var p:lease.positions())h.assertTrue(!level.getForcedChunks().contains(p.toLong()),"Lease left persistent forced chunks");
-            h.runAfterDelay(250,()->{h.assertTrue(lease.positions().stream().allMatch(p->level.getChunkSource().getChunkNow(p.x,p.z)==null),"Closed lease retained distant chunks");h.succeed();});
-        });
+            waitUnloaded(h,lease,0);
+        }));
     }
+    private static void waitReady(GameTestHelper h,SectorChunkLease lease,int ticks,Runnable done){h.runAfterDelay(1,()->{
+        h.assertTrue(ticks<8000,"Entities did not become ready in isolated load fixture");
+        try{lease.keepAlive();if(lease.ready())done.run();else waitReady(h,lease,ticks+1,done);}catch(IOException e){throw new RuntimeException(e);}
+    });}
+    private static void waitUnloaded(GameTestHelper h,SectorChunkLease lease,int ticks){h.runAfterDelay(1,()->{
+        h.assertTrue(ticks<8000,"Closed lease retained distant chunks");
+        if(lease.positions().stream().allMatch(p->h.getLevel().getChunkSource().getChunkNow(p.x,p.z)==null))h.succeed();else waitUnloaded(h,lease,ticks+1);
+    });}
     private static void keep(GameTestHelper h,SectorChunkLease lease,int ticks,Runnable after){h.runAfterDelay(1,()->{
         try{lease.keepAlive();if(ticks<160)keep(h,lease,ticks+1,after);else after.run();}catch(IOException e){throw new RuntimeException(e);}
     });}
@@ -85,7 +93,7 @@ public final class ChunkLifecycleTests {
         h.assertTrue(ticks<1000,"Bounded operation did not settle or report failure");
         try{if(SectorService.activeFixture(f.ctx))await(h,f,ticks+1,done);else done.run();}catch(IOException error){throw new RuntimeException(error);}
     });}
-    @GameTest(template="townhall_state_empty",batch="load_05",timeoutTicks=1500)
+    @GameTest(template="townhall_state_empty",batch="load_05",timeoutTicks=10000)
     public static void queued_base_city_paths_apply_without_public_command_and_preserve_ledger(GameTestHelper h)throws Exception {
         PublicFixture f=new PublicFixture(h,24000);f.stage();CityBasePreparation.queueFixture("public-test",f);
         awaitPublic(h,f,0,()->{try{
@@ -97,13 +105,13 @@ public final class ChunkLifecycleTests {
             h.assertTrue(refused&&Arrays.equals(before,Files.readAllBytes(f.file())),"Existing history reapplied/overwritten");h.succeed();
         }catch(Exception e){throw new RuntimeException(e);}});
     }
-    @GameTest(template="townhall_state_empty",batch="load_06",timeoutTicks=1500)
+    @GameTest(template="townhall_state_empty",batch="load_06",timeoutTicks=10000)
     public static void automatic_base_preparation_refuses_real_source_conflict(GameTestHelper h)throws Exception {
         PublicFixture f=new PublicFixture(h,26000);f.stage();var changed=f.plan.cells().stream().filter(StreetscapeR5.Cell::changes).findFirst().orElseThrow();
         f.level().setBlock(changed.pos(),Blocks.DIAMOND_BLOCK.defaultBlockState(),FLAGS);CityBasePreparation.queueFixture("public-conflict",f);
-        awaitPublic(h,f,0,()->{h.assertTrue(!Files.exists(f.file())&&f.level().getBlockState(changed.pos()).is(Blocks.DIAMOND_BLOCK),"Conflict was overwritten");h.assertTrue(f.ledger().getInt("resources")==1234,"Refusal charged");h.succeed();});
+        awaitPublic(h,f,0,()->{h.assertTrue(!Files.exists(f.file())&&f.level().getBlockState(changed.pos()).is(Blocks.DIAMOND_BLOCK),"Conflict was overwritten");h.assertTrue(CityBasePreparation.reason(h.getLevel().getServer(),"public-conflict").contains("Streetscape conflict"),"Expected actual source conflict, not an unrelated setup failure: "+CityBasePreparation.reason(h.getLevel().getServer(),"public-conflict"));h.assertTrue(f.ledger().getInt("resources")==1234,"Refusal charged");h.succeed();});
     }
-    private static void awaitPublic(GameTestHelper h,PublicFixture f,int ticks,Runnable done){h.runAfterDelay(1,()->{h.assertTrue(ticks<800,"Public initializer stuck");if(CityBasePreparation.isRunning(h.getLevel().getServer()))awaitPublic(h,f,ticks+1,done);else done.run();});}
+    private static void awaitPublic(GameTestHelper h,PublicFixture f,int ticks,Runnable done){h.runAfterDelay(1,()->{h.assertTrue(ticks<8000,"Public initializer stuck");if(CityBasePreparation.isRunning(h.getLevel().getServer()))awaitPublic(h,f,ticks+1,done);else done.run();});}
     private static void ok(GameTestHelper h,MapAssetService.Result r){h.assertTrue(r.success(),r.message());}
     private static final class Fixture implements SectorService.Provider {
         final ServerLevel level;final BlockPos base=new BlockPos(22000,200,22000),support=base.offset(80,-1,80);

@@ -31,7 +31,7 @@ public final class SectorService {
         private final SectorTransaction.Environment environment;
         private final SectorTransaction.Action action;
         private final SectorTransaction.Fault fault;
-        private long maxSlice;private int slices,maxWrites,loadingTicks;
+        private long maxSlice,loadingStartedNanos;private int slices,maxWrites,loadingTicks;
         Active(Context context,SectorTransaction.Runner runner,SectorChunkLease lease){
             this.context=context;this.runner=runner;this.lease=lease;environment=null;action=null;fault=null;
         }
@@ -49,7 +49,8 @@ public final class SectorService {
         try{
             current.lease.keepAlive();
             if(!current.lease.ready()){
-                if(++current.loadingTicks>600)throw new IOException("Timed out loading the bounded construction area; retained history is unchanged and can be resumed");
+                if(current.loadingTicks++==0)current.loadingStartedNanos=System.nanoTime();
+                if(current.loadingTicks>600&&System.nanoTime()-current.loadingStartedNanos>30_000_000_000L)throw new IOException("Timed out loading the bounded construction area; retained history is unchanged and can be resumed");
                 return;
             }
             current.loadingTicks=0;
