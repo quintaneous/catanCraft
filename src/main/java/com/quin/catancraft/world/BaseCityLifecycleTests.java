@@ -25,6 +25,25 @@ public final class BaseCityLifecycleTests {
         for(var c:f.plan.cells())h.assertTrue(StreetscapeR5.matches(f.level().getBlockState(c.pos()),c.after()),"Path missing "+c.pos());
         h.assertTrue(f.ledger().getInt("resources")==1234,"Preparation charged");
     }
+    @FunctionalInterface private interface FixtureAction { void run() throws Exception; }
+    // Stage historical fixtures only after their complete read boundary is resident.
+    // The production queue still acquires and releases its own independent lease.
+    private static void readyPublic(GameTestHelper h,ChunkLifecycleTests.PublicFixture f,FixtureAction action)throws Exception {
+        net.minecraft.world.phys.AABB bounds=null;
+        for(var c:f.plan.cells()){var b=new net.minecraft.world.phys.AABB(c.pos()).inflate(2);bounds=bounds==null?b:bounds.minmax(b);}
+        for(var b:f.plan.boxes())bounds=bounds==null?b:bounds.minmax(b);
+        waitFixture(h,SectorChunkLease.acquire(f.level(),bounds),0,action);
+    }
+    private static void waitFixture(GameTestHelper h,SectorChunkLease lease,int ticks,FixtureAction action) {
+        h.runAfterDelay(1,()->{
+            try {
+                h.assertTrue(ticks<8000,"Public fixture failed to load before history staging");
+                lease.keepAlive();
+                if(!lease.ready()){waitFixture(h,lease,ticks+1,action);return;}
+                try{action.run();}finally{lease.close();}
+            }catch(Exception e){lease.close();throw new RuntimeException(e);}
+        });
+    }
     @GameTest(template="townhall_state_empty",batch="base01",timeoutTicks=10000)
     public static void temporary_entity_collision_retries_without_restart_or_command(GameTestHelper h)throws Exception {
         var f=pub(h,30000);var c=f.plan.cells().stream().filter(v->v.before().isAir()&&!v.after().getCollisionShape(f.level(),v.pos()).isEmpty()).findFirst().orElseThrow();
@@ -42,18 +61,20 @@ public final class BaseCityLifecycleTests {
     }
     @GameTest(template="townhall_state_empty",batch="base02",timeoutTicks=10000)
     public static void interrupted_public_journal_is_resumed_not_skipped(GameTestHelper h)throws Exception {
-        var f=pub(h,32000);try{StreetscapeTransaction.run(f,StreetscapeTransaction.Action.APPLY,(stage,n)->{if(stage.equals("write")&&n==17)throw new IOException("injected interruption");});}catch(IOException expected){}
+        var f=pub(h,32000);readyPublic(h,f,()->{try{StreetscapeTransaction.run(f,StreetscapeTransaction.Action.APPLY,(stage,n)->{if(stage.equals("write")&&n==17)throw new IOException("injected interruption");});}catch(IOException expected){}
         h.assertTrue(Files.exists(f.file()),"No retained interruption");var id=StreetscapeJournal.read(f.file()).getUUID("id");
         CityBasePreparation.queuePublicFixture("resume",f);await(h,"resume",PUBLIC,0,()->{try{requireCommitted(h,f);h.assertTrue(id.equals(StreetscapeJournal.read(f.file()).getUUID("id")),"Invented replacement journal");f.finish();h.succeed();}catch(Exception e){throw new RuntimeException(e);}});
+        });
     }
     @GameTest(template="townhall_state_empty",batch="base03",timeoutTicks=10000)
     public static void intentional_public_rollback_is_not_reapplied(GameTestHelper h)throws Exception {
-        var f=pub(h,34000);StreetscapeTransaction.run(f,StreetscapeTransaction.Action.APPLY);StreetscapeTransaction.run(f,StreetscapeTransaction.Action.ROLLBACK);byte[] before=Files.readAllBytes(f.file());
+        var f=pub(h,34000);readyPublic(h,f,()->{StreetscapeTransaction.run(f,StreetscapeTransaction.Action.APPLY);StreetscapeTransaction.run(f,StreetscapeTransaction.Action.ROLLBACK);byte[] before=Files.readAllBytes(f.file());
         CityBasePreparation.queuePublicFixture("rollback",f);await(h,"rollback",PUBLIC,0,()->{try{
             h.assertTrue(CityBasePreparation.reason(h.getLevel().getServer(),"rollback").contains("intentionally"),"Rollback marked ready");
             h.assertTrue(Arrays.equals(before,Files.readAllBytes(f.file())),"Rollback history overwritten");
             for(var c:f.plan.cells())h.assertTrue(StreetscapeR5.matches(f.level().getBlockState(c.pos()),c.before()),"Rollback replayed");f.finish();h.succeed();
         }catch(Exception e){throw new RuntimeException(e);}});
+        });
     }
     @GameTest(template="townhall_state_empty",batch="base04",timeoutTicks=10000)
     public static void corrupt_public_history_is_blocked_not_ready(GameTestHelper h)throws Exception {
@@ -65,8 +86,9 @@ public final class BaseCityLifecycleTests {
     }
     @GameTest(template="townhall_state_empty",batch="base05",timeoutTicks=10000)
     public static void committed_public_verification_does_not_rewrite_receipt(GameTestHelper h)throws Exception {
-        var f=pub(h,38000);StreetscapeTransaction.run(f,StreetscapeTransaction.Action.APPLY);byte[] before=Files.readAllBytes(f.file());
+        var f=pub(h,38000);readyPublic(h,f,()->{StreetscapeTransaction.run(f,StreetscapeTransaction.Action.APPLY);byte[] before=Files.readAllBytes(f.file());
         CityBasePreparation.queuePublicFixture("committed",f);await(h,"committed",PUBLIC,0,()->{try{requireCommitted(h,f);h.assertTrue(Arrays.equals(before,Files.readAllBytes(f.file())),"Committed receipt rewritten");f.finish();h.succeed();}catch(Exception e){throw new RuntimeException(e);}});
+        });
     }
     @GameTest(template="townhall_state_empty",batch="base06",timeoutTicks=10000)
     public static void six_houses_initialize_without_maintenance_command(GameTestHelper h)throws Exception {

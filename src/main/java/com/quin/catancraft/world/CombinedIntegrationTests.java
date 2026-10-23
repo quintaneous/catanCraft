@@ -139,6 +139,14 @@ public final class CombinedIntegrationTests {
             for(int x=isolationMinX>>4;x<=isolationMaxX>>4;x++)for(int z=isolationMinZ>>4;z<=isolationMaxZ>>4;z++){
                 level.setChunkForced(x,z,true);level.getChunk(x,z);
             }
+            // This is an artificial GameTest scene, not an authored user save.
+            // Remove generated mobs before the deliberate occupancy-test actors exist.
+            if(!(level.getServer() instanceof GameTestServer))throw new IOException("Fixture isolation outside GameTest server");
+            var artificialScene=new net.minecraft.world.phys.AABB(isolationMinX-1,isolationMinY-1,isolationMinZ-1,isolationMaxX+2,isolationMaxY+2,isolationMaxZ+2);
+            int generatedMobs=0;
+            for(var entity:new ArrayList<>(level.getEntities((net.minecraft.world.entity.Entity)null,artificialScene)))
+                if(entity instanceof net.minecraft.world.entity.Mob){entity.discard();generatedMobs++;}
+            CatanCraft.LOGGER.info("COMBINED_FIXTURE_GENERATED_MOBS_REMOVED city={} count={} beforeTestEntities=true",city,generatedMobs);
             int enclosureCells=0,unspecifiedFluids=0;
             for(BlockPos mutable:BlockPos.betweenClosed(isolationMinX,isolationMinY,isolationMinZ,isolationMaxX,isolationMaxY,isolationMaxZ)){
                 BlockPos position=mutable.immutable();if(source.containsKey(position))continue;
