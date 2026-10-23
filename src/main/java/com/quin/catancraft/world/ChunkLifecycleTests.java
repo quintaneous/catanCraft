@@ -83,7 +83,7 @@ public final class ChunkLifecycleTests {
     }catch(Exception e){throw new RuntimeException(e);}}
     private static void await(GameTestHelper h,Fixture f,int ticks,Runnable done){h.runAfterDelay(1,()->{
         h.assertTrue(ticks<1000,"Bounded operation did not settle or report failure");
-        if(SectorService.activeFixture(f.ctx))await(h,f,ticks+1,done);else done.run();
+        try{if(SectorService.activeFixture(f.ctx))await(h,f,ticks+1,done);else done.run();}catch(IOException error){throw new RuntimeException(error);}
     });}
     @GameTest(template="townhall_state_empty",batch="load_05",timeoutTicks=1500)
     public static void queued_base_city_paths_apply_without_public_command_and_preserve_ledger(GameTestHelper h)throws Exception {
