@@ -1,0 +1,97 @@
+name: Recovery retained producer diagnosis
+on:
+  push:
+    branches: [chatgpt/purchase-recovery-0.1.33]
+    paths: ['.github/workflows/recovery-producer-diagnostic.yml']
+permissions:
+  contents: read
+  actions: read
+jobs:
+  diagnostic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        source:
+          - {name: baseline032, sha: 2f02120b0b489421650c83bf7dab305995c2a92a}
+          - {name: candidate033, sha: 5412009058af6fa81e5655115d6a0b99899e912d}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ matrix.source.sha }}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: gradle/actions/setup-gradle@v4
+        with: {gradle-version: '8.8'}
+      - name: Add diagnostic text only, preserve all predicates
+        run: |
+          mkdir -p build/producer-diagnostic
+          git rev-parse HEAD > build/producer-diagnostic/BASE_COMMIT.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main/java/com/quin/catancraft/world/ProducerTransaction.java')
+          s=p.read_text();old='throw new IOException("Producer post-write mismatch")'
+          new='throw new IOException("Producer post-write mismatch at "+cells.get(i).pos()+" family="+cells.get(i).family()+" expected="+states[i]+" actual="+e.level().getBlockState(cells.get(i).pos())+" source="+cells.get(i).old()+" target="+cells.get(i).next()+" time="+e.level().getGameTime())'
+          assert s.count(old)==1;p.write_text(s.replace(old,new))
+          PY
+          git diff > build/producer-diagnostic/diagnostic-only.patch
+          gradle build --no-daemon --max-workers=4 > build/producer-diagnostic/build.log 2>&1
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/producer-diagnostic/assets-$attempt.log 2>&1 && exit 0
+          done
+          exit 1
+      - name: Two independent fresh-world diagnostic executions, keep every result
+        run: |
+          set -uo pipefail
+          failure=0
+          for iteration in 1 2; do
+            rm -rf build/gametest-run
+            mkdir -p build/gametest-run/config/catancraft/schematics
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem build/gametest-run/config/catancraft/schematics/
+            status=0
+            timeout 650s gradle runGameTestServer -PgameTestNamespace=catancraft --daemon --max-workers=4 > build/producer-diagnostic/native-$iteration.log 2>&1 || status=$?
+            echo "$status" > build/producer-diagnostic/native-$iteration.exit
+            grep -E 'post-write|GAME TESTS COMPLETE|required tests|failed!' build/producer-diagnostic/native-$iteration.log || true
+            if [ "$status" != 0 ] || ! grep -Fq 'All 50 required tests passed' build/producer-diagnostic/native-$iteration.log; then failure=1; fi
+          done
+          exit "$failure"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: producer-diagnostic-${{ matrix.source.name }}
+          path: build/producer-diagnostic/
+          if-no-files-found: error
+  collect-original:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Retain original candidate artifacts, passes and failure
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api repos/quintaneous/catanCraft/actions/runs/40602987904/jobs?per_page=100 > original-jobs.json
+          gh api repos/quintaneous/catanCraft/actions/runs/40602987904/artifacts?per_page=100 > original-artifacts.json
+          mkdir original
+          gh run download 40602987904 --repo quintaneous/catanCraft --dir original
+          python3 - <<'PY'
+          import pathlib,json,hashlib,re,shutil
+          root=pathlib.Path('original');dest=pathlib.Path('evidence');dest.mkdir()
+          for p in root.rglob('source.zip'):
+              target=dest/'source.zip'
+              if target.exists(): assert hashlib.sha256(p.read_bytes()).digest()==hashlib.sha256(target.read_bytes()).digest()
+              else: shutil.copy2(p,target)
+          jars={hashlib.sha256(p.read_bytes()).hexdigest() for p in root.rglob('catancraft-0.1.33-purchase-recovery.jar')}
+          assert len(jars)==1,jars
+          shutil.copy2(next(root.rglob('catancraft-0.1.33-purchase-recovery.jar')),dest/'candidate.jar')
+          for directory in root.iterdir():
+              target=dest/directory.name;target.mkdir()
+              for p in directory.rglob('*'):
+                  if p.is_file() and p.suffix not in ('.zip','.jar'):shutil.copy2(p,target/p.name)
+          for name in ['original-jobs.json','original-artifacts.json']:shutil.copy2(name,dest/name)
+          (dest/'jar-sha256.txt').write_text(next(iter(jars))+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recovery033-original-evidence
+          path: evidence/
+          if-no-files-found: error
