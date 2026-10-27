@@ -284,6 +284,7 @@ public final class SectorService {
             }
             DefenseCityReservations.requireAvailable(c.root(),c.city(),file);
             if(terminalReadOnly&&!contract.cityGroup().isEmpty()){SectorCityAP3Group.verifyCurrentAssembly(c);return new MapAssetService.Result(true,"Current complete City A assembly and retained group lineage verified; zero writes and zero charge",0);}
+            if(PaidRecoveryService.isRunning(c.server()))throw new IOException("An original paid construction is being recovered; wait for completion");
             if(CityBasePreparation.isRunning(c.server()))throw new IOException("Base city paths are being prepared automatically; retry after completion");
             if(bounded&&action!=SectorTransaction.Action.STATUS)lease=SectorChunkLease.acquire(c.server().overworld(),entityBounds(contract.plan()));
             var env=environment(c,side,contract,identity,file,terminalReadOnly);

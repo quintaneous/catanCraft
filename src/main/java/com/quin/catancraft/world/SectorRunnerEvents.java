@@ -12,8 +12,8 @@ import net.minecraftforge.fml.common.Mod;
 public final class SectorRunnerEvents {
     private SectorRunnerEvents(){}
     @SubscribeEvent public static void tick(TickEvent.ServerTickEvent event){
-        if(event.phase==TickEvent.Phase.END){SectorService.tick(event.getServer());CityBasePreparation.tick(event.getServer());}
+        if(event.phase==TickEvent.Phase.END){SectorService.tick(event.getServer());CityBasePreparation.tick(event.getServer());PaidRecoveryService.tick(event.getServer());}
     }
-    @SubscribeEvent public static void stopping(ServerStoppingEvent event){SectorService.stopped(event.getServer());CityBasePreparation.stopped(event.getServer());}
-    @SubscribeEvent public static void stopped(ServerStoppedEvent event){SectorService.stopped(event.getServer());CityBasePreparation.stopped(event.getServer());}
+    @SubscribeEvent public static void stopping(ServerStoppingEvent event){SectorService.stopped(event.getServer());CityBasePreparation.stopped(event.getServer());PaidRecoveryService.stopped(event.getServer());}
+    @SubscribeEvent public static void stopped(ServerStoppedEvent event){SectorService.stopped(event.getServer());CityBasePreparation.stopped(event.getServer());PaidRecoveryService.stopped(event.getServer());}
 }

@@ -233,6 +233,8 @@ public final class NationDashboard {
                 addTerritory(lines, nation, territory, leader);
                 String baseStatus = com.quin.catancraft.world.CityBasePreparation.status(player.server,territory.id());
                 if (!baseStatus.isEmpty()) lines.add("D|" + baseStatus);
+                String recoveryStatus = com.quin.catancraft.world.PaidRecoveryService.status(player.server,territory.id());
+                if (!recoveryStatus.isEmpty()) lines.add("Y|" + recoveryStatus);
                 lines.addAll(DefenseMenuRows.rows(territory.id(), leader, nation,
                         com.quin.catancraft.world.SectorService.menuStates(player.server, player.getUUID(), territory.id())));
                 lines.add("E|" + territory.id());

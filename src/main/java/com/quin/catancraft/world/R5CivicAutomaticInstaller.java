@@ -41,7 +41,7 @@ import java.util.zip.ZipFile;
  * The installation journal precedes world writes, and the charge and building
  * record are saved together in CatanSavedData. If the process crashes before
  * completing the transaction, its immutable journal remains and repurchase is
- * REFUSED until a separate, audited recovery procedure is implemented.
+ * recovered through its hash-bound recovery companion without replaying a charge.
  */
 public final class R5CivicAutomaticInstaller {
     private static final String ROOT_NAME="CatanCraft_Season1_R7_Development";
@@ -56,9 +56,9 @@ public final class R5CivicAutomaticInstaller {
     private static final int MAX_JOURNAL_BYTES=2_800_000;
 
     public record Result(boolean success,String message) {}
-    private record Write(BlockPos pos,BlockState before,BlockState after,String stage) {}
-    private record Cell(BlockPos pos,BlockState before,BlockState after) {}
-    private record Plan(List<Write> writes,LinkedHashMap<Long,Cell> finalCells,int barrels) {}
+    record Write(BlockPos pos,BlockState before,BlockState after,String stage) {}
+    record Cell(BlockPos pos,BlockState before,BlockState after) {}
+    record Plan(List<Write> writes,LinkedHashMap<Long,Cell> finalCells,int barrels) {}
 
     private R5CivicAutomaticInstaller() {}
 
@@ -91,7 +91,7 @@ public final class R5CivicAutomaticInstaller {
                 !MARKER_VALUE.equals(Files.readString(marker).trim()))
             throw new IllegalStateException("R7 automatic construction is not enabled for this disposable world. Missing one-time world-root marker: "+MARKER_NAME+". No purchase was charged.");
     }
-    private static String canonical(BlockState state) {
+    static String canonical(BlockState state) {
         StringBuilder result=new StringBuilder(BuiltInRegistries.BLOCK.getKey(state.getBlock()).toString());
         List<String> props=new ArrayList<>();
         for(Property<?> p:state.getProperties()) props.add(canonicalProperty(state,p));
@@ -108,7 +108,7 @@ public final class R5CivicAutomaticInstaller {
         if(parsed.isEmpty())throw new IllegalStateException("Invalid blockstate property "+property.getName()+"="+value);
         return state.setValue(property,(Comparable)parsed.get());
     }
-    private static BlockState state(String source) {
+    static BlockState state(String source) {
         int split=source.indexOf('[');
         String blockId=split<0?source:source.substring(0,split);
         ResourceLocation key=ResourceLocation.tryParse(blockId);
@@ -164,28 +164,33 @@ public final class R5CivicAutomaticInstaller {
         }
         return false;
     }
-    private static Plan plan(MinecraftServer server,TerritoryDefinition city,
-                             ServerLevel level,BuildingType type) throws Exception {
+    static Plan contract(TerritoryDefinition city,BuildingType type) throws Exception {
         R5ReadOnlyPreflight.verifyArchive();
         R5ReadOnlyPreflight.verifyIndex();
+        Path idx=FMLPaths.CONFIGDIR.get().resolve("catancraft").resolve(STAGED_INDEX);
+        try(ZipFile index=new ZipFile(idx.toFile());ZipFile art=new ZipFile(R5ReadOnlyPreflight.archivePath().toFile())) {
+            return contract(city,type,(civic,path)->read(civic?art:index,path));
+        }
+    }
+    interface Documents { JsonObject read(boolean civic,String path)throws Exception; }
+    static Plan contract(TerritoryDefinition city,BuildingType type,Documents documents)throws Exception {
         String territory=city.id().toUpperCase(Locale.ROOT);
         String requested=kind(type);
         List<String> groupNames=type==BuildingType.COMMERCIAL_DISTRICT
                 ?List.of("cleanup_tree_16_10","commercial_sidewalk")
                 :List.of("logistics_service_connection");
-        Path idx=FMLPaths.CONFIGDIR.get().resolve("catancraft").resolve(STAGED_INDEX);
-        if(!Files.isRegularFile(idx))throw new IllegalStateException("Missing pinned R5 index archive");
+
         List<Write> writes=new ArrayList<>();
         LinkedHashMap<Long,Cell> all=new LinkedHashMap<>();
         Map<Long,BlockState> virtual=new HashMap<>();
-        try(ZipFile index=new ZipFile(idx.toFile());ZipFile art=new ZipFile(R5ReadOnlyPreflight.archivePath().toFile())) {
+        {
             List<String> stageNames=new ArrayList<>(groupNames);
             stageNames.add("CIVIC");
             for(String stage:stageNames) {
                 boolean civic="CIVIC".equals(stage);
                 String path=civic?"contracts/civic-deltas/"+territory+"_"+requested+".json":
                         "contracts/groups/"+territory+"/"+stage+".json";
-                JsonObject doc=read(civic?art:index,path);
+                JsonObject doc=documents.read(civic,path);
                 String actualTerritory=doc.get("territory_id").getAsString();
                 if(!territory.equals(actualTerritory))throw new IllegalStateException("R5 stage wrong territory: "+path);
                 if(civic) {
@@ -202,7 +207,7 @@ public final class R5CivicAutomaticInstaller {
                 for(JsonElement entry:changes) {
                     JsonObject row=entry.getAsJsonObject();
                     BlockPos p=position(row);
-                    if(!seenInStage.add(p.asLong())||protectedFromCivic(p,city)||!level.hasChunkAt(p))
+                    if(!seenInStage.add(p.asLong())||protectedFromCivic(p,city))
                         throw new IllegalStateException("Duplicated/protected/unloaded R5 cell "+p);
                     BlockState before=state(row.get("expected_before_blockstate").getAsString());
                     BlockState after=state(row.get("after_blockstate").getAsString());
@@ -211,11 +216,7 @@ public final class R5CivicAutomaticInstaller {
                             !before.getFluidState().isEmpty()||!after.getFluidState().isEmpty())
                         throw new IllegalStateException("R5 plan contains a fluid or unapproved block-entity at "+p);
                     BlockState now=virtual.get(p.asLong());
-                    if(now==null) {
-                        now=level.getBlockState(p);
-                        if(level.getBlockEntity(p)!=null||!level.getFluidState(p).isEmpty())
-                            throw new IllegalStateException("Existing tile/fluid at R5 cell "+p);
-                    }
+                    if(now==null) now=before;
                     if(!now.equals(before))
                         throw new IllegalStateException("Unexpected R7 surface at "+p+"; expected="+canonical(before)+" actual="+canonical(now)+". Refusing construction; nothing charged.");
                     Cell prior=all.get(p.asLong());
@@ -233,19 +234,27 @@ public final class R5CivicAutomaticInstaller {
         int requiredBarrels=type==BuildingType.COMMERCIAL_DISTRICT?8:24;
         if(writes.size()!=requiredWrites||all.size()!=requiredUnique||actualBarrels!=requiredBarrels)
             throw new IllegalStateException("R5 source counts changed; refuse unreviewed revision");
+        return new Plan(List.copyOf(writes),all,actualBarrels);
+    }
+    private static Plan plan(MinecraftServer server,TerritoryDefinition city,ServerLevel level,BuildingType type)throws Exception {
+        Plan plan=contract(city,type);
+        for(Cell c:plan.finalCells().values()) {
+            if(!level.hasChunkAt(c.pos())||!level.getBlockState(c.pos()).equals(c.before())||level.getBlockEntity(c.pos())!=null||!level.getFluidState(c.pos()).isEmpty())
+                throw new IllegalStateException("Unexpected R7 surface/tile/fluid at "+c.pos()+"; nothing charged");
+        }
         // Reject interference with any entity (including dropped items) that
         // intersects a new non-air block. No clearing or teleporting entities.
-        for(Cell c:all.values()) {
+        for(Cell c:plan.finalCells().values()) {
             if(c.after().isAir()||c.after().equals(c.before()))continue;
             if(!level.getEntities((Entity)null,new AABB(c.pos()),Entity::isAlive).isEmpty())
                 throw new IllegalStateException("Entity in construction footprint at "+c.pos());
         }
-        return new Plan(List.copyOf(writes),all,actualBarrels);
+        return plan;
     }
-    private static JsonArray xyz(BlockPos p) {
+    static JsonArray xyz(BlockPos p) {
         JsonArray a=new JsonArray();a.add(p.getX());a.add(p.getY());a.add(p.getZ());return a;
     }
-    private static void seal(JsonObject j) throws Exception {
+    static void seal(JsonObject j) throws Exception {
         j.remove("sha256");
         byte[] b=MessageDigest.getInstance("SHA-256").digest(GSON.toJson(j).getBytes(StandardCharsets.UTF_8));
         StringBuilder s=new StringBuilder();for(byte x:b)s.append(String.format(Locale.ROOT,"%02x",x&255));
@@ -269,7 +278,7 @@ public final class R5CivicAutomaticInstaller {
                                       TerritoryDefinition city,BuildingType type,
                                       NationData nation,EconomyCost cost,Plan plan) throws Exception {
         JsonObject j=new JsonObject();
-        j.addProperty("schema",1);j.addProperty("phase","PENDING");
+        j.addProperty("schema",1);j.addProperty("phase","PENDING");j.addProperty("receipt_required",true);
         j.addProperty("transaction_id",UUID.randomUUID().toString());
         j.addProperty("source_revision","R5-1 VERIFIED AGAINST R7");
         j.addProperty("world_root",world.toString());
@@ -316,6 +325,7 @@ public final class R5CivicAutomaticInstaller {
         Path record=null;
         try {
             if(!isCivic(type))throw new IllegalArgumentException("Invalid R5 civic type");
+            PaidRecoveryService.requireClear(server,territory.id());
             Path world=root(server);
             ensureTargetWorld(server,world);
             if(!nation.id().equals(territory.ownerNationId())||
@@ -396,8 +406,9 @@ public final class R5CivicAutomaticInstaller {
                 throw new IllegalStateException("Civic purchase eligibility changed after placement");
             cost.charge(nation);
             territory.buildings().add(new BuildingInstance(type,1,0,""));
+            PaidConstructionRecovery.receipt(data,UUID.fromString(j.get("transaction_id").getAsString()));
             data.setDirty();economyChanged=true;
-            server.saveEverything(true,true,true);
+            if(!server.saveEverything(true,true,true))throw new IOException("Civic save incomplete; original purchase retained for recovery");
             j.addProperty("phase","COMMITTED");
             j.addProperty("economic_committed",true);persist(record,j);
             CatanCraft.LOGGER.info("R5 AUTO CIVIC {} {} COMMITTED, {} writes, 1 charge, journal {}",
@@ -410,7 +421,7 @@ public final class R5CivicAutomaticInstaller {
                     "World writes started={} economyChanged={} journal={}",
                     type,territory.id(),physicalStarted,economyChanged,record,failure);
             return new Result(false,"Civic auto-construction refused: "+failure.getMessage()+
-                    (physicalStarted?". JOURNAL PRESERVED; blocks may have changed. Do NOT retry purchase; do not clear history. Contact development for guarded recovery.":
+                    (physicalStarted?". JOURNAL PRESERVED; blocks may have changed. Do NOT retry purchase or clear history. Recovery will reconcile this original purchase automatically when its prerequisites are ready.":
                             ". No world writes started and no resources charged."));
         }
     }

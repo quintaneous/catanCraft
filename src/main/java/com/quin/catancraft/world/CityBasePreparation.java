@@ -131,7 +131,7 @@ public final class CityBasePreparation {
         }
     }
     private static void startNext(MinecraftServer server) {
-        if(pending!=null||SectorService.hasActiveOperation(server)) return;
+        if(pending!=null||SectorService.hasActiveOperation(server)||PaidRecoveryService.isRunning(server)) return;
         Job next=null;
         for(Job j:queue.values()) if(server.getTickCount()>=j.afterTick()){next=j;break;}
         if(next==null)return;

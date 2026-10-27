@@ -53,8 +53,8 @@ import java.util.UUID;
  * Unknown edited buildings, occupied interiors, or stale saved placement tokens
  * stop BEFORE any charge or writes. Historical transactions remain immutable.
  *
- * An interrupted journal deliberately locks the upgrade until a dedicated
- * journal reconciliation/rollback tool is built. Do not delete that file.
+ * An interrupted journal is reconciled through a separate hash-bound recovery
+ * companion. Original records and management-book NBT are never rewritten.
  */
 public final class TownHallPrestigeUpgradeService {
     private static final int FLAGS = Block.UPDATE_CLIENTS | Block.UPDATE_KNOWN_SHAPE | Block.UPDATE_SUPPRESS_DROPS;
@@ -76,6 +76,7 @@ public final class TownHallPrestigeUpgradeService {
         try {
             if(nextLevel != 4 && nextLevel != 5 || territory.cityLevel() != nextLevel - 1)
                 throw new IllegalStateException("Invalid Town Hall prestige tier transition");
+            PaidRecoveryService.requireClear(server,territory.id());
             Path world = ConstructionWorldAuthorization.authorize(server);
             if (!nation.id().equals(territory.ownerNationId()) || data.nation(nation.id()) == null ||
                     !cost.canAfford(nation))
@@ -222,7 +223,7 @@ public final class TownHallPrestigeUpgradeService {
             // Real source preimage, original lectern NBT and all economic
             // balances are journaled DURABLY before modifying any block.
             CompoundTag txn = new CompoundTag();
-            txn.putInt("schema",1);txn.putString("phase","PENDING");
+            txn.putInt("schema",1);txn.putString("phase","PENDING");txn.putBoolean("receiptRequired",true);
             txn.putUUID("transaction",UUID.randomUUID());
             txn.putString("worldRoot",world.toString());txn.putString("city",cityId);
             txn.putString("ownerNation",nation.id().toString());
@@ -288,6 +289,7 @@ public final class TownHallPrestigeUpgradeService {
             cost.charge(nation);
             territory.setCityLevel(nextLevel);
             data.setPlacedMapAsset(stateKey,targetToken);
+            PaidConstructionRecovery.receipt(data,txn.getUUID("transaction"));
             data.setDirty();economyChanged=true;
             if(!server.saveEverything(true,true,true))throw new IOException("Town Hall save incomplete; retain journal");
             txn.putString("phase","COMMITTED");writeJournal(journal,txn);
@@ -300,7 +302,7 @@ public final class TownHallPrestigeUpgradeService {
             CatanCraft.LOGGER.error("Guarded TH prestige upgrade REFUSED city {} to level {}; journal={} written={} physical={} economy={}",
                     territory.id(),nextLevel,journal,journalWritten,physicalWritten,economyChanged,error);
             return new Result(false,"Town Hall prestige upgrade refused: "+error.getMessage()+
-                    (journalWritten ? ". Transaction journal preserved; do NOT delete it or retry. Send diagnostics for recovery." :
+                    (journalWritten ? ". Transaction journal preserved; do NOT delete it or repeat the purchase. Automatic recovery will reconcile this original transaction when ready." :
                             ". No Town Hall blocks were changed and no resources charged."));
         }
     }
