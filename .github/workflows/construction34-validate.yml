@@ -1,0 +1,91 @@
+name: Construction34 focused validation
+on:
+  push:
+    branches: [chatgpt/construction-safety-0.1.34]
+    paths: ['.github/workflows/construction34-validate.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - name: Materialize reviewed source as a normal source commit
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          if ! test -f src/main/java/com/quin/catancraft/world/BasicConstructionPurchase.java; then
+            python3 tools/construction34/materialize.py
+            git add build.gradle src/main/java src/main/resources/data/catancraft/basic_construction tests/fixtures/basic-construction-provenance.json docs/CONSTRUCTION_SAFETY_034.md
+            git config user.name 'quintaneous'
+            git config user.email '145784746+quintaneous@users.noreply.github.com'
+            git commit -m 'Guard early Hall and factory purchases with durable original-price recovery; retry legacy startup work safely'
+            test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
+            git push origin HEAD:"$GITHUB_REF"
+          fi
+      - id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_construction34, count: 24}
+          - {ns: catancraft_paid_recovery, count: 19}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Compile exact committed source
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build/construction34-evidence
+          git rev-parse HEAD > build/construction34-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/construction34-evidence/source.zip
+          gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/construction34-evidence/build.log
+          sha256sum build/libs/*.jar > build/construction34-evidence/JAR_SHA256.txt
+      - name: Fetch test assets with bounded network-only retry
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/construction34-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/construction34-evidence/assets-3.log
+          exit 1
+      - name: Run native tests once and require exact count
+        shell: bash
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -uo pipefail
+          status=0
+          timeout 1600s gradle runGameTestServer -PcontrolledGameTests=true -PgameTestNamespace="$NS" --daemon --max-workers=4 > build/construction34-evidence/$NS.log 2>&1 || status=$?
+          echo "$status" > build/construction34-evidence/$NS.exit
+          cat build/construction34-evidence/$NS.log
+          test "$status" = 0 && grep -Fq "$COUNT GAME TESTS COMPLETE" build/construction34-evidence/$NS.log && grep -Fq "All $COUNT required tests passed" build/construction34-evidence/$NS.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: construction34-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/construction34-evidence/
+          if-no-files-found: error
