@@ -110,6 +110,9 @@ final class ProducerTransaction {
         CompoundTag j=exists?ProducerJournal.read(e.file()):null;Phase phase=exists?phase(j):null;
         if(exists && (j.getInt("schema")!=1 || !j.hasUUID("id") || !j.getCompound("identity").equals(e.identity())
             || !j.getCompound("spec").equals(description)))throw new IOException("Foreign producer journal or changed contract");
+        Map<BlockPos,BlockState> sourceCovers=sourceCoveredGrass(cells);
+        // Absence is meaningful: old journals keep their original strict interpretation.
+        Set<BlockPos> provedGrass=exists?readSourceCoverProof(j,sourceCovers):sourceCovers.keySet();
         boolean pending=phase!=null && phase!=Phase.COMMITTED && phase!=Phase.ROLLED_BACK;
         String previous=exists?j.getString("previousReceipt"):safe(e.receipt());
         String paid=exists?j.getUUID("id")+":paid":"",rolled=exists?j.getUUID("id")+":rolled_back":"";
@@ -142,6 +145,8 @@ final class ProducerTransaction {
             boolean valid;
             if(changed.contains(i) && pending) valid=ProducerRevisions.matches(state,before.get(i))||ProducerRevisions.matches(state,c.next());
             else valid=ProducerRevisions.matches(state,paidReceipt?c.next():c.old());
+            if(!valid&&!changed.contains(i)&&provedGrass.contains(c.pos())&&state.equals(Blocks.DIRT.defaultBlockState()))
+                valid=exists||exactSourceCover(e,c.pos(),sourceCovers.get(c.pos()));
             if(!valid)throw new IOException("Modified producer cell at "+c.pos()+": "+state);
             BlockEntity be=e.level().getBlockEntity(c.pos());
             if(c.old().is(Blocks.BARREL)) {
@@ -197,8 +202,11 @@ final class ProducerTransaction {
             e.save(); // Flush the unmodified source before durable ownership of any block write.
             if(!e.ledger().equals(ledger)||!identity.equals(e.identity()))throw new IOException("Ledger/owner changed during source save");
             entities.verify();
+            for(var cover:sourceCovers.entrySet())if(!exactSourceCover(e,cover.getKey(),cover.getValue()))
+                throw new IOException("Producer source cover changed before intent at "+cover.getKey());
             j=new CompoundTag();j.putInt("schema",1);j.putUUID("id",UUID.randomUUID());j.put("identity",e.identity().copy());
             j.put("spec",description);j.putString("previousReceipt",previous);j.put("ledgerBefore",ledger.copy());
+            j.put("sourceCoveredGrassV1",sourceCoverProof(sourceCovers));
             ListTag nbt=new ListTag();for(var entry:inventories.entrySet()) {
                 CompoundTag n=new CompoundTag();n.putLong("pos",entry.getKey().asLong());n.put("actualNbt",entry.getValue().copy());nbt.add(n);
             }
@@ -263,6 +271,34 @@ final class ProducerTransaction {
         }
     }
     private static String safe(String value){return value==null?"":value;}
+    /** Only source-covered unchanged reads; target-only cover grants no permission. */
+    private static Map<BlockPos,BlockState> sourceCoveredGrass(List<Cell> cells) {
+        Map<BlockPos,BlockState> source=new HashMap<>();for(Cell c:cells)source.put(c.pos(),c.old());
+        Map<BlockPos,BlockState> covers=new HashMap<>();
+        for(Cell c:cells)if(c.old().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&c.old().equals(c.next())){
+            BlockState cover=source.get(c.pos().above());
+            if(cover!=null&&BuiltInRegistries.BLOCK.getKey(cover.getBlock()).getNamespace().equals("minecraft")
+                &&SectorNaturalSupportPolicy.blocksGrass(cover,c.pos().above()))covers.put(c.pos(),cover);
+        }
+        return Map.copyOf(covers);
+    }
+    private static boolean exactSourceCover(Environment e,BlockPos grass,BlockState cover) {
+        return cover!=null&&e.level().hasChunkAt(grass.above())&&cover.equals(e.level().getBlockState(grass.above()))
+            &&e.level().getBlockEntity(grass.above())==null;
+    }
+    private static CompoundTag sourceCoverProof(Map<BlockPos,BlockState> covers) {
+        CompoundTag proof=new CompoundTag();proof.putInt("version",1);ListTag list=new ListTag();
+        covers.keySet().stream().sorted(Comparator.comparingLong(BlockPos::asLong)).forEach(pos->{
+            CompoundTag entry=new CompoundTag();entry.putLong("pos",pos.asLong());entry.put("sourceCover",NbtUtils.writeBlockState(covers.get(pos)));list.add(entry);
+        });proof.put("covers",list);return proof;
+    }
+    private static Set<BlockPos> readSourceCoverProof(CompoundTag journal,Map<BlockPos,BlockState> covers)throws IOException {
+        if(!journal.contains("sourceCoveredGrassV1"))return Set.of();
+        if(!journal.contains("sourceCoveredGrassV1",Tag.TAG_COMPOUND)||!sourceCoverProof(covers).equals(journal.getCompound("sourceCoveredGrassV1")))
+            throw new IOException("Changed producer source-cover proof");
+        // The exact spec/identity and this canonical proof share the journal's checksum.
+        return covers.keySet();
+    }
     private static void advance(Path p,CompoundTag j,Phase next) throws IOException {
         if(!ProducerJournal.read(p).equals(j))throw new IOException("Producer journal changed concurrently");
         j.putString("phase",next.name());ProducerJournal.write(p,j,true);

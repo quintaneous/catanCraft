@@ -45,6 +45,7 @@ public final class StartupRecovery34Tests {
         Fixture f=new Fixture(h,"b");ProducerSeed seed=new ProducerSeed(f);
         ready(f,()->{
             seed.stage();interrupt(h,()->ProducerTransaction.run(seed,ProducerTransaction.Action.APPLY,(stage,n)->{if(stage.equals("prepared"))throw new IOException(INTERRUPTED);}));
+            seed.decayProvenSourceGrass();
             byte[] original=Files.readAllBytes(seed.file());CompoundTag inventories=seed.inventories();long money=f.nation.treasury();
             f.nation.setTreasury(0);f.save();f.release();PaidRecoveryService.stopped(f.server);
             await(f,0,()->PaidRecoveryService.status(f.server,f.city).contains("Original producer price"),()->{
@@ -119,7 +120,8 @@ public final class StartupRecovery34Tests {
         byte[] completed=Files.readAllBytes(journal);CompoundTag nation=f.nation.save();PaidRecoveryService.stopped(f.server);
         f.h.runAfterDelay(220,()->{try{
             verify.run();f.h.assertTrue(nation.equals(f.nation.save())&&Arrays.equals(completed,Files.readAllBytes(journal)),"Completed history or balance changed after rediscovery");
-            f.h.assertTrue(PaidRecoveryService.status(f.server,f.city).isEmpty()&&!PaidRecoveryService.isRunning(f.server),"Completed history remained queued");
+            // Other cities may retain legitimate blocked work. This journal/city must not replay.
+            f.h.assertTrue(PaidRecoveryService.status(f.server,f.city).isEmpty(),"Completed city history remained queued");
             f.diskMatches();f.finish();f.h.succeed();
         }catch(Exception e){f.release();throw new RuntimeException(e);}});
     }
@@ -175,7 +177,15 @@ public final class StartupRecovery34Tests {
                 token(plot.family(),ProducerRevisions.token(plot.family(),1));
             }f.save();
         }
-        void geometry(int tier)throws IOException{for(var plot:spec.plots())for(var c:ProducerRevisions.plan(plot.family(),tier,plot.anchor()))f.h.assertTrue(ProducerRevisions.matches(f.level.getBlockState(c.position()),c.state()),"Production producer geometry differs at "+c.position());}
+        Set<BlockPos> provenGrass()throws IOException{Set<BlockPos> out=new HashSet<>();for(Tag t:ProducerJournal.read(file).getCompound("sourceCoveredGrassV1").getList("covers",Tag.TAG_COMPOUND))out.add(BlockPos.of(((CompoundTag)t).getLong("pos")));return out;}
+        void decayProvenSourceGrass()throws IOException {
+            Set<BlockPos> positions=provenGrass();f.h.assertTrue(positions.size()==2,"Pinned L1 lumberyard source-cover count changed");
+            for(BlockPos pos:positions){Blocks.GRASS_BLOCK.randomTick(f.level.getBlockState(pos),f.level,pos,net.minecraft.util.RandomSource.create(7));f.h.assertTrue(f.level.getBlockState(pos).equals(Blocks.DIRT.defaultBlockState()),"Native covered source grass did not decay");}
+        }
+        void geometry(int tier)throws IOException{Set<BlockPos> proven=provenGrass();for(var plot:spec.plots())for(var c:ProducerRevisions.plan(plot.family(),tier,plot.anchor())){
+            var actual=f.level.getBlockState(c.position());boolean expectedDirt=proven.contains(c.position())&&c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState());
+            f.h.assertTrue(expectedDirt||ProducerRevisions.matches(actual,c.state()),"Production producer geometry differs at "+c.position());
+        }}
         CompoundTag inventories()throws IOException {CompoundTag out=new CompoundTag();for(var plot:spec.plots())for(var c:ProducerRevisions.plan(plot.family(),1,plot.anchor()))if(c.state().is(Blocks.BARREL))out.put(Long.toString(c.position().asLong()),f.level.getBlockEntity(c.position()).saveWithFullMetadata());return out;}
         public ServerLevel level(){return f.level;}public Path file(){return file;}public ProducerTransaction.Spec spec(){return spec;}public NationData nation(){return f.nation;}public TerritoryData territory(){return f.territory;}
         public CompoundTag identity(){CompoundTag n=new CompoundTag();n.putString("world",f.root.toString());n.putString("dimension",f.def.dimension());n.putString("city",f.city);n.putString("owner",String.valueOf(f.territory.ownerNationId()));n.putString("mapContract","resource_r1_2026_10_14");return n;}
