@@ -147,4 +147,4 @@ def prepareContractGameTestWorld = tasks.register('prepareContractGameTestWorld'
         }
     }
 }
-tasks.named('runGameTestServer').configure { dependsOn prepareContractGameTestWorld }
+tasks.matching { it.name == 'runGameTestServer' }.configureEach { dependsOn prepareContractGameTestWorld }
