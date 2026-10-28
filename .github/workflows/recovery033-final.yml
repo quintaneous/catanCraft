@@ -1,0 +1,170 @@
+name: Recovery033 controlled final validation
+on:
+  push:
+    branches: [chatgpt/purchase-recovery-0.1.33]
+    paths: ['.github/workflows/recovery033-final.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions: {contents: write}
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {fetch-depth: 0}
+      - name: Commit reviewed test-world preparation and strict diagnostics
+        run: |
+          set -euo pipefail
+          git merge-base --is-ancestor 5412009058af6fa81e5655115d6a0b99899e912d HEAD
+          echo '8fbf9c78202ef9f1d9d09f3b7e8177a33f8883e617a2505d0b06795d8be3c5d5  tools/purchase-recovery/controlled-environment.patch' | sha256sum -c -
+          if ! grep -q 'def controlledGameTests' build.gradle; then
+            git apply --check tools/purchase-recovery/controlled-environment.patch
+            git apply tools/purchase-recovery/controlled-environment.patch
+            git diff --check
+            git config user.name quintaneous
+            git config user.email 145784746+quintaneous@users.noreply.github.com
+            git add -- build.gradle src/main/java/com/quin/catancraft/world/ProducerTransaction.java
+            git commit -m 'Isolate synthetic native test terrain and expose exact strict producer drift'
+            git push origin HEAD:refs/heads/chatgpt/purchase-recovery-0.1.33
+          fi
+      - id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_paid_recovery, count: 19}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_integration, count: 12}
+          - {ns: catancraft_economy_clock, count: 9}
+          - {ns: catancraft_base_lifecycle, count: 8}
+          - {ns: catancraft_chunk_lifecycle, count: 6}
+          - {ns: catancraft_public27, count: 11}
+          - {ns: catancraft_houses, count: 11}
+          - {ns: catancraft_wall_gui, count: 8}
+          - {ns: catancraft_sectors_service, count: 15}
+          - {ns: catancraft_sector_prices, count: 7}
+          - {ns: catancraft_producer_r2, count: 9}
+          - {ns: catancraft_defense, count: 8}
+          - {ns: catancraft_sectors, count: 22}
+          - {ns: catancraft_sectors_natural, count: 7}
+          - {ns: catancraft_producer_stability, count: 6}
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ needs.prepare.outputs.sha }}'}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: gradle/actions/setup-gradle@v4
+        with: {gradle-version: '8.8'}
+      - name: Build exact committed release candidate
+        run: |
+          set -o pipefail
+          mkdir -p build/final033-evidence
+          git rev-parse HEAD > build/final033-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/final033-evidence/source.zip
+          gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/final033-evidence/build.log
+          sha256sum build/libs/*.jar > build/final033-evidence/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        run: |
+          for attempt in 1 2 3; do gradle downloadAssets --daemon --max-workers=4 > build/final033-evidence/assets-$attempt.log 2>&1 && exit 0; done
+          cat build/final033-evidence/assets-3.log
+          exit 1
+      - name: Execute controlled native suite once and verify exact count
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          status=0
+          timeout 1100s gradle runGameTestServer -PgameTestNamespace="$NS" -PcontrolledGameTests=true --daemon --max-workers=4 > build/final033-evidence/$NS.log 2>&1 || status=$?
+          echo "$status" > build/final033-evidence/$NS.exit
+          cp "build/controlled-$NS-run/server.properties" build/final033-evidence/SERVER_PROPERTIES.txt || true
+          cat build/final033-evidence/$NS.log
+          test "$status" = 0
+          grep -Fq "$COUNT GAME TESTS COMPLETE" build/final033-evidence/$NS.log
+          grep -Fq "All $COUNT required tests passed" build/final033-evidence/$NS.log
+          if [ "$NS" = catancraft_producer_stability ]; then
+            test "$(grep -Fc 'PRODUCER_STABILITY_PASS' build/final033-evidence/$NS.log)" = 48
+            test "$(grep -Fc 'PRODUCER_GRAVITY_PASS' build/final033-evidence/$NS.log)" = 10
+            grep -Fq 'generator=net.minecraft.world.level.levelgen.FlatLevelSource seed=0' build/final033-evidence/$NS.log
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: final033-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/final033-evidence/
+          if-no-files-found: error
+  normal-control:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with: {ref: '${{ needs.prepare.outputs.sha }}'}
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: gradle/actions/setup-gradle@v4
+        with: {gradle-version: '8.8'}
+      - name: Run same strict tests in explicitly uncontrolled normal terrain
+        run: |
+          mkdir -p build/normal-control build/catancraft_producer_stability-run
+          git rev-parse HEAD > build/normal-control/SOURCE_COMMIT.txt
+          printf 'level-seed=0\nlevel-type=minecraft:normal\ngenerate-structures=false\n' > build/catancraft_producer_stability-run/server.properties
+          gradle build --no-daemon --max-workers=4 > build/normal-control/build.log 2>&1
+          for attempt in 1 2 3; do gradle downloadAssets --daemon --max-workers=4 > build/normal-control/assets-$attempt.log 2>&1 && break; done
+          status=0
+          timeout 800s gradle runGameTestServer -PgameTestNamespace=catancraft_producer_stability --daemon --max-workers=4 > build/normal-control/native.log 2>&1 || status=$?
+          echo "$status" > build/normal-control/native.exit
+          cp build/catancraft_producer_stability-run/server.properties build/normal-control/SERVER_PROPERTIES.txt
+          grep -E 'PRODUCER_TEST_ENV|mismatch|failed!|GAME TESTS COMPLETE|required tests' build/normal-control/native.log || true
+          grep -Fq '6 GAME TESTS COMPLETE' build/normal-control/native.log
+          grep -Fq 'generator=net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator seed=0' build/normal-control/native.log
+          echo 'Observational control: recorded failure is NOT a native-test pass.'
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: final033-normal-control
+          path: build/normal-control/
+          if-no-files-found: error
+  collect:
+    needs: [prepare, validate, normal-control]
+    if: always() && needs.prepare.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: final033-*
+          path: collected
+      - name: Preserve every result and deduplicate identical source and binary
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,shutil
+          out=Path('release-evidence');out.mkdir()
+          shared={};manifest=[]
+          for root in sorted(Path('collected').iterdir()):
+              for p in sorted(root.rglob('*')):
+                  if not p.is_file():continue
+                  digest=hashlib.sha256(p.read_bytes()).hexdigest()
+                  manifest.append({'artifact':root.name,'path':str(p.relative_to(root)),'bytes':p.stat().st_size,'sha256':digest})
+                  if p.suffix=='.jar' or p.name=='source.zip':
+                      if p.name in shared:assert shared[p.name]==digest,'Builds disagree for '+p.name
+                      else:shared[p.name]=digest;shutil.copy2(p,out/p.name)
+                  else:
+                      dest=out/root.name/p.relative_to(root);dest.parent.mkdir(parents=True,exist_ok=True);shutil.copy2(p,dest)
+          (out/'artifact-members.json').write_text(json.dumps(manifest,indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: recovery033-controlled-delivery-evidence
+          path: release-evidence/
+          if-no-files-found: error
