@@ -2,6 +2,9 @@ package com.quin.catancraft.world;
 
 import com.quin.catancraft.map.MapAnchor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.state.properties.Property;
 import net.minecraft.nbt.*;
 import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
@@ -36,6 +39,7 @@ final class BasicConstructionAssets {
             }
         }
         if(members.size()!=13)throw new IOException("Incomplete construction asset bundle");
+        Map<String,Volume> validated=new HashMap<>();
         for(var member:members.entrySet()){
             String name=member.getKey().replace(".schem","");var a=SchematicAssetRegistry.asset(name);
             if(a==null)throw new IOException("Unknown pinned construction asset");
@@ -46,15 +50,44 @@ final class BasicConstructionAssets {
                 ||!n.getList("BlockEntities",Tag.TAG_COMPOUND).isEmpty()||!n.getList("Entities",Tag.TAG_COMPOUND).isEmpty())throw new IOException("Pinned construction asset contract changed: "+name);
             int max=n.getInt("PaletteMax");if(max<1||max>4096)throw new IOException("Invalid construction palette");
             BlockState[] palette=new BlockState[max];var p=n.getCompound("Palette");
-            for(String text:p.getAllKeys()){int i=p.getInt(text);if(i<0||i>=max||palette[i]!=null)throw new IOException("Invalid palette entry");palette[i]=ProducerExteriorR2.parseExact(text);}
+            for(String text:p.getAllKeys()){int i=p.getInt(text);if(i<0||i>=max||palette[i]!=null)throw new IOException("Invalid palette entry");palette[i]=parsePalette(text);}
             for(var s:palette)if(s==null)throw new IOException("Missing palette entry");
             BlockState[] states=new BlockState[w*h*l];int i=0,value=0,shift=0;
             for(byte sb:n.getByteArray("BlockData")){int b=sb&255;value|=(b&127)<<shift;if((b&128)!=0){shift+=7;if(shift>28)throw new IOException("Bad construction VarInt");continue;}
                 if(i>=states.length||value<0||value>=max)throw new IOException("Bad construction voxel");states[i++]=palette[value];value=0;shift=0;}
             if(i!=states.length||shift!=0)throw new IOException("Incomplete construction volume");
-            cache.put(name,new Volume(w,h,l,a.anchorX(),a.anchorY(),a.anchorZ(),states));
+            validated.put(name,new Volume(w,h,l,a.anchorX(),a.anchorY(),a.anchorZ(),states));
         }
+        cache.putAll(validated);
         if(!cache.containsKey(id))throw new IOException("Unknown pinned asset: "+id);return cache.get(id);
+    }
+    /** Sponge palettes may omit default properties; still reject unknown/ambiguous syntax. */
+    static BlockState parsePalette(String text)throws IOException {
+        if(text==null||text.isEmpty()||text.length()>1024)throw new IOException("Invalid construction palette state");
+        int open=text.indexOf('[');String name=text,props=null;
+        if(open>=0){
+            if(!text.endsWith("]")||text.indexOf('[',open+1)>=0)throw new IOException("Invalid construction palette syntax: "+text);
+            name=text.substring(0,open);props=text.substring(open+1,text.length()-1);
+        }
+        if(!name.matches("[a-z0-9_.-]+:[a-z0-9_./-]+"))throw new IOException("Invalid construction block ID: "+name);
+        ResourceLocation id=ResourceLocation.tryParse(name);
+        if(id==null||!BuiltInRegistries.BLOCK.containsKey(id))throw new IOException("Unknown construction block: "+name);
+        var block=BuiltInRegistries.BLOCK.get(id);BlockState state=block.defaultBlockState();
+        if(props!=null&&!props.isEmpty()){
+            Set<String> seen=new HashSet<>();
+            for(String pair:props.split(",",-1)){
+                String[] kv=pair.split("=",-1);
+                if(kv.length!=2||!seen.add(kv[0]))throw new IOException("Invalid/duplicate construction property: "+text);
+                Property<?> property=block.getStateDefinition().getProperty(kv[0]);
+                if(property==null)throw new IOException("Unknown construction property: "+text);
+                state=property(state,property,kv[1],text);
+            }
+        }
+        return state;
+    }
+    private static <T extends Comparable<T>> BlockState property(BlockState state,Property<T> property,String value,String text)throws IOException {
+        T parsed=property.getValue(value).orElseThrow(()->new IOException("Invalid construction property value: "+text));
+        return state.setValue(property,parsed);
     }
     static List<SchematicPlacementService.PlanCell> plan(String id,MapAnchor a)throws IOException {
         ProducerExteriorR2.validateRotation(a);var v=load(id);int sign=a.rotation()==0?1:-1;Rotation r=ProducerExteriorR2.rotation(a);

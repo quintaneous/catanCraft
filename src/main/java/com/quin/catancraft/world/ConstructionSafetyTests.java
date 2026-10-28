@@ -184,7 +184,7 @@ public final class ConstructionSafetyTests {
             f.stage();long cash=f.nation.treasury();DefenseTransaction.run(f,DefenseTransaction.Action.APPLY);
             PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK,(phase,n)->{if(phase.equals("rollback_write")&&n==3)throw new IOException("rollback-interrupted");}),"rollback-interrupted");
             AtomicInteger attempts=new AtomicInteger();PaidRecoveryService.queueFixture(server,f.file,"fixture",area,()->{if(attempts.incrementAndGet()==1)throw new PreparationDeferred("test loading");return DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK).writes();});
-            awaitQueue(h,f.file,attempts,2,0,()->{try{h.assertTrue(f.nation.treasury()==cash&&f.nation.resource(ResourceType.STONE)==100,"Legacy refund not once");h.assertTrue(DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK).writes()==0&&f.nation.treasury()==cash,"Repeat refund");}catch(Exception ex){throw new RuntimeException(ex);}});
+            awaitQueue(h,f.file,attempts,2,0,()->{try(var verificationLease=SectorChunkLease.acquire(h.getLevel(),area)){h.assertTrue(f.nation.treasury()==cash&&f.nation.resource(ResourceType.STONE)==100,"Legacy refund not once");h.assertTrue(DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK).writes()==0&&f.nation.treasury()==cash,"Repeat refund");}catch(Exception ex){throw new RuntimeException(ex);}});
         });
     }
     @GameTest(template="townhall_state_empty",batch="basic17",timeoutTicks=10000)
@@ -218,6 +218,20 @@ public final class ConstructionSafetyTests {
             long paid=f.nation.treasury();h.assertTrue(paid==cash-f.cost().money(),"Original price not settled once");
             h.assertTrue(DefenseTransaction.run(f,DefenseTransaction.Action.RESUME).writes()==0&&f.nation.treasury()==paid,"Repeated payment");h.succeed();
         });
+    }
+
+    @GameTest(template="townhall_state_empty",batch="palette34")
+    public static void delivered_palette_defaults_and_invalid_properties(GameTestHelper h)throws Exception {
+        h.assertTrue(BasicConstructionAssets.parsePalette("minecraft:grass_block").equals(Blocks.GRASS_BLOCK.defaultBlockState()),"Omitted defaults not resolved");
+        var stairs=BasicConstructionAssets.parsePalette("minecraft:oak_stairs[facing=south,half=top]");
+        h.assertTrue(stairs.getValue(StairBlock.FACING)==net.minecraft.core.Direction.SOUTH&&stairs.getValue(StairBlock.HALF)==net.minecraft.world.level.block.state.properties.Half.TOP&&!stairs.getValue(StairBlock.WATERLOGGED),"Partial property defaults changed");
+        for(String invalid:List.of("minecraft:not_a_real_block","minecraft:grass_block[bogus=true]","minecraft:grass_block[snowy=invalid]","minecraft:grass_block[snowy=true,snowy=false]","minecraft:grass_block[snowy=true,]","minecraft:grass_block[snowy=true","minecraft:grass_block]")){
+            boolean refused=false;try{BasicConstructionAssets.parsePalette(invalid);}catch(IOException expected){refused=true;}
+            h.assertTrue(refused,"Invalid palette accepted: "+invalid);
+        }
+        String[] ids={"starter_settlement","th1","th2","th3","vehicle_factory","weapons_factory","steel_mill","textile_mill","fuel_refinery","concrete_plant","machine_shop","chemical_plant","electronics_factory"};
+        for(String id:ids){var v=BasicConstructionAssets.load(id);h.assertTrue(v.states().length==v.width()*v.height()*v.length(),"Incomplete decoded asset: "+id);}
+        h.succeed();
     }
 
 }
