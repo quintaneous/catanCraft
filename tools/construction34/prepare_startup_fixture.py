@@ -27,7 +27,7 @@ name = 'CatanCraft Environment V4 - Visual Polish R2'
 assert (source_run / '.catancraft-controlled-fixture-v1').read_text() == signature
 props = dict(line.split('=', 1) for line in (source_run / 'server.properties').read_text().splitlines()
              if line and not line.startswith('#') and '=' in line)
-assert props['level-type'] in ('minecraft:flat', 'flat') and props['level-name'] == 'world'
+assert props['level-type'].replace('\\:', ':') in ('minecraft:flat', 'flat') and props['level-name'] == 'world'
 assert source.is_dir() and not target_run.exists(), 'Never overwrite a test world'
 assert not any(p.is_symlink() for p in source_run.rglob('*')), 'No linked inputs'
 for forbidden in ('catancraft-fresh-demo.json', 'CATANCRAFT_R7_AUTOBUILD_DISPOSABLE_TEST_ONLY.txt'):
