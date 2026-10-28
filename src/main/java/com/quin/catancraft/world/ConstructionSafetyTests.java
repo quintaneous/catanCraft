@@ -126,7 +126,8 @@ public final class ConstructionSafetyTests {
     public static void occupied_mutation_refuses_without_removing_item(GameTestHelper h)throws Exception {
         with(h,"a","steel_mill","plot_1",0,f->{BlockPos pos=null;for(int i=0;i<f.plan.source().size();i++){var a=f.plan.source().get(i);var b=f.plan.target().get(i);if(a.state().isAir()&&b.state().is(Blocks.STONE_BRICKS)){pos=a.position();break;}}if(pos==null)pos=f.changed();
             var item=new ItemEntity(f.level,pos.getX()+.5,pos.getY()+.5,pos.getZ()+.5,new ItemStack(Items.STICK));item.setNoGravity(true);f.level.addFreshEntity(item);
-            h.runAfterDelay(3,()->{try{PaidRecoveryTests.refused(h,f::prepare,"Construction hazard:");h.assertTrue(!item.isRemoved()&&!Files.exists(f.original()),"Occupancy removed item or created intent");item.discard();f.prepare();f.complete();h.succeed();}catch(Exception e){throw new RuntimeException(e);}});
+            var held=SectorChunkLease.acquire(f.level,BasicConstructionPurchase.bounds(f.request,MapDefinitionManager.territory("a")));
+            h.runAfterDelay(3,()->{try{held.keepAlive();PaidRecoveryTests.refused(h,f::prepare,"Construction hazard:");h.assertTrue(!item.isRemoved()&&!Files.exists(f.original()),"Occupancy removed item or created intent");item.discard();f.prepare();f.complete();h.succeed();}catch(Exception e){throw new RuntimeException(e);}finally{item.discard();held.close();}});
         });
     }
     @GameTest(template="townhall_state_empty",batch="basic13",timeoutTicks=10000)
@@ -182,6 +183,7 @@ public final class ConstructionSafetyTests {
         for(var c:f.plan.cells()){AABB b=new AABB(c.pos()).inflate(2);bounds=bounds==null?b:bounds.minmax(b);}for(var c:f.plan.reads())bounds=bounds.minmax(new AABB(c.pos()).inflate(2));
         final AABB area=bounds;PaidRecoveryTests.ready(h,area,()->{
             f.stage();long cash=f.nation.treasury();DefenseTransaction.run(f,DefenseTransaction.Action.APPLY);
+            decayDefenseGrass(h,f);
             PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK,(phase,n)->{if(phase.equals("rollback_write")&&n==3)throw new IOException("rollback-interrupted");}),"rollback-interrupted");
             AtomicInteger attempts=new AtomicInteger();PaidRecoveryService.queueFixture(server,f.file,"fixture",area,()->{if(attempts.incrementAndGet()==1)throw new PreparationDeferred("test loading");return DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK).writes();});
             awaitQueue(h,f.file,attempts,2,0,()->{try(var verificationLease=SectorChunkLease.acquire(h.getLevel(),area)){h.assertTrue(f.nation.treasury()==cash&&f.nation.resource(ResourceType.STONE)==100,"Legacy refund not once");h.assertTrue(DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK).writes()==0&&f.nation.treasury()==cash,"Repeat refund");}catch(Exception ex){throw new RuntimeException(ex);}});
@@ -232,6 +234,44 @@ public final class ConstructionSafetyTests {
         String[] ids={"starter_settlement","th1","th2","th3","vehicle_factory","weapons_factory","steel_mill","textile_mill","fuel_refinery","concrete_plant","machine_shop","chemical_plant","electronics_factory"};
         for(String id:ids){var v=BasicConstructionAssets.load(id);h.assertTrue(v.states().length==v.width()*v.height()*v.length(),"Incomplete decoded asset: "+id);}
         h.succeed();
+    }
+
+    static BlockPos decayDefenseGrass(GameTestHelper h,DefenseTests.Fixture f)throws Exception {
+        for(var r:f.plan.reads())if(r.state().is(Blocks.GRASS_BLOCK)&&SectorNaturalSupportPolicy.blocksGrass(f.level.getBlockState(r.pos().above()),r.pos().above())){
+            f.level.getChunkAt(r.pos());Blocks.GRASS_BLOCK.randomTick(f.level.getBlockState(r.pos()),f.level,r.pos(),net.minecraft.util.RandomSource.create(7));
+            h.assertTrue(f.level.getBlockState(r.pos()).is(Blocks.DIRT),"Native covered grass did not decay");return r.pos();
+        }throw new IOException("No native covered support in delivered socket");
+    }
+    static AABB defenseBounds(DefenseTests.Fixture f){AABB box=null;for(var r:f.plan.reads())box=box==null?new AABB(r.pos()).inflate(4):box.minmax(new AABB(r.pos()).inflate(4));for(var c:f.plan.cells())box=box.minmax(new AABB(c.pos()).inflate(4));return box;}
+    @GameTest(template="townhall_state_empty",batch="natural34a",timeoutTicks=6000)
+    public static void native_legacy_support_proof_retains_dirt_and_rejects_foreign_material(GameTestHelper h)throws Exception {
+        var f=new DefenseTests.Fixture(h.getLevel(),"a","front_w_04");PaidRecoveryTests.ready(h,defenseBounds(f),()->{
+            f.stage();DefenseTransaction.run(f,DefenseTransaction.Action.APPLY);long paid=f.nation.treasury();var support=decayDefenseGrass(h,f);
+            h.assertTrue(DefenseTransaction.run(f,DefenseTransaction.Action.RESUME).writes()==0&&f.nation.treasury()==paid,"Native support replayed purchase");
+            f.level.setBlock(support,Blocks.GOLD_BLOCK.defaultBlockState(),FLAGS);PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK),"read-only condition changed");
+            h.assertTrue(f.nation.treasury()==paid,"Foreign support caused refund");f.level.setBlock(support,Blocks.DIRT.defaultBlockState(),FLAGS);
+            DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK);h.assertTrue(f.level.getBlockState(support).is(Blocks.DIRT)&&f.nation.treasury()==1000,"Natural dirt repainted or refund wrong");h.succeed();
+        });
+    }
+    @GameTest(template="townhall_state_empty",batch="natural34b",timeoutTicks=6000)
+    public static void missing_legacy_support_proof_stays_strict_without_rewriting_history(GameTestHelper h)throws Exception {
+        var f=new DefenseTests.Fixture(h.getLevel(),"a","front_w_04");PaidRecoveryTests.ready(h,defenseBounds(f),()->{
+            f.stage();DefenseTransaction.run(f,DefenseTransaction.Action.APPLY);var journal=ProducerJournal.read(f.file);journal.remove("naturalSupportV1");ProducerJournal.write(f.file,journal,true);
+            byte[] before=Files.readAllBytes(f.file);long paid=f.nation.treasury();decayDefenseGrass(h,f);
+            PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.ROLLBACK),"read-only condition changed");
+            h.assertTrue(Arrays.equals(before,Files.readAllBytes(f.file))&&f.nation.treasury()==paid,"Historical proof invented or unsafe refund");h.succeed();
+        });
+    }
+    @GameTest(template="townhall_state_empty",batch="natural34c",timeoutTicks=6000)
+    public static void unexposed_and_corrupt_defense_support_proof_refuse_without_charge(GameTestHelper h)throws Exception {
+        var f=new DefenseTests.Fixture(h.getLevel(),"a","front_w_04");PaidRecoveryTests.ready(h,defenseBounds(f),()->{
+            f.stage();PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.APPLY,(phase,n)->{if(phase.equals("prepared"))throw new IOException("prepared-stop");}),"prepared-stop");
+            var support=f.plan.reads().stream().filter(r->r.state().is(Blocks.GRASS_BLOCK)).findFirst().orElseThrow().pos();byte[] before=Files.readAllBytes(f.file);
+            f.level.setBlock(support,Blocks.DIRT.defaultBlockState(),FLAGS);PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.RESUME),"read-only condition changed");
+            h.assertTrue(Arrays.equals(before,Files.readAllBytes(f.file))&&f.nation.treasury()==1000,"Unexposed support charged");f.level.setBlock(support,Blocks.GRASS_BLOCK.defaultBlockState(),FLAGS);
+            var journal=ProducerJournal.read(f.file);journal.getCompound("naturalSupportV1").putLongArray("exposed",new long[]{support.offset(999,0,0).asLong()});ProducerJournal.write(f.file,journal,true);
+            PaidRecoveryTests.refused(h,()->DefenseTransaction.run(f,DefenseTransaction.Action.RESUME),"natural-support contract");h.assertTrue(f.nation.treasury()==1000,"Corrupt proof charged");h.succeed();
+        });
     }
 
 }

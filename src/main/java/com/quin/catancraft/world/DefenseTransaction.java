@@ -37,6 +37,7 @@ public final class DefenseTransaction {
         if(exists && (j.getInt("schema")!=1 || !j.hasUUID("id") || !j.getCompound("identity").equals(e.identity()) || !j.getString("revision").equals(p.token()) || !j.getCompound("cost").equals(cost(e.cost()))))throw new IOException("Foreign defense journal/price/source identity");
         String phase=exists?j.getString("phase"):"NONE";
         if(!Set.of("NONE","PREPARED","RESERVED","APPLYING","COMMITTED","ROLLING_BACK","ROLLED_BACK").contains(phase))throw new IOException("Unknown defense journal phase");
+        Set<BlockPos> natural=naturalSupports(p);Set<BlockPos> exposed=exists?readNatural(j,natural):Set.of();
         String id=exists?j.getUUID("id").toString():"",receipt=safe(e.receipt());
         String previous=exists?j.getString("previousReceipt"):receipt;
         boolean reserved=exists && receipt.equals(id+":reserved"),paid=exists && receipt.equals(id+":paid"),refunded=exists && receipt.equals(id+":refunded");
@@ -48,8 +49,12 @@ public final class DefenseTransaction {
         for(var r:p.reads()){
             if(!e.level().hasChunkAt(r.pos()))throw new PreparationDeferred("Defense read-only chunk unloaded");
             BlockState expected=e.readState(r);CompoundTag actual=nbt(e.level(),r.pos()),canonical=defaultNbt(r.pos(),expected);
-            if(!e.level().getBlockState(r.pos()).equals(expected) || !actual.getString("id").equals(canonical.getString("id")))throw new IOException("Defense read-only condition changed at "+r.pos());
-            readStates.put(r.pos(),expected);readNbt.put(r.pos(),actual);
+            BlockState observed=e.level().getBlockState(r.pos());
+            boolean nativeDirt=exists&&j.contains("naturalSupportV1",Tag.TAG_COMPOUND)&&!phase.equals("PREPARED")&&(reserved||paid||refunded)
+                &&natural.contains(r.pos())&&expected.equals(Blocks.GRASS_BLOCK.defaultBlockState())&&observed.equals(Blocks.DIRT.defaultBlockState())
+                &&(exposed.contains(r.pos())||coveredNow(e,r.pos()));
+            if((!observed.equals(expected)&&!nativeDirt) || !actual.getString("id").equals(canonical.getString("id")))throw new IOException("Defense read-only condition changed at "+r.pos()+": expected "+expected+", actual "+observed);
+            readStates.put(r.pos(),observed);readNbt.put(r.pos(),actual);
         }
         ListTag cells=exists?j.getList("cells",Tag.TAG_COMPOUND):new ListTag();if(exists&&cells.size()!=p.cells().size())throw new IOException("Incomplete defense snapshot");
         List<BlockState> live=new ArrayList<>();List<ConstructionHazards.Write> writes=new ArrayList<>();
@@ -77,7 +82,7 @@ public final class DefenseTransaction {
         var guard=ConstructionHazards.inspect(e.level(),writes);
         if(!exists){
             if(!e.cost().canAfford(e.nation()))throw new IOException("Cannot afford defense: "+e.cost().describe());e.save();
-            j=new CompoundTag();j.putInt("schema",1);j.putUUID("id",UUID.randomUUID());j.put("identity",e.identity().copy());j.putString("revision",p.token());j.put("cost",cost(e.cost()));j.putString("previousReceipt",previous);j.put("cells",cells);j.putString("phase","PREPARED");ProducerJournal.write(e.file(),j,false);id=j.getUUID("id").toString();fault.at("prepared",0);
+            j=new CompoundTag();j.putInt("schema",1);j.putUUID("id",UUID.randomUUID());j.put("identity",e.identity().copy());j.putString("revision",p.token());j.put("cost",cost(e.cost()));j.putString("previousReceipt",previous);j.put("cells",cells);j.putString("phase","PREPARED");j.put("naturalSupportV1",naturalTag(natural,Set.of()));ProducerJournal.write(e.file(),j,false);id=j.getUUID("id").toString();fault.at("prepared",0);
         }
         if(!rollback&&!reserved&&!paid){
             e.requirements(false);guard.verify();verifyReads(e,readStates,readNbt);verifySource(e,p,live);
@@ -86,6 +91,9 @@ public final class DefenseTransaction {
             e.cost().charge(e.nation());e.receipt(id+":reserved");e.save();reserved=true;fault.at("reserved",0);
         }
         e.requirements(rollback);guard.verify();verifyReads(e,readStates,readNbt);verifySource(e,p,live);
+        // Persist observed owned cover before rollback can remove it. Historical journals
+        // without this versioned proof remain strict; never infer permission from a balance.
+        rememberCover(e,j,natural);
         advance(e.file(),j,rollback?"ROLLING_BACK":"APPLYING");int count=0;
         for(int step=0;step<p.cells().size();step++){
             int i=rollback?p.cells().size()-1-step:step;var c=p.cells().get(i);BlockState target=rollback?c.before():c.after();
@@ -102,6 +110,7 @@ public final class DefenseTransaction {
             if(!target.canSurvive(e.level(),c.pos()))throw new IOException("Defense final support failed at "+c.pos());
         }
         verifyReads(e,readStates,readNbt);
+        rememberCover(e,j,natural);
         guard.verify();e.save();fault.at("physical_saved",count);
         e.requirements(rollback);guard.verify();verifyReads(e,readStates,readNbt);verifyFinal(e,p,rollback);if(!j.getCompound("identity").equals(e.identity()))throw new IOException("Defense identity changed before settlement");
         String expectedReceipt=paid?id+":paid":reserved?id+":reserved":refunded?id+":refunded":previous;
@@ -132,4 +141,36 @@ public final class DefenseTransaction {
     }
     private static CompoundTag nbt(ServerLevel l,BlockPos p){BlockEntity b=l.getBlockEntity(p);return b==null?new CompoundTag():b.saveWithFullMetadata().copy();}
     private static void advance(Path path,CompoundTag j,String phase) throws IOException {if(!ProducerJournal.read(path).equals(j))throw new IOException("Defense journal changed concurrently");j.putString("phase",phase);ProducerJournal.write(path,j,true);}
+    private static Set<BlockPos> naturalSupports(DefenseRevisions.Plan p) {
+        Map<BlockPos,BlockState> covers=new HashMap<>();
+        for(var c:p.cells())if(c.before().isAir()&&SectorNaturalSupportPolicy.blocksGrass(c.after(),c.pos()))covers.put(c.pos(),c.after());
+        Set<BlockPos> supports=new HashSet<>();
+        for(var r:p.reads())if(r.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&covers.containsKey(r.pos().above()))supports.add(r.pos());
+        return Set.copyOf(supports);
+    }
+    private static CompoundTag naturalTag(Set<BlockPos> supports,Set<BlockPos> exposed) {
+        CompoundTag n=new CompoundTag();n.putInt("version",1);n.putLongArray("supports",supports.stream().mapToLong(BlockPos::asLong).sorted().toArray());n.putLongArray("exposed",exposed.stream().mapToLong(BlockPos::asLong).sorted().toArray());return n;
+    }
+    private static Set<BlockPos> readNatural(CompoundTag journal,Set<BlockPos> supports)throws IOException {
+        if(!journal.contains("naturalSupportV1"))return Set.of();
+        if(!journal.contains("naturalSupportV1",Tag.TAG_COMPOUND))throw new IOException("Invalid legacy defense natural-support proof");
+        CompoundTag n=journal.getCompound("naturalSupportV1");Set<BlockPos> exposed=new HashSet<>();
+        for(long v:n.getLongArray("exposed"))if(!exposed.add(BlockPos.of(v)))throw new IOException("Duplicate natural-support exposure");
+        if(!supports.containsAll(exposed)||!naturalTag(supports,exposed).equals(n))throw new IOException("Changed legacy defense natural-support contract");
+        return Set.copyOf(exposed);
+    }
+    private static boolean coveredNow(Environment e,BlockPos support) {
+        BlockPos above=support.above();
+        for(var c:e.plan().cells())if(c.pos().equals(above)&&SectorNaturalSupportPolicy.blocksGrass(c.after(),above)&&e.level().getBlockState(above).equals(c.after()))return true;
+        return false;
+    }
+    private static void rememberCover(Environment e,CompoundTag j,Set<BlockPos> supports)throws IOException {
+        if(!j.contains("naturalSupportV1"))return;
+        Set<BlockPos> old=readNatural(j,supports),now=new HashSet<>(old);
+        for(BlockPos p:supports)if(coveredNow(e,p))now.add(p);
+        if(now.equals(old))return;
+        if(!ProducerJournal.read(e.file()).equals(j))throw new IOException("Defense history changed while recording owned cover");
+        j.put("naturalSupportV1",naturalTag(supports,now));ProducerJournal.write(e.file(),j,true);
+    }
+
 }

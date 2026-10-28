@@ -1,6 +1,6 @@
 # Combined construction safety candidate (A06 / A09)
 
-Base: 0.1.33 exact release 967e9faaa2f954e51c7612a48551a9a33d50cad5, with release documentation 1cb34f3435bb9a7b733acc16864e5ffef049b8bb preserved. Status: IMPLEMENTED LOCALLY / NOT YET VALIDATED. This document alone is not a release or owner acceptance.
+Base: 0.1.33 exact release 967e9faaa2f954e51c7612a48551a9a33d50cad5, with release documentation 1cb34f3435bb9a7b733acc16864e5ffef049b8bb preserved. Status: IMPLEMENTED / CI VALIDATION PENDING. This document alone is not a release or owner acceptance.
 
 Normal early Town Hall upgrades (1->2, 2->3) and nine ordinary industrial purchases use the existing receipt-backed recovery engine. Source and target assets are pinned byte-for-byte to the delivered R7 package. Entire source envelopes are checked; actual books and inventories are retained. A successful pre-purchase save precedes a sealed immutable source intent, then block writes, physical save, one original-price settlement and durable receipt. The old public direct-paid-paste helpers now fail closed. Existing full TH4/5 and civic recovery is retained, not recreated. This is resume/reconciliation, not a new refund/rollback implementation.
 
@@ -8,4 +8,6 @@ A shared server-thread queue discovers unfinished producer and legacy defense jo
 
 Source assets/price/progression/sector art remain unchanged. This does not harden every operator map-import operation or reconstruct historical unjournaled partial pastes. There is no live deployment, foundation merge, world reset, armed defense, gate/siege, new terrain, front-park rollout, NPCs or economy rebalance. SEC-01 crowbar remains unresolved/high priority. No Blender handoff required.
 
-Expected validation: retain all 209 selected native tests plus 24 new cases; old test/asset evidence must not be relabeled. Use controlled synthetic test worlds, delivered source plans, and separate copied-server checks. Original failed logs are retained. Windows/client interaction and current walled save must be distinguished from automated/headless evidence.
+Expected validation: retain all 209 selected native tests plus 28 new cases; old test/asset evidence must not be relabeled. Use controlled synthetic test worlds, delivered source plans, and separate copied-server checks. Original failed logs are retained. Windows/client interaction and current walled save must be distinguished from automated/headless evidence.
+
+New legacy-defense intents carry a versioned whitelist and recorded owned-cover exposure for native covered-grass-to-dirt transitions. The ground is never repainted. Old histories lacking this evidence remain strict and may block on material drift; no support proof is invented retrospectively. This does not change accepted whole-sector wall contracts.
