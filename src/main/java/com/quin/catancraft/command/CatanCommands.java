@@ -1447,31 +1447,14 @@ public final class CatanCommands {
             return 1;
         }
 
-        if (nextLevel <= 3 && mapDefinition != null) {
-            MapAssetService.Result placement =
-                    MapAssetService.upgradeTownHall(
-                            source.getServer(),
-                            data,
-                            mapDefinition,
-                            nextLevel
-                    );
-            if (!placement.success()) {
-                source.sendFailure(Component.literal(
-                        "Town Hall upgrade failed; no resources were charged. " +
-                                placement.message()));
-                return 0;
-            }
+        MapAssetService.Result early = com.quin.catancraft.world.BasicConstructionPurchase.hall(
+                source.getServer(), player.getUUID(), territory.id(), nextLevel);
+        if (!early.success()) {
+            source.sendFailure(Component.literal(early.message()));
+            return 0;
         }
-
-        cost.charge(nation);
-        territory.setCityLevel(nextLevel);
-        data.setDirty();
-
-        String visualNote = " Town Hall upgraded in-world.";
-
-        source.sendSuccess(() -> Component.literal(
-                territory.name() + " upgraded to City Level " +
-                        territory.cityLevel() + "." + visualNote), true);
+        // Receipt, debit and purchased level are settled together by the guarded service.
+        source.sendSuccess(() -> Component.literal(early.message()), true);
         NationDashboard.open(player);
         return 1;
     }

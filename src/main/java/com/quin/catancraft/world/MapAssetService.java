@@ -167,130 +167,18 @@ public final class MapAssetService {
         return result;
     }
 
-    public static Result placeBuilding(
-            MinecraftServer server,
-            CatanSavedData data,
-            TerritoryDefinition territory,
-            BuildingType type
-    ) {
-        String assetId = SchematicAssetRegistry.buildingAsset(type);
-        if (assetId == null) {
-            return new Result(
-                    true,
-                    "No finished physical schematic exists for " +
-                            type.displayName() + " yet; economy building is data-only.",
-                    0
-            );
-        }
-
-        SchematicAssetRegistry.Asset asset =
-                SchematicAssetRegistry.asset(assetId);
-        MapAnchor anchor =
-                SchematicAssetRegistry.territoryAnchor(assetId, territory);
-        if (asset == null || anchor == null) {
-            return new Result(false,
-                    "No valid physical placement contract for " + assetId + ".", 0);
-        }
-
-        String key = territoryKey(territory.id(), asset.plot());
-        String existing = data.placedMapAsset(key);
-
-        if (existing != null && !sameAsset(existing, assetId)) {
-            return new Result(false,
-                    "Physical plot " + asset.plot() +
-                            " is already occupied by " + existing + ".", 0);
-        }
-
-        if (asset.placementToken().equals(existing)) {
-            return new Result(true,
-                    assetId + " is already placed at " + asset.plot() + ".", 0);
-        }
-
-        SchematicPlacementService.Result validation =
-                SchematicPlacementService.validateAsset(assetId, anchor);
-        if (!validation.success()) {
-            return new Result(false, validation.message(), 0);
-        }
-
-        SchematicPlacementService.Result placement =
-                SchematicPlacementService.placeAsset(
-                        server,
-                        territory.dimension(),
-                        assetId,
-                        anchor
-                );
-        if (!placement.success()) {
-            return new Result(false, placement.message(), placement.changedBlocks());
-        }
-
-        data.setPlacedMapAsset(key, asset.placementToken());
-        data.setDirty();
-        return new Result(true, placement.message(), placement.changedBlocks());
+    /** Compatibility stubs: paid buildings must use the leader-authorized journaled service. */
+    @Deprecated
+    public static Result placeBuilding(MinecraftServer server,CatanSavedData data,TerritoryDefinition territory,BuildingType type) {
+        return new Result(false,"Direct paid-building paste is disabled; use the normal nation purchase menu.",0);
     }
-
-    public static Result placeBuilding(MinecraftServer server, CatanSavedData data,
-            TerritoryDefinition territory, BuildingType type, String selectedPlot) {
-        String assetId = SchematicAssetRegistry.buildingAsset(type);
-        SchematicAssetRegistry.Asset asset = SchematicAssetRegistry.asset(assetId);
-        if (asset == null || !IndustrialPlotService.INDUSTRIAL_PLOTS.contains(selectedPlot))
-            return new Result(false, "Unknown factory or industrial plot.", 0);
-        MapAnchor anchor = IndustrialPlotService.anchorFor(type, selectedPlot, territory);
-        if (anchor == null) return new Result(false, "Missing factory plot anchor.", 0);
-        String key = territoryKey(territory.id(), selectedPlot);
-        String existing = data.placedMapAsset(key);
-        if (existing != null)
-            return new Result(false, "Plot already occupied: " + existing, 0);
-        SchematicPlacementService.Result validation =
-                SchematicPlacementService.validateAsset(assetId, anchor);
-        if (!validation.success())
-            return new Result(false, validation.message(), 0);
-        SchematicPlacementService.Result placed =
-                SchematicPlacementService.placeAsset(server, territory.dimension(), assetId, anchor);
-        if (!placed.success()) return new Result(false, placed.message(), placed.changedBlocks());
-        data.setPlacedMapAsset(key, asset.placementToken());
-        data.setDirty();
-        return new Result(true, placed.message(), placed.changedBlocks());
+    @Deprecated
+    public static Result placeBuilding(MinecraftServer server,CatanSavedData data,TerritoryDefinition territory,BuildingType type,String selectedPlot) {
+        return new Result(false,"Direct paid-building paste is disabled; use the normal nation purchase menu.",0);
     }
-
-    public static Result upgradeTownHall(
-            MinecraftServer server,
-            CatanSavedData data,
-            TerritoryDefinition territory,
-            int cityLevel
-    ) {
-        String assetId = hallAsset(cityLevel);
-
-        MapAnchor anchor =
-                SchematicAssetRegistry.territoryAnchor(assetId, territory);
-        if (anchor == null) {
-            return new Result(false,
-                    "No Town Hall placement contract for " + territory.id() + ".", 0);
-        }
-
-        SchematicPlacementService.Result validation =
-                SchematicPlacementService.validateAsset(assetId, anchor);
-        if (!validation.success()) {
-            return new Result(false, validation.message(), 0);
-        }
-
-        SchematicPlacementService.Result placement =
-                SchematicPlacementService.placeAsset(
-                        server,
-                        territory.dimension(),
-                        assetId,
-                        anchor
-                );
-        if (!placement.success()) {
-            return new Result(false, placement.message(), placement.changedBlocks());
-        }
-
-        recordPlacement(
-                data,
-                territoryKey(territory.id(), "town_hall"),
-                assetId
-        );
-        data.setDirty();
-        return new Result(true, placement.message(), placement.changedBlocks());
+    @Deprecated
+    public static Result upgradeTownHall(MinecraftServer server,CatanSavedData data,TerritoryDefinition territory,int cityLevel) {
+        return new Result(false,"Direct paid Town Hall paste is disabled; use the normal nation upgrade menu.",0);
     }
 
     /**

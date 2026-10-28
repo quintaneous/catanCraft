@@ -46,7 +46,7 @@ public final class DefenseTransaction {
         e.requirements(rollback);
         Map<BlockPos,BlockState> readStates=new HashMap<>();Map<BlockPos,CompoundTag> readNbt=new HashMap<>();
         for(var r:p.reads()){
-            if(!e.level().hasChunkAt(r.pos()))throw new IOException("Defense read-only chunk unloaded");
+            if(!e.level().hasChunkAt(r.pos()))throw new PreparationDeferred("Defense read-only chunk unloaded");
             BlockState expected=e.readState(r);CompoundTag actual=nbt(e.level(),r.pos()),canonical=defaultNbt(r.pos(),expected);
             if(!e.level().getBlockState(r.pos()).equals(expected) || !actual.getString("id").equals(canonical.getString("id")))throw new IOException("Defense read-only condition changed at "+r.pos());
             readStates.put(r.pos(),expected);readNbt.put(r.pos(),actual);
@@ -54,7 +54,7 @@ public final class DefenseTransaction {
         ListTag cells=exists?j.getList("cells",Tag.TAG_COMPOUND):new ListTag();if(exists&&cells.size()!=p.cells().size())throw new IOException("Incomplete defense snapshot");
         List<BlockState> live=new ArrayList<>();List<ConstructionHazards.Write> writes=new ArrayList<>();
         for(int i=0;i<p.cells().size();i++){
-            var c=p.cells().get(i);e.allow(c.pos());if(!e.level().hasChunkAt(c.pos()))throw new IOException("Defense chunk unloaded");
+            var c=p.cells().get(i);e.allow(c.pos());if(!e.level().hasChunkAt(c.pos()))throw new PreparationDeferred("Defense chunk unloaded");
             CompoundTag tag=exists?cells.getCompound(i):new CompoundTag();
             CompoundTag expectedNbt=defaultNbt(c.pos(),c.after());
             if(exists && (tag.getLong("pos")!=c.pos().asLong() || !tag.getCompound("before").equals(NbtUtils.writeBlockState(c.before())) || !tag.getCompound("after").equals(NbtUtils.writeBlockState(c.after())) || !tag.getCompound("afterNbt").equals(expectedNbt) || !tag.getCompound("beforeNbt").isEmpty()))throw new IOException("Defense snapshot contract changed");
@@ -81,7 +81,9 @@ public final class DefenseTransaction {
         }
         if(!rollback&&!reserved&&!paid){
             e.requirements(false);guard.verify();verifyReads(e,readStates,readNbt);verifySource(e,p,live);
-            if(!j.getCompound("identity").equals(e.identity()) || !safe(e.receipt()).equals(previous))throw new IOException("Ambiguous defense reservation");e.cost().charge(e.nation());e.receipt(id+":reserved");e.save();reserved=true;fault.at("reserved",0);
+            if(!j.getCompound("identity").equals(e.identity()) || !safe(e.receipt()).equals(previous))throw new IOException("Ambiguous defense reservation");
+            if(!e.cost().canAfford(e.nation()))throw new PreparationDeferred("Original defense price is outstanding: "+e.cost().describe());
+            e.cost().charge(e.nation());e.receipt(id+":reserved");e.save();reserved=true;fault.at("reserved",0);
         }
         e.requirements(rollback);guard.verify();verifyReads(e,readStates,readNbt);verifySource(e,p,live);
         advance(e.file(),j,rollback?"ROLLING_BACK":"APPLYING");int count=0;

@@ -116,7 +116,7 @@ public final class DefenseTests {
     }
     private interface Checked {void run() throws Exception;}
     private static void expectRefusal(Checked r) throws Exception {try{r.run();}catch(IOException expected){return;}throw new AssertionError("Expected safety refusal");}
-    private static final class Fixture implements DefenseTransaction.Environment {
+    static final class Fixture implements DefenseTransaction.Environment {
         final ServerLevel level;final DefenseRevisions.Plan plan;final NationData nation=new NationData(UUID.randomUUID(),"defense-test",UUID.randomUUID(),1000);final Path file;String receipt="",owned="";boolean authorized=true;Map<String,DefenseRevisions.Plan> installed=new HashMap<>();
         Fixture(ServerLevel l,String city,String socket) throws IOException {
             if(!(l.getServer() instanceof GameTestServer))throw new IOException("Disposable GameTest server required");level=l;plan=DefenseRevisions.plan(city,socket);nation.addResource(ResourceType.STONE,100);

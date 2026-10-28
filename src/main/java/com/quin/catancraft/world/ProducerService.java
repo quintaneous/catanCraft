@@ -52,6 +52,19 @@ public final class ProducerService {
     }
     private static synchronized MapAssetService.Result operation(MinecraftServer server,String input,String kind,ProducerTransaction.Action action) {
         try {
+            if(action==ProducerTransaction.Action.APPLY&&PaidRecoveryService.isRunning(server))throw new IOException("Another construction is loading/recovering; retry after completion");
+            return execute(server,input,kind,action,null);
+        }catch(ProducerTransaction.FreshOccupancyRefusal ex) {
+            return new MapAssetService.Result(false,"Producer upgrade not started: "+ex.getMessage()+
+                ". No upgrade blocks changed and no payment taken. Clear only the reported construction hazard, then retry.",0);
+        }catch(Exception ex) {
+            CatanCraft.LOGGER.error("Producer operation refused city={} kind={}",input,kind,ex);
+            return new MapAssetService.Result(false,"Producer operation stopped: "+ex.getMessage()+
+                ". Preserve blocks and journals. A retained incomplete transaction can be resumed or rolled back; never repeat a purchase to recover it.",0);
+        }
+    }
+    private static MapAssetService.Result execute(MinecraftServer server,String input,String kind,ProducerTransaction.Action action,Path expectedPath)throws Exception {
+
             String city=input.toLowerCase(Locale.ROOT);Path root=ConstructionWorldAuthorization.authorize(server);
             if(!city.matches("[a-p]"))throw new IOException("Unknown city");
             CatanSavedData data=CatanSavedData.get(server);TerritoryData t=data.territory(city);
@@ -95,35 +108,22 @@ public final class ProducerService {
                     spec=new ProducerTransaction.Spec(paid,target,plots);
                 }
             }
+            if(expectedPath!=null&&!path.equals(expectedPath))throw new IOException("Producer recovery selected a different history");
             var env=context(server,root,data,t,def,spec,path,action!=ProducerTransaction.Action.STATUS);
             var result=ProducerTransaction.run(env,action);
             CatanCraft.LOGGER.info("PRODUCER_R1 city={} kind={} writes={} {}",city,kind,result.writes(),result.message());
             return new MapAssetService.Result(true,result.message(),result.writes());
-        }catch(ProducerTransaction.FreshOccupancyRefusal ex) {
-            return new MapAssetService.Result(false,"Producer upgrade not started: "+ex.getMessage()+
-                ". No upgrade blocks changed and no payment taken. Clear only the reported construction hazard, then retry.",0);
-        }catch(Exception ex) {
-            CatanCraft.LOGGER.error("Producer operation refused city={} kind={}",input,kind,ex);
-            return new MapAssetService.Result(false,"Producer operation stopped: "+ex.getMessage()+
-                ". Preserve blocks and journals. A retained incomplete transaction can be resumed or rolled back; never repeat a purchase to recover it.",0);
-        }
     }
-    /** Only reconcile existing incomplete owned journals, never initiate an upgrade on startup. */
-    @SubscribeEvent(priority=EventPriority.LOWEST) public static void recoverStarted(ServerStartedEvent event) {
-        MinecraftServer server=event.getServer();Path root;
-        try {root=ConstructionWorldAuthorization.authorize(server);}catch(IOException notAuthorized){return;}
-        for(char c='a';c<='p';c++)try {
-            String city=String.valueOf(c);
-            for(Path p:histories(root,city)) {
-                var phase=ProducerTransaction.phase(ProducerJournal.read(p));
-                if(phase==ProducerTransaction.Phase.COMMITTED || phase==ProducerTransaction.Phase.ROLLED_BACK)continue;
-                var result=operation(server,city,"restart-recovery",phase==ProducerTransaction.Phase.ROLLING_BACK?
-                    ProducerTransaction.Action.ROLLBACK:ProducerTransaction.Action.RESUME);
-                if(!result.success())CatanCraft.LOGGER.error("Producer restart recovery remains blocked: {}",result.message());
-                break;
-            }
-        }catch(Exception e){CatanCraft.LOGGER.error("Producer recovery refused; retain journal for city "+c,e);}
+    static MapAssetService.Result recoverExisting(MinecraftServer server,Path file)throws Exception {
+        Path root=ConstructionWorldAuthorization.authorize(server);
+        if(!root.resolve("data").equals(file.getParent()))throw new IOException("Foreign producer recovery path");
+        CompoundTag j=ProducerJournal.read(file);String city=j.getCompound("identity").getString("city");
+        if(!city.matches("[a-p]")||!histories(root,city).contains(file))throw new IOException("Invalid producer recovery selection");
+        var phase=ProducerTransaction.phase(j);
+        if(phase==ProducerTransaction.Phase.COMMITTED||phase==ProducerTransaction.Phase.ROLLED_BACK)return new MapAssetService.Result(true,"Producer history already complete; no replay",0);
+        return execute(server,city,"restart-recovery",phase==ProducerTransaction.Phase.ROLLING_BACK?ProducerTransaction.Action.ROLLBACK:ProducerTransaction.Action.RESUME,file);
     }
+    // Existing-history recovery is scheduled by PaidRecoveryService after chunks/entities load.
     private static List<Path> histories(Path root,String city) throws IOException {
         Path dir=root.resolve("data");if(!Files.isDirectory(dir))return List.of();
         try(var stream=Files.newDirectoryStream(dir,"catancraft_producer_"+city+"_*_r{1,2}.dat")) {

@@ -137,7 +137,7 @@ final class ProducerTransaction {
         }
         BlockState[] live=new BlockState[cells.size()];Map<BlockPos,CompoundTag> inventories=new HashMap<>();
         for(int i=0;i<cells.size();i++) {
-            Cell c=cells.get(i);if(!e.level().hasChunkAt(c.pos()))throw new IOException("Unloaded producer chunk at "+c.pos());
+            Cell c=cells.get(i);if(!e.level().hasChunkAt(c.pos()))throw new PreparationDeferred("Unloaded producer chunk at "+c.pos());
             BlockState state=e.level().getBlockState(c.pos());live[i]=state;
             boolean valid;
             if(changed.contains(i) && pending) valid=ProducerRevisions.matches(state,before.get(i))||ProducerRevisions.matches(state,c.next());
@@ -160,7 +160,7 @@ final class ProducerTransaction {
         }
         if(action!=Action.ROLLBACK && phase==Phase.ROLLING_BACK)throw new IOException("Rollback started; finish rollback");
         if(!exists && mask.isEmpty() && spec.paidBefore()==spec.paidAfter())return new Result("Producer visuals already match paid level; zero writes and zero charge.",0);
-        if(!paidReceipt && action!=Action.ROLLBACK && !spec.cost().canAfford(e.nation()))throw new IOException("Cannot afford producer upgrade: "+spec.cost().describe());
+        if(!paidReceipt && action!=Action.ROLLBACK && !spec.cost().canAfford(e.nation())){if(pending)throw new PreparationDeferred("Original producer price is outstanding: "+spec.cost().describe());throw new IOException("Cannot afford producer upgrade: "+spec.cost().describe());}
         boolean rollback=action==Action.ROLLBACK;
         List<ConstructionHazards.Write> hazardWrites=new ArrayList<>();
         for(int k=0;k<mask.size();k++) {
@@ -186,7 +186,7 @@ final class ProducerTransaction {
         for(AABB box:boxes) {
             for(BlockPos b:BlockPos.betweenClosed((int)box.minX-1,(int)box.minY-1,(int)box.minZ-1,(int)box.maxX,(int)box.maxY,(int)box.maxZ)) {
                 BlockPos p=b.immutable();if(unique.contains(p))continue;
-                if(!e.level().hasChunkAt(p))throw new IOException("Unloaded producer boundary");
+                if(!e.level().hasChunkAt(p))throw new PreparationDeferred("Unloaded producer boundary");
                 shell.put(p,e.level().getBlockState(p));BlockEntity be=e.level().getBlockEntity(p);
                 if(be!=null)shellNbt.put(p,be.saveWithFullMetadata().copy());
             }

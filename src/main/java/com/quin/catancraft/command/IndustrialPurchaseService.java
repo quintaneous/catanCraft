@@ -75,24 +75,14 @@ public final class IndustrialPurchaseService {
             return 0;
         }
 
-        MapAssetService.Result result = MapAssetService.placeBuilding(
-                source.getServer(), data, map, type, chosen);
+        MapAssetService.Result result = com.quin.catancraft.world.BasicConstructionPurchase.industry(
+                source.getServer(), player.getUUID(), territory.id(), type, chosen);
         if (!result.success()) {
-            source.sendFailure(Component.literal(
-                    "Physical construction failed: " + result.message() +
-                    " No economy cost was charged."));
+            source.sendFailure(Component.literal(result.message()));
             return 0;
         }
-
-        // No external unit production occurs until the purchase is recorded.
-        cost.charge(nation);
-        territory.buildings().add(new BuildingInstance(
-                type, 1, type.isProcessor() ? 100 : 0, chosen));
-        data.setDirty();
-        source.sendSuccess(() -> Component.literal(
-                "Built " + type.displayName() + " on " + chosen +
-                " in " + territory.name() + " for " + cost.describe() +
-                " (" + result.changedBlocks() + " changed blocks)."), true);
+        // The guarded transaction, not the command, owns payment and purchased state.
+        source.sendSuccess(() -> Component.literal(result.message()), true);
         NationDashboard.open(player);
         return 1;
     }

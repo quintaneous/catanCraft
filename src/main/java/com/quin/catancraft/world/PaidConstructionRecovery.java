@@ -25,7 +25,7 @@ final class PaidConstructionRecovery {
     }
     interface Environment {
         ServerLevel level(); Path original(); byte[] originalBytes();
-        CompoundTag identity(); List<Cell> cells();
+        CompoundTag identity(); List<Cell> cells() throws IOException;
         void authorize() throws IOException;
         boolean paid() throws IOException;
         void checkPayment() throws IOException;

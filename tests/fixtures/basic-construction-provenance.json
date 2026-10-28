@@ -1,0 +1,91 @@
+{
+  "archive_sha256": "2a7a362047a6672b802c0077cd58db236183c10a69cc69dc928c64859d985edc",
+  "source": "mcwar.zip / mcwar/config/catancraft/schematics_bundle.zip",
+  "members": [
+    {
+      "asset": "starter_settlement",
+      "source_member": "starter_settlement_v2.schem",
+      "sha256": "fe03d2ddcc76555ad56f0767d601100380193053bfdca1f56dd2f45d7be9e443",
+      "size": 6181
+    },
+    {
+      "asset": "th1",
+      "source_member": "thall1.schem",
+      "sha256": "dfe74c98ba01bc2d66496b2d306a61de951ad0a3a24af6d6de895d2dbb16ec88",
+      "size": 2717
+    },
+    {
+      "asset": "th2",
+      "source_member": "thall2.schem",
+      "sha256": "63041e5acbd8f669b8dcc71251382e2df4a901d52c34d94f4398e35047ce23c9",
+      "size": 3459
+    },
+    {
+      "asset": "th3",
+      "source_member": "thall3.schem",
+      "sha256": "e659c7fd88dfa7cad2464d3f4bb1a9da28178efab7463da9106a1a76e56e5129",
+      "size": 6610
+    },
+    {
+      "asset": "vehicle_factory",
+      "source_member": "vehiclefactory.schem",
+      "sha256": "793e2a277fcb7287ba76298d2080808e315bcf626f76e9fe8f9ce5143e731649",
+      "size": 1372
+    },
+    {
+      "asset": "weapons_factory",
+      "source_member": "weaponsfactory.schem",
+      "sha256": "9590a848409d177f0e4fa0238767ca6ee6f0aaac18563e9f9a14ae18ced5b229",
+      "size": 1276
+    },
+    {
+      "asset": "steel_mill",
+      "source_member": "steel_mill.schem",
+      "sha256": "de1f30fc291315aec75f953d2b953936c4f1ad965dda1a4eaa4e21674c09a478",
+      "size": 1439
+    },
+    {
+      "asset": "textile_mill",
+      "source_member": "textile_mill.schem",
+      "sha256": "6c8990e3d265aa6db9a3c381b65f349df6d472b1945d9ed5e343e0d7530f9f2f",
+      "size": 1204
+    },
+    {
+      "asset": "fuel_refinery",
+      "source_member": "fuel_refinery.schem",
+      "sha256": "423defe576ece5217905e01d4ed15aa170c771c1a7e35a06e668e4bc87da62f2",
+      "size": 1316
+    },
+    {
+      "asset": "concrete_plant",
+      "source_member": "concrete_plant.schem",
+      "sha256": "030fa495fcdec6004b3dea7d1104f25ef08e5f9ff912aafb4db321a0d162572a",
+      "size": 1286
+    },
+    {
+      "asset": "machine_shop",
+      "source_member": "machine_shop.schem",
+      "sha256": "31a37f931c53257c3682eb08363caeaacfcce4e2b79d7e4f8240a36bc286443d",
+      "size": 1239
+    },
+    {
+      "asset": "chemical_plant",
+      "source_member": "chemical_plant.schem",
+      "sha256": "fe1b93e06490ae6108885f2a85c6a42c430d7a86ff5cf818eaa5dcd991ac19a1",
+      "size": 1331
+    },
+    {
+      "asset": "electronics_factory",
+      "source_member": "electronics_factory.schem",
+      "sha256": "633dc41ab6f12b45aaadb86ba7080eea81c484be04c74b6a6d40dcb6348740ab",
+      "size": 1212
+    }
+  ],
+  "bundle_sha256": "cbaf8b095958f7de19a58bbca2723f18a1273d908eb5f174d36cd4aa1e9608d1",
+  "recovered_complete_members_byte_identical": [
+    "starter_settlement.schem",
+    "th1.schem",
+    "th2.schem",
+    "th3.schem"
+  ]
+}

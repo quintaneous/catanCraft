@@ -26,6 +26,12 @@ public final class DefenseService {
         if(busy)return new MapAssetService.Result(false,"Defense transaction already active; retry after it completes",0);
         busy=true;
         try{
+            if(action==DefenseTransaction.Action.APPLY&&PaidRecoveryService.isRunning(server))throw new IOException("Another construction is loading/recovering; retry after completion");
+            return execute(server,city,socket,action,approvedCost,null);
+        }catch(Exception x){CatanCraft.LOGGER.error("Defense operation refused city={} socket={}",city,socket,x);return new MapAssetService.Result(false,"Defense refused: "+x.getMessage()+". Preserve retained journal; no duplicate purchase to recover.",0);}finally{busy=false;}
+    }
+    private static MapAssetService.Result execute(MinecraftServer server,String city,String socket,DefenseTransaction.Action action,EconomyCost approvedCost,Path expectedPath)throws Exception {
+
             if(!server.isSameThread())throw new IOException("Defense operation requires server main thread");
             city=city.toLowerCase(Locale.ROOT);socket=socket.toLowerCase(Locale.ROOT);
             if(!city.matches("[a-p]")||!socket.matches("[a-z0-9_]+"))throw new IOException("Unknown defense city/socket");
@@ -34,6 +40,7 @@ public final class DefenseService {
             if(territory==null||territory.ownerNationId()==null||data.nation(territory.ownerNationId())==null)throw new IOException("Owned defense city required");
             ProducerService.validateMap(def);UUID owner=territory.ownerNationId();NationData nation=data.nation(owner);
             final Path file=chooseHistory(root,data,city,socket,action);
+            if(expectedPath!=null&&!file.equals(expectedPath))throw new IOException("Defense recovery selected a different history");
             // Recovery uses the historical immutable price, never a newly chosen catalog entry.
             final EconomyCost cost;
             if(Files.exists(file,LinkOption.NOFOLLOW_LINKS)) {
@@ -101,7 +108,16 @@ public final class DefenseService {
                 }
             };
             var result=DefenseTransaction.run(env,action);return new MapAssetService.Result(true,result.message(),result.writes());
-        }catch(Exception x){CatanCraft.LOGGER.error("Defense operation refused city={} socket={}",city,socket,x);return new MapAssetService.Result(false,"Defense refused: "+x.getMessage()+". Preserve retained journal; no duplicate purchase to recover.",0);}finally{busy=false;}
+    }
+    static MapAssetService.Result recoverExisting(MinecraftServer server,Path file)throws Exception {
+        if(busy)throw new PreparationDeferred("Another historical defense transaction is active");
+        busy=true;try{
+            Path root=TownHallRepairService.authorize(server);
+            if(!root.resolve("data").equals(file.getParent()))throw new IOException("Foreign defense recovery path");
+            CompoundTag j=ProducerJournal.read(file),id=j.getCompound("identity");String phase=j.getString("phase");
+            if(phase.equals("COMMITTED")||phase.equals("ROLLED_BACK"))return new MapAssetService.Result(true,"Defense history already complete; no replay",0);
+            return execute(server,id.getString("city"),id.getString("socket"),phase.equals("ROLLING_BACK")?DefenseTransaction.Action.ROLLBACK:DefenseTransaction.Action.RESUME,null,file);
+        }finally{busy=false;}
     }
     /** Strict historical pricing: unknown fields/types and nonpositive material amounts fail closed. */
     static EconomyCost historicalCost(CompoundTag c) throws IOException {
@@ -132,14 +148,5 @@ public final class DefenseService {
         }
         if(matches!=0 || (receipt!=null&&!receipt.isEmpty()))throw new IOException("Defense receipt has no matching retained history; preserve ledger and recover the missing journal");return base;
     }
-    @SubscribeEvent public static void recoverStarted(ServerStartedEvent event){
-        MinecraftServer server=event.getServer();Path root;try{root=TownHallRepairService.authorize(server);}catch(IOException denied){return;}
-        try(var paths=Files.newDirectoryStream(root.resolve("data"),"catancraft_defense_*_r4a_r6_1.dat")){
-            for(Path p:paths)try{
-                CompoundTag j=ProducerJournal.read(p);String phase=j.getString("phase");if(phase.equals("COMMITTED")||phase.equals("ROLLED_BACK"))continue;
-                CompoundTag id=j.getCompound("identity");var result=operation(server,id.getString("city"),id.getString("socket"),phase.equals("ROLLING_BACK")?DefenseTransaction.Action.ROLLBACK:DefenseTransaction.Action.RESUME,null);
-                if(!result.success())CatanCraft.LOGGER.error("Defense recovery blocked: {}",result.message());
-            }catch(Exception x){CatanCraft.LOGGER.error("Retain unresolved defense journal {}",p,x);}
-        }catch(NoSuchFileException empty){}catch(IOException x){CatanCraft.LOGGER.error("Defense recovery scan refused",x);}
-    }
+    // Existing-history recovery is scheduled only; no one-shot writes at ServerStartedEvent.
 }

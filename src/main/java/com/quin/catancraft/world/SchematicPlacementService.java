@@ -353,7 +353,11 @@ public final class SchematicPlacementService {
 
                     // Flag 2 sends the block change to clients without cascading
                     // normal survival-style neighbor destruction during a bulk paste.
-                    level.setBlock(worldPos, target, 2);
+                    if (!level.setBlock(worldPos, target, 2)
+                            || !level.getBlockState(worldPos).equals(target)) {
+                        return new Result(false, "Schematic block placement failed at " + worldPos
+                                + "; prior changed blocks=" + changed + ". Preserve this world for review.", changed);
+                    }
                     changed++;
                 }
             }

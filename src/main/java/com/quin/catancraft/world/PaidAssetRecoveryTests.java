@@ -72,7 +72,7 @@ public final class PaidAssetRecoveryTests {
             }
         }
         PaidConstructionRecovery.Environment saving(PaidConstructionRecovery.Environment e){return new PaidConstructionRecovery.Environment(){
-            public ServerLevel level(){return e.level();}public Path original(){return e.original();}public byte[] originalBytes(){return e.originalBytes();}public CompoundTag identity(){return e.identity();}public List<PaidConstructionRecovery.Cell> cells(){return e.cells();}
+            public ServerLevel level(){return e.level();}public Path original(){return e.original();}public byte[] originalBytes(){return e.originalBytes();}public CompoundTag identity(){return e.identity();}public List<PaidConstructionRecovery.Cell> cells()throws IOException{return e.cells();}
             public void authorize()throws IOException{e.authorize();}public boolean paid()throws IOException{return e.paid();}public void checkPayment()throws IOException{e.checkPayment();}public void settle()throws IOException{e.settle();}
             public CompoundTag ledger(){return e.ledger();}public void save()throws IOException{F.this.save();}
         };}
