@@ -1,5 +1,13 @@
 # Combined integration status
 
+## INT-02 / DEF-02 — A06 / A09 combined continuation, 2026-10-28
+
+Delivered 0.1.33 and its release-documentation ancestry are preserved. Resumed the newer interrupted 0.1.34 remote implementation, then completed early Hall/ordinary factory source safeguards and real producer/legacy-defense startup retries. New source-cover evidence fixes native covered-grass decay while old proofless histories remain strict. No live world or installed mods were accessed or modified.
+
+Exact JAR source `e7f9e67345de36ca90e31008fddc1f610f4805e2`: **251/251 selected native checks across 20 namespaces, 73/73 Python checks**, all zero failures; downloaded source/JAR hashes and source archive bytes independently verified. Earlier failed logs remain retained and explained. This is automated validation, not owner installation or acceptance. Accepted North Reinforced / East-South-West Basic walls and 0.1.32 readiness stay accepted without repeated purchase tests. No 0.1.33 installation is presumed. SEC-01 crowbar remains unresolved/high priority.
+
+Use [the 0.1.34 release record](CONSTRUCTION_SAFETY_034_RELEASE.md) and [one solo checklist](CONSTRUCTION_SAFETY_034_SOLO_CHECKLIST.md). Existing R7 performance and Windows/client/modpack acceptance limitations remain; no reset/imports/multiplayer/Blender assignment. The older dated checkpoints below are historical, not current delivery instructions.
+
 ## DEF-02 / INT-02 actual R7 production path — 2026-10-19
 
 Checkpoint `4b0b1ae` activates the player-facing sector resolver only for bound
