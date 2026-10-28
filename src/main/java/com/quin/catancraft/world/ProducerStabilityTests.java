@@ -1,7 +1,7 @@
 package com.quin.catancraft.world;
 
 import com.quin.catancraft.CatanCraft;
-import com.quin.catancraft.economy.ResourceType;
+import com.quin.catancraft.data.ResourceType;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.world.entity.item.FallingBlockEntity;
