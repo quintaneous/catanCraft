@@ -56,7 +56,7 @@ public final class ConstructionSafetyTests {
         void prepare()throws IOException{BasicConstructionPurchase.fixturePrepare(level.getServer(),data,dir,request,this::save);}
         PaidConstructionRecovery.Environment env()throws IOException{return BasicConstructionPurchase.fixture(level.getServer(),data,dir,original(),this::save);}
         void complete()throws Exception{PaidConstructionRecovery.resume(env());}
-        BlockPos changed(){for(int i=0;i<plan.source().size();i++)if(!plan.source().get(i).state().equals(plan.target().get(i).state())&&!plan.source().get(i).position().equals(plan.manager()))return plan.source().get(i).position();throw new IOException("No changes");}
+        BlockPos changed() throws IOException {for(int i=0;i<plan.source().size();i++)if(!plan.source().get(i).state().equals(plan.target().get(i).state())&&!plan.source().get(i).position().equals(plan.manager()))return plan.source().get(i).position();throw new IOException("No changes");}
         void target()throws Exception{for(var c:plan.target())h.assertTrue(TownHallInteractionPolicy.matches(level.getBlockState(c.position()),c.state(),c.position().equals(plan.manager())),"Target mismatch "+c.position());}
     }
     static void with(GameTestHelper h,String city,String asset,String plot,int from,Work work)throws Exception {
