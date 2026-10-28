@@ -1,0 +1,99 @@
+diff --git a/build.gradle b/build.gradle
+index 7a9e27e..abc6698 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -15,6 +15,9 @@ base {
+ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
+ 
+ def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()
++def controlledGameTests = providers.gradleProperty('controlledGameTests').orElse('false').get().toBoolean()
++if (!(gameTestNamespace ==~ /[a-z0-9_]+/)) throw new GradleException('Invalid GameTest namespace')
++def contractTestDirectory = project.file("build/controlled-${gameTestNamespace}-run")
+ 
+ minecraft {
+     mappings channel: 'official', version: '1.20.1'
+@@ -35,7 +38,7 @@ minecraft {
+             args '--nogui'
+         }
+         gameTestServer {
+-            workingDirectory project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : gameTestNamespace == 'catancraft_public27' ? 'build/public-gametest-run' : "build/${gameTestNamespace}-run")
++            workingDirectory controlledGameTests ? contractTestDirectory : project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : gameTestNamespace == 'catancraft_public27' ? 'build/public-gametest-run' : "build/${gameTestNamespace}-run")
+             property 'forge.enabledGameTestNamespaces', gameTestNamespace
+         }
+     }
+@@ -87,7 +90,7 @@ tasks.named('processResources', ProcessResources).configure {
+ 
+ // Integration native tests run in a third disposable namespace/world, retaining both suites.
+ tasks.named('processResources', ProcessResources).configure {
+-    ['catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
++    ['catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
+         from('src/main/resources/data/catancraft/structures') {
+             include 'townhall_state_empty.nbt'
+             into "data/${ns}/structures"
+@@ -100,3 +103,48 @@ tasks.withType(AbstractArchiveTask).configureEach {
+     preserveFileTimestamps = false
+     reproducibleFileOrder = true
+ }
++
++// Synthetic construction fixtures must not be excavated into a random normal
++// world's gravel/aquifers. Opt-in and separate build paths preserve authored-world
++// tests and all real servers. Refuse an unrecognized existing save; never delete it.
++def prepareContractGameTestWorld = tasks.register('prepareContractGameTestWorld') {
++    onlyIf { controlledGameTests }
++    outputs.upToDateWhen { false }
++    doLast {
++        def marker = new File(contractTestDirectory, '.catancraft-controlled-fixture-v1')
++        def signature = 'CatanCraft synthetic flat fixture v1\n'
++        def level = new File(contractTestDirectory, 'world/level.dat')
++        if (level.exists() && (!marker.isFile() || marker.text != signature)) {
++            throw new GradleException('Unrecognized existing GameTest save; use a new build directory. No files removed.')
++        }
++        def settings = [
++            'level-name': 'world',
++            'level-type': 'minecraft:flat',
++            'level-seed': '0',
++            'generate-structures': 'false',
++            'generator-settings': '{"layers":[{"block":"minecraft:bedrock","height":1},{"block":"minecraft:dirt","height":2},{"block":"minecraft:grass_block","height":1}],"biome":"minecraft:plains","lakes":false,"features":false,"structure_overrides":[]}'
++        ]
++        contractTestDirectory.mkdirs()
++        def propertiesFile = new File(contractTestDirectory, 'server.properties')
++        if (propertiesFile.exists()) {
++            def previous = new Properties()
++            propertiesFile.withInputStream { previous.load(it) }
++            settings.each { key, value ->
++                if (previous.getProperty(key) != value) throw new GradleException('GameTest settings changed: ' + key + '; refusing to replace existing fixture.')
++            }
++        } else {
++            if (level.exists()) throw new GradleException('Existing fixture lost its properties; no automatic replacement.')
++            propertiesFile.text = settings.collect { key, value -> key + '=' + value }.join('\n') + '\n'
++        }
++        if (!marker.exists()) marker.text = signature
++        def schematics = new File(contractTestDirectory, 'config/catancraft/schematics')
++        schematics.mkdirs()
++        ['thall4.schem', 'thall5.schem'].each { name ->
++            def source = project.file('tests/fixtures/' + name)
++            def destination = new File(schematics, name)
++            if (destination.exists() && !Arrays.equals(source.bytes, destination.bytes)) throw new GradleException('Changed GameTest schematic: ' + name)
++            if (!destination.exists()) destination.bytes = source.bytes
++        }
++    }
++}
++tasks.named('runGameTestServer').configure { dependsOn prepareContractGameTestWorld }
+diff --git a/src/main/java/com/quin/catancraft/world/ProducerTransaction.java b/src/main/java/com/quin/catancraft/world/ProducerTransaction.java
+index eb5380a..fb0b5b7 100644
+--- a/src/main/java/com/quin/catancraft/world/ProducerTransaction.java
++++ b/src/main/java/com/quin/catancraft/world/ProducerTransaction.java
+@@ -269,7 +269,12 @@ final class ProducerTransaction {
+     }
+     private static void verify(Environment e,List<Cell> cells,BlockState[] states,Map<BlockPos,CompoundTag> inventories,
+             Map<BlockPos,BlockState> shell,Map<BlockPos,CompoundTag> shellNbt,CompoundTag ledger,Set<UUID> items,List<AABB> boxes) throws IOException {
+-        for(int i=0;i<cells.size();i++)if(!states[i].equals(e.level().getBlockState(cells.get(i).pos())))throw new IOException("Producer post-write mismatch");
++        for(int i=0;i<cells.size();i++) {
++            Cell cell=cells.get(i);BlockState actual=e.level().getBlockState(cell.pos());
++            if(!states[i].equals(actual))throw new IOException("Producer post-write mismatch at "+cell.pos()
++                +" family="+cell.family()+" expected="+states[i]+" actual="+actual
++                +" source="+cell.old()+" target="+cell.next());
++        }
+         for(var n:inventories.entrySet()) {
+             BlockEntity b=e.level().getBlockEntity(n.getKey());if(b==null || !n.getValue().equals(b.saveWithFullMetadata()))throw new IOException("Producer inventory changed");
+         }
