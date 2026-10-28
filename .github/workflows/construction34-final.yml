@@ -1,0 +1,159 @@
+name: Construction34 combined validation
+on:
+  push:
+    branches: [chatgpt/construction-safety-0.1.34]
+    paths: ['.github/workflows/construction34-final.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      sha: ${{ steps.source.outputs.sha }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref }}
+      - name: Commit reviewed bounded support proof and fixture lifetimes
+        run: |
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64,lzma,hashlib,subprocess
+          patch=lzma.decompress(base64.b64decode(Path('tools/construction34/native-support-fix.patch.xz.b64').read_bytes()))
+          assert hashlib.sha256(patch).hexdigest()=='144ff8a684e3cbc224b8522282cce8c092ecaf58eafe80d5cb23f54f65de4c37'
+          if 'naturalSupportV1' not in Path('src/main/java/com/quin/catancraft/world/DefenseTransaction.java').read_text():
+              subprocess.run(['git','apply','--check','-'],input=patch,check=True)
+              subprocess.run(['git','apply','-'],input=patch,check=True)
+          p=Path('docs/CONSTRUCTION_SAFETY_034.md');s=p.read_text().replace('IMPLEMENTED LOCALLY / NOT YET VALIDATED','IMPLEMENTED / CI VALIDATION PENDING').replace('24 new cases','28 new cases')
+          note='\nNew legacy-defense intents carry a versioned whitelist and recorded owned-cover exposure for native covered-grass-to-dirt transitions. The ground is never repainted. Old histories lacking this evidence remain strict and may block on material drift; no support proof is invented retrospectively. This does not change accepted whole-sector wall contracts.\n'
+          if note not in s:s+=note
+          p.write_text(s)
+          PY
+          git add src/main/java docs/CONSTRUCTION_SAFETY_034.md
+          if ! git diff --cached --quiet; then
+            git config user.name 'quintaneous'
+            git config user.email '145784746+quintaneous@users.noreply.github.com'
+            git commit -m 'Record exact legacy wall support exposure; retain strict old-history refusal and native physics'
+            test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
+            git push origin HEAD:"$GITHUB_REF"
+          fi
+      - id: source
+        run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+  validate:
+    needs: prepare
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_construction34, count: 28}
+          - {ns: catancraft_paid_recovery, count: 19}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_integration, count: 12}
+          - {ns: catancraft_economy_clock, count: 9}
+          - {ns: catancraft_base_lifecycle, count: 8}
+          - {ns: catancraft_chunk_lifecycle, count: 6}
+          - {ns: catancraft_public27, count: 11}
+          - {ns: catancraft_houses, count: 11}
+          - {ns: catancraft_wall_gui, count: 8}
+          - {ns: catancraft_sectors_service, count: 15}
+          - {ns: catancraft_sector_prices, count: 7}
+          - {ns: catancraft_producer_r2, count: 9}
+          - {ns: catancraft_defense, count: 8}
+          - {ns: catancraft_sectors, count: 22}
+          - {ns: catancraft_sectors_natural, count: 7}
+          - {ns: catancraft_producer_stability, count: 7}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.prepare.outputs.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact committed source
+        shell: bash
+        run: |
+          set -o pipefail
+          mkdir -p build/construction34-evidence
+          git rev-parse HEAD > build/construction34-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/construction34-evidence/source.zip
+          gradle build -PreleaseCommit=$(git rev-parse HEAD) --no-daemon --max-workers=4 2>&1 | tee build/construction34-evidence/build.log
+          sha256sum build/libs/*.jar > build/construction34-evidence/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/construction34-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/construction34-evidence/assets-3.log
+          exit 1
+      - name: Execute native suite once and require exact count
+        shell: bash
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -uo pipefail
+          status=0
+          timeout 1600s gradle runGameTestServer -PcontrolledGameTests=true -PgameTestNamespace="$NS" --daemon --max-workers=4 > build/construction34-evidence/$NS.log 2>&1 || status=$?
+          echo "$status" > build/construction34-evidence/$NS.exit
+          echo "$COUNT" > build/construction34-evidence/$NS.expected
+          cat build/construction34-evidence/$NS.log
+          test "$status" = 0 && grep -Fq "$COUNT GAME TESTS COMPLETE" build/construction34-evidence/$NS.log && grep -Fq "All $COUNT required tests passed" build/construction34-evidence/$NS.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: construction34-final-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/construction34-evidence/
+          if-no-files-found: error
+  collect:
+    needs: [prepare, validate]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: construction34-final-*
+          path: evidence
+      - name: Preserve every result and deduplicate identical source and binary
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,shutil
+          root=Path('delivery');root.mkdir()
+          records=[];seen={};suite_results=[]
+          for folder in sorted(Path('evidence').iterdir()):
+              ns=folder.name.removeprefix('construction34-final-');ev=folder/'construction34-evidence'
+              log=ev/(ns+'.log');exitfile=ev/(ns+'.exit');expected=ev/(ns+'.expected')
+              count=int(expected.read_text()) if expected.exists() else None
+              text=log.read_text(errors='replace') if log.exists() else ''
+              ok=count is not None and exitfile.exists() and exitfile.read_text().strip()=='0' and f'{count} GAME TESTS COMPLETE' in text and f'All {count} required tests passed' in text
+              suite_results.append({'namespace':ns,'expected':count,'passed':ok})
+              for p in sorted(folder.rglob('*')):
+                  if not p.is_file():continue
+                  digest=hashlib.sha256(p.read_bytes()).hexdigest();rel=p.relative_to(folder)
+                  if p.name=='source.zip' or p.suffix=='.jar':
+                      target=root/'shared'/p.name
+                      if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()!=digest:raise SystemExit('Different source/JAR across exact-source jobs')
+                  else:target=root/ns/rel
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  if not target.exists():shutil.copy2(p,target)
+                  records.append({'namespace':ns,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
+          (root/'MANIFEST.json').write_text(json.dumps({'suites':suite_results,'selected_test_total':sum(s['expected'] or 0 for s in suite_results),'all_passed':len(suite_results)==17 and all(s['passed'] for s in suite_results),'files':records},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: construction34-combined-source-and-evidence
+          path: delivery/
+          if-no-files-found: error
