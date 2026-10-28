@@ -1,0 +1,35 @@
+name: Recover interrupted construction34 staging
+on:
+  push:
+    branches: [chatgpt/construction-safety-0.1.34]
+    paths: ['.github/workflows/construction34-source-recovery.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Preserve exact source and incomplete staging without applying it
+        run: |
+          mkdir -p recovery
+          git rev-parse HEAD > recovery/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o recovery/source.zip
+          python3 - <<'PY'
+          from pathlib import Path
+          import base64, lzma, json, hashlib
+          parts=sorted(Path('tools/construction34').glob('source.patch.xz.b64.*'))
+          raw=''.join(p.read_text().strip() for p in parts)
+          raw=raw[:len(raw)//4*4]
+          decoder=lzma.LZMADecompressor()
+          data=decoder.decompress(base64.b64decode(raw))
+          Path('recovery/INCOMPLETE_SOURCE_PATCH.txt').write_bytes(data)
+          Path('recovery/STAGING_STATUS.json').write_text(json.dumps({'parts':[str(p) for p in parts],'complete_xz':decoder.eof,'recovered_bytes':len(data),'sha256':hashlib.sha256(data).hexdigest(),'applied':False},indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: construction34-preserved-source
+          path: recovery/
+          if-no-files-found: error
