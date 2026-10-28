@@ -18,6 +18,8 @@ def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('ca
 def controlledGameTests = providers.gradleProperty('controlledGameTests').orElse('false').get().toBoolean()
 if (!(gameTestNamespace ==~ /[a-z0-9_]+/)) throw new GradleException('Invalid GameTest namespace')
 def contractTestDirectory = project.file("build/controlled-${gameTestNamespace}-run")
+// Isolated generated flat fixture only; production world names are unchanged.
+def contractWorldName = gameTestNamespace == 'catancraft_startup34' ? 'CatanCraft_Season1_R7_Development' : 'world'
 
 minecraft {
     mappings channel: 'official', version: '1.20.1'
@@ -90,7 +92,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Integration native tests run in a third disposable namespace/world, retaining both suites.
 tasks.named('processResources', ProcessResources).configure {
-    ['catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
+    ['catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
         from('src/main/resources/data/catancraft/structures') {
             include 'townhall_state_empty.nbt'
             into "data/${ns}/structures"
@@ -113,12 +115,12 @@ def prepareContractGameTestWorld = tasks.register('prepareContractGameTestWorld'
     doLast {
         def marker = new File(contractTestDirectory, '.catancraft-controlled-fixture-v1')
         def signature = 'CatanCraft synthetic flat fixture v1\n'
-        def level = new File(contractTestDirectory, 'world/level.dat')
+        def level = new File(contractTestDirectory, "${contractWorldName}/level.dat")
         if (level.exists() && (!marker.isFile() || marker.text != signature)) {
             throw new GradleException('Unrecognized existing GameTest save; use a new build directory. No files removed.')
         }
         def settings = [
-            'level-name': 'world',
+            'level-name': contractWorldName,
             'level-type': 'minecraft:flat',
             'level-seed': '0',
             'generate-structures': 'false',

@@ -87,17 +87,39 @@ public final class BasicConstructionPurchase {
         return new Blueprint(before,after,r.kind().equals("hall")?after.get(TownHallRevisions.managerIndex()).position():null);
     }
     static AABB bounds(Request r,TerritoryDefinition d)throws IOException {var b=SchematicAssetRegistry.asset(r.asset()).boundsAt(anchor(r,d));return new AABB(b.min(),b.max().offset(1,1,1)).inflate(2);}
+    /** Only grass already covered in the exact authored SOURCE qualifies. Future
+     * construction cover and exposed plot grass never establish this permission. */
+    private static Map<BlockPos,BlockState> sourceGrassCover(Blueprint b) {
+        Map<BlockPos,BlockState> source=new HashMap<>(),covers=new HashMap<>();
+        for(var c:b.source())source.put(c.position(),c.state());
+        for(var c:b.source())if(c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())){
+            BlockState cover=source.get(c.position().above());
+            if(SectorNaturalSupportPolicy.blocksGrass(cover,c.position().above()))covers.put(c.position(),cover);
+        }
+        return covers;
+    }
+    private static boolean sourceDirt(BlockPos pos,BlockState actual,Map<BlockPos,BlockState> covers,
+            java.util.function.Function<BlockPos,BlockState> observed) {
+        BlockState cover=covers.get(pos);
+        return actual.equals(Blocks.DIRT.defaultBlockState())&&cover!=null&&cover.equals(observed.apply(pos.above()));
+    }
+    private static BlockState preserveSourceDirt(BlockState before,BlockState target,boolean provenCover) {
+        return provenCover&&before.equals(Blocks.DIRT.defaultBlockState())&&target.is(Blocks.GRASS_BLOCK)
+                ?before:TownHallInteractionPolicy.targetFor(before,target);
+    }
     static CompoundTag capture(ServerLevel level,Blueprint b)throws IOException {
         if(b.source().size()!=b.target().size()||b.source().isEmpty()||b.source().size()>250000)throw new IOException("Invalid basic-construction volume");
         Map<BlockPos,BlockState> doors=new HashMap<>();for(var c:b.source())if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());
         Set<BlockPos> missing=TownHallInteractionPolicy.missingDoorCells(doors,level::getBlockState);
+        Map<BlockPos,BlockState> grassCover=sourceGrassCover(b);
         Map<BlockState,Integer> palette=new LinkedHashMap<>();ListTag encoded=new ListTag();int[] states=new int[b.source().size()];List<ConstructionHazards.Write> writes=new ArrayList<>();CompoundTag result=new CompoundTag();
         for(int i=0;i<states.length;i++){
             var c=b.source().get(i);var target=b.target().get(i);BlockPos p=c.position();
             if(!p.equals(target.position()))throw new IOException("Construction envelope mismatch");
             if(!level.hasChunkAt(p))throw new PreparationDeferred("Construction chunks are still loading");
             BlockState actual=level.getBlockState(p);boolean manager=p.equals(b.manager());
-            if(!missing.contains(p)&&!TownHallInteractionPolicy.matches(actual,c.state(),manager))throw new IOException("Construction source conflict at "+p+": "+actual);
+            if(!missing.contains(p)&&!TownHallInteractionPolicy.matches(actual,c.state(),manager)
+                    &&!sourceDirt(p,actual,grassCover,level::getBlockState))throw new IOException("Construction source conflict at "+p+": "+actual);
             BlockEntity be=level.getBlockEntity(p);
             if(manager){
                 if(!(be instanceof LecternBlockEntity)||!target.state().is(Blocks.LECTERN))throw new IOException("Original management lectern is missing or changed");
@@ -105,7 +127,7 @@ public final class BasicConstructionPurchase {
             }else if(be!=null||actual.hasBlockEntity())throw new IOException("Unexpected existing inventory at "+p);
             if(!actual.getFluidState().isEmpty()||!target.state().getFluidState().isEmpty())throw new IOException("Unapproved construction fluid at "+p);
             Integer id=palette.get(actual);if(id==null){id=palette.size();palette.put(actual,id);encoded.add(NbtUtils.writeBlockState(actual));}states[i]=id;
-            BlockState next=manager?actual:TownHallInteractionPolicy.targetFor(actual,target.state());
+            BlockState next=manager?actual:preserveSourceDirt(actual,target.state(),grassCover.containsKey(p));
             if(!actual.equals(next))writes.add(new ConstructionHazards.Write(p,next));
         }
         ConstructionHazards.inspect(level,writes).verify();
@@ -121,15 +143,24 @@ public final class BasicConstructionPurchase {
         Map<BlockPos,BlockState> saved=new HashMap<>(),doors=new HashMap<>();
         for(int i=0;i<indices.length;i++){if(indices[i]<0||indices[i]>=palette.size())throw new IOException("Invalid captured state index");var c=b.source().get(i);saved.put(c.position(),palette.get(indices[i]));if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());}
         Set<BlockPos> missing=TownHallInteractionPolicy.missingDoorCells(doors,saved::get);List<PaidConstructionRecovery.Cell> cells=new ArrayList<>(indices.length);
+        Map<BlockPos,BlockState> grassCover=sourceGrassCover(b);
         for(int i=0;i<indices.length;i++){
             var source=b.source().get(i);var target=b.target().get(i);BlockPos pos=source.position();BlockState before=saved.get(pos);boolean manager=pos.equals(b.manager());
-            if(!missing.contains(pos)&&!TownHallInteractionPolicy.matches(before,source.state(),manager))throw new IOException("Captured source is not an approved revision at "+pos);
-            BlockState after=manager?level.getBlockState(pos):TownHallInteractionPolicy.targetFor(before,target.state());
+            if(!missing.contains(pos)&&!TownHallInteractionPolicy.matches(before,source.state(),manager)
+                    &&!sourceDirt(pos,before,grassCover,saved::get))throw new IOException("Captured source is not an approved revision at "+pos);
+            // The sealed before-image proves the authored source cover existed;
+            // delayed recovery may now observe that same grass naturally decayed.
+            boolean covered=grassCover.containsKey(pos)&&grassCover.get(pos).equals(saved.get(pos.above()));
+            BlockState after=manager?level.getBlockState(pos):preserveSourceDirt(before,target.state(),covered);
             if(manager){if(!TownHallInteractionPolicy.matches(after,target.state(),true)||!(level.getBlockEntity(pos) instanceof LecternBlockEntity)||!snapshot.contains("managerNbt",Tag.TAG_COMPOUND))throw new IOException("Management lectern changed during recovery");cells.add(new PaidConstructionRecovery.Cell(pos,List.of(after),after));}
             else {
                 // A restart may derive stairs/fence shapes or a player may use a door
                 // normally. Accept only this typed policy, never arbitrary air/material.
                 BlockState live=level.getBlockState(pos);LinkedHashSet<BlockState> allowed=new LinkedHashSet<>(List.of(before,after));
+                if(covered&&(live.equals(Blocks.DIRT.defaultBlockState())||live.equals(Blocks.GRASS_BLOCK.defaultBlockState()))){
+                    allowed.add(live);
+                    if(target.state().is(Blocks.GRASS_BLOCK))after=live; // Never repaint naturally derived ground.
+                }
                 if(TownHallInteractionPolicy.matches(live,before,false)||TownHallInteractionPolicy.matches(live,after,false))allowed.add(live);
                 if(TownHallInteractionPolicy.matches(live,after,false))after=live;
                 cells.add(new PaidConstructionRecovery.Cell(pos,List.copyOf(allowed),after));
