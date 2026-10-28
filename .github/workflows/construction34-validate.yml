@@ -17,27 +17,17 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - name: Materialize and verify reviewed source as a normal source commit
+      - name: Commit reviewed parser correction without changing original assets
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          if ! test -f src/main/java/com/quin/catancraft/world/BasicConstructionPurchase.java; then
-            python3 tools/construction34/materialize.py
-          fi
-          python3 - <<'PY'
-          from pathlib import Path
-          p=Path('src/main/java/com/quin/catancraft/world/ConstructionSafetyTests.java')
-          s=p.read_text()
-          if 'BlockPos changed(){' in s:
-              assert s.count('BlockPos changed(){') == 1
-              p.write_text(s.replace('BlockPos changed(){','BlockPos changed() throws IOException {'))
-          else:
-              assert 'BlockPos changed() throws IOException {' in s
-          PY
-          git add build.gradle src/main/java src/main/resources/data/catancraft/basic_construction tests/fixtures/basic-construction-provenance.json docs/CONSTRUCTION_SAFETY_034.md
-          if ! git diff --cached --quiet; then
+          echo '50b55d4c565eeebcf680050effa403db20d14e4748cf37327eba938f265a901d  tools/construction34/palette-fix.patch' | sha256sum -c -
+          if ! grep -q 'static BlockState parsePalette' src/main/java/com/quin/catancraft/world/BasicConstructionAssets.java; then
+            git apply --check tools/construction34/palette-fix.patch
+            git apply tools/construction34/palette-fix.patch
+            git add src/main/java
             git config user.name 'quintaneous'
             git config user.email '145784746+quintaneous@users.noreply.github.com'
-            git commit -m 'Declare checked source-fixture exception; preserve construction and recovery guards'
+            git commit -m 'Decode omitted schematic defaults strictly and verify rollback with its own chunk lease'
             test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
             git push origin HEAD:"$GITHUB_REF"
           fi
@@ -51,7 +41,7 @@ jobs:
       fail-fast: false
       matrix:
         suite:
-          - {ns: catancraft_construction34, count: 24}
+          - {ns: catancraft_construction34, count: 25}
           - {ns: catancraft_paid_recovery, count: 19}
     steps:
       - uses: actions/checkout@v4
