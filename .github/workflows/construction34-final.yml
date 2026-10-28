@@ -27,6 +27,7 @@ jobs:
       fail-fast: false
       matrix:
         suite:
+          - {ns: catancraft_producer_source34, count: 4}
           - {ns: catancraft_startup34, count: 3}
           - {ns: catancraft_basic_natural34, count: 7}
           - {ns: catancraft_construction34, count: 28}
@@ -136,7 +137,7 @@ jobs:
                   target.parent.mkdir(parents=True,exist_ok=True)
                   if not target.exists():shutil.copy2(p,target)
                   records.append({'namespace':ns,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
-          (root/'MANIFEST.json').write_text(json.dumps({'suites':suite_results,'selected_test_total':sum(s['expected'] or 0 for s in suite_results),'all_passed':len(suite_results)==19 and all(s['passed'] for s in suite_results),'files':records},indent=2))
+          (root/'MANIFEST.json').write_text(json.dumps({'suites':suite_results,'selected_test_total':sum(s['expected'] or 0 for s in suite_results),'all_passed':len(suite_results)==20 and all(s['passed'] for s in suite_results),'files':records},indent=2))
           PY
       - uses: actions/upload-artifact@v4
         with:
