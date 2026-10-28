@@ -16,21 +16,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with: {fetch-depth: 0}
-      - name: Commit reviewed test-world preparation and strict diagnostics
+      - name: Verify committed controlled fixture source
         run: |
           set -euo pipefail
           git merge-base --is-ancestor 5412009058af6fa81e5655115d6a0b99899e912d HEAD
           echo '8fbf9c78202ef9f1d9d09f3b7e8177a33f8883e617a2505d0b06795d8be3c5d5  tools/purchase-recovery/controlled-environment.patch' | sha256sum -c -
-          if ! grep -q 'def controlledGameTests' build.gradle; then
-            git apply --check tools/purchase-recovery/controlled-environment.patch
-            git apply tools/purchase-recovery/controlled-environment.patch
-            git diff --check
-            git config user.name quintaneous
-            git config user.email 145784746+quintaneous@users.noreply.github.com
-            git add -- build.gradle src/main/java/com/quin/catancraft/world/ProducerTransaction.java
-            git commit -m 'Isolate synthetic native test terrain and expose exact strict producer drift'
-            git push origin HEAD:refs/heads/chatgpt/purchase-recovery-0.1.33
-          fi
+          grep -Fq 'def controlledGameTests' build.gradle
+          grep -Fq 'empty_section_hides_cave_air_until_upgrade_adds_solid' src/main/java/com/quin/catancraft/world/ProducerStabilityTests.java
+          test -z "$(git status --porcelain)"
       - id: source
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   validate:
@@ -56,7 +49,7 @@ jobs:
           - {ns: catancraft_defense, count: 8}
           - {ns: catancraft_sectors, count: 22}
           - {ns: catancraft_sectors_natural, count: 7}
-          - {ns: catancraft_producer_stability, count: 6}
+          - {ns: catancraft_producer_stability, count: 7}
     steps:
       - uses: actions/checkout@v4
         with: {ref: '${{ needs.prepare.outputs.sha }}'}
@@ -93,6 +86,7 @@ jobs:
           if [ "$NS" = catancraft_producer_stability ]; then
             test "$(grep -Fc 'PRODUCER_STABILITY_PASS' build/final033-evidence/$NS.log)" = 48
             test "$(grep -Fc 'PRODUCER_GRAVITY_PASS' build/final033-evidence/$NS.log)" = 10
+            grep -Fq 'PRODUCER_HIDDEN_CAVE_AIR_CONTROL hiddenRead=air ignoredClear=PASS firstSolidReveals=cave_air strictRefusal=PASS noCharge=PASS resume=PASS' build/final033-evidence/$NS.log
             grep -Fq 'generator=net.minecraft.world.level.levelgen.FlatLevelSource seed=0' build/final033-evidence/$NS.log
           fi
       - uses: actions/upload-artifact@v4
@@ -126,7 +120,7 @@ jobs:
           echo "$status" > build/normal-control/native.exit
           cp build/catancraft_producer_stability-run/server.properties build/normal-control/SERVER_PROPERTIES.txt
           grep -E 'PRODUCER_TEST_ENV|mismatch|failed!|GAME TESTS COMPLETE|required tests' build/normal-control/native.log || true
-          grep -Fq '6 GAME TESTS COMPLETE' build/normal-control/native.log
+          grep -Fq '7 GAME TESTS COMPLETE' build/normal-control/native.log
           grep -Fq 'generator=net.minecraft.world.level.levelgen.NoiseBasedChunkGenerator seed=0' build/normal-control/native.log
           echo 'Observational control: recorded failure is NOT a native-test pass.'
       - uses: actions/upload-artifact@v4
