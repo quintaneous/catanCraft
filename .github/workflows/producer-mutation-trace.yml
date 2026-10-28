@@ -1,0 +1,71 @@
+name: Producer mutation caller trace
+on:
+  push:
+    branches: [chatgpt/purchase-recovery-0.1.33]
+    paths: ['.github/workflows/producer-mutation-trace.yml']
+permissions:
+  contents: read
+jobs:
+  trace:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: gradle/actions/setup-gradle@v4
+        with: {gradle-version: '8.8'}
+      - name: Stage diagnostic-only caller tracing
+        run: |
+          mkdir -p build/caller-evidence
+          python3 - <<'PY'
+          import json,textwrap
+          from pathlib import Path
+          prior=Path('.github/workflows/producer-stability-probe.yml').read_text()
+          code=prior.split("python3 - <<'PY'\n",1)[1].split('\n          PY',1)[0]
+          exec(textwrap.dedent(code))
+          p=Path('src/main/java/com/quin/catancraft/mixin/ProducerCallerTraceMixin.java')
+          p.write_text('''package com.quin.catancraft.mixin;
+          import net.minecraft.core.BlockPos;
+          import net.minecraft.world.level.block.Blocks;
+          import net.minecraft.world.level.block.state.BlockState;
+          import net.minecraft.world.level.chunk.LevelChunk;
+          import org.spongepowered.asm.mixin.Mixin;
+          import org.spongepowered.asm.mixin.injection.At;
+          import org.spongepowered.asm.mixin.injection.Inject;
+          import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+          @Mixin(value=LevelChunk.class,remap=false)
+          public abstract class ProducerCallerTraceMixin {
+            @Inject(method="setBlockState",at=@At("HEAD"),remap=false,require=1)
+            private void trace(BlockPos p,BlockState s,boolean moving,CallbackInfoReturnable<BlockState> cir){
+              if(s.is(Blocks.GRAVEL)&&p.getY()>-50&&p.getY()<0&&p.getX()>=0&&p.getX()<2400){
+                System.err.println("GRAVEL_NATIVE_CALL pos="+p+" thread="+Thread.currentThread().getName());
+                new Exception("DIAGNOSTIC gravel placement caller").printStackTrace();
+              }
+            }
+          }
+          ''')
+          Path('src/main/resources/producer-trace.mixins.json').write_text(json.dumps({'required':True,'minVersion':'0.8','package':'com.quin.catancraft.mixin','compatibilityLevel':'JAVA_17','mixins':['ProducerCallerTraceMixin'],'injectors':{'defaultRequire':1}}))
+          p=Path('build.gradle');p.write_text(p.read_text()+"\nminecraft.runs.gameTestServer { args '--mixin', 'producer-trace.mixins.json' }\n")
+          PY
+          git diff > build/caller-evidence/instrumentation.patch
+          cp src/main/java/com/quin/catancraft/mixin/ProducerCallerTraceMixin.java build/caller-evidence/
+          gradle build --no-daemon --max-workers=4 > build/caller-evidence/build.log 2>&1
+      - name: Reproduce with caller trace
+        run: |
+          for attempt in 1 2 3; do gradle downloadAssets --daemon --max-workers=4 > build/caller-evidence/assets-$attempt.log 2>&1 && break; done
+          for ns in catancraft_producer_probe catancraft; do
+            dir=build/$ns-run; if [ "$ns" = catancraft ]; then dir=build/gametest-run; fi
+            mkdir -p "$dir/config/catancraft/schematics"
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$dir/config/catancraft/schematics/"
+            status=0
+            timeout 700s gradle runGameTestServer -PgameTestNamespace="$ns" --daemon --max-workers=4 > build/caller-evidence/$ns.log 2>&1 || status=$?
+            echo "$status" > build/caller-evidence/$ns.exit
+            grep -E 'GRAVEL_NATIVE_CALL|mismatch|failed!|GAME TESTS COMPLETE|required tests' build/caller-evidence/$ns.log || true
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: producer-caller-trace
+          path: build/caller-evidence/
+          if-no-files-found: error
