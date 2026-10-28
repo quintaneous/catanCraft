@@ -269,7 +269,12 @@ final class ProducerTransaction {
     }
     private static void verify(Environment e,List<Cell> cells,BlockState[] states,Map<BlockPos,CompoundTag> inventories,
             Map<BlockPos,BlockState> shell,Map<BlockPos,CompoundTag> shellNbt,CompoundTag ledger,Set<UUID> items,List<AABB> boxes) throws IOException {
-        for(int i=0;i<cells.size();i++)if(!states[i].equals(e.level().getBlockState(cells.get(i).pos())))throw new IOException("Producer post-write mismatch");
+        for(int i=0;i<cells.size();i++) {
+            Cell cell=cells.get(i);BlockState actual=e.level().getBlockState(cell.pos());
+            if(!states[i].equals(actual))throw new IOException("Producer post-write mismatch at "+cell.pos()
+                +" family="+cell.family()+" expected="+states[i]+" actual="+actual
+                +" source="+cell.old()+" target="+cell.next());
+        }
         for(var n:inventories.entrySet()) {
             BlockEntity b=e.level().getBlockEntity(n.getKey());if(b==null || !n.getValue().equals(b.saveWithFullMetadata()))throw new IOException("Producer inventory changed");
         }
