@@ -9,38 +9,14 @@ permissions:
 jobs:
   prepare:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     outputs:
       sha: ${{ steps.source.outputs.sha }}
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - name: Commit reviewed bounded support proof and fixture lifetimes
-        run: |
-          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
-          python3 - <<'PY'
-          from pathlib import Path
-          import base64,lzma,hashlib,subprocess
-          patch=lzma.decompress(base64.b64decode(Path('tools/construction34/native-support-fix.patch.xz.b64').read_bytes()))
-          assert hashlib.sha256(patch).hexdigest()=='144ff8a684e3cbc224b8522282cce8c092ecaf58eafe80d5cb23f54f65de4c37'
-          if 'naturalSupportV1' not in Path('src/main/java/com/quin/catancraft/world/DefenseTransaction.java').read_text():
-              subprocess.run(['git','apply','--check','-'],input=patch,check=True)
-              subprocess.run(['git','apply','-'],input=patch,check=True)
-          p=Path('docs/CONSTRUCTION_SAFETY_034.md');s=p.read_text().replace('IMPLEMENTED LOCALLY / NOT YET VALIDATED','IMPLEMENTED / CI VALIDATION PENDING').replace('24 new cases','28 new cases')
-          note='\nNew legacy-defense intents carry a versioned whitelist and recorded owned-cover exposure for native covered-grass-to-dirt transitions. The ground is never repainted. Old histories lacking this evidence remain strict and may block on material drift; no support proof is invented retrospectively. This does not change accepted whole-sector wall contracts.\n'
-          if note not in s:s+=note
-          p.write_text(s)
-          PY
-          git add src/main/java docs/CONSTRUCTION_SAFETY_034.md
-          if ! git diff --cached --quiet; then
-            git config user.name 'quintaneous'
-            git config user.email '145784746+quintaneous@users.noreply.github.com'
-            git commit -m 'Record exact legacy wall support exposure; retain strict old-history refusal and native physics'
-            test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
-            git push origin HEAD:"$GITHUB_REF"
-          fi
+      - name: Verify exact immutable source
+        run: test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
       - id: source
         run: echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
   validate:
@@ -51,6 +27,8 @@ jobs:
       fail-fast: false
       matrix:
         suite:
+          - {ns: catancraft_startup34, count: 3}
+          - {ns: catancraft_basic_natural34, count: 7}
           - {ns: catancraft_construction34, count: 28}
           - {ns: catancraft_paid_recovery, count: 19}
           - {ns: catancraft, count: 50}
@@ -96,6 +74,14 @@ jobs:
           done
           cat build/construction34-evidence/assets-3.log
           exit 1
+      - name: Stage generated legacy-identity recovery fixture
+        if: matrix.suite.ns == 'catancraft_startup34'
+        shell: bash
+        run: |
+          set -euo pipefail
+          timeout 1000s gradle runGameTestServer -PcontrolledGameTests=true -PgameTestNamespace=catancraft_sector_prices --daemon --max-workers=4 > build/construction34-evidence/startup-bootstrap.log 2>&1
+          grep -F 'All 7 required tests passed' build/construction34-evidence/startup-bootstrap.log
+          python3 tools/construction34/prepare_startup_fixture.py > build/construction34-evidence/startup-provenance.json
       - name: Execute native suite once and require exact count
         shell: bash
         env:
@@ -150,7 +136,7 @@ jobs:
                   target.parent.mkdir(parents=True,exist_ok=True)
                   if not target.exists():shutil.copy2(p,target)
                   records.append({'namespace':ns,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
-          (root/'MANIFEST.json').write_text(json.dumps({'suites':suite_results,'selected_test_total':sum(s['expected'] or 0 for s in suite_results),'all_passed':len(suite_results)==17 and all(s['passed'] for s in suite_results),'files':records},indent=2))
+          (root/'MANIFEST.json').write_text(json.dumps({'suites':suite_results,'selected_test_total':sum(s['expected'] or 0 for s in suite_results),'all_passed':len(suite_results)==19 and all(s['passed'] for s in suite_results),'files':records},indent=2))
           PY
       - uses: actions/upload-artifact@v4
         with:
