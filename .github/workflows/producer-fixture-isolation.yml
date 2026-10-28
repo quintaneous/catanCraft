@@ -1,0 +1,92 @@
+name: Producer fixture isolation comparison
+on:
+  push:
+    branches: [chatgpt/purchase-recovery-0.1.33]
+    paths: ['.github/workflows/producer-fixture-isolation.yml']
+permissions:
+  contents: read
+jobs:
+  compare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        isolated: ['false', 'true']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with: {distribution: temurin, java-version: '17'}
+      - uses: gradle/actions/setup-gradle@v4
+        with: {gradle-version: '8.8'}
+      - name: Stage bounded fixture-only intervention and falling-block tracing
+        env:
+          ISOLATED: ${{ matrix.isolated }}
+        run: |
+          mkdir -p build/isolation-evidence
+          python3 - <<'PY'
+          import json,textwrap,os
+          from pathlib import Path
+          s=Path('.github/workflows/producer-stability-probe.yml').read_text()
+          exec(textwrap.dedent(s.split("python3 - <<'PY'\n",1)[1].split('\n          PY',1)[0]))
+          p=Path('src/main/java/com/quin/catancraft/world/ProducerTests.java');s=p.read_text()
+          old='''                for(var c:plan) {
+                              BlockState state=c.state();'''
+          old='                for(var c:plan) {\n                    BlockState state=c.state();'
+          new='''                var staleFalling=new java.util.ArrayList<net.minecraft.world.entity.item.FallingBlockEntity>();
+                          for(var entity:level().getAllEntities())if(entity instanceof net.minecraft.world.entity.item.FallingBlockEntity falling
+                              && falling.getX()>=box.minX-2 && falling.getX()<=box.maxX+2
+                              && falling.getZ()>=box.minZ-2 && falling.getZ()<=box.maxZ+2)staleFalling.add(falling);
+                          for(var falling:staleFalling){
+                              CatanCraft.LOGGER.info("FIXTURE_FALLING isolated={} family={} pos={} start={} block={} age={}",Boolean.getBoolean("catancraft.fixtureIsolation"),f,falling.position(),falling.getStartPos(),falling.getBlockState(),falling.time);
+                              if(Boolean.getBoolean("catancraft.fixtureIsolation"))falling.discard();
+                          }
+                          for(var c:plan) {
+                              BlockState state=c.state();'''
+          assert s.count(old)==1;s=s.replace(old,new);p.write_text(s)
+          p=Path('src/main/java/com/quin/catancraft/mixin/ProducerSpawnTraceMixin.java')
+          p.write_text('''package com.quin.catancraft.mixin;
+          import net.minecraft.core.BlockPos;
+          import net.minecraft.world.level.Level;
+          import net.minecraft.world.level.block.Blocks;
+          import net.minecraft.world.level.block.state.BlockState;
+          import net.minecraft.world.entity.item.FallingBlockEntity;
+          import org.spongepowered.asm.mixin.Mixin;
+          import org.spongepowered.asm.mixin.injection.At;
+          import org.spongepowered.asm.mixin.injection.Inject;
+          import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+          @Mixin(value=FallingBlockEntity.class,remap=false)
+          public abstract class ProducerSpawnTraceMixin {
+            @Inject(method="fall",at=@At("HEAD"),remap=false,require=1)
+            private static void trace(Level l,BlockPos p,BlockState s,CallbackInfoReturnable<FallingBlockEntity> cir){
+              if(s.is(Blocks.GRAVEL)&&p.getX()>=0&&p.getX()<2400){
+                System.err.println("GRAVEL_NATIVE_SPAWN pos="+p+" below="+l.getBlockState(p.below())+" time="+l.getGameTime());
+                new Exception("DIAGNOSTIC gravel spawn caller").printStackTrace();
+              }
+            }
+          }
+          ''')
+          Path('src/main/resources/producer-spawn-trace.mixins.json').write_text(json.dumps({'required':True,'minVersion':'0.8','package':'com.quin.catancraft.mixin','compatibilityLevel':'JAVA_17','mixins':['ProducerSpawnTraceMixin'],'injectors':{'defaultRequire':1}}))
+          p=Path('build.gradle');p.write_text(p.read_text()+"\nminecraft.runs.gameTestServer { args '--mixin', 'producer-spawn-trace.mixins.json'; property 'catancraft.fixtureIsolation', '"+os.environ['ISOLATED']+"' }\n")
+          PY
+          git diff > build/isolation-evidence/instrumentation.patch
+          cp src/main/java/com/quin/catancraft/mixin/ProducerSpawnTraceMixin.java build/isolation-evidence/
+          gradle build --no-daemon --max-workers=4 > build/isolation-evidence/build.log 2>&1
+      - name: Compare repeated native placement and retained tests
+        run: |
+          for attempt in 1 2 3; do gradle downloadAssets --daemon --max-workers=4 > build/isolation-evidence/assets-$attempt.log 2>&1 && break; done
+          for ns in catancraft_producer_probe catancraft; do
+            dir=build/$ns-run; if [ "$ns" = catancraft ]; then dir=build/gametest-run; fi
+            mkdir -p "$dir/config/catancraft/schematics"
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$dir/config/catancraft/schematics/"
+            status=0
+            timeout 700s gradle runGameTestServer -PgameTestNamespace="$ns" --daemon --max-workers=4 > build/isolation-evidence/$ns.log 2>&1 || status=$?
+            echo "$status" > build/isolation-evidence/$ns.exit
+            grep -E 'PROBE_|FIXTURE_FALLING|mismatch|failed!|GAME TESTS COMPLETE|required tests' build/isolation-evidence/$ns.log || true
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: producer-fixture-isolated-${{ matrix.isolated }}
+          path: build/isolation-evidence/
+          if-no-files-found: error
