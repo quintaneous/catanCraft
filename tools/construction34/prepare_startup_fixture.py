@@ -49,6 +49,14 @@ shutil.copytree(source, target)
 (target / 'level.dat').write_bytes(updated)
 (target / '.catancraft-startup34-synthetic-v1').write_text('Generated flat startup recovery fixture; not an authored or owner world.\n')
 (target_run / '.catancraft-controlled-fixture-v1').write_text(signature)
+settings = {
+    'level-name': target.name,
+    'level-type': 'minecraft:flat',
+    'level-seed': '0',
+    'generate-structures': 'false',
+    'generator-settings': '{"layers":[{"block":"minecraft:bedrock","height":1},{"block":"minecraft:dirt","height":2},{"block":"minecraft:grass_block","height":1}],"biome":"minecraft:plains","lakes":false,"features":false,"structure_overrides":[]}',
+}
+(target_run / 'server.properties').write_text(''.join(f'{key}={value}\n' for key, value in settings.items()))
 record = {'source': str(source.relative_to(REPO)), 'target': str(target.relative_to(REPO)),
           'sourceLevelSHA256': hashlib.sha256(raw_file).hexdigest(),
           'testLevelSHA256': hashlib.sha256(updated).hexdigest(),

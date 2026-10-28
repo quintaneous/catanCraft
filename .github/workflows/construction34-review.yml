@@ -1,4 +1,5 @@
 name: Construction34 review regressions
+# Startup fixture staging includes its exact immutable server properties.
 on:
   push:
     branches: [chatgpt/construction-safety-0.1.34]
