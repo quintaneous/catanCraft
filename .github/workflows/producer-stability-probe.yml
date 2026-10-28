@@ -1,0 +1,97 @@
+name: Producer stability investigation
+on:
+  push:
+    branches: [chatgpt/purchase-recovery-0.1.33]
+    paths: ['.github/workflows/producer-stability-probe.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    strategy:
+      fail-fast: false
+      matrix:
+        seed: [117, 2031, 10093]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: fcfe1e7c490a96eb6f65d882f1103a94594282ac
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Instrument without changing production guards
+        run: |
+          mkdir -p build/stability-evidence
+          git rev-parse HEAD > build/stability-evidence/SOURCE_COMMIT.txt
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main/java/com/quin/catancraft/world/ProducerTransaction.java')
+          s=p.read_text();old='throw new IOException("Producer post-write mismatch");'
+          assert s.count(old)==1
+          s=s.replace(old,'throw new IOException("Producer post-write mismatch at "+cells.get(i).pos()+" family="+cells.get(i).family()+" expected="+states[i]+" actual="+e.level().getBlockState(cells.get(i).pos())+" source="+cells.get(i).old()+" target="+cells.get(i).next()+" time="+e.level().getGameTime()+" thread="+Thread.currentThread().getName());')
+          p.write_text(s)
+          p=Path('src/main/java/com/quin/catancraft/world/ProducerTests.java');s=p.read_text()
+          old='Env e=new Env(h,rotation,5);e.prepare(1);e.select(1,5);ProducerTransaction.run(e,APPLY);var inventory=e.inventories();'
+          new='Env e=new Env(h,rotation,5);e.prepare(1);e.select(1,5); try { ProducerTransaction.run(e,APPLY); } catch(Exception ex) { ex.printStackTrace(); throw ex; } var inventory=e.inventories();'
+          assert s.count(old)==1;s=s.replace(old,new);p.write_text(s)
+          p=Path('src/main/java/com/quin/catancraft/world/ProducerStabilityProbeTests.java')
+          p.write_text('''package com.quin.catancraft.world;
+          import com.quin.catancraft.CatanCraft;
+          import net.minecraft.gametest.framework.*;
+          import net.minecraftforge.gametest.*;
+          @GameTestHolder("catancraft_producer_probe") @PrefixGameTestTemplate(false)
+          public final class ProducerStabilityProbeTests {
+            @GameTest(template="townhall_state_empty",batch="probe_north",timeoutTicks=4000)
+            public static void repeated_north(GameTestHelper h){iteration(h,0,0);}
+            @GameTest(template="townhall_state_empty",batch="probe_south",timeoutTicks=4000)
+            public static void repeated_south(GameTestHelper h){iteration(h,180,0);}
+            private static void iteration(GameTestHelper h,int rot,int n){
+              try {
+                var e=new ProducerTests.Env(h,rot,5);e.prepare(1);e.select(1,5);
+                var inventory=e.inventories();var ledger=e.ledger().copy();
+                CatanCraft.LOGGER.info("PROBE_BEGIN rotation={} iteration={} origin={}",rot,n,e.origin);
+                ProducerTransaction.run(e,ProducerTransaction.Action.APPLY);
+                h.runAfterDelay(10,()->{try {
+                  ProducerTransaction.run(e,ProducerTransaction.Action.STATUS);e.assertGeometry(5);
+                  h.assertTrue(inventory.equals(e.inventories()),"Probe inventory changed");
+                  h.assertTrue(ledger.getList("nations",10).equals(e.ledger().getList("nations",10)),"Probe altered nation");
+                  CatanCraft.LOGGER.info("PROBE_PASS rotation={} iteration={}",rot,n);
+                  if(n==23)h.succeed();else iteration(h,rot,n+1);
+                }catch(Exception x){x.printStackTrace();h.fail(x.toString());}});
+              }catch(Exception x){x.printStackTrace();h.fail(x.toString());}
+            }
+          }
+          ''')
+          p=Path('build.gradle');s=p.read_text();s+='\ntasks.named("processResources", ProcessResources).configure { from("src/main/resources/data/catancraft/structures") { include "townhall_state_empty.nbt"; into "data/catancraft_producer_probe/structures" } }\n';p.write_text(s)
+          PY
+          git diff > build/stability-evidence/diagnostic.patch
+          cp src/main/java/com/quin/catancraft/world/ProducerStabilityProbeTests.java build/stability-evidence/
+          gradle build --no-daemon --max-workers=4 > build/stability-evidence/build.log 2>&1
+      - name: Run fixed-seed native probes and retained suite; preserve all exits
+        env:
+          SEED: ${{ matrix.seed }}
+        run: |
+          for attempt in 1 2 3; do gradle downloadAssets --daemon --max-workers=4 > build/stability-evidence/assets-$attempt.log 2>&1 && break; done
+          for ns in catancraft_producer_probe catancraft; do
+            dir=build/$ns-run
+            if [ "$ns" = catancraft ]; then dir=build/gametest-run; fi
+            mkdir -p "$dir/config/catancraft/schematics"
+            cp tests/fixtures/thall4.schem tests/fixtures/thall5.schem "$dir/config/catancraft/schematics/"
+            printf 'level-seed=%s\n' "$SEED" > "$dir/server.properties"
+            status=0
+            timeout 900s gradle runGameTestServer -PgameTestNamespace="$ns" --daemon --max-workers=4 > build/stability-evidence/$ns.log 2>&1 || status=$?
+            echo "$status" > build/stability-evidence/$ns.exit
+            grep -E 'PROBE_|post-write mismatch|GAME TESTS COMPLETE|required tests|failed!' build/stability-evidence/$ns.log || true
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: producer-probe-${{ matrix.seed }}
+          path: build/stability-evidence/
+          if-no-files-found: error
