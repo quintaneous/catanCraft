@@ -17,15 +17,27 @@ jobs:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref }}
-      - name: Materialize reviewed source as a normal source commit
+      - name: Materialize and verify reviewed source as a normal source commit
         run: |
           test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
           if ! test -f src/main/java/com/quin/catancraft/world/BasicConstructionPurchase.java; then
             python3 tools/construction34/materialize.py
-            git add build.gradle src/main/java src/main/resources/data/catancraft/basic_construction tests/fixtures/basic-construction-provenance.json docs/CONSTRUCTION_SAFETY_034.md
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          p=Path('src/main/java/com/quin/catancraft/world/ConstructionSafetyTests.java')
+          s=p.read_text()
+          if 'BlockPos changed(){' in s:
+              assert s.count('BlockPos changed(){') == 1
+              p.write_text(s.replace('BlockPos changed(){','BlockPos changed() throws IOException {'))
+          else:
+              assert 'BlockPos changed() throws IOException {' in s
+          PY
+          git add build.gradle src/main/java src/main/resources/data/catancraft/basic_construction tests/fixtures/basic-construction-provenance.json docs/CONSTRUCTION_SAFETY_034.md
+          if ! git diff --cached --quiet; then
             git config user.name 'quintaneous'
             git config user.email '145784746+quintaneous@users.noreply.github.com'
-            git commit -m 'Guard early Hall and factory purchases with durable original-price recovery; retry legacy startup work safely'
+            git commit -m 'Declare checked source-fixture exception; preserve construction and recovery guards'
             test "$(git ls-remote origin "$GITHUB_REF" | cut -f1)" = "$GITHUB_SHA"
             git push origin HEAD:"$GITHUB_REF"
           fi
