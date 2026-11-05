@@ -75,18 +75,28 @@ vehicle eligibility, restoration and actual gate overlay/clearance remain
 separate integration work. Existing global TaCZ/SBW protection stays enabled.
 SEC-01 remains unresolved/high priority at its recorded installed-runtime scope.
 
-## Validation at implementation checkpoint
+## Validation and retained initial failure
 
 Initial source `93b6eb32c2858db0bc7f4c64288216ef79d77697` passed all 16 new
-objective-rule cases. In workflow `42128183273`, the retained gate suite passed
+objective-rule cases and all 50 retained baseline cases. In workflow
+`42128183273`, the retained gate suite passed
 11/12: its obstructed-close fixture timed out waiting for entity chunk residency
 before running its assertions. The failed raw artifact `13460859239` is retained
 (SHA256 `cb51d9cc0c78c9d8b60818f552b11c1c6baf75e9c19d3a70e9f0402e35e18eee`).
+The initial run therefore executed 78 cases: 77 passed and 1 failed. Its
+[raw failed native log](evidence/siege36_initial_gate_failure.log) and
+[verified result summary](evidence/siege36_initial_validation.json) are preserved.
 The fixture now uses the existing paid-recovery 4,000-attempt readiness budget,
 a 5,000-tick outer timeout and per-chunk/timing diagnostics, while still requiring
 actual chunk/entity readiness. No gate or siege safety predicate changes.
-The original transient loading cause is not proven; a later green run alone
-would not prove it. Exact-source revalidation remains pending at this checkpoint. The rule cases are simulations inside Forge GameTest,
+Final source `d1ee94ac7f6ad619118805647d9380460768f5d0` passed all **78/78**
+selected cases in workflow `42128969056`: 16 siege, 12 gate and 50 baseline.
+The new diagnostics directly observed one fixture still waiting on entity
+residency at 400 attempts / 531 ms, then ready at 1,415 attempts / 1,161 ms.
+This demonstrates that the old 400-attempt budget can expire before a normally
+loading fixture is ready. It does not identify the exact first failure's missing
+chunk or underlying I/O cause. No production safety condition was relaxed.
+[Exact source, hashes and preserved evidence](SIEGE_RULES_036_CHECKPOINT.md). The rule cases are simulations inside Forge GameTest,
 not multiplayer, connected-client or live city acceptance. A compressed NBT
 readback is not a process-restart proof. Final evidence will record actual counts,
 source/JAR hashes and any failed attempts separately.

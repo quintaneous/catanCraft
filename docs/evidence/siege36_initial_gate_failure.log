@@ -1,0 +1,179 @@
+> Task :compileJava UP-TO-DATE
+> Task :processResources UP-TO-DATE
+> Task :classes UP-TO-DATE
+> Task :prepareContractGameTestWorld
+> Task :downloadMcpConfig
+> Task :extractSrg UP-TO-DATE
+> Task :createSrgToMcp
+> Task :downloadMCMeta UP-TO-DATE
+> Task :downloadAssets UP-TO-DATE
+> Task :extractNatives
+> Task :makeSrcDirs
+> Task :prepareRuns
+> Task :prepareRunGameTestServer
+> Task :prepareRunGameTestServerCompile UP-TO-DATE
+
+> Task :runGameTestServer
+2026-11-05 23:17:35,685 main WARN Advanced terminal features are not available in this environment
+[23:17:35] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher running: args [--launchTarget, forgegametestserveruserdev, --gameDir, ., --fml.forgeVersion, 47.4.10, --fml.mcVersion, 1.20.1, --fml.forgeGroup, net.minecraftforge, --fml.mcpVersion, 20230612.114412]
+[23:17:35] [main/INFO] [cp.mo.mo.Launcher/MODLAUNCHER]: ModLauncher 10.0.9+10.0.9+main.dcd20f30 starting: java version 17.0.21 by Eclipse Adoptium; OS Linux arch amd64 version 7.0.0-1019-azure
+[23:17:35] [main/WARN] [ne.mi.fm.lo.FMLConfig/CORE]: Configuration file /home/runner/work/catanCraft/catanCraft/build/controlled-catancraft_gate35-run/config/fml.toml is not correct. Correcting
+[23:17:35] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowSkipGLVersions] was corrected from null to []
+[23:17:35] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowLogHelpMessage] was corrected from null to true
+[23:17:35] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowSquir] was corrected from null to false
+[23:17:35] [main/INFO] [ne.mi.fm.lo.FMLConfig/CORE]: Incorrect key [earlyWindowShowCPU] was corrected from null to false
+[23:17:35] [main/INFO] [ne.mi.fm.lo.ImmediateWindowHandler/]: ImmediateWindowProvider not loading because launch target is forgegametestserveruserdev
+[23:17:35] [main/INFO] [mixin/]: SpongePowered MIXIN Subsystem Version=0.8.5 Source=union:/home/runner/.gradle/caches/modules-2/files-2.1/org.spongepowered/mixin/0.8.5/9d1c0c3a304ae6697ecd477218fa61b850bf57fc/mixin-0.8.5.jar%23116!/ Service=ModLauncher Env=SERVER
+[23:17:36] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/.gradle/caches/modules-2/files-2.1/net.minecraftforge/javafmllanguage/1.20.1-47.4.10/ccc533c7dd67e0983217197d7549c8b49e7ab453/javafmllanguage-1.20.1-47.4.10.jar is missing mods.toml file
+[23:17:36] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/.gradle/caches/modules-2/files-2.1/net.minecraftforge/lowcodelanguage/1.20.1-47.4.10/e9a2879fe3612ea34b9728ec2633304a1e67d480/lowcodelanguage-1.20.1-47.4.10.jar is missing mods.toml file
+[23:17:36] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/.gradle/caches/modules-2/files-2.1/net.minecraftforge/mclanguage/1.20.1-47.4.10/ec5cefbbc65c67302b8fac317010faab85fa14b9/mclanguage-1.20.1-47.4.10.jar is missing mods.toml file
+[23:17:36] [main/WARN] [ne.mi.fm.lo.mo.ModFileParser/LOADING]: Mod file /home/runner/.gradle/caches/modules-2/files-2.1/net.minecraftforge/fmlcore/1.20.1-47.4.10/94dae566be650566ea9115a1414ab76bfcf5a804/fmlcore-1.20.1-47.4.10.jar is missing mods.toml file
+[23:17:36] [main/INFO] [ne.mi.fm.lo.mo.JarInJarDependencyLocator/]: No dependencies to load found. Skipping!
+[23:17:38] [main/INFO] [cp.mo.mo.LaunchServiceHandler/MODLAUNCHER]: Launching target 'forgegametestserveruserdev' with arguments [--gameDir, .]
+[23:17:43] [modloading-worker-0/INFO] [ne.mi.co.ForgeMod/FORGEMOD]: Forge mod loading, version 47.4.10, for MC 1.20.1 with MCP 20230612.114412
+[23:17:43] [modloading-worker-0/INFO] [ne.mi.co.MinecraftForge/FORGE]: MinecraftForge v47.4.10 Initialized
+[23:17:43] [modloading-worker-0/INFO] [co.qu.ca.CatanCraft/]: CatanCraft 0.1.36-siege-rules-foundation loading
+[23:17:44] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Starting version check at https://files.minecraftforge.net/net/minecraftforge/forge/promotions_slim.json
+[23:17:44] [Forge Version Check/INFO] [ne.mi.fm.VersionChecker/]: [forge] Found status: OUTDATED Current: 47.4.10 Target: 47.4.28
+[23:17:45] [main/INFO] [mojang/YggdrasilAuthenticationService]: Environment: authHost='https://authserver.mojang.com', accountsHost='https://api.mojang.com', sessionHost='https://sessionserver.mojang.com', servicesHost='https://api.minecraftservices.com', name='PROD'
+[23:17:45] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.10_mapped_official_1.20.1/forge-1.20.1-47.4.10_mapped_official_1.20.1.jar%23181!/assets/.mcassetsroot' uses unexpected schema
+[23:17:45] [main/WARN] [minecraft/VanillaPackResourcesBuilder]: Assets URL 'union:/home/runner/.gradle/caches/forge_gradle/minecraft_user_repo/net/minecraftforge/forge/1.20.1-47.4.10_mapped_official_1.20.1/forge-1.20.1-47.4.10_mapped_official_1.20.1.jar%23181!/data/.mcassetsroot' uses unexpected schema
+[23:17:47] [main/INFO] [minecraft/RecipeManager]: Loaded 7 recipes
+[23:17:47] [main/INFO] [minecraft/AdvancementList]: Loaded 1271 advancements
+[23:17:47] [main/INFO] [ne.mi.ga.ForgeGameTestHooks/]: Enabled Gametest Namespaces: [catancraft_gate35]
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Configuration file ./world/serverconfig/forge-server.toml is not correct. Correcting
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server was corrected from null to its default, SimpleCommentedConfig:{}. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringBlockEntities was corrected from null to its default, false. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.removeErroringEntities was corrected from null to its default, false. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.fullBoundingBoxLadders was corrected from null to its default, false. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.zombieBaseSummonChance was corrected from null to its default, 0.1. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.zombieBabyChance was corrected from null to its default, 0.05. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.permissionHandler was corrected from null to its default, forge:default_handler. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.advertiseDedicatedServerToLan was corrected from null to its default, true. 
+[23:17:47] [Server thread/WARN] [ne.mi.co.ForgeConfigSpec/CORE]: Incorrect key server.useItemWithDurationZero was corrected from null to its default, false. 
+[23:17:48] [Server thread/INFO] [minecraft/MinecraftServer]: Preparing start region for dimension minecraft:overworld
+[23:17:49] [Worker-Main-3/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[23:17:49] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 0%
+[23:17:49] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 5%
+[23:17:50] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 36%
+[23:17:50] [Worker-Main-2/INFO] [minecraft/LoggerChunkProgressListener]: Preparing spawn area: 72%
+[23:17:51] [Server thread/INFO] [minecraft/LoggerChunkProgressListener]: Time elapsed: 2217 ms
+[23:17:51] [Server thread/INFO] [minecraft/GameTestServer]: Started game test server
+[23:17:51] [Server thread/INFO] [ne.mi.se.pe.PermissionAPI/]: Successfully initialized permission handler forge:default_handler
+[23:17:51] [Server thread/INFO] [co.qu.ca.CatanCraft/]: Loaded CatanCraft map season1_river_bridges_v3: 16 territories, 3 monuments, 1 public zones, 4 infrastructure points from /home/runner/work/catanCraft/catanCraft/build/controlled-catancraft_gate35-run/config/catancraft/map.json
+[23:17:51] [Server thread/INFO] [co.qu.ca.CatanCraft/]: Economy clock initialized without a catch-up payment; next scheduled boundary will produce normally
+[23:17:51] [Server thread/INFO] [minecraft/MinecraftServer]: [CatanCraft] Monument active: Military Depot at X=88 Y=81 Z=-35. Hold the zone for 120 seconds.
+[23:17:51] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_09:1' (1 tests)...
+[23:17:52] [Server thread/INFO] [minecraft/GameTestServer]: 12 tests are now running!
+[23:17:52] [Server thread/INFO] [minecraft/GameTestServer]: [_           ]
+[23:17:53] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_08:1' (1 tests)...
+[23:17:53] [Server thread/INFO] [minecraft/GameTestServer]: [+_          ]
+[23:17:54] [Server thread/INFO] [minecraft/GameTestServer]: [+_          ]
+[23:17:54] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_07:1' (1 tests)...
+[23:17:55] [Server thread/INFO] [minecraft/GameTestServer]: [++_         ]
+[23:17:55] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_06:1' (1 tests)...
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:56] [Server thread/INFO] [minecraft/GameTestServer]: [+++_        ]
+[23:17:57] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_05:1' (1 tests)...
+[23:17:58] [Server thread/INFO] [minecraft/GameTestServer]: [++++_       ]
+[23:17:58] [Server thread/INFO] [minecraft/GameTestServer]: [++++_       ]
+[23:17:58] [Server thread/INFO] [minecraft/GameTestServer]: [++++_       ]
+[23:17:58] [Server thread/INFO] [minecraft/GameTestServer]: [++++_       ]
+[23:17:58] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_04:1' (1 tests)...
+[23:17:59] [Server thread/INFO] [minecraft/GameTestServer]: [+++++_      ]
+[23:17:59] [Server thread/INFO] [minecraft/GameTestServer]: [+++++_      ]
+[23:18:00] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_03:1' (1 tests)...
+[23:18:00] [Server thread/INFO] [minecraft/GameTestServer]: [++++++_     ]
+[23:18:00] [Server thread/INFO] [minecraft/GameTestServer]: [++++++_     ]
+[23:18:01] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_02:1' (1 tests)...
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:02] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++_    ]
+[23:18:03] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_01:1' (1 tests)...
+[23:18:03] [Server thread/ERROR] [minecraft/LogTestReporter]: obstructed_close_preserves_entity_blocks_and_absent_journal failed! Gate fixture entity chunks never became ready
+[23:18:03] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X    ]
+[23:18:03] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X_   ]
+[23:18:03] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X_   ]
+[23:18:04] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_12:1' (1 tests)...
+[23:18:05] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X+_  ]
+[23:18:05] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_11:1' (1 tests)...
+[23:18:06] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X++_ ]
+[23:18:06] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X++_ ]
+[23:18:06] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X++_ ]
+[23:18:06] [Server thread/INFO] [minecraft/GameTestBatchRunner]: Running test batch 'gate35_10:1' (1 tests)...
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X+++_]
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X+++_]
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X+++_]
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: [+++++++X++++]
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: ========= 12 GAME TESTS COMPLETE ======================
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: 1 required tests failed :(
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]:    - obstructed_close_preserves_entity_blocks_and_absent_journal
+[23:18:07] [Server thread/INFO] [minecraft/GameTestServer]: ====================================================
+[23:18:07] [Server thread/INFO] [minecraft/MinecraftServer]: Stopping server
+[23:18:07] [Server thread/INFO] [minecraft/MinecraftServer]: Saving players
+[23:18:07] [Server thread/INFO] [minecraft/MinecraftServer]: Saving worlds
+[23:18:08] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:overworld
+[23:18:09] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_end
+[23:18:09] [Server thread/INFO] [minecraft/MinecraftServer]: Saving chunks for level 'ServerLevel[world]'/minecraft:the_nether
+[23:18:09] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (world): All chunks are saved
+[23:18:09] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM1): All chunks are saved
+[23:18:09] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage (DIM-1): All chunks are saved
+[23:18:09] [Server thread/INFO] [minecraft/MinecraftServer]: ThreadedAnvilChunkStorage: All dimensions are saved
+[23:18:09] [Server thread/INFO] [minecraft/GameTestServer]: Game test server shutting down
+
+> Task :runGameTestServer FAILED
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__run_3-1793920649698.json
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':runGameTestServer'.
+> Process 'command '/usr/lib/jvm/temurin-17-jdk-amd64/bin/java'' finished with non-zero exit value 1
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.8/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 40s
+11 actionable tasks: 6 executed, 5 up-to-date

@@ -1,0 +1,25 @@
+{
+  "source": "93b6eb32c2858db0bc7f4c64288216ef79d77697",
+  "run": 42128183273,
+  "artifact_id": 13460859239,
+  "archive_sha256": "cb51d9cc0c78c9d8b60818f552b11c1c6baf75e9c19d3a70e9f0402e35e18eee",
+  "executed": 78,
+  "passed": 77,
+  "failed": 1,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_gate35": {
+      "expected": 12,
+      "passed": false
+    },
+    "catancraft_siege36": {
+      "expected": 16,
+      "passed": true
+    }
+  },
+  "failure": "obstructed_close_preserves_entity_blocks_and_absent_journal: fixture entity chunks not ready within original400 attempts; body not reached",
+  "all_manifest_files_verified": true
+}

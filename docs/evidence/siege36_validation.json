@@ -1,0 +1,99 @@
+{
+  "source": "d1ee94ac7f6ad619118805647d9380460768f5d0",
+  "run": 42128969056,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42128969056",
+  "artifact_id": 13462441609,
+  "archive_sha256": "2255af819541f71c7e7aa60922e91e21b21ac0b200b765625d09b0048fdbc48a",
+  "executed": 78,
+  "passed": 78,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_gate35": {
+      "expected": 12,
+      "passed": true
+    },
+    "catancraft_siege36": {
+      "expected": 16,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.36-siege-rules-foundation.jar",
+  "jar_bytes": 2911133,
+  "jar_sha256": "203ce07461a40e5bf44a0774485fd7ee5acf72ba352f9fb7dd2214fe2464f83e",
+  "source_archive_matches_git": true,
+  "all_manifest_files_verified": true,
+  "preexisting_class_files_identical_excluding_changed_gate_tests": 427,
+  "changed_preexisting_jar_entries_vs_035": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml",
+    "com/quin/catancraft/world/GateTransition35Tests$Fixture.class",
+    "com/quin/catancraft/world/GateTransition35Tests.class"
+  ],
+  "gate_fixture_readiness": [
+    {
+      "attempts": 39,
+      "wallMillis": 858,
+      "chunks": 2
+    },
+    {
+      "attempts": 16,
+      "wallMillis": 262,
+      "chunks": 2
+    },
+    {
+      "attempts": 17,
+      "wallMillis": 194,
+      "chunks": 2
+    },
+    {
+      "attempts": 1415,
+      "wallMillis": 1161,
+      "chunks": 2
+    },
+    {
+      "attempts": 27,
+      "wallMillis": 683,
+      "chunks": 1
+    },
+    {
+      "attempts": 24,
+      "wallMillis": 297,
+      "chunks": 2
+    },
+    {
+      "attempts": 14,
+      "wallMillis": 153,
+      "chunks": 2
+    },
+    {
+      "attempts": 306,
+      "wallMillis": 437,
+      "chunks": 2
+    },
+    {
+      "attempts": 38,
+      "wallMillis": 268,
+      "chunks": 2
+    },
+    {
+      "attempts": 46,
+      "wallMillis": 319,
+      "chunks": 1
+    },
+    {
+      "attempts": 35,
+      "wallMillis": 206,
+      "chunks": 1
+    },
+    {
+      "attempts": 48,
+      "wallMillis": 373,
+      "chunks": 2
+    }
+  ],
+  "initial_failure_retained": true
+}
