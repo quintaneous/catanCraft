@@ -1,0 +1,53 @@
+{
+  "artifact_id": 13460991056,
+  "archive_sha256": "a0e1144867724fdf84495d53c945de43e5d5875f9dd2e9d0e9980685ef80d6aa",
+  "source": "694320186f3a14e1b1b345b7c38e91b310419712",
+  "all_passed": true,
+  "scenarios": 118,
+  "executions": 119,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_gate35": {
+      "expected": 12,
+      "passed": true
+    },
+    "catancraft_paid_recovery": {
+      "expected": 19,
+      "passed": true
+    },
+    "catancraft_sectors": {
+      "expected": 22,
+      "passed": true
+    },
+    "catancraft_sectors_natural": {
+      "expected": 7,
+      "passed": true
+    },
+    "catancraft_sbw": {
+      "expected": 7,
+      "passed": true
+    },
+    "procurement_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "procurement_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.35-security-gate-foundation.jar",
+  "jar_bytes": 2885541,
+  "jar_sha256": "f35028608386f7f0d0d4637f3c06bf4825d20cf74e9efddceeedbfdc9f5b43db",
+  "source_archive_matches_git": true,
+  "all_manifest_files_verified": true,
+  "workflow_run": 42124906880,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42124906880",
+  "native_failed": 0,
+  "seed_process": "3702:1793919258028",
+  "verify_process": "3868:1793919292879",
+  "runtime_manifest_sha256": "6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452"
+}

@@ -1,0 +1,267 @@
+{
+  "canonical_bytes_mtimes_unchanged": true,
+  "canonical_inventory_before_and_after": {
+    ".catancraft-sec01-runtime-v1": {
+      "kind": "file",
+      "mtime_ns": 1793918768615288369,
+      "sha256": "4944bf47dfcbc5b49249f1277cb0fb801be8e0a05620d45e3031f262953736e3"
+    },
+    "download-provenance.json": {
+      "kind": "file",
+      "mtime_ns": 1793918768616960835,
+      "sha256": "4bf1c77d95ab378563d18b92d1642adcddd88fb2f70f6841aa606c970a31b679"
+    },
+    "embedded/Ponder-Forge-1.20.1-1.0.91.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768580058028,
+      "sha256": "86e6b64372aba6d9c56f2c35725ea26d8febf2c75eed9950566e7f2849443b34"
+    },
+    "embedded/cloth-config-forge-11.1.106.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768603184197,
+      "sha256": "29cc609a80f3cf27a8e53a43473b71ff24ecb3a6eb480c610017f8a98429e867"
+    },
+    "embedded/curios-forge-5.14.1+1.20.1.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768533439242,
+      "sha256": "6d77ae8ad532fdf303390f404b0081b3b4ac4f61e7f1f4b4d4a9077e132dae4f"
+    },
+    "embedded/flywheel-forge-1.20.1-1.0.5.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768593740948,
+      "sha256": "316ca250f19244956b5f0cd75329309ea65a77b4b8da854389b6a9222e7f427c"
+    },
+    "embedded/geckolib-forge-1.20.1-4.4.6.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768540864714,
+      "sha256": "0de40c205130fe07e79440f1250a22459e32618e1afdfcd44eb9626044c12f87"
+    },
+    "embedded/rhino-1.8.1-SNAPSHOT.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768551695417,
+      "sha256": "4aab6124356e91e16263fa065556444b96bf5d9438e1399914cd971ef8b73616"
+    },
+    "embedded/simplebedrockmodel-2.5.1-forge-mc1.20.1.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768568015837,
+      "sha256": "323612d16de1d68a1dadc02b3329bfc0614d015ef70995bce7098adf38a437dc"
+    },
+    "inputs/kotlinforforge-4.11.0-all.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918541353423918,
+      "sha256": "ef988f86d170af499d147ea8a5c34c99dbd6d8f4a5ad236a4b43818dc4470a10"
+    },
+    "inputs/superbwarfare-0.8.9.2-mc1.20.1-65d985a64-all.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918520021534799,
+      "sha256": "559930003f638080de648a8621821d785158768c3f69a762094ef4c8d3c4cc12"
+    },
+    "inputs/superbwarfare-0.8.9.2-mc1.20.1-65d985a64-sources.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918528521322124,
+      "sha256": "06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5"
+    },
+    "maven/audit/catancraft/sec01_035/cloth-config/11.1.106/cloth-config-11.1.106.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768608087362,
+      "sha256": "29cc609a80f3cf27a8e53a43473b71ff24ecb3a6eb480c610017f8a98429e867"
+    },
+    "maven/audit/catancraft/sec01_035/cloth-config/11.1.106/cloth-config-11.1.106.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768613676631,
+      "sha256": "c2b37ed3d2ba6a4a73029a383a700511e0a74d260bfc32899d3dcbcebf6260a8"
+    },
+    "maven/audit/catancraft/sec01_035/curios/5.14.1+1.20.1/curios-5.14.1+1.20.1.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768536276080,
+      "sha256": "6d77ae8ad532fdf303390f404b0081b3b4ac4f61e7f1f4b4d4a9077e132dae4f"
+    },
+    "maven/audit/catancraft/sec01_035/curios/5.14.1+1.20.1/curios-5.14.1+1.20.1.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768539282394,
+      "sha256": "93ecc95b6a01582d7122cac53c58300fa46b81f38e78843d8457e0d8da4c5fde"
+    },
+    "maven/audit/catancraft/sec01_035/flywheel/1.0.5/flywheel-1.0.5.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768597851415,
+      "sha256": "316ca250f19244956b5f0cd75329309ea65a77b4b8da854389b6a9222e7f427c"
+    },
+    "maven/audit/catancraft/sec01_035/flywheel/1.0.5/flywheel-1.0.5.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768602369113,
+      "sha256": "8fa43444fe89255d46a403f9f666841dc212592b8497371fcac85da47d242f42"
+    },
+    "maven/audit/catancraft/sec01_035/geckolib/4.4.6/geckolib-4.4.6.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768546020539,
+      "sha256": "0de40c205130fe07e79440f1250a22459e32618e1afdfcd44eb9626044c12f87"
+    },
+    "maven/audit/catancraft/sec01_035/geckolib/4.4.6/geckolib-4.4.6.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768550690595,
+      "sha256": "109180e9c44a4f9f0742f2c95d1685099b2078dc8e383e02d8177350593d5b02"
+    },
+    "maven/audit/catancraft/sec01_035/kotlinforforge/4.11.0/kotlinforforge-4.11.0.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768502986547,
+      "sha256": "ef988f86d170af499d147ea8a5c34c99dbd6d8f4a5ad236a4b43818dc4470a10"
+    },
+    "maven/audit/catancraft/sec01_035/kotlinforforge/4.11.0/kotlinforforge-4.11.0.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768532642608,
+      "sha256": "ca0ce264968889fd1381d5eb4a81869e6f0bfc4e06ae993acddc49f40ea2511d"
+    },
+    "maven/audit/catancraft/sec01_035/ponder/1.0.91/ponder-1.0.91.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768583505207,
+      "sha256": "86e6b64372aba6d9c56f2c35725ea26d8febf2c75eed9950566e7f2849443b34"
+    },
+    "maven/audit/catancraft/sec01_035/ponder/1.0.91/ponder-1.0.91.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768592848368,
+      "sha256": "b032d802941cc2956fa50dbf37d7cae158836576640593bd791ce922100afea5"
+    },
+    "maven/audit/catancraft/sec01_035/rhino/1.8.1-SNAPSHOT/rhino-1.8.1-SNAPSHOT.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768559714603,
+      "sha256": "4aab6124356e91e16263fa065556444b96bf5d9438e1399914cd971ef8b73616"
+    },
+    "maven/audit/catancraft/sec01_035/rhino/1.8.1-SNAPSHOT/rhino-1.8.1-SNAPSHOT.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768567172427,
+      "sha256": "f084d88a2927f71ba677b199fc2698492dbe69fff853495b9529d7fe26892424"
+    },
+    "maven/audit/catancraft/sec01_035/simplebedrockmodel/2.5.1-forge-mc1.20.1/simplebedrockmodel-2.5.1-forge-mc1.20.1.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768573849413,
+      "sha256": "323612d16de1d68a1dadc02b3329bfc0614d015ef70995bce7098adf38a437dc"
+    },
+    "maven/audit/catancraft/sec01_035/simplebedrockmodel/2.5.1-forge-mc1.20.1/simplebedrockmodel-2.5.1-forge-mc1.20.1.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768579370621,
+      "sha256": "b2dc3b25b13289649534fac2a8e20bb7b4d04bf4e6c5518837790fe272e45553"
+    },
+    "maven/audit/catancraft/sec01_035/superbwarfare/0.8.9.2/superbwarfare-0.8.9.2.jar": {
+      "kind": "file",
+      "mtime_ns": 1793918768366241750,
+      "sha256": "559930003f638080de648a8621821d785158768c3f69a762094ef4c8d3c4cc12"
+    },
+    "maven/audit/catancraft/sec01_035/superbwarfare/0.8.9.2/superbwarfare-0.8.9.2.pom": {
+      "kind": "file",
+      "mtime_ns": 1793918768501974763,
+      "sha256": "a388a2c886cb9505830268caf68012de203286200b61e04015767eabed455ca4"
+    },
+    "runtime-artifacts.json": {
+      "kind": "file",
+      "mtime_ns": 1793918768616038978,
+      "sha256": "6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452"
+    }
+  },
+  "canonical_verify": {
+    "command": [
+      "python3",
+      "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+      "--root",
+      "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-035-runtime",
+      "--verify-only"
+    ],
+    "exit_code": 0,
+    "stderr": "",
+    "stdout": "{\"manifest_sha256\": \"6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452\", \"no_native_tests_executed\": true, \"published_input_count\": 3, \"result\": \"PASS\", \"root\": \"/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-035-runtime\", \"runtime_artifact_count\": 9, \"verified_file_count\": 31}\n"
+  },
+  "check_script_sha256": "d3d9273afd403cc198475fb7d42c341c47dc8ea4f5290ba9bd6e6fd9993b3876",
+  "commit": "694320186f3a14e1b1b345b7c38e91b310419712",
+  "init_sha256": "7fef01656ed51a0916e843d86241b30b988ee10f1e1fc05680de3c8ca20f1ecd",
+  "manifest_sha256": "6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452",
+  "native_tests_executed": false,
+  "negative_cases": [
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+        "--root",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-verify-negative-nkn7wwww/0",
+        "--verify-only"
+      ],
+      "exit_code": 1,
+      "fixture_bytes_links_mtimes_preserved": true,
+      "name": "forged manifest",
+      "stderr": "SEC01 runtime refusal: Runtime verification failed: runtime-artifacts.json\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+        "--root",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-verify-negative-nkn7wwww/1",
+        "--verify-only"
+      ],
+      "exit_code": 1,
+      "fixture_bytes_links_mtimes_preserved": true,
+      "name": "modified staged JAR",
+      "stderr": "SEC01 runtime refusal: Runtime verification failed: maven/audit/catancraft/sec01_035/superbwarfare/0.8.9.2/superbwarfare-0.8.9.2.jar\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+        "--root",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-verify-negative-nkn7wwww/2",
+        "--verify-only"
+      ],
+      "exit_code": 1,
+      "fixture_bytes_links_mtimes_preserved": true,
+      "name": "modified staged POM",
+      "stderr": "SEC01 runtime refusal: Runtime verification failed: maven/audit/catancraft/sec01_035/superbwarfare/0.8.9.2/superbwarfare-0.8.9.2.pom\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+        "--root",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-verify-negative-nkn7wwww/3",
+        "--verify-only"
+      ],
+      "exit_code": 1,
+      "fixture_bytes_links_mtimes_preserved": true,
+      "name": "modified published input",
+      "stderr": "SEC01 runtime refusal: Pinned published input mismatch: superbwarfare-0.8.9.2-mc1.20.1-65d985a64-all.jar\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+        "--root",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-verify-negative-nkn7wwww/4",
+        "--verify-only"
+      ],
+      "exit_code": 1,
+      "fixture_bytes_links_mtimes_preserved": true,
+      "name": "unknown file",
+      "stderr": "SEC01 runtime refusal: Unknown runtime file retained: preserve-me.txt\n",
+      "stdout": ""
+    },
+    {
+      "command": [
+        "python3",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/tools/sec01_035/prepare_runtime.py",
+        "--root",
+        "/workspace/scratch/a1b6a42f71e7/catanCraft/build/sec01-verify-negative-nkn7wwww/5",
+        "--verify-only"
+      ],
+      "exit_code": 1,
+      "fixture_bytes_links_mtimes_preserved": true,
+      "name": "symlink",
+      "stderr": "SEC01 runtime refusal: Runtime contains a symlink: preserve-link\n",
+      "stdout": ""
+    }
+  ],
+  "result": "PASS",
+  "runtime_file_count": 31,
+  "schema": "catancraft-sec01-verifier-evidence-v1",
+  "verifier_sha256": "1cff0fb021e35adfdde7b314e2a3001ce3f678c2f52f9ec25e00a63c56e72eac"
+}

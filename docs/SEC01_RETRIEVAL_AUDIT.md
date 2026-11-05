@@ -1,5 +1,13 @@
 # SEC-01 — published-runtime retrieval audit
 
+## 2026-11-05 update — real procurement and process restart now validated
+
+At source `694320186f3a14e1b1b345b7c38e91b310419712`, the retained seven published-SBW checks passed again, and one new real pickup/LAV procurement scenario passed both seed and separate-JVM verification using the same isolated world. Exact original charges, persisted entity UUIDs, ownership, retrieval refusal and ordinary retrieval control passed. Runtime preparation is now reproducible in `tools/sec01_035/`. See [the exact-source 0.1.35 checkpoint and evidence](SECURITY_GATE_035_CHECKPOINT.md).
+
+This closes the missing **automated real-procurement/normal-process-restart evidence** item below. It does not close installed artifact/configuration comparison or owner interaction acceptance, prove arbitrary crash atomicity, or authorize future weapons. The production guard is unchanged. **SEC-01 remains OPEN / HIGH PRIORITY.** The October 18 text below is historical evidence and its formerly missing procurement/restart item is superseded only to this stated extent.
+
+## Historical October 18 audit
+
 2026-10-18. **OPEN / HIGH PRIORITY.** Candidate protection now passes seven isolated native tests against the official published Superb Warfare 0.8.9.2 Forge artifact. This is narrower than owner-modpack acceptance or a verified process-restart/procurement test. No installed mods, active world, live server or multiplayer were accessed.
 
 ## Runtime provenance
