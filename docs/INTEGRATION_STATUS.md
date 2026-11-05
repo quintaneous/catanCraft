@@ -1,5 +1,11 @@
 # Combined integration status
 
+## INT-02 / DEF-02 — 0.1.34 owner solo acceptance, 2026-11-05
+
+The owner reported "everything looks good" after the clarified focused 0.1.34 check. Record startup/join, `/nation gui`, retained purchased levels/inventory/existing city, and normal restart as owner-reported PASS. Optional new purchases, an actual unfinished recovery and optional lectern interaction were not separately reported and are not inferred. The approved A06/A09 batch is complete; preserve prior accepted North Reinforced / East-South-West Basic walls and 0.1.32 readiness without repeat tests.
+
+See [the acceptance record](CONSTRUCTION_SAFETY_034_OWNER_ACCEPTANCE.md). JAR source remains `e7f9e67345de36ca90e31008fddc1f610f4805e2`; its earlier 251/251 native and 73/73 Python evidence is unchanged. This update only records acceptance and corrects "management book" wording to the optional Town Hall lectern. No new build, test run, live-world/mod change, reset, import, multiplayer or Blender work. SEC-01 crowbar remains unresolved/high priority. Pending-acceptance language in the older dated delivery entry below is historical and superseded by this report.
+
 ## INT-02 / DEF-02 — A06 / A09 combined continuation, 2026-10-28
 
 Delivered 0.1.33 and its release-documentation ancestry are preserved. Resumed the newer interrupted 0.1.34 remote implementation, then completed early Hall/ordinary factory source safeguards and real producer/legacy-defense startup retries. New source-cover evidence fixes native covered-grass decay while old proofless histories remain strict. No live world or installed mods were accessed or modified.

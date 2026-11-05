@@ -1,6 +1,6 @@
 # CatanCraft 0.1.34 combined A06 / A09 release record
 
-Status: built and automated checks passed; owner installation and in-game acceptance remain pending. This release carries forward delivered 0.1.33 source `967e9faaa2f954e51c7612a48551a9a33d50cad5` and its documentation `1cb34f3435bb9a7b733acc16864e5ffef049b8bb`. No assumption is made that 0.1.33 was installed or accepted.
+Status: built and automated checks passed; the focused solo check is owner-reported PASS on 2026-11-05. See [the acceptance record](CONSTRUCTION_SAFETY_034_OWNER_ACCEPTANCE.md) for its exact scope. This release carries forward delivered 0.1.33 source `967e9faaa2f954e51c7612a48551a9a33d50cad5` and its documentation `1cb34f3435bb9a7b733acc16864e5ffef049b8bb`. No assumption is made that 0.1.33 was installed or accepted.
 
 ## Exact delivered binary
 
@@ -55,4 +55,4 @@ Earlier evidence is retained under its original source: initial candidate `7588c
 
 Use the single [solo checklist](CONSTRUCTION_SAFETY_034_SOLO_CHECKLIST.md). Preserve City A **North Reinforced; East, South and West Basic**, accepted mixed connections/restart, and the accepted 0.1.32 base-city-readiness result. No accepted purchase retests, reset, manual imports, deliberate crashes, multiplayer or Blender work are required. The owner's live world and installed mods were not accessed or modified.
 
-Windows/client/current-modpack installation and owner acceptance remain untested. Queue rebind and injected interruptions do not establish arbitrary process-kill/power-loss safety. Old proofless histories or target-only newly covered grass can still block safely on drift; no missing proof is manufactured. Completed-path memoization can require the next service/server restart for an operator-created interruption later in the same session. These tests do not add hard frame-time guarantees or supersede the recorded R7 preparation/slice timing limits. SEC-01 purchased-SBW crowbar exploit remains **UNRESOLVED / HIGH PRIORITY**.
+The owner reports the focused check passed in their existing test setup; broader Windows/client/modpack compatibility is not certified by that report. Queue rebind and injected interruptions do not establish arbitrary process-kill/power-loss safety. Old proofless histories or target-only newly covered grass can still block safely on drift; no missing proof is manufactured. Completed-path memoization can require the next service/server restart for an operator-created interruption later in the same session. These tests do not add hard frame-time guarantees or supersede the recorded R7 preparation/slice timing limits. SEC-01 purchased-SBW crowbar exploit remains **UNRESOLVED / HIGH PRIORITY**.
