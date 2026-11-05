@@ -1,5 +1,13 @@
 # Combined integration status
 
+## SIE-01 / SIE-04 — approved rules and 0.1.36 objective foundation, 2026-11-05
+
+The owner approved the recommended defender-win mechanics as provisional playtest rules: shared overall timer across outer-point then Town-Hall objectives, no timer reset, contest pauses capture while the clock runs, and defender victory on timeout or attacker surrender. Durations remain explicit adjustable inputs, not invented live settings. This supersedes the earlier pending-mechanism wording below without extending approval to unrelated siege/capture policies.
+
+Branch `chatgpt/siege-rules-0.1.36` starts at `f79fdaa8ab0a9dd967dbd14bc942a2ccfda3781d`, retaining the validated 0.1.35 code and all accepted 0.1.34/0.1.33 work. The new isolated rule evaluator freezes session identities/rules, enforces ordered objectives and one clock, preserves terminal results, and strictly encodes/decodes state. It is not registered for commands, scheduler, damage, ownership settlement or restoration. [Contract and precise limits](SIEGE_RULES_036_CONTRACT.md). Build/native validation is pending at this implementation checkpoint.
+
+Accepted City A walls/readiness and 0.1.34 solo acceptance remain unchanged; no live-world/mod change, reset, import, repeated accepted purchase, multiplayer or Blender work. SEC-01 remains unresolved/high priority pending its separate installed-runtime acceptance. Gate geometry/overlay, exact durations/presence/empty-zone policy, disconnect and settlement/restoration contracts remain before player deployment.
+
 ## SEC-01 / DEF-06 / SIE-01 — 0.1.35 development checkpoint, 2026-11-05
 
 The owner authorized both purchased-vehicle crowbar verification and gates/siege as the next workstreams after accepting 0.1.34. Branch `chatgpt/vehicle-security-gates-0.1.35` starts at accepted checkpoint `4fedb8d09634cd27a435d0fe60ca4f2c0a786087`; original purchase and placement/recovery work is retained.

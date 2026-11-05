@@ -1,6 +1,6 @@
 # DEF-06 / SIE-01 — gates and siege rules draft, 2026-11-05
 
-Status: **design discussion plus unregistered gate movement foundation**. This is
+Status: **approved provisional core rules; gate and siege foundations remain unregistered**. This is
 not an enabled siege system or an installed City A gate. The owner authorized
 SEC-01 verification and functional gates/siege as the next two workstreams.
 That supersedes the earlier batch's no-gates/no-siege scope restriction, while
@@ -20,9 +20,11 @@ contracts. Accepted 0.1.34 and City A wall states are preserved.
 - Basic contest behavior accepted: capture progresses while attackers are present
   and pauses when defenders enter the capture zone. Exact zone/presence definitions
   and behavior when nobody is present remain undecided.
-- Defenders must have an explicit way to win and end the siege. The owner
-  emphasized this requirement on 2026-11-05; a specific victory mechanism and
-  duration have not yet been approved.
+- On 2026-11-05 the owner approved the recommended defender-win mechanics as
+  provisional playtest rules: one overall clock across both stages, no stage
+  reset, contested capture pauses without pausing that clock, and defender victory
+  on timeout or explicit attacker surrender. The owner permits later tuning.
+  Numeric durations were not proposed or chosen; keep them explicit and adjustable.
 
 ## Approved objective sequence
 
@@ -37,18 +39,17 @@ two-stage objective. Exact objective geometry, stage-progress retention/recaptur
 precise presence/contesting definitions and durations still need a rules contract.
 The approved sequence does not enable siege damage or alter the accepted city.
 
-## Defender victory proposal — not yet approved
+## Approved provisional defender victory rules
 
-Recommend one overall attack timer shared by both objective stages. If attackers
+Use one overall attack timer shared by both objective stages. If attackers
 have not completed the Town Hall capture when it expires, defenders win, whether
 the attackers are still at the outer point or have reached the Town Hall.
 Capturing the outer point unlocks the next stage without resetting or extending
-the overall timer. Contested capture pauses objective progress; it would not
-pause this overall timer. This gives delaying and counterattacking a concrete
+the overall timer. Contested capture pauses objective progress without pausing
+this overall timer. This gives delaying and counterattacking a concrete
 purpose and prevents an indefinitely contested siege.
 
-Also propose an explicit attacker withdrawal/surrender that ends the siege as a
-defender win. Who may surrender and when it is permitted still need agreement.
+Explicit attacker withdrawal/surrender ends the siege as a defender win. Who may surrender and when it is permitted still need agreement.
 A momentary team wipe, empty objective or disconnect should not be treated as
 surrender implicitly; respawn and disconnect rules remain separate decisions.
 
@@ -60,8 +61,11 @@ restart harassment; no duration or eligibility rule is assigned here.
 Still undecided: total siege duration, timer start/preparation, objective hold
 times, overtime at expiry, simultaneous completion/expiry ordering, attacker
 respawns, disconnect/server-restart timing, cooldown and surrender permissions.
-The owner required a defender win; none of these proposed mechanics is inferred
-as approved from that requirement. No runtime behavior changes with this draft.
+Approval covers the mechanisms stated above, not unchosen numerical durations,
+cooldown or unrelated capture/restore policies. The isolated 0.1.36 rule evaluator
+implements these mechanisms with required frozen timing inputs; see
+[SIE-01 / SIE-04 implementation contract](SIEGE_RULES_036_CONTRACT.md). It is not
+registered in a live server scheduler or player command.
 
 ## Rules still requiring a decision
 
@@ -70,7 +74,7 @@ With the objective selected, settle these together before enabling combat:
 - Declaration: who may start, how the defender is notified, preparation time,
   cancellation, simultaneous sieges, cooldown and any cost.
 - Contest and victory: exact objective locations/presence, empty-zone behavior,
-  progress decay, hold/overall duration, defender victory mechanism, expiry
+  progress decay, hold/overall duration, expiry
   ordering, attacker defeat, disconnect and server restart behavior.
 - Damage: approved siege boundary, legal targets and weapons, and exact restoration
   policy. Existing global protection remains active until a scoped replacement
