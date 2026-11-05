@@ -23,7 +23,7 @@ public final class GateTransition35Tests {
     private static final AtomicInteger SITES=new AtomicInteger();
     private static final GateTransition35.State OPEN=GateTransition35.State.OPEN,CLOSED=GateTransition35.State.CLOSED;
 
-    @GameTest(template="townhall_state_empty",batch="gate35_01",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_01",timeoutTicks=5000)
     public static void complete_cycle_is_bounded_and_source_saved_before_intent(GameTestHelper h){run(h,f->{
         UUID close=UUID.randomUUID();try(var r=f.begin(CLOSED,close)){
             h.assertTrue(f.all(OPEN)&&f.sourceSavedBeforeIntent,"Preparation wrote blocks or omitted durable source save");
@@ -33,14 +33,14 @@ public final class GateTransition35Tests {
         f.finish(OPEN,UUID.randomUUID());h.assertTrue(f.all(OPEN)&&f.journal().getString("phase").equals("DONE")&&f.flushes>=6,"Full cycle lost exact state or physical-save ordering");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_02",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_02",timeoutTicks=5000)
     public static void obstructed_close_preserves_entity_blocks_and_absent_journal(GameTestHelper h){run(h,f->{
         ItemEntity obstruction=f.item(f.cells.get(4).pos());UUID id=obstruction.getUUID();CompoundTag before=obstruction.saveWithoutId(new CompoundTag()).copy();
         refuse(()->f.begin(CLOSED,UUID.randomUUID()));
         h.assertTrue(f.all(OPEN)&&!Files.exists(f.path())&&!obstruction.isRemoved()&&id.equals(obstruction.getUUID())&&before.equals(obstruction.saveWithoutId(new CompoundTag())),"Blocked close changed entity/world/history");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_03",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_03",timeoutTicks=5000)
     public static void partial_motion_resumes_only_its_original_intent(GameTestHelper h){run(h,f->{
         UUID id=UUID.randomUUID();try(var r=f.begin(CLOSED,id)){
             refuse(()->f.begin(CLOSED,id));h.assertTrue(r.step()==4,"Fixture did not interrupt after a bounded partial slice");
@@ -51,7 +51,7 @@ public final class GateTransition35Tests {
         h.assertTrue(f.all(CLOSED),"Resumed gate incomplete");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_04",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_04",timeoutTicks=5000)
     public static void owner_world_and_live_guard_changes_refuse_before_writes(GameTestHelper h){run(h,f->{
         UUID id=UUID.randomUUID(),owner=f.owner;String world=f.worldId;
         try(var r=f.begin(CLOSED,id)){f.allowed=false;refuse(r::step);}
@@ -62,7 +62,7 @@ public final class GateTransition35Tests {
         h.assertTrue(f.all(OPEN),"Runner failed to recheck current owner");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_05",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_05",timeoutTicks=5000)
     public static void unknown_source_and_unjournaled_target_mixture_are_not_adopted(GameTestHelper h){run(h,f->{
         BlockPos last=f.cells.get(5).pos();f.level.setBlock(last,Blocks.GOLD_BLOCK.defaultBlockState(),2);refuse(()->f.begin(CLOSED,UUID.randomUUID()));
         h.assertTrue(f.count(CLOSED)==0&&!Files.exists(f.path()),"Foreign last source wrote an earlier gate cell");
@@ -70,7 +70,7 @@ public final class GateTransition35Tests {
         h.assertTrue(f.count(CLOSED)==1&&!Files.exists(f.path()),"Target mixture without original intent was adopted");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_06",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_06",timeoutTicks=5000)
     public static void changed_read_and_new_obstruction_stop_the_next_slice(GameTestHelper h){run(h,f->{
         UUID id=UUID.randomUUID();var first=f.begin(CLOSED,id);h.assertTrue(first.step()==4,"Missing partial fixture");
         var read=f.reads.get(0);f.level.setBlock(read.pos(),Blocks.GOLD_BLOCK.defaultBlockState(),2);byte[] saved=Files.readAllBytes(f.path());refuse(first::step);
@@ -82,7 +82,7 @@ public final class GateTransition35Tests {
         }
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_07",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_07",timeoutTicks=5000)
     public static void duplicate_is_read_only_and_old_request_cannot_replay_after_cycle(GameTestHelper h){run(h,f->{
         UUID close=UUID.randomUUID();f.finish(CLOSED,close);byte[] saved=Files.readAllBytes(f.path());int flushes=f.flushes;
         try(var repeated=f.begin(CLOSED,close)){h.assertTrue(repeated.done()&&repeated.step()==0,"Duplicate closed request restarted motion");}
@@ -90,7 +90,7 @@ public final class GateTransition35Tests {
         refuse(()->f.begin(OPEN,close));f.finish(OPEN,UUID.randomUUID());refuse(()->f.begin(CLOSED,close));h.assertTrue(f.all(OPEN),"Historical intent replay closed a later opened gate");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_08",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_08",timeoutTicks=5000)
     public static void fluid_block_entity_and_incomplete_read_masks_refuse(GameTestHelper h){run(h,f->{
         // The wall torch's east support would appear only in a later write: final-state-only
         // physics would accept it, but the first intermediate native world is unsupported.
@@ -102,7 +102,7 @@ public final class GateTransition35Tests {
         refuse(()->GateTransition35.begin(f,contract,CLOSED,UUID.randomUUID()));h.assertTrue(f.all(OPEN)&&!Files.exists(f.path()),"Unsupported states/missing boundary produced a gate journal or writes");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_09",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_09",timeoutTicks=5000)
     public static void hostile_sealed_proof_and_changed_file_are_retained_and_refused(GameTestHelper h){run(h,f->{
         UUID id=UUID.randomUUID();try(var r=f.begin(CLOSED,id)){
             CompoundTag forged=f.journal();forged.putString("unrecognizedAuthority","approved");ProducerJournal.write(f.path(),forged,true);byte[] hostile=Files.readAllBytes(f.path());refuse(r::step);
@@ -111,7 +111,7 @@ public final class GateTransition35Tests {
         refuse(()->f.begin(CLOSED,id));h.assertTrue(f.all(OPEN),"Fresh reader accepted noncanonical hostile proof");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_10",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_10",timeoutTicks=5000)
     public static void changed_contract_and_missing_history_do_not_authorize_recovery(GameTestHelper h){run(h,f->{
         UUID id=UUID.randomUUID();try(var r=f.begin(CLOSED,id)){r.step();}
         var cells=new ArrayList<>(f.cells);var first=cells.get(0);cells.set(0,new GateTransition35.Cell(first.pos(),first.open(),Blocks.GOLD_BLOCK.defaultBlockState()));
@@ -121,12 +121,12 @@ public final class GateTransition35Tests {
         h.assertTrue(!Files.exists(f.path())&&Arrays.equals(saved,Files.readAllBytes(retained))&&f.count(CLOSED)==4,"Missing history caused mixed-state adoption");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_11",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_11",timeoutTicks=5000)
     public static void opening_refuses_native_support_loss_without_mutating_context(GameTestHelper h){run(h,CLOSED,true,f->{
         refuse(()->f.begin(OPEN,UUID.randomUUID()));h.assertTrue(f.all(CLOSED)&&f.level.getBlockState(f.cells.get(0).pos().above()).is(Blocks.TORCH)&&!Files.exists(f.path()),"Opening removed support for an unchanged neighboring torch");
     });}
 
-    @GameTest(template="townhall_state_empty",batch="gate35_12",timeoutTicks=1000)
+    @GameTest(template="townhall_state_empty",batch="gate35_12",timeoutTicks=5000)
     public static void source_save_failure_is_clean_and_target_save_failure_remains_pending(GameTestHelper h){run(h,f->{
         UUID id=UUID.randomUUID();f.failFlush=true;refuse(()->f.begin(CLOSED,id));h.assertTrue(f.all(OPEN)&&!Files.exists(f.path()),"Source-save failure wrote intent/blocks");
         f.failFlush=false;try(var r=f.begin(CLOSED,id)){f.failFlush=true;refuse(r::step);}
@@ -143,12 +143,21 @@ public final class GateTransition35Tests {
     }
     private static void ready(GameTestHelper h,Fixture f,Body body,int attempts){h.runAfterDelay(attempts==0?10:1,()->{
         try{
-            f.lease.keepAlive();if(!f.lease.ready()){if(attempts>=400)throw new IOException("Gate fixture entity chunks never became ready");ready(h,f,body,attempts+1);return;}
+            f.lease.keepAlive();if(!f.lease.ready()){
+                // Match the existing paid-recovery fixture's bounded residency budget.
+                // Never run assertions until real chunks AND entity sections are ready.
+                if(attempts==400||attempts==4000)com.quin.catancraft.CatanCraft.LOGGER.warn(
+                    "GATE35_FIXTURE_WAIT attempts={} wallMillis={} pending={}",attempts,f.wallMillis(),f.pendingChunks());
+                if(attempts>=4000)throw new IOException("Gate fixture entity chunks never became ready: "+f.pendingChunks());
+                ready(h,f,body,attempts+1);return;
+            }
+            com.quin.catancraft.CatanCraft.LOGGER.info("GATE35_FIXTURE_READY attempts={} wallMillis={} chunks={}",attempts,f.wallMillis(),f.lease.chunkCount());
             StreetscapeService.requireLoadedEntities(f.level,List.of(GateTransition35.bounds(f.contract)));
             try{body.run(f);h.succeed();}finally{f.lease.close();}
         }catch(Exception error){f.lease.close();throw new RuntimeException(error);}
     });}
     private static final class Fixture implements GateTransition35.Environment {
+        final long startedNanos=System.nanoTime();
         final ServerLevel level;final List<GateTransition35.Cell> cells;final List<GateTransition35.Read> reads;final GateTransition35.GateContract contract;final SectorChunkLease lease;
         final String city="g35_"+UUID.randomUUID().toString().replace("-","");UUID owner=UUID.randomUUID();String worldId=UUID.randomUUID().toString();boolean allowed=true,failFlush,sourceSavedBeforeIntent;int flushes;
         Fixture(GameTestHelper h,GateTransition35.State initial,boolean torch)throws IOException {
@@ -164,6 +173,15 @@ public final class GateTransition35Tests {
             Set<BlockPos> writePositions=new HashSet<>(),context=new HashSet<>();for(var cell:cells)writePositions.add(cell.pos());for(var cell:cells)for(Direction d:Direction.values())if(!writePositions.contains(cell.pos().relative(d)))context.add(cell.pos().relative(d));
             reads=context.stream().sorted(Comparator.comparingLong(BlockPos::asLong)).map(p->new GateTransition35.Read(p,level.getBlockState(p))).toList();
             contract=new GateTransition35.GateContract("fixture","synthetic-gate35-v1",initial,cells,reads);lease=SectorChunkLease.acquire(level,GateTransition35.bounds(contract));
+        }
+        long wallMillis(){return (System.nanoTime()-startedNanos)/1_000_000L;}
+        List<String> pendingChunks(){
+            List<String> result=new ArrayList<>();
+            for(var p:lease.positions()){
+                boolean chunk=level.getChunkSource().getChunkNow(p.x,p.z)!=null,entities=level.areEntitiesLoaded(p.toLong());
+                if(!chunk||!entities)result.add(p+":chunk="+chunk+",entities="+entities);
+            }
+            return List.copyOf(result);
         }
         public ServerLevel level(){return level;}public String worldId(){return worldId;}public String city(){return city;}public UUID owner(){return owner;}
         public void guard()throws IOException {if(!allowed)throw new IOException("Fixture caller authorization revoked");}

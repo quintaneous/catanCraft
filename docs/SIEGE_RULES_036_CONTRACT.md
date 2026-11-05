@@ -77,9 +77,16 @@ SEC-01 remains unresolved/high priority at its recorded installed-runtime scope.
 
 ## Validation at implementation checkpoint
 
-Planned focused native harness: 16 new objective-rule cases, 12 retained gate
-cases and 50 retained baseline cases. Validation has not yet run at this commit;
-no pass is claimed here. The rule cases are simulations inside Forge GameTest,
+Initial source `93b6eb32c2858db0bc7f4c64288216ef79d77697` passed all 16 new
+objective-rule cases. In workflow `42128183273`, the retained gate suite passed
+11/12: its obstructed-close fixture timed out waiting for entity chunk residency
+before running its assertions. The failed raw artifact `13460859239` is retained
+(SHA256 `cb51d9cc0c78c9d8b60818f552b11c1c6baf75e9c19d3a70e9f0402e35e18eee`).
+The fixture now uses the existing paid-recovery 4,000-attempt readiness budget,
+a 5,000-tick outer timeout and per-chunk/timing diagnostics, while still requiring
+actual chunk/entity readiness. No gate or siege safety predicate changes.
+The original transient loading cause is not proven; a later green run alone
+would not prove it. Exact-source revalidation remains pending at this checkpoint. The rule cases are simulations inside Forge GameTest,
 not multiplayer, connected-client or live city acceptance. A compressed NBT
 readback is not a process-restart proof. Final evidence will record actual counts,
 source/JAR hashes and any failed attempts separately.

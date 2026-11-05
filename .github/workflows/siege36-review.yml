@@ -1,3 +1,4 @@
+# Second exact-source run: retain initial fixture-residency failure; no safety predicate changed.
 name: Siege36 objective rules validation
 on:
   push:
