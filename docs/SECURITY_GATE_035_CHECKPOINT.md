@@ -105,10 +105,11 @@ archival and production performance remain before functional player deployment.
 
 [The siege rules draft](SIE01_RULES_DRAFT_035.md) records the owner's decisions:
 both nations online to begin; capture city plus eligible local purchased vehicles.
-The objective still needs discussion. Recommendation: outer point, then Town Hall,
-with one active objective at a time. No timers, disconnect behavior, damage area,
-vehicle eligibility, stockpile transfer or automatic victory rules are approved
-by this recommendation. Existing global damage protections stay enabled.
+The owner subsequently approved outer point, then Town Hall, with one active
+objective at a time (2026-11-05). This is objective-sequence approval only; exact
+capture/contest rules, timers, disconnect behavior, damage area, vehicle
+eligibility and stockpile transfer remain undecided. Existing global damage
+protections stay enabled. The decision update changes no tested source or JAR.
 
 ## Preserved acceptance and next work
 
@@ -117,7 +118,7 @@ Accepted North Reinforced / East-South-West Basic, their mixed connections/resta
 installed mod, reset, manual import, repeated accepted purchase, multiplayer,
 NPC/Combined Arms or Blender work occurred.
 
-Next: agree the siege objective and finish its concise rules contract; define
+Next: finish the selected two-stage objective's concise rules contract; define
 an approved gate mask/overlay and access/price contract before production wiring.
 SEC-01 installed-runtime acceptance can use existing purchased vehicles when
 that narrow check is agreed; this checkpoint does not ask for another purchase.

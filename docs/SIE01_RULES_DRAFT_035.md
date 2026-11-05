@@ -13,27 +13,27 @@ contracts. Accepted 0.1.34 and City A wall states are preserved.
   online. Disconnect handling after initiation is still undecided.
 - Capture should transfer the city and eligible local purchased vehicles.
   Exact eligibility and transfer boundaries remain to be agreed.
-- The objective needs brainstorming. No objective, timer or automatic victory
-  rule has been chosen.
+- Objective approved on 2026-11-05: **capture an outer point, then hold the Town
+  Hall**, with one active objective at a time. The owner replied "yeah I like
+  that" to the two-stage recommendation. This approves the objective sequence;
+  capture timings, contest rules and disconnect handling remain undecided.
 
-## Objective choices for discussion
+## Approved objective sequence
 
-| Option | What attackers do | What it adds | Main tradeoff |
-| --- | --- | --- | --- |
-| Town Hall hold | Reach and hold the Town Hall objective while defenders contest it | One visible objective; least extra state | Attackers can largely bypass the outer defense battle |
-| Outer point, then Town Hall | Secure an outer objective to unlock a Town Hall capture phase | Clear assault progression and a reason to defend the approaches | Needs one approved outer point and rules for keeping or losing phase progress |
-| Several city points | Control multiple objectives in the city | More routes and divided responsibilities | Greater coordination burden; may spread small teams too thin |
+1. Attackers capture the designated outer point.
+2. That unlocks the Town Hall capture phase; attackers must then hold the Town Hall.
+3. Completing that objective wins the siege and triggers the agreed capture
+   settlement, whose exact vehicle eligibility and restoration rules remain TBD.
 
-Recommendation for discussion: **outer point, then Town Hall**. It gives the
-walls and gate a useful role without requiring simultaneous objectives. It is
-a proposal, not approval. A gate breach alone should not silently award the city.
-No mandatory wall destruction is implied: attackers might breach, enter during
-an opening, or use another agreed route. Exact access and capture rules remain
-part of the next contract.
+Only one objective is active at a time. This gives the defenses a role without
+requiring simultaneous captures. Breaching a gate alone does not complete the
+two-stage objective. Exact objective geometry, stage-progress retention/recapture,
+attacker presence, contest behavior and durations still need a rules contract.
+The approved sequence does not enable siege damage or alter the accepted city.
 
 ## Rules still requiring a decision
 
-After selecting the objective, settle these together before enabling combat:
+With the objective selected, settle these together before enabling combat:
 
 - Declaration: who may start, how the defender is notified, preparation time,
   cancellation, simultaneous sieges, cooldown and any cost.
