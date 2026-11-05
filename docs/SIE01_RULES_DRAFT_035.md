@@ -16,7 +16,13 @@ contracts. Accepted 0.1.34 and City A wall states are preserved.
 - Objective approved on 2026-11-05: **capture an outer point, then hold the Town
   Hall**, with one active objective at a time. The owner replied "yeah I like
   that" to the two-stage recommendation. This approves the objective sequence;
-  capture timings, contest rules and disconnect handling remain undecided.
+  capture timings and disconnect handling remain undecided.
+- Basic contest behavior accepted: capture progresses while attackers are present
+  and pauses when defenders enter the capture zone. Exact zone/presence definitions
+  and behavior when nobody is present remain undecided.
+- Defenders must have an explicit way to win and end the siege. The owner
+  emphasized this requirement on 2026-11-05; a specific victory mechanism and
+  duration have not yet been approved.
 
 ## Approved objective sequence
 
@@ -28,8 +34,34 @@ contracts. Accepted 0.1.34 and City A wall states are preserved.
 Only one objective is active at a time. This gives the defenses a role without
 requiring simultaneous captures. Breaching a gate alone does not complete the
 two-stage objective. Exact objective geometry, stage-progress retention/recapture,
-attacker presence, contest behavior and durations still need a rules contract.
+precise presence/contesting definitions and durations still need a rules contract.
 The approved sequence does not enable siege damage or alter the accepted city.
+
+## Defender victory proposal — not yet approved
+
+Recommend one overall attack timer shared by both objective stages. If attackers
+have not completed the Town Hall capture when it expires, defenders win, whether
+the attackers are still at the outer point or have reached the Town Hall.
+Capturing the outer point unlocks the next stage without resetting or extending
+the overall timer. Contested capture pauses objective progress; it would not
+pause this overall timer. This gives delaying and counterattacking a concrete
+purpose and prevents an indefinitely contested siege.
+
+Also propose an explicit attacker withdrawal/surrender that ends the siege as a
+defender win. Who may surrender and when it is permitted still need agreement.
+A momentary team wipe, empty objective or disconnect should not be treated as
+surrender implicitly; respawn and disconnect rules remain separate decisions.
+
+On a defender win, the city and its purchased vehicles stay with their existing
+owners. The siege ends and temporary damage is handled by the eventual approved
+restoration contract. A repeat-attack cooldown is proposed to prevent immediate
+restart harassment; no duration or eligibility rule is assigned here.
+
+Still undecided: total siege duration, timer start/preparation, objective hold
+times, overtime at expiry, simultaneous completion/expiry ordering, attacker
+respawns, disconnect/server-restart timing, cooldown and surrender permissions.
+The owner required a defender win; none of these proposed mechanics is inferred
+as approved from that requirement. No runtime behavior changes with this draft.
 
 ## Rules still requiring a decision
 
@@ -37,8 +69,9 @@ With the objective selected, settle these together before enabling combat:
 
 - Declaration: who may start, how the defender is notified, preparation time,
   cancellation, simultaneous sieges, cooldown and any cost.
-- Contest: exact objective locations, presence/contesting rules, progress decay,
-  duration, attacker defeat, defender disconnect and server restart behavior.
+- Contest and victory: exact objective locations/presence, empty-zone behavior,
+  progress decay, hold/overall duration, defender victory mechanism, expiry
+  ordering, attacker defeat, disconnect and server restart behavior.
 - Damage: approved siege boundary, legal targets and weapons, and exact restoration
   policy. Existing global protection remains active until a scoped replacement
   is proven. Do not turn off global grief protection to simulate a battle zone.
