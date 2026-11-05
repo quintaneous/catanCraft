@@ -1,0 +1,146 @@
+name: Security35 and gate foundation validation
+on:
+  push:
+    branches: [chatgpt/vehicle-security-gates-0.1.35]
+    paths: ['.github/workflows/security35-review.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_gate35, count: 12}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_paid_recovery, count: 19}
+          - {ns: catancraft_sectors, count: 22}
+          - {ns: catancraft_sectors_natural, count: 7}
+          - {ns: sbw_restart, count: 9}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact committed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p build/security35-evidence
+          git rev-parse HEAD > build/security35-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/security35-evidence/source.zip
+          gradle build -PreleaseCommit="$GITHUB_SHA" --no-daemon --max-workers=4 2>&1 | tee build/security35-evidence/build.log
+          sha256sum build/libs/*.jar > build/security35-evidence/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/security35-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/security35-evidence/assets-3.log
+          exit 1
+      - name: Prepare pinned published optional SBW runtime
+        if: matrix.suite.ns == 'sbw_restart'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/sec01_035/prepare_runtime.py --root build/sec01-035-runtime > build/security35-evidence/runtime-prepare.json
+          python3 tools/sec01_035/prepare_runtime.py --root build/sec01-035-runtime --verify-only > build/security35-evidence/runtime-verify.json
+          cp build/sec01-035-runtime/runtime-artifacts.json build/sec01-035-runtime/download-provenance.json build/security35-evidence/
+      - name: Execute selected native checks once
+        shell: bash
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -euo pipefail
+          run_check() {
+            local label="$1" expected="$2" status=0
+            shift 2
+            timeout 1600s gradle runGameTestServer -PcontrolledGameTests=true --daemon --max-workers=4 "$@" > "build/security35-evidence/$label.log" 2>&1 || status=$?
+            echo "$status" > "build/security35-evidence/$label.exit"
+            echo "$expected" > "build/security35-evidence/$label.expected"
+            cat "build/security35-evidence/$label.log"
+            test "$status" = 0
+            grep -Fq "$expected GAME TESTS COMPLETE" "build/security35-evidence/$label.log"
+            grep -Fq "All $expected required tests passed" "build/security35-evidence/$label.log"
+          }
+          if test "$NS" = sbw_restart; then
+            run_check catancraft_sbw 7 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw
+            run_check procurement_seed 1 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw_procurement35 -PsbwRestartPhase=seed
+            grep -Fq SEC01_PROCUREMENT35_SEED_PASS build/security35-evidence/procurement_seed.log
+            # Same world, a separate JavaExec process. No copying, deletion, reset or NBT injection.
+            run_check procurement_verify 1 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw_procurement35 -PsbwRestartPhase=verify
+            grep -Fq SEC01_PROCUREMENT35_VERIFY_PASS build/security35-evidence/procurement_verify.log
+            cp build/controlled-catancraft_sbw_procurement35-run/world/data/catancraft_sec01_procurement35_*.dat build/security35-evidence/
+          else
+            run_check "$NS" "$COUNT" -PgameTestNamespace="$NS"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: security35-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/security35-evidence/
+          if-no-files-found: error
+  collect:
+    needs: validate
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: security35-*
+          path: evidence
+      - name: Retain every result and verify common source and JAR
+        env:
+          SOURCE: ${{ github.sha }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import hashlib,json,os,shutil
+          root=Path('delivery');root.mkdir()
+          expected={'catancraft_gate35':12,'catancraft':50,'catancraft_paid_recovery':19,'catancraft_sectors':22,'catancraft_sectors_natural':7,'catancraft_sbw':7,'procurement_seed':1,'procurement_verify':1}
+          records=[];results={};source_errors=[];jars=set()
+          for folder in sorted(Path('evidence').iterdir()):
+              group=folder.name.removeprefix('security35-');ev=folder/'security35-evidence'
+              source=ev/'SOURCE_COMMIT.txt'
+              if not source.exists() or source.read_text().strip()!=os.environ['SOURCE']:source_errors.append(group)
+              for label,count in expected.items():
+                  log=ev/(label+'.log');status=ev/(label+'.exit')
+                  if not log.exists():continue
+                  text=log.read_text(errors='replace')
+                  if label in results:raise SystemExit('Duplicate suite result')
+                  ok=status.exists() and status.read_text().strip()=='0' and f'{count} GAME TESTS COMPLETE' in text and f'All {count} required tests passed' in text
+                  if label.startswith('procurement_'):ok=ok and ('SEC01_PROCUREMENT35_'+label.removeprefix('procurement_').upper()+'_PASS') in text
+                  results[label]={'expected':count,'passed':ok}
+              for p in sorted(folder.rglob('*')):
+                  if not p.is_file():continue
+                  digest=hashlib.sha256(p.read_bytes()).hexdigest();rel=p.relative_to(folder)
+                  if p.name=='source.zip' or p.suffix=='.jar':
+                      target=root/'shared'/p.name
+                      if p.suffix=='.jar':jars.add(digest)
+                      if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()!=digest:raise SystemExit('Different source/JAR across exact-source jobs')
+                  else:target=root/group/rel
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  if not target.exists():shutil.copy2(p,target)
+                  records.append({'group':group,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
+          passed=set(results)==set(expected) and all(r['passed'] for r in results.values()) and not source_errors and len(jars)==1
+          (root/'MANIFEST.json').write_text(json.dumps({'source':os.environ['SOURCE'],'results':results,'expected_phase_executions':sum(expected.values()),'expected_unique_scenarios':sum(expected.values())-1,'all_passed':passed,'source_errors':source_errors,'files':records},indent=2))
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: security35-combined-source-and-evidence
+          path: delivery/
+          if-no-files-found: error

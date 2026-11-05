@@ -1,5 +1,13 @@
 # Combined integration status
 
+## SEC-01 / DEF-06 / SIE-01 — 0.1.35 development checkpoint, 2026-11-05
+
+The owner authorized both purchased-vehicle crowbar verification and gates/siege as the next workstreams after accepting 0.1.34. Branch `chatgpt/vehicle-security-gates-0.1.35` starts at accepted checkpoint `4fedb8d09634cd27a435d0fe60ca4f2c0a786087`; original purchase and placement/recovery work is retained.
+
+New work adds a pinned published SBW 0.8.9.2 audit runtime, a real procurement/save/separate-JVM restart scenario, and an unregistered exact-mask cyclic gate movement foundation with 12 native checks. The existing crowbar guard is unchanged pending evidence. The reproducible runtime is optional test infrastructure, not a new production dependency. Validation is pending at this source checkpoint; no build/native pass is claimed here. SEC-01 remains unresolved/high priority until installed-version evidence and owner acceptance support closure.
+
+The owner chose both nations online to begin siege and city plus eligible local purchased vehicles on capture; the objective needs brainstorming. [The reviewable rules draft](SIE01_RULES_DRAFT_035.md) records proposals, unresolved decisions and the gate/wall air-contract conflict. No production gates, siege damage, prices or capture mechanics are enabled. Accepted North Reinforced / East-South-West Basic, 0.1.32 readiness and 0.1.34 acceptance remain unchanged. No live-world/mod changes, reset, import, multiplayer or Blender assignment.
+
 ## INT-02 / DEF-02 — 0.1.34 owner solo acceptance, 2026-11-05
 
 The owner reported "everything looks good" after the clarified focused 0.1.34 check. Record startup/join, `/nation gui`, retained purchased levels/inventory/existing city, and normal restart as owner-reported PASS. Optional new purchases, an actual unfinished recovery and optional lectern interaction were not separately reported and are not inferred. The approved A06/A09 batch is complete; preserve prior accepted North Reinforced / East-South-West Basic walls and 0.1.32 readiness without repeat tests.
