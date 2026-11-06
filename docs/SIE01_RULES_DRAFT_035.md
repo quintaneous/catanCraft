@@ -124,3 +124,15 @@ wall cells. Do not broaden the combat area from wall bounds by inference. A real
 siege needs independently approved spatial and restoration contracts, unique
 snapshot identity, settlement receipts and tested crash recovery before damage
 or ownership transfer can be enabled.
+
+## 0.1.37 bounded presence implementation, 2026-11-06
+
+The unregistered server adapter now binds explicit immutable objective boxes and
+reads active-zone presence from server-owned player positions and live nation
+membership. Living Survival/Adventure players count; Creative/Spectator/dead
+players do not capture, while online status is recorded separately. Feet use
+minimum-inclusive / maximum-exclusive box faces. These are provisional
+implementation recommendations, not acceptance of live geometry. No production
+profile, active siege service or player controls are registered. See the
+[0.1.37 contract](SIEGE_OBJECTIVES_037_CONTRACT.md) for binding, fixture and durable
+controller limits. Actual locations/durations and safe restoration remain pending.

@@ -1,5 +1,11 @@
 # Combined integration status
 
+## SIE-01 / SIE-04 — 0.1.37 objective registration and server presence, 2026-11-06
+
+Branch `chatgpt/siege-objectives-0.1.37` continues `a51b1f8e8a6b41e878731130464a724b8c969984`, the validated 0.1.36 documentation head. Adds immutable explicit city objective profiles, bounded territory/height validation, world/owner binding and read-only server roster/membership/position sampling. The active objective alone counts; defenders contest without freezing the shared clock. No production profile, player command, siege scheduler, damage, transfer or restoration is enabled. [Contract and precise limits](SIEGE_OBJECTIVES_037_CONTRACT.md).
+
+Implementation and independent fixture/review work are in progress; no 0.1.37 build/test pass is claimed yet. Final exact-source evidence will be recorded after execution. Provisional mode/feet-position rules and synthetic test volumes do not approve City A geometry or numeric durations. All accepted purchase/recovery/wall work remains; no live-world/mod change, reset, import, repeated accepted purchases, multiplayer or Blender work. SEC-01 remains unresolved/high priority.
+
 ## SIE-01 / SIE-04 — approved rules and 0.1.36 objective foundation, 2026-11-05
 
 The owner approved the recommended defender-win mechanics as provisional playtest rules: shared overall timer across outer-point then Town-Hall objectives, no timer reset, contest pauses capture while the clock runs, and defender victory on timeout or attacker surrender. Durations remain explicit adjustable inputs, not invented live settings. This supersedes the earlier pending-mechanism wording below without extending approval to unrelated siege/capture policies.
