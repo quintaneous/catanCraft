@@ -1,0 +1,35 @@
+{
+  "source": "1065450c3f8a482eb51fe2ca45481c15ea97108f",
+  "run": 42134586506,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42134586506",
+  "artifact_id": 13465405797,
+  "archive_sha256": "599374c22dbc134575111eb7a8b0845347305ad012bdf5d190068073d58036ae",
+  "executed": 88,
+  "passed": 88,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_objectives37": {
+      "expected": 22,
+      "passed": true
+    },
+    "catancraft_siege36": {
+      "expected": 16,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.37-siege-objectives.jar",
+  "jar_bytes": 2941681,
+  "jar_sha256": "a5d58edc458ed967caa1036d9c788c498de134ef12466ce5c3348d290294a13b",
+  "source_files_byte_compared": 370,
+  "all_manifest_files_verified": 27,
+  "identical_preexisting_classes_vs_036": 442,
+  "changed_preexisting_jar_entries_vs_036": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml"
+  ],
+  "scope": "Controlled native fixtures; no authenticated-client, multiplayer, restart-service or owner acceptance"
+}

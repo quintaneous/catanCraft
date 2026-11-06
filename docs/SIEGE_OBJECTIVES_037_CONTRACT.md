@@ -78,8 +78,11 @@ PlayerList or authenticates a client. The production connection predicate is
 checked separately to reject detached fake players. These are isolated native
 simulations, not multiplayer or real connected-client acceptance.
 
-Exact-source build/results will be recorded in the checkpoint after execution.
-Retained siege rules and baseline tests are selected alongside the new cases.
+Source `1065450c3f8a482eb51fe2ca45481c15ea97108f` built and passed **88/88**
+selected native checks on its first run: 22 objective/presence, 16 retained siege
+rules and 50 retained baseline. Downloaded source/JAR and all manifest hashes
+were verified; all 442 preexisting classes and existing assets match 0.1.36.
+[Exact source, artifact and validation evidence](SIEGE_OBJECTIVES_037_CHECKPOINT.md).
 No live world, installed mods, accepted purchase replay, imports, reset or Blender
 work. Accepted North Reinforced / East-South-West Basic walls remain unchanged.
 SEC-01 crowbar remains **UNRESOLVED / HIGH PRIORITY** at installed-runtime scope.
