@@ -83,8 +83,10 @@ Selected validation: new isolated session cases, retained 22 presence cases,
 the same disposable world. The restart proof must preserve the exact seed
 journal bytes before reopening, show a different process identity, retain a
 partially captured Town Hall, then finish with a defender timeout and immutable
-result. Test clocks, identities and durations are synthetic. Final actual counts,
-source/JAR/archive hashes and any failures will be recorded after execution.
+result. Test clocks, identities and durations are synthetic. Source `c261da8c5488ce1fca940f6106a1c9e5987c5e01` passed all 111 distinct
+scenarios / 112 phase executions on its first native run, including the actual
+second-JVM proof. Source/JAR/archive checksums and sealed restart receipts were
+independently verified. [Exact checkpoint and limits](SIEGE_RECOVERY_038_CHECKPOINT.md).
 
 No live world/installed mod changes, accepted purchase replay, reset, manual
 imports, multiplayer or Blender task. Accepted City A walls and earlier recovery

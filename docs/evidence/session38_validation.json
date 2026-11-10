@@ -1,0 +1,79 @@
+{
+  "source": "c261da8c5488ce1fca940f6106a1c9e5987c5e01",
+  "run": 42884168426,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42884168426",
+  "artifact_id": 13796445094,
+  "archive_sha256": "1fc921d0c7e88b267d7aeac52a01ee2992bd3fdd432d0b7133ac8190bf6de824",
+  "unique_scenarios": 111,
+  "phase_executions": 112,
+  "passed_phase_executions": 112,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_objectives37": {
+      "expected": 22,
+      "passed": true
+    },
+    "catancraft_session38": {
+      "expected": 22,
+      "passed": true
+    },
+    "catancraft_siege36": {
+      "expected": 16,
+      "passed": true
+    },
+    "session_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "session_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.38-siege-recovery.jar",
+  "jar_bytes": 2990112,
+  "jar_sha256": "ca9f1095c0f8da66da153a525add515a41836b1c11b12596771991accc6f4c38",
+  "source_files_byte_compared": 377,
+  "all_manifest_files_verified": 51,
+  "identical_preexisting_classes_vs_037": 448,
+  "changed_preexisting_jar_entries_vs_037": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml",
+    "com/quin/catancraft/world/SiegeObjectives37$Bound.class",
+    "com/quin/catancraft/world/SiegeObjectives37$Report.class",
+    "com/quin/catancraft/world/SiegeObjectives37.class"
+  ],
+  "debug_metadata_comparison": {
+    "line_number_table_only_changes": [
+      "com/quin/catancraft/world/SiegeObjectives37.class",
+      "com/quin/catancraft/world/SiegeObjectives37$Report.class"
+    ],
+    "comparison": "Every class byte/structure except LineNumberTable payloads matches; constant pool, instructions, signatures and other attributes preserved"
+  },
+  "restart_proof_verified": true,
+  "seed_process": "3160:1794338538878",
+  "verify_process": "3313:1794338558216",
+  "scope": "Controlled native fixtures; separate-JVM objective-state recovery; no authenticated-client, multiplayer, damage-restoration, settlement or owner acceptance",
+  "restart_checkpoint": {
+    "seed": {
+      "elapsed": 3,
+      "outerProgress": 2,
+      "townHallProgress": 1,
+      "revision": 3
+    },
+    "terminal": {
+      "status": "DEFENDER_WON_TIMEOUT",
+      "elapsed": 20,
+      "outerProgress": 2,
+      "townHallProgress": 1,
+      "revision": 21
+    },
+    "original_journal_bytes_verified_before_resume": true,
+    "original_profile_retained": true,
+    "terminal_actions_do_not_rewrite": true
+  }
+}
