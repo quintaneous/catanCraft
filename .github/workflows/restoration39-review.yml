@@ -1,0 +1,144 @@
+name: Snapshot39 structural restoration and restart validation
+on:
+  push:
+    branches: [chatgpt/siege-restoration-0.1.39]
+    paths: ['.github/workflows/restoration39-review.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_gate35, count: 12}
+          - {ns: catancraft_snapshot39, count: 22}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_session38, count: 22}
+          - {ns: snapshot_restart, count: 2}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact committed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p build/snapshot39-evidence
+          git rev-parse HEAD > build/snapshot39-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/snapshot39-evidence/source.zip
+          gradle build -PreleaseCommit="$GITHUB_SHA" --no-daemon --max-workers=4 2>&1 | tee build/snapshot39-evidence/build.log
+          sha256sum build/libs/*.jar > build/snapshot39-evidence/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/snapshot39-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/snapshot39-evidence/assets-3.log
+          exit 1
+      - name: Execute selected native checks once
+        shell: bash
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -euo pipefail
+          run_check() {
+            local label="$1" expected="$2" status=0
+            shift 2
+            timeout 1600s gradle runGameTestServer -PcontrolledGameTests=true --daemon --max-workers=4 "$@" > "build/snapshot39-evidence/$label.log" 2>&1 || status=$?
+            echo "$status" > "build/snapshot39-evidence/$label.exit"
+            echo "$expected" > "build/snapshot39-evidence/$label.expected"
+            cat "build/snapshot39-evidence/$label.log"
+            test "$status" = 0
+            grep -Fq "$expected GAME TESTS COMPLETE" "build/snapshot39-evidence/$label.log"
+            grep -Fq "All $expected required tests passed" "build/snapshot39-evidence/$label.log"
+          }
+          if test "$NS" = snapshot_restart; then
+            run_check snapshot_seed 1 -PgameTestNamespace=catancraft_snapshot39_restart -PsnapshotRestartPhase=seed
+            grep -Fq SNAPSHOT39_RESTART_SEED_PASS build/snapshot39-evidence/snapshot_seed.log
+            # Same files and world, independent JavaExec processes; no copying, reset or reconstruction.
+            run_check snapshot_verify 1 -PgameTestNamespace=catancraft_snapshot39_restart -PsnapshotRestartPhase=verify
+            grep -Fq SNAPSHOT39_RESTART_VERIFY_PASS build/snapshot39-evidence/snapshot_verify.log
+          else
+            run_check "$NS" "$COUNT" -PgameTestNamespace="$NS"
+          fi
+      - name: Retain any restart proof including interrupted phases
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p build/snapshot39-evidence
+          shopt -s nullglob
+          for proof in build/controlled-catancraft_snapshot39_restart-run/world/data/catancraft_{restore,snapshot}39_*.dat; do
+            cp "$proof" build/snapshot39-evidence/
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: snapshot39-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/snapshot39-evidence/
+          if-no-files-found: error
+  collect:
+    needs: validate
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: snapshot39-*
+          path: evidence
+      - name: Retain every result and verify common source and JAR
+        env:
+          SOURCE: ${{ github.sha }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import hashlib,json,os,shutil
+          root=Path('delivery');root.mkdir()
+          expected={'catancraft_gate35':12,'catancraft_snapshot39':22,'catancraft':50,'catancraft_session38':22,'snapshot_seed':1,'snapshot_verify':1}
+          records=[];results={};source_errors=[];jars=set()
+          for folder in sorted(Path('evidence').iterdir()):
+              group=folder.name.removeprefix('snapshot39-');ev=folder/'snapshot39-evidence'
+              source=ev/'SOURCE_COMMIT.txt'
+              if not source.exists() or source.read_text().strip()!=os.environ['SOURCE']:source_errors.append(group)
+              for label,count in expected.items():
+                  log=ev/(label+'.log');status=ev/(label+'.exit')
+                  if not log.exists():continue
+                  text=log.read_text(errors='replace')
+                  if label in results:raise SystemExit('Duplicate suite result')
+                  ok=status.exists() and status.read_text().strip()=='0' and f'{count} GAME TESTS COMPLETE' in text and f'All {count} required tests passed' in text
+                  if label in ['snapshot_seed','snapshot_verify']:ok=ok and ('SNAPSHOT39_RESTART_'+label.removeprefix('snapshot_').upper()+'_PASS') in text
+                  results[label]={'expected':count,'passed':ok}
+              for p in sorted(folder.rglob('*')):
+                  if not p.is_file():continue
+                  digest=hashlib.sha256(p.read_bytes()).hexdigest();rel=p.relative_to(folder)
+                  if p.name=='source.zip' or p.suffix=='.jar':
+                      target=root/'shared'/p.name
+                      if p.suffix=='.jar':jars.add(digest)
+                      if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()!=digest:raise SystemExit('Different source/JAR across exact-source jobs')
+                  else:target=root/group/rel
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  if not target.exists():shutil.copy2(p,target)
+                  records.append({'group':group,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
+          passed=set(results)==set(expected) and all(r['passed'] for r in results.values()) and not source_errors and len(jars)==1
+          (root/'MANIFEST.json').write_text(json.dumps({'source':os.environ['SOURCE'],'results':results,'expected_native_executions':sum(expected.values()),'expected_unique_scenarios':sum(expected.values())-1,'all_passed':passed,'source_errors':source_errors,'files':records},indent=2))
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: snapshot39-combined-source-and-evidence
+          path: delivery/
+          if-no-files-found: error

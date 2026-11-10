@@ -1,3 +1,9 @@
+## 2026-11-10 — SIE-02 / SIE-03 0.1.39 structural restoration implementation (validation pending)
+
+Continue the validated 0.1.38 head on `chatgpt/siege-restoration-0.1.39`; fresh remote heads checked before edits. New unregistered backend captures immutable actual structural state, protected inventory/full NBT, frozen damage subsets, four-write restoration slices, physical-save-before-receipt ordering and exact restart recovery. Existing production classes, purchase recovery and accepted City A artwork remain unchanged. See [contract](SIEGE_RESTORATION_039_CONTRACT.md). New native22 and separate-process restart scenario are authored; no build/test pass is claimed here. Retained session22, gate12 and baseline50 are selected for the combined validation. SEC-01 remains UNRESOLVED / HIGH PRIORITY; no installed mod or live world touched.
+
+Owner additionally requested ECO-03 weapon factory tier catalogs with class variety and better higher-tier options, strongest guns reserved for special drops, and price testing; MON-01 monument rewards should become weighted supply drops with common through very rare gun/vehicle/ammo possibilities. This is Phase3 design/catalog work alongside the current siege implementation, not a live balance change. Exact installed gun-pack enumeration and tested prices/weights remain necessary.
+
 # Combined integration status
 
 ## SIE-04 / SIE-05 — 0.1.38 durable objective state, 2026-11-10

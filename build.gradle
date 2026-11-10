@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '0.1.38-siege-recovery'
+version = '0.1.39-siege-restoration'
 group = 'com.quin.catancraft'
 
 base {
@@ -16,6 +16,10 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()
 def controlledGameTests = providers.gradleProperty('controlledGameTests').orElse('false').get().toBoolean()
+def snapshotRestartPhase = providers.gradleProperty('snapshotRestartPhase').orElse('').get()
+if (gameTestNamespace == 'catancraft_snapshot39_restart' && (!controlledGameTests || !(snapshotRestartPhase in ['seed', 'verify']))) {
+    throw new GradleException('Snapshot restart test requires controlledGameTests=true and snapshotRestartPhase=seed|verify')
+}
 def siegeRestartPhase = providers.gradleProperty('siegeRestartPhase').orElse('').get()
 if (gameTestNamespace == 'catancraft_session38_restart' && (!controlledGameTests || !(siegeRestartPhase in ['seed', 'verify']))) {
     throw new GradleException('Siege restart test requires controlledGameTests=true and siegeRestartPhase=seed|verify')
@@ -50,6 +54,7 @@ minecraft {
         gameTestServer {
             workingDirectory controlledGameTests ? contractTestDirectory : project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : gameTestNamespace == 'catancraft_public27' ? 'build/public-gametest-run' : "build/${gameTestNamespace}-run")
             property 'forge.enabledGameTestNamespaces', gameTestNamespace
+            if (gameTestNamespace == 'catancraft_snapshot39_restart') property 'catancraft.snapshotRestartPhase', snapshotRestartPhase
             if (gameTestNamespace == 'catancraft_session38_restart') property 'catancraft.siegeRestartPhase', siegeRestartPhase
             if (gameTestNamespace == 'catancraft_sbw_procurement35') property 'catancraft.sbwRestartPhase', sbwRestartPhase
         }
@@ -102,7 +107,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Integration native tests run in a third disposable namespace/world, retaining both suites.
 tasks.named('processResources', ProcessResources).configure {
-    ['catancraft_session38','catancraft_session38_restart','catancraft_objectives37','catancraft_siege36','catancraft_gate35','catancraft_sbw_procurement35','catancraft_producer_source34','catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
+    ['catancraft_snapshot39','catancraft_snapshot39_restart','catancraft_session38','catancraft_session38_restart','catancraft_objectives37','catancraft_siege36','catancraft_gate35','catancraft_sbw_procurement35','catancraft_producer_source34','catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
         from('src/main/resources/data/catancraft/structures') {
             include 'townhall_state_empty.nbt'
             into "data/${ns}/structures"
