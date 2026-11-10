@@ -146,3 +146,21 @@ not selection of the live offline-clock policy. Damage snapshots, restoration,
 ownership settlement and player-facing activation remain separate. See the
 [0.1.38 contract](SIEGE_RECOVERY_038_CONTRACT.md). Physical gun/ammunition counters
 and fixed vehicle deployment bays remain the agreed ECO-03 Phase 3 scope.
+
+## 0.1.39 bounded structural restoration, 2026-11-10
+
+An unregistered snapshot/restoration backend now preserves actual pre-siege
+simple structural blocks and protected full block-entity NBT. A saved damage
+subset and separate progress journal allow four-write slices to resume after a
+real separate-process restart. Inventories remain protected reads, never rolled
+back; changed contents block restoration. This does not yet support full City A
+wall art, weapon damage or ownership transfer. See the [0.1.39 contract](SIEGE_RESTORATION_039_CONTRACT.md)
+and [validated checkpoint](SIEGE_RESTORATION_039_CHECKPOINT.md). The next bridge
+must explicitly control damage, drops/secondary effects and other construction,
+then connect restoration to saved siege outcomes. No actual damage region is
+inferred from old whole-box restoration or wall bounds.
+
+Owner-requested weapon factory progression, drop-only top guns and weighted
+monument supply rewards are now recorded under ECO-03/ECO-02/MON-01 for the same
+later Phase3 procurement update. The [reference catalog proposal](ECO03_WEAPON_TIERS_AND_MONUMENT_LOOT_PLAN.md)
+is planning evidence, not a live balance change or installed-pack acceptance.

@@ -1,0 +1,58 @@
+{
+  "source": "b652bb5ab468d1c45c066fd19175a11ecae93bd5",
+  "run": 42888843335,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42888843335",
+  "artifact_id": 13796658661,
+  "archive_sha256": "558e4ca8f5b7ba691927b27c5ae39543f39b72fa7bc37fbe016756151f9f8041",
+  "unique_scenarios": 107,
+  "phase_executions": 108,
+  "passed_phase_executions": 108,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_gate35": {
+      "expected": 12,
+      "passed": true
+    },
+    "catancraft_session38": {
+      "expected": 22,
+      "passed": true
+    },
+    "catancraft_snapshot39": {
+      "expected": 22,
+      "passed": true
+    },
+    "snapshot_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "snapshot_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.39-siege-restoration.jar",
+  "jar_bytes": 3049383,
+  "jar_sha256": "222f250c09480ea9834b2dd515d066f97e92f6c35a275aec81587001d62573a3",
+  "source_files_byte_compared": 383,
+  "all_manifest_files_verified": 52,
+  "identical_preexisting_classes_vs_038": 466,
+  "changed_preexisting_jar_entries_vs_038": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml"
+  ],
+  "restart_proof_verified": true,
+  "seed_process": "3151:1794340215514",
+  "verify_process": "3309:1794340237115",
+  "restored_before_restart": 4,
+  "restored_after_restart": 8,
+  "recovered_writes": 4,
+  "protected_inventory_counts": [
+    2,
+    13
+  ],
+  "scope": "Controlled native fixtures; distinct-JVM physical structural restoration; no authenticated-client, multiplayer, live weapon damage, ownership settlement or owner acceptance"
+}

@@ -1,0 +1,3908 @@
+{
+  "status": "reference-data audit and provisional allocation only; no installed-pack or combat/balance acceptance",
+  "tacz_source_commit": "42af1be5bbe4127c083cfa19b57482f8aae23df2",
+  "tacz_source_url": "https://github.com/MCModderAnchor/TACZ/tree/42af1be5bbe4127c083cfa19b57482f8aae23df2",
+  "tacz_files_sha256": {
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/aa12_data.json": "1e11b20c1dde32857ae346cb94bdc98752f75cfd40ee5c40157b4ff9f5fb606c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ai_awp_data.json": "3c4d7ee408672b0f05709b527533ae590202562bcd085b7e8023c9eefa51657b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ak12_data.json": "8369368399297565fffae464f46e350e1bb61076be20b39b58813c132670e3a2",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ak47_data.json": "0cf2f1d90cc78ada4a78de66ab608a5df8d501d6d30bbcc5cb3c9645da8fe08b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ak74m_data.json": "7f84bafc1bf4d9d977470d58680da19784a35e3df04adc393aa9ad1e136798c4",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/aug_data.json": "9c93d1990113a0af7ed3e7cfcfe192b0800bba20232368d8a8a3c2d068f8eb6e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/b93r_data.json": "95f0b8008ae7873d4eb8558a805ec8821521664b974c74f8f8a0136ac0482e42",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/cz75_data.json": "23029e5b238511121315ce8b9ec30186cf6d331acfcdbe71083c83f8e44d04ca",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/db_long_data.json": "6d310f11fc758bfc1b7e24f517b7c1244abba49bf1dd2937a1370d6380354a6f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/db_short_data.json": "cfab91fb88fc53b899ee67dffd09b58d209473bcf27dad9b943e4d1a267d6f10",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/deagle_data.json": "5c7d77d8352dd8e242c57a0e1605851125aa8d200829085e27d3df29e43183a9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/deagle_golden_data.json": "78e9619c205d2d6e38a62e0f2567c9bb7e608f1ec32a5e634f0db714c282ff13",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/fn_evolys_data.json": "e5b50d7c6970fa5154db569058b90e63ec077d4be131747e2622a4ea7b672d0d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/fn_fal_data.json": "23af57fc8a3386c83dc2db9acb3fa857a000376c55845cf62b76cb3187d036b9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/g36k_data.json": "4c2d1ec1ffaea690518ad798d0e2d25a5002536f8bfbfe8774a2adb42bc6cb7f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/glock_17_data.json": "1a8e33da556a9d5b4da0120f4bf31b31f04d1983ed1e98db497cd3ca677ae23d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hcar_data.json": "bd469f05f24d59df19bb918c6076e98003d3a3863a823a1c45db811c7b381329",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk416d_data.json": "92756d3da2b83e0a508a53a4683eb85c87fff98c1c89894ff29de8da40a420ec",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_g3_data.json": "a2c6fd37f95af3ed938aa75848a51143dcb3280eddab2194081b1728763a606d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_mk23_data.json": "19fa91cda5b477efd2af257d1c961cc80ec251de6d0081bf062aaafc45516267",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_mp5a5_data.json": "10ce8c6e21541c7d49cd0941b482e4eb0afd4c4a2b1ff23e8224779a085d1341",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_mp7a1_data.json": "32d4096cf2669ad14206222086318cc640b8a575624dff2350c3d73b0c04a46f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hm50b_data.json": "4fdca1093e2f3b5f2ffd5eb5168f7b457184c77d7c5475e2184ab2f0db539150",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/kar98_data.json": "5220f01a03467f704e8185d3cdf762cfae0da950504d56050b5407fef43a29bb",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/lonetrail_data.json": "104de20bff177aaeca4076cfe7ea755033888f2d76c1c784afd3aa06e44d3bab",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1014_data.json": "d8c6badcb3a3ee63dedd848147f843d748ffa05ff478c25e3b2145e95650c7c2",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m107_data.json": "172c330512051571ff8a198eb65bf9fe6040f6586166681b3f6966e8c12f59cd",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m16a1_data.json": "e71f89cc3c056b74320e8e9d85544507f86c8fed9b896b308d3a6831e3123872",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m16a4_data.json": "d45e58cf4d248909aee1c3decae9420101f236bab965d7763b0253d6ce36f9b1",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1866_data.json": "7fe78da79ecbd56aba25a49f3fe286dda82d57a171aee1dad4d32482c0732750",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1897_data.json": "e46f9f940362f78d1b378a1a6a91cfc55ec6def81aae95abed998f4477efb77b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1911_data.json": "c42b8313c769533a189e637fc5600503a0e3693c53e4c1ff98d6a81ec49687a6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m249_data.json": "86fcd5942de40c8ff0e4e603cc767dab89eeabafeaa5994a138e1c58c44ea8c8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m320_data.json": "88400e01c6b497338bf165b80c825f785798c20f38a1f8a8fefd5d1974fc575c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m4a1_data.json": "5aea2290b948ef4643eda52dbf83f4306e7917a23ff87bb8dc93ac6006aa089f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m700_data.json": "e4d44de135a075a5534ec67eac6617d276210f708a24d8b6f38aaab2f99afb32",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m870_data.json": "a1b77ef30178cb51d3e2eff34e97cb9fa699581bc08170bcd20c2a33bada798e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m95_data.json": "8c2500ea132106062d0339527a3bf4c4940321bb544df49fdc1739b49cd1d204",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m9a4_data.json": "6ba852d8c79db4f4d0938ec8ca0564aec4a00553829585a1e1c17297afff8054",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mcx_spear_lt_data.json": "805ce1a5513ca3f8bea8020e70d5594fca92aa74ecb24bb642d1fb3fc82e1c91",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/minigun_data.json": "c586aad19e166721da142b7e6be54a69aa47ffd30b13aa6800a4845624beacb6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mk14_data.json": "06872ab14be08a617df2d5615bb0dc6321f958b33e12e9c004aec194b0411e99",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mk18_data.json": "4fee26f00cc82728ffabc5d53821e6ecfb898093630140c9b7ec5ede5905890b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mrad_data.json": "acb2231c0ebe783d79d1414108c8b3b4192870f972c093b16e6aef846ad4bce8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/p320_data.json": "f6bcb339ec181f70226a63d2db505ec0cfc124704137fd4bc3062ac85e2bdda9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/p90_data.json": "5110422945f5f8c5f4acac5e834d672e0885404eb1df5e876d4edb7b3f543249",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/pkm_data.json": "ff35fe67f3180f836c1e2b6b498d678770d13c0ffb96f631bfe464df7ff1beb8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/qbz_191_data.json": "9219ca897b25727bbd024ba8bdb13afc89b5157c34f221e3e058cd3cdde78646",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/qbz_95_data.json": "658eef8902998c444fb8792b82ce83ead35188a872e830b072a5004647596796",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/qr_24_data.json": "b740fca8090d590e10d88da7acba64b23fad25fdabb71b59b12d64c96e80c1ac",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/rhino357_data.json": "63dc11726e78cb080622216b9ccf8ee8c632889dddec284ab6d9251c3c055895",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/rpg7_data.json": "65b96900f5b2d01485f620493485041f88a3a2359c6d4655c6677241bc5f661c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/rpk_data.json": "9735287abd3ecd1d46b4ef6a841910a62b2399575e9e00268af7560d60bdcc6d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/scar_h_data.json": "bdf240bd849984b58f85f9c195c71db8507e09bced9f59078d9b8e60ec5d5403",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/scar_l_data.json": "668fb5d432bfa2ca2d831eb42fc0e4fd2e9932064394d506b2efa360487ca030",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/scar_mk20_data.json": "469bcb4144b0e974784799d05a7eb77066bfe421b49470fcb905236939c19542",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/sks_tactical_data.json": "d256e327b53305103cd822569c992d9c4df0f18ce9734c8438cf390947a5a5df",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/spas_12_data.json": "99873bcc23e8c7332dc2df9b5cdb68300c8b2ff258646b303da674145dcc28e6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/spr15hb_data.json": "7ca1bab2cafa5b8a6299f965aecadeab47e452d0f5d49ef1e355723f9d4dc08e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/springfield1873_data.json": "8ec4b7379991246811a5698153e4de5a2ff05d964b8db52758b8757c2b787e1d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/svd_data.json": "a374f2203e505856120890b8f84ee0a9f093fb0a5ed846ad2fa263b723a7a22e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/taurus500_data.json": "e19bbc7550b83407ff5599aefc029a298694fedf81baf6c9f4e43036e95c6328",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/taurus943_data.json": "406a9c2399a702144d67cbdb2286989e878379215bf5cf8ecf3659114daed2a9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/tec_9_data.json": "c229277c40369e50739d2a3c5a740d31f025d14be96a4d7627b6901f1a9f81fd",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/timeless50_data.json": "af78fd0896366c2dc893fc0f0011ddd047c7c6dd7d6b75200b1af26fdd7c6c22",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/type_81_data.json": "379e6bff3197f4846a9abc7fd09d14675d00a8543a527b44effc51a6979f92fc",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ump45_data.json": "d79bba176256f700326714ad3dfd550c6779409cf599a8f9d7790913b28a3205",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/urgi_data.json": "e53552b3bad6e764e434ba50dc4784844224db19691e4f7e8ed4e2dc80e1761c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/uzi_data.json": "08f81714ad8f01b388ae94a6fca7d4398f9be3a6cd61b1b6f22a0f2aebb20277",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/vector45_data.json": "5e48d061191aedceffac49b2edabce752aaef323ca0a311304604a56639e1e34",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/aa12.json": "7752c013f827384c3dadd7e4063ed91390368165d0f7e1b20b9fc3b6d7462398",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ai_awp.json": "8a74d9b543892671846508c860b6174fd5861d81d2c140e851b79ac0d3d1a4c4",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ak12.json": "1ab1b1bdbdc0d8378b85c9970adaea9c5240fed6ece146f345439896ffb03642",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ak47.json": "064c8360621c82af3282585639bd3c827f0eeaf8689b932b0e6d2f63709aa33e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ak74m.json": "a2bff1c897ec8986c5813515d95441666363801e48e6e91d9d28c1d15a83397c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/aug.json": "d9f9c7b04232f2610046f451f344feb7c9f287e5de6d52eb7ef25d6fbc26b5b1",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/b93r.json": "a0adbbdce669f7ccf1585ca23f4b047477ebc25010911f03bcd88744fa71b572",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/cz75.json": "36a0327ad14313cf5893c84c9abc8c19871bafbbe118b38ed0b917ce8ebf71e0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/db_long.json": "16d2b43d361a906e2eee1c49055497d127ebe0073e8f35a1109943a0cfc7106f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/db_short.json": "1904ea6b9d6f38e1662e89ba10971527f8287d87760260ce5d3e147df266586c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/deagle.json": "ad76d0d0495b7270ee00c51bce9f9311826c82eff5b005c58ec25de5ecbdb983",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/deagle_golden.json": "ed72a92cc0a4df841d005498bb3561e96def0dc5cfa04491bc379b1713ceea57",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/fn_evolys.json": "de96772bbcd3989b7c3220ce0ae33016e277b7489cb34c67924fde7ec69d5f0f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/fn_fal.json": "9e63d77227c9dc9199142ee6411d844fad23ce29a8c1e3f81be6a6ffbea8fc48",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/g36k.json": "5ea4b74c729667fbbbe2df2179fc062223b84b172c1643ebd81049a2fb59d350",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/glock_17.json": "09e4c4b4d15c04e3fa51f28d7883bd211c2cd72c8fc34eb90e3e44156ad21560",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hcar.json": "4633ccea8a9ebac2087e6d497a000a1ef934d4b8c1d67eaf3e9c9c3998c8a755",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk416d.json": "a0c774eabceaef00f8ec4312c919a4a80839a25c0a9afaa4f547610c17622f25",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_g3.json": "c0d9fea70ee9c0e18b9abc1da52dca4ddf4707d7e75297b72ba0edc055e881eb",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_mk23.json": "e6ce35c7e009b03033a94ba84dc6050509044231b7e54950b2e0c4e3be86c0ce",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_mp5a5.json": "650cc987a84fd50785dbd0bf15a154717316118c14f01300fa829bdf489aa34f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_mp7a1.json": "47df9d77cc585f3d8f175b0882db336b8063cc44fbd197441f503ecbcaabf4a2",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hm50b.json": "9ab54240accc1f57d699748df11b82c56c97fd574d348389bee232605c8f4522",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/kar98.json": "c7d1cb72e1caea42bd9364107e72abd5fe5afcb4b9201b2b0dc086136c5d6e3c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/lonetrail.json": "0eecd91eb98c4874965d6e46617f217a55da40be255c4aa35541e809d4a70295",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1014.json": "df97b39814edd70e679d0f5ba9bff7aebfad0ae972e73c1baadca78095ea1cae",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m107.json": "17cc5e56c0652a667de411135a97002ae40a56a4540c6ff837a0803523e061e5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m16a1.json": "82e642ce8e20fb371cd0f15f3ca8128cd2471564c2d9617513ad803b80da371d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m16a4.json": "006f5c98722c2805ed48b978794f5bb3d8e9506ee1f68283c80bcd9cca3f5709",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1866.json": "5882a97d023dc396f59ba50d0124609fe8ddaa7b24637fdcf36e09f5737dae3e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1897.json": "85551e3925ae9ee9443906402e46f1beb9f75675485b8c17cf22d3212a720744",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1911.json": "cdebac45c3e19f2c8d5ccab612b9f992e7137bc5133b965e0365df726f90a9fd",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m249.json": "749e976cb87f52ff06abd1c13807b89444d0aeefc51f6e56d4699e08c77fc34f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m320.json": "85b5f606011e68776c913e5d9b0a54a5b95253760c3b1be678870f66b88cbf24",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m4a1.json": "a3e03c5d1ae3d692d2c3adf163a970f9b92ff43e9588fcc0e3b624ea9905e8ed",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m700.json": "a916f11f297f7d549a3988f2c6a53f8afb5c4abee90777bdbfba2be8891a5f2b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m870.json": "d1ba36d5d99d0fac8827b1142e97aebd378d1c05ab80fad6231b9b49730216b0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m95.json": "46b1ab67cde3506d2613c781230b5e13f81b7942f0f2e1008e18e2907df7b267",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m9a4.json": "eb7bf292d8e3bcce616a4a8454916116a14437c80fd68ce1c422948c9e29c86e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mcx_spear_lt.json": "a73a56fe897a817878f1c42a571ba1fa08e78f045607cb8138bc4dbee10ee90a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/minigun.json": "676dbab9f3e718134013d0cf573a79588a3e32309d6aa91bebd8273445e8a61a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mk14.json": "703c6bfe86139a0bb1ccdd7104f7e6818601d459df14770100076e2178375f8f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mk18.json": "0219705db5fe59144ccf13f13f54099847a858642a097edb969a3a360662b0a7",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mrad.json": "f0627106f2de87b873a74c984e7a15bdd531e01fba7e17e4004cb4dc97b6a889",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/p320.json": "b2dd365f58fc7849bdeab799e4f8e1e71eb7f1283c7638cc50b0490f94fccbf4",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/p90.json": "6c7d8850376cbe2bf81164f5163ecf3c2898a8d0860369f0b31f2f0f609f626a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/pkm.json": "abb8b578850ea9e6e52717b6686f64e37ae4faafea766b971897da2c1520c436",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/qbz_191.json": "411223599ae97e0d50d196ce8ba3721f08d00fb770bb33a7d58e44479d424c46",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/qbz_95.json": "2e5dfa2dac3ed6b928a17b8ae5bb6e554bf4ffd40670b389146bea13365ef7d3",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/qr_24.json": "0d52ffc6e8bbe153f1a343914fbdcd179e45bf6b86e43bcac7b357d536af3993",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/rhino357.json": "460aefb5953d45efe54c66d462c9b4876ed8c6ab3cd019a6808633c3f7dbf46b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/rpg7.json": "65841ccf35590e69773d87c7b845746031f061904b00d88c2ff9d3fa57c0fd99",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/rpk.json": "043f5a2547793341cef37f432fca17e84d248f67a9a48e2e08ebbe85fa0781a5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/scar_h.json": "d780ab37acc9d44e23235fd2d57f87bae75647d12847b44acaffa06df2b273e8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/scar_l.json": "020edf2f08c752abd9c7093d566ec111b41153d2cfe3e6b77555e832323b1d3a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/scar_mk20.json": "45cef63f66c0c4d3fd67fad9384a32f6c2d3142013eabe185f83d8cf417479b1",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/sks_tactical.json": "8c9a16df3c71f328abf3010c690b37359f7dcc2f37c4e643b35f177421c6f646",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/spas_12.json": "5523c9bddb7456f312e189dce0b4f6b930daf4ad098de2bc9f791ff167a914e9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/spr15hb.json": "c32b2c0cd923c7ab015b084209fe67b83bd1de63b3184d21431fd43184c6527f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/springfield1873.json": "9ed0d09aa434753f2c9c97dfd388db0983d0055c4f1d27b9d3e2be155642c4e6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/svd.json": "baad1d31b852d7111ddfbb0d56e58623e409be188abf2742b2eb135378ea9c09",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/taurus500.json": "be73f1a2922bc4030a47eeef3ef0defa7f8341ffa133e4a8564dcf91baecbb13",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/taurus943.json": "805a12169f983eabc31278cb224d25764cb7c8cbead2a3c736609a926b38e00f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/tec_9.json": "f19104d1f426c23e3e63ee7f9bd8cf67f1d432c5c0dfd0d79e60a2c11f7dd306",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/timeless50.json": "286df0cac1d76fa3dd87cb626b30b3f1dd61da4adbed67846ec294b37416bc82",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/type_81.json": "b826c75618db565eb04e453857d643a4c2b1464979298f845063703bfdd750e5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ump45.json": "fc1665b6fd8017b2a8f87c0a4f8e6b18d3e773c36faab98bb7a662978323fd47",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/urgi.json": "9be25dbc0cbb0aaa8650db0b33968cd6d620c30442515f6f8e7930fa22309db8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/uzi.json": "394c9adc743b087f736757fa03e14189ff575302e81d84cf06b2a9cfbbd6c52c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/vector45.json": "2bf01c7edc4052279345caa6c06f057de34f24573fcd52e5e9036285bcbb2b5d"
+  },
+  "sbw_source_url": "https://cdn.modrinth.com/data/Cd3DYqzn/versions/81Iyv9ao/superbwarfare-0.8.9.2-mc1.20.1-65d985a64-sources.jar",
+  "sbw_source_bytes": 31115305,
+  "sbw_source_sha256": "06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5",
+  "tacz_entries": [
+    {
+      "id": "tacz:aa12",
+      "type": "shotgun",
+      "data": "tacz:aa12_data",
+      "ammo": "tacz:12g",
+      "capacity": 8,
+      "rpm": 350,
+      "damage": 30,
+      "armor_ignore": 0.0,
+      "bolt": "open_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi",
+        "auto"
+      ],
+      "weight": 5.2,
+      "bullet_amount": 10,
+      "damage_adjust": [
+        {
+          "distance": 15,
+          "damage": 30
+        },
+        {
+          "distance": 30,
+          "damage": 25
+        },
+        {
+          "distance": "infinite",
+          "damage": 15
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:ai_awp",
+      "type": "sniper",
+      "data": "tacz:ai_awp_data",
+      "ammo": "tacz:338",
+      "capacity": 5,
+      "rpm": 171,
+      "damage": 50,
+      "armor_ignore": 0.6,
+      "bolt": "manual_action",
+      "aim_time": 0.33,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 6.9,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 80,
+          "damage": 50
+        },
+        {
+          "distance": 160,
+          "damage": 45
+        },
+        {
+          "distance": "infinite",
+          "damage": 40
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 25,
+        "radius": 1.25,
+        "knockback": true,
+        "delay": 0.2
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:ak12",
+      "type": "rifle",
+      "data": "tacz:ak12_data",
+      "ammo": "tacz:545x39",
+      "capacity": 30,
+      "rpm": 660,
+      "damage": 7.5,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 32,
+          "damage": 7.5
+        },
+        {
+          "distance": 64,
+          "damage": 6.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 5.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:ak47",
+      "type": "rifle",
+      "data": "tacz:ak47_data",
+      "ammo": "tacz:762x39",
+      "capacity": 30,
+      "rpm": 600,
+      "damage": 9,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.22,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 30,
+          "damage": 9
+        },
+        {
+          "distance": 60,
+          "damage": 7.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 6
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:ak74m",
+      "type": "rifle",
+      "data": "tacz:ak74m_data",
+      "ammo": "tacz:545x39",
+      "capacity": 30,
+      "rpm": 650,
+      "damage": 8,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.4,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 30,
+          "damage": 8
+        },
+        {
+          "distance": 60,
+          "damage": 6.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:aug",
+      "type": "rifle",
+      "data": "tacz:aug_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 750,
+      "damage": 7,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.24,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 28,
+          "damage": 7
+        },
+        {
+          "distance": 65,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:b93r",
+      "type": "pistol",
+      "data": "tacz:b93r_data",
+      "ammo": "tacz:9mm",
+      "capacity": 20,
+      "rpm": 900,
+      "damage": 7.5,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "burst",
+        "semi"
+      ],
+      "weight": 1.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 16,
+          "damage": 7.5
+        },
+        {
+          "distance": 32,
+          "damage": 6
+        },
+        {
+          "distance": 48,
+          "damage": 4
+        },
+        {
+          "distance": "infinite",
+          "damage": 3
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:cz75",
+      "type": "pistol",
+      "data": "tacz:cz75_data",
+      "ammo": "tacz:9mm",
+      "capacity": 16,
+      "rpm": 900,
+      "damage": 5,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 1.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 12,
+          "damage": 5
+        },
+        {
+          "distance": 30,
+          "damage": 4
+        },
+        {
+          "distance": "infinite",
+          "damage": 3
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:db_long",
+      "type": "shotgun",
+      "data": "tacz:db_long_data",
+      "ammo": "tacz:12g",
+      "capacity": 2,
+      "rpm": 200,
+      "damage": 36,
+      "armor_ignore": 0.25,
+      "bolt": "open_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.2,
+      "bullet_amount": 12,
+      "damage_adjust": [
+        {
+          "distance": 24,
+          "damage": 36
+        },
+        {
+          "distance": 36,
+          "damage": 30
+        },
+        {
+          "distance": "infinite",
+          "damage": 24
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:db_short",
+      "type": "shotgun",
+      "data": "tacz:db_short_data",
+      "ammo": "tacz:12g",
+      "capacity": 2,
+      "rpm": 150,
+      "damage": 32,
+      "armor_ignore": 0.33,
+      "bolt": "open_bolt",
+      "aim_time": 0.1,
+      "fire_mode": [
+        "burst",
+        "semi"
+      ],
+      "weight": 2.1,
+      "bullet_amount": 16,
+      "damage_adjust": [
+        {
+          "distance": 5,
+          "damage": 32
+        },
+        {
+          "distance": 9,
+          "damage": 24
+        },
+        {
+          "distance": "infinite",
+          "damage": 16
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:db_short_gun_logic"
+    },
+    {
+      "id": "tacz:deagle",
+      "type": "pistol",
+      "data": "tacz:deagle_data",
+      "ammo": "tacz:50ae",
+      "capacity": 7,
+      "rpm": 300,
+      "damage": 16,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 2,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 15,
+          "damage": 16
+        },
+        {
+          "distance": 30,
+          "damage": 14
+        },
+        {
+          "distance": 50,
+          "damage": 12
+        },
+        {
+          "distance": "infinite",
+          "damage": 10
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 10,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:deagle_golden",
+      "type": "pistol",
+      "data": "tacz:deagle_golden_data",
+      "ammo": "tacz:357mag",
+      "capacity": 9,
+      "rpm": 350,
+      "damage": 12,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 2,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 18,
+          "damage": 12
+        },
+        {
+          "distance": 36,
+          "damage": 11
+        },
+        {
+          "distance": 55,
+          "damage": 9
+        },
+        {
+          "distance": "infinite",
+          "damage": 7
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 5,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:fn_evolys",
+      "type": "mg",
+      "data": "tacz:fn_evolys_data",
+      "ammo": "tacz:308",
+      "capacity": 75,
+      "rpm": 750,
+      "damage": 12,
+      "armor_ignore": 0.4,
+      "bolt": "open_bolt",
+      "aim_time": 0.25,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 5.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 12
+        },
+        {
+          "distance": 80,
+          "damage": 8
+        },
+        {
+          "distance": "infinite",
+          "damage": 6
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:fn_fal",
+      "type": "rifle",
+      "data": "tacz:fn_fal_data",
+      "ammo": "tacz:308",
+      "capacity": 20,
+      "rpm": 350,
+      "damage": 13,
+      "armor_ignore": 0.4,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi",
+        "auto"
+      ],
+      "weight": 4.7,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 45,
+          "damage": 13
+        },
+        {
+          "distance": 90,
+          "damage": 10
+        },
+        {
+          "distance": "infinite",
+          "damage": 8
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:g36k",
+      "type": "rifle",
+      "data": "tacz:g36k_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 780,
+      "damage": 7,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.3,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 45,
+          "damage": 7
+        },
+        {
+          "distance": 72,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 5.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:glock_17",
+      "type": "pistol",
+      "data": "tacz:glock_17_data",
+      "ammo": "tacz:9mm",
+      "capacity": 17,
+      "rpm": 400,
+      "damage": 6,
+      "armor_ignore": 0,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 18,
+          "damage": 7
+        },
+        {
+          "distance": 45,
+          "damage": 5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:hcar",
+      "type": "rifle",
+      "data": "tacz:hcar_data",
+      "ammo": "tacz:30_06",
+      "capacity": 20,
+      "rpm": 350,
+      "damage": 18,
+      "armor_ignore": 0.4,
+      "bolt": "closed_bolt",
+      "aim_time": 0.25,
+      "fire_mode": [
+        "auto",
+        "burst"
+      ],
+      "weight": 5.3,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 32,
+          "damage": 18
+        },
+        {
+          "distance": 64,
+          "damage": 15
+        },
+        {
+          "distance": 96,
+          "damage": 12
+        },
+        {
+          "distance": "infinite",
+          "damage": 10
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 12,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:hk416d",
+      "type": "rifle",
+      "data": "tacz:hk416d_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 943,
+      "damage": 7,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.4,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 7
+        },
+        {
+          "distance": 48,
+          "damage": 5.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:hk_g3",
+      "type": "rifle",
+      "data": "tacz:hk_g3_data",
+      "ammo": "tacz:308",
+      "capacity": 20,
+      "rpm": 350,
+      "damage": 12,
+      "armor_ignore": 0.5,
+      "bolt": "closed_bolt",
+      "aim_time": 0.24,
+      "fire_mode": [
+        "semi",
+        "auto"
+      ],
+      "weight": 4.3,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 12
+        },
+        {
+          "distance": 80,
+          "damage": 10
+        },
+        {
+          "distance": "infinite",
+          "damage": 9
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:hk_mk23",
+      "type": "pistol",
+      "data": "tacz:hk_mk23_data",
+      "ammo": "tacz:45acp",
+      "capacity": 12,
+      "rpm": 50,
+      "damage": 12,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi",
+        "burst"
+      ],
+      "weight": 1.4,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 12
+        },
+        {
+          "distance": 50,
+          "damage": 11
+        },
+        {
+          "distance": "infinite",
+          "damage": 9
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 30,
+        "radius": 0.75,
+        "knockback": true,
+        "delay": 0.2
+      },
+      "script": "tacz:hk_mk23_logic"
+    },
+    {
+      "id": "tacz:hk_mp5a5",
+      "type": "smg",
+      "data": "tacz:hk_mp5a5_data",
+      "ammo": "tacz:9mm",
+      "capacity": 30,
+      "rpm": 820,
+      "damage": 7,
+      "armor_ignore": 0.15,
+      "bolt": "closed_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "weight": 2.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 18,
+          "damage": 7
+        },
+        {
+          "distance": 40,
+          "damage": 5
+        },
+        {
+          "distance": 65,
+          "damage": 4.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 3.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:hk_mp7a1",
+      "type": "smg",
+      "data": "tacz:hk_mp7a1_data",
+      "ammo": "tacz:46x30",
+      "capacity": 20,
+      "rpm": 950,
+      "damage": 6,
+      "armor_ignore": 0.65,
+      "bolt": "closed_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 2.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 6
+        },
+        {
+          "distance": 40,
+          "damage": 5
+        },
+        {
+          "distance": 65,
+          "damage": 4.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 3.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:hm50b",
+      "type": "sniper",
+      "data": "tacz:hm50b_data",
+      "ammo": "tacz:50bmg",
+      "capacity": 10,
+      "rpm": 180,
+      "damage": 70,
+      "armor_ignore": 0.6,
+      "bolt": "manual_action",
+      "aim_time": 0.4,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 13.0,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 75,
+          "damage": 70
+        },
+        {
+          "distance": 150,
+          "damage": 60
+        },
+        {
+          "distance": "infinite",
+          "damage": 45
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 30,
+        "radius": 1.8,
+        "knockback": true,
+        "delay": 0.25
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:kar98",
+      "type": "sniper",
+      "data": "tacz:kar98_data",
+      "ammo": "tacz:792x57",
+      "capacity": 4,
+      "rpm": 250,
+      "damage": 26,
+      "armor_ignore": 0.4,
+      "bolt": "manual_action",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.8,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 26
+        },
+        {
+          "distance": 80,
+          "damage": 22
+        },
+        {
+          "distance": "infinite",
+          "damage": 15
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:kar98_gun_logic"
+    },
+    {
+      "id": "tacz:lonetrail",
+      "type": "pistol",
+      "data": "tacz:lonetrail_data",
+      "ammo": "tacz:30_06",
+      "capacity": 1,
+      "rpm": 90,
+      "damage": 21.5,
+      "armor_ignore": 0.4,
+      "bolt": "open_bolt",
+      "aim_time": 0.25,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 2.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 45,
+          "damage": 24
+        },
+        {
+          "distance": 75,
+          "damage": 21
+        },
+        {
+          "distance": "infinite",
+          "damage": 18
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:m1014",
+      "type": "shotgun",
+      "data": "tacz:m1014_data",
+      "ammo": "tacz:12g",
+      "capacity": 6,
+      "rpm": 200,
+      "damage": 40,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.8,
+      "bullet_amount": 8,
+      "damage_adjust": [
+        {
+          "distance": 14,
+          "damage": 40
+        },
+        {
+          "distance": 28,
+          "damage": 32
+        },
+        {
+          "distance": "infinite",
+          "damage": 24
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 10,
+        "radius": 2,
+        "knockback": false,
+        "delay": 0.12
+      },
+      "script": "tacz:m1014_gun_logic"
+    },
+    {
+      "id": "tacz:m107",
+      "type": "sniper",
+      "data": "tacz:m107_data",
+      "ammo": "tacz:50bmg",
+      "capacity": 10,
+      "rpm": 250,
+      "damage": 55,
+      "armor_ignore": 0.5,
+      "bolt": "closed_bolt",
+      "aim_time": 0.35,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 10.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 65,
+          "damage": 50
+        },
+        {
+          "distance": 120,
+          "damage": 40
+        },
+        {
+          "distance": "infinite",
+          "damage": 35
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 25,
+        "radius": 1.5,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:m16a1",
+      "type": "rifle",
+      "data": "tacz:m16a1_data",
+      "ammo": "tacz:556x45",
+      "capacity": 20,
+      "rpm": 700,
+      "damage": 8,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.22,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.6,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 45,
+          "damage": 8.5
+        },
+        {
+          "distance": 70,
+          "damage": 7
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:m16a4",
+      "type": "rifle",
+      "data": "tacz:m16a4_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 400,
+      "damage": 8,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.22,
+      "fire_mode": [
+        "burst",
+        "semi"
+      ],
+      "weight": 3.6,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 32,
+          "damage": 8
+        },
+        {
+          "distance": 64,
+          "damage": 7
+        },
+        {
+          "distance": "infinite",
+          "damage": 6
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:m1866",
+      "type": "dmr",
+      "data": "tacz:m1866_data",
+      "ammo": "tacz:45acp",
+      "capacity": 5,
+      "rpm": 350,
+      "damage": 12,
+      "armor_ignore": 0.0,
+      "bolt": "manual_action",
+      "aim_time": 0.19,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 4.0,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 12,
+          "damage": 12
+        },
+        {
+          "distance": 36,
+          "damage": 9
+        },
+        {
+          "distance": "infinite",
+          "damage": 6
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:m1866_gun_logic"
+    },
+    {
+      "id": "tacz:m1897",
+      "type": "shotgun",
+      "data": "tacz:m1897_data",
+      "ammo": "tacz:12g",
+      "capacity": 5,
+      "rpm": 400,
+      "damage": 32,
+      "armor_ignore": 0.25,
+      "bolt": "manual_action",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 3.6,
+      "bullet_amount": 8,
+      "damage_adjust": [
+        {
+          "distance": 16,
+          "damage": 32
+        },
+        {
+          "distance": 20,
+          "damage": 28
+        },
+        {
+          "distance": 24,
+          "damage": 24
+        },
+        {
+          "distance": "infinite",
+          "damage": 16
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 50,
+        "radius": 3,
+        "knockback": false,
+        "delay": 5
+      },
+      "script": "tacz:m870_unload_gun_logic"
+    },
+    {
+      "id": "tacz:m1911",
+      "type": "pistol",
+      "data": "tacz:m1911_data",
+      "ammo": "tacz:45acp",
+      "capacity": 7,
+      "rpm": 350,
+      "damage": 11,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 1.2,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 19,
+          "damage": 11
+        },
+        {
+          "distance": 40,
+          "damage": 9
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:m249",
+      "type": "mg",
+      "data": "tacz:m249_data",
+      "ammo": "tacz:556x45",
+      "capacity": 75,
+      "rpm": 750,
+      "damage": 7.5,
+      "armor_ignore": 0.3,
+      "bolt": "open_bolt",
+      "aim_time": 0.3,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 8,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 35,
+          "damage": 7
+        },
+        {
+          "distance": 80,
+          "damage": 5.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4.5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:m320",
+      "type": "rpg",
+      "data": "tacz:m320_data",
+      "ammo": "tacz:40mm",
+      "capacity": 1,
+      "rpm": 150,
+      "damage": 10,
+      "armor_ignore": 0.0,
+      "bolt": "open_bolt",
+      "aim_time": 0.1,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.6,
+      "bullet_amount": 1,
+      "damage_adjust": null,
+      "explosion": {
+        "explode": true,
+        "damage": 50,
+        "radius": 6,
+        "knockback": true,
+        "delay": 30
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:m4a1",
+      "type": "rifle",
+      "data": "tacz:m4a1_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 800,
+      "damage": 7,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 32,
+          "damage": 7
+        },
+        {
+          "distance": 64,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 4.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:m700",
+      "type": "sniper",
+      "data": "tacz:m700_data",
+      "ammo": "tacz:30_06",
+      "capacity": 5,
+      "rpm": 180,
+      "damage": 24,
+      "armor_ignore": 0.5,
+      "bolt": "manual_action",
+      "aim_time": 0.3,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 6.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 48,
+          "damage": 24
+        },
+        {
+          "distance": 96,
+          "damage": 19
+        },
+        {
+          "distance": 190,
+          "damage": 16
+        },
+        {
+          "distance": "infinite",
+          "damage": 14
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:m870",
+      "type": "shotgun",
+      "data": "tacz:m870_data",
+      "ammo": "tacz:12g",
+      "capacity": 5,
+      "rpm": 180,
+      "damage": 36,
+      "armor_ignore": 0.25,
+      "bolt": "manual_action",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.2,
+      "bullet_amount": 9,
+      "damage_adjust": [
+        {
+          "distance": 18,
+          "damage": 36
+        },
+        {
+          "distance": 32,
+          "damage": 27
+        },
+        {
+          "distance": "infinite",
+          "damage": 18
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 16,
+        "radius": 3,
+        "knockback": false,
+        "delay": 0.15
+      },
+      "script": "tacz:m870_unload_gun_logic"
+    },
+    {
+      "id": "tacz:m95",
+      "type": "sniper",
+      "data": "tacz:m95_data",
+      "ammo": "tacz:50bmg",
+      "capacity": 5,
+      "rpm": 151,
+      "damage": 75,
+      "armor_ignore": 0.75,
+      "bolt": "manual_action",
+      "aim_time": 0.37,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 10.7,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 75,
+          "damage": 75
+        },
+        {
+          "distance": 150,
+          "damage": 65
+        },
+        {
+          "distance": "infinite",
+          "damage": 50
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 30,
+        "radius": 1.8,
+        "knockback": true,
+        "delay": 0.25
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:m9a4",
+      "type": "pistol",
+      "data": "tacz:m9a4_data",
+      "ammo": "tacz:9mm",
+      "capacity": 17,
+      "rpm": 450,
+      "damage": 7,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 7.5
+        },
+        {
+          "distance": 45,
+          "damage": 5.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:mcx_spear_lt",
+      "type": "rifle",
+      "data": "tacz:mcx_spear_lt_data",
+      "ammo": "tacz:300blk",
+      "capacity": 30,
+      "rpm": 1000,
+      "damage": 8,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 8
+        },
+        {
+          "distance": 30,
+          "damage": 7
+        },
+        {
+          "distance": 40,
+          "damage": 6
+        },
+        {
+          "distance": 50,
+          "damage": 5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:minigun",
+      "type": "mg",
+      "data": "tacz:minigun_data",
+      "ammo": "tacz:308",
+      "capacity": null,
+      "rpm": 1200,
+      "damage": 8,
+      "armor_ignore": 0.5,
+      "bolt": "open_bolt",
+      "aim_time": 0.25,
+      "fire_mode": [
+        "auto",
+        "burst"
+      ],
+      "weight": 15.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 50,
+          "damage": 8
+        },
+        {
+          "distance": 95,
+          "damage": 7
+        },
+        {
+          "distance": "infinite",
+          "damage": 6
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:mk14",
+      "type": "dmr",
+      "data": "tacz:mk14_data",
+      "ammo": "tacz:308",
+      "capacity": 10,
+      "rpm": 300,
+      "damage": 16,
+      "armor_ignore": 0.5,
+      "bolt": "closed_bolt",
+      "aim_time": 0.21,
+      "fire_mode": [
+        "semi",
+        "auto"
+      ],
+      "weight": 5.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 60,
+          "damage": 16
+        },
+        {
+          "distance": 120,
+          "damage": 13.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 10.5
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 10,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:mk18",
+      "type": "rifle",
+      "data": "tacz:mk18_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 750,
+      "damage": 7.5,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 24,
+          "damage": 7.5
+        },
+        {
+          "distance": 56,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:mrad",
+      "type": "sniper",
+      "data": "tacz:mrad_data",
+      "ammo": "tacz:338",
+      "capacity": 10,
+      "rpm": 151,
+      "damage": 45,
+      "armor_ignore": 0.75,
+      "bolt": "manual_action",
+      "aim_time": 0.28,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 6.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 96,
+          "damage": 45
+        },
+        {
+          "distance": 180,
+          "damage": 40
+        },
+        {
+          "distance": "infinite",
+          "damage": 35
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 20,
+        "radius": 1.5,
+        "knockback": true,
+        "delay": 0.2
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:p320",
+      "type": "pistol",
+      "data": "tacz:p320_data",
+      "ammo": "tacz:45acp",
+      "capacity": 12,
+      "rpm": 450,
+      "damage": 10,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 1.2,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 10
+        },
+        {
+          "distance": 50,
+          "damage": 7
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:p90",
+      "type": "smg",
+      "data": "tacz:p90_data",
+      "ammo": "tacz:57x28",
+      "capacity": 50,
+      "rpm": 850,
+      "damage": 6,
+      "armor_ignore": 0.7,
+      "bolt": "closed_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto",
+        "burst"
+      ],
+      "weight": 2.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 24,
+          "damage": 6
+        },
+        {
+          "distance": 42,
+          "damage": 5
+        },
+        {
+          "distance": 64,
+          "damage": 4.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 3
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:pkm",
+      "type": "mg",
+      "data": "tacz:pkm_data",
+      "ammo": "tacz:762x54",
+      "capacity": 75,
+      "rpm": 650,
+      "damage": 13,
+      "armor_ignore": 0.45,
+      "bolt": "open_bolt",
+      "aim_time": 0.3,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 7.75,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 45,
+          "damage": 13
+        },
+        {
+          "distance": 90,
+          "damage": 10
+        },
+        {
+          "distance": "infinite",
+          "damage": 7.5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:qbz_191",
+      "type": "rifle",
+      "data": "tacz:qbz_191_data",
+      "ammo": "tacz:58x42",
+      "capacity": 30,
+      "rpm": 750,
+      "damage": 7.5,
+      "armor_ignore": 0.4,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 7.5
+        },
+        {
+          "distance": 75,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 4.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:qbz_95",
+      "type": "rifle",
+      "data": "tacz:qbz_95_data",
+      "ammo": "tacz:58x42",
+      "capacity": 30,
+      "rpm": 660,
+      "damage": 7.5,
+      "armor_ignore": 0.4,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi",
+        "burst"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 30,
+          "damage": 7.5
+        },
+        {
+          "distance": 64,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 4.5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:qr_24",
+      "type": "rifle",
+      "data": "tacz:qr_24_data",
+      "ammo": "tacz:545x39",
+      "capacity": 32,
+      "rpm": 880,
+      "damage": 7,
+      "armor_ignore": 0.1,
+      "bolt": "closed_bolt",
+      "aim_time": 0.21,
+      "fire_mode": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "weight": 3.25,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 25,
+          "damage": 7
+        },
+        {
+          "distance": 50,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:rhino357",
+      "type": "pistol",
+      "data": "tacz:rhino357_data",
+      "ammo": "tacz:357mag",
+      "capacity": 6,
+      "rpm": 200,
+      "damage": 15,
+      "armor_ignore": 0.3,
+      "bolt": "open_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 1.85,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 25,
+          "damage": 15
+        },
+        {
+          "distance": 35,
+          "damage": 13
+        },
+        {
+          "distance": 50,
+          "damage": 11
+        },
+        {
+          "distance": "infinite",
+          "damage": 9.5
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 30,
+        "radius": 0.75,
+        "knockback": true,
+        "delay": 1
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:rpg7",
+      "type": "rpg",
+      "data": "tacz:rpg7_data",
+      "ammo": "tacz:rpg_rocket",
+      "capacity": 1,
+      "rpm": 150,
+      "damage": 20,
+      "armor_ignore": 0.0,
+      "bolt": "open_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 6.3,
+      "bullet_amount": 1,
+      "damage_adjust": null,
+      "explosion": {
+        "explode": true,
+        "damage": 120,
+        "radius": 3,
+        "knockback": true,
+        "destroy_block": true,
+        "delay": 30
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:rpk",
+      "type": "mg",
+      "data": "tacz:rpk_data",
+      "ammo": "tacz:762x39",
+      "capacity": 40,
+      "rpm": 600,
+      "damage": 10,
+      "armor_ignore": 0.3,
+      "bolt": "closed_bolt",
+      "aim_time": 0.17,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 4.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 48,
+          "damage": 10
+        },
+        {
+          "distance": 72,
+          "damage": 8
+        },
+        {
+          "distance": "infinite",
+          "damage": 6
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 22,
+        "radius": 0.6,
+        "knockback": true,
+        "delay": 1
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:scar_h",
+      "type": "rifle",
+      "data": "tacz:scar_h_data",
+      "ammo": "tacz:308",
+      "capacity": 20,
+      "rpm": 570,
+      "damage": 14,
+      "armor_ignore": 0.5,
+      "bolt": "closed_bolt",
+      "aim_time": 0.24,
+      "fire_mode": [
+        "semi",
+        "auto"
+      ],
+      "weight": 4.6,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 35,
+          "damage": 14
+        },
+        {
+          "distance": 85,
+          "damage": 11
+        },
+        {
+          "distance": "infinite",
+          "damage": 9
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 10,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:scar_l",
+      "type": "rifle",
+      "data": "tacz:scar_l_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 625,
+      "damage": 7.5,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.21,
+      "fire_mode": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 30,
+          "damage": 7.5
+        },
+        {
+          "distance": 55,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:scar_mk20",
+      "type": "dmr",
+      "data": "tacz:scar_mk20_data",
+      "ammo": "tacz:308",
+      "capacity": 10,
+      "rpm": 275,
+      "damage": 18,
+      "armor_ignore": 0.5,
+      "bolt": "closed_bolt",
+      "aim_time": 0.21,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 5.1,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 72,
+          "damage": 18
+        },
+        {
+          "distance": 120,
+          "damage": 16
+        },
+        {
+          "distance": "infinite",
+          "damage": 12
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 8,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:sks_tactical",
+      "type": "dmr",
+      "data": "tacz:sks_tactical_data",
+      "ammo": "tacz:762x39",
+      "capacity": 10,
+      "rpm": 510,
+      "damage": 12,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.85,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 55,
+          "damage": 12
+        },
+        {
+          "distance": 110,
+          "damage": 10
+        },
+        {
+          "distance": "infinite",
+          "damage": 7
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:spas_12",
+      "type": "shotgun",
+      "data": "tacz:spas_12_data",
+      "ammo": "tacz:12g",
+      "capacity": 5,
+      "rpm": 200,
+      "damage": 48,
+      "armor_ignore": 0.25,
+      "bolt": "manual_action",
+      "aim_time": 0.21,
+      "fire_mode": [
+        "semi",
+        "burst"
+      ],
+      "weight": 4.6,
+      "bullet_amount": 8,
+      "damage_adjust": [
+        {
+          "distance": 15,
+          "damage": 48
+        },
+        {
+          "distance": 30,
+          "damage": 40
+        },
+        {
+          "distance": "infinite",
+          "damage": 24
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 16,
+        "radius": 3,
+        "knockback": false,
+        "delay": 0.15
+      },
+      "script": "tacz:spas_12_gun_logic"
+    },
+    {
+      "id": "tacz:spr15hb",
+      "type": "dmr",
+      "data": "tacz:spr15hb_data",
+      "ammo": "tacz:556x45",
+      "capacity": 15,
+      "rpm": 700,
+      "damage": 10,
+      "armor_ignore": 0.3,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "semi",
+        "burst"
+      ],
+      "weight": 3.2,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 10
+        },
+        {
+          "distance": 72,
+          "damage": 8
+        },
+        {
+          "distance": "infinite",
+          "damage": 7
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:springfield1873",
+      "type": "sniper",
+      "data": "tacz:springfield1873_data",
+      "ammo": "tacz:45_70",
+      "capacity": 1,
+      "rpm": 90,
+      "damage": 35,
+      "armor_ignore": 0.25,
+      "bolt": "open_bolt",
+      "aim_time": 0.22,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 35
+        },
+        {
+          "distance": 64,
+          "damage": 28
+        },
+        {
+          "distance": 88,
+          "damage": 19
+        },
+        {
+          "distance": "infinite",
+          "damage": 16
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:svd",
+      "type": "sniper",
+      "data": "tacz:svd_data",
+      "ammo": "tacz:762x54",
+      "capacity": 10,
+      "rpm": 180,
+      "damage": 19,
+      "armor_ignore": 0.45,
+      "bolt": "closed_bolt",
+      "aim_time": 0.25,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 4,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 72,
+          "damage": 19
+        },
+        {
+          "distance": 120,
+          "damage": 17
+        },
+        {
+          "distance": "infinite",
+          "damage": 12
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 12,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:taurus500",
+      "type": "pistol",
+      "data": "tacz:taurus500_data",
+      "ammo": "tacz:500mag",
+      "capacity": 5,
+      "rpm": 120,
+      "damage": 40,
+      "armor_ignore": 0.5,
+      "bolt": "open_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 2.2,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 40,
+          "damage": 40
+        },
+        {
+          "distance": 55,
+          "damage": 30
+        },
+        {
+          "distance": 75,
+          "damage": 20
+        },
+        {
+          "distance": "infinite",
+          "damage": 15
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 10,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.13
+      },
+      "script": null
+    },
+    {
+      "id": "tacz:taurus943",
+      "type": "pistol",
+      "data": "tacz:taurus943_data",
+      "ammo": "tacz:22wmr",
+      "capacity": 8,
+      "rpm": 200,
+      "damage": 8,
+      "armor_ignore": 0.0,
+      "bolt": "open_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 0.85,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 12,
+          "damage": 8
+        },
+        {
+          "distance": 25,
+          "damage": 6
+        },
+        {
+          "distance": 32,
+          "damage": 4
+        },
+        {
+          "distance": "infinite",
+          "damage": 3
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 30,
+        "radius": 0.75,
+        "knockback": true,
+        "delay": 1
+      },
+      "script": "tacz:taurus943_gun_logic"
+    },
+    {
+      "id": "tacz:tec_9",
+      "type": "pistol",
+      "data": "tacz:tec_9_data",
+      "ammo": "tacz:9mm",
+      "capacity": 20,
+      "rpm": 1200,
+      "damage": 6,
+      "armor_ignore": 0.1,
+      "bolt": "open_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 1.4,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 12,
+          "damage": 6
+        },
+        {
+          "distance": 22,
+          "damage": 5
+        },
+        {
+          "distance": 32,
+          "damage": 4
+        },
+        {
+          "distance": "infinite",
+          "damage": 2
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:timeless50",
+      "type": "pistol",
+      "data": "tacz:timeless50_data",
+      "ammo": "tacz:50ae",
+      "capacity": 8,
+      "rpm": 300,
+      "damage": 15,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.16,
+      "fire_mode": [
+        "semi"
+      ],
+      "weight": 1.65,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 20,
+          "damage": 16
+        },
+        {
+          "distance": 50,
+          "damage": 14
+        },
+        {
+          "distance": "infinite",
+          "damage": 9
+        }
+      ],
+      "explosion": {
+        "explode": false,
+        "damage": 8,
+        "radius": 1,
+        "knockback": true,
+        "delay": 0.15
+      },
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:type_81",
+      "type": "rifle",
+      "data": "tacz:type_81_data",
+      "ammo": "tacz:762x39",
+      "capacity": 30,
+      "rpm": 650,
+      "damage": 9,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 25,
+          "damage": 9
+        },
+        {
+          "distance": 55,
+          "damage": 7
+        },
+        {
+          "distance": "infinite",
+          "damage": 4.5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:ump45",
+      "type": "smg",
+      "data": "tacz:ump45_data",
+      "ammo": "tacz:45acp",
+      "capacity": 25,
+      "rpm": 660,
+      "damage": 10,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto",
+        "burst"
+      ],
+      "weight": 2.65,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 30,
+          "damage": 10
+        },
+        {
+          "distance": 55,
+          "damage": 7
+        },
+        {
+          "distance": "infinite",
+          "damage": 5.5
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:urgi",
+      "type": "rifle",
+      "data": "tacz:urgi_data",
+      "ammo": "tacz:556x45",
+      "capacity": 30,
+      "rpm": 750,
+      "damage": 7.5,
+      "armor_ignore": 0.25,
+      "bolt": "closed_bolt",
+      "aim_time": 0.2,
+      "fire_mode": [
+        "auto",
+        "semi"
+      ],
+      "weight": 3.5,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 36,
+          "damage": 7.5
+        },
+        {
+          "distance": 68,
+          "damage": 6
+        },
+        {
+          "distance": "infinite",
+          "damage": 4.5
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    },
+    {
+      "id": "tacz:uzi",
+      "type": "smg",
+      "data": "tacz:uzi_data",
+      "ammo": "tacz:9mm",
+      "capacity": 20,
+      "rpm": 600,
+      "damage": 8.5,
+      "armor_ignore": 0.15,
+      "bolt": "open_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto"
+      ],
+      "weight": 4,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 24,
+          "damage": 8.5
+        },
+        {
+          "distance": 50,
+          "damage": 7.5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": null
+    },
+    {
+      "id": "tacz:vector45",
+      "type": "smg",
+      "data": "tacz:vector45_data",
+      "ammo": "tacz:45acp",
+      "capacity": 20,
+      "rpm": 1200,
+      "damage": 8,
+      "armor_ignore": 0.2,
+      "bolt": "closed_bolt",
+      "aim_time": 0.18,
+      "fire_mode": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "weight": 3.0,
+      "bullet_amount": 1,
+      "damage_adjust": [
+        {
+          "distance": 15,
+          "damage": 8
+        },
+        {
+          "distance": 36,
+          "damage": 6
+        },
+        {
+          "distance": 50,
+          "damage": 5
+        },
+        {
+          "distance": "infinite",
+          "damage": 4
+        }
+      ],
+      "explosion": null,
+      "script": "tacz:xmag_reload_logic"
+    }
+  ],
+  "sbw_entries": [
+    {
+      "id": "superbwarfare:aa_12",
+      "GunType": "Shotgun",
+      "Damage": 2.5,
+      "RPM": 360,
+      "Magazine": 25,
+      "BypassesArmor": 0.05,
+      "Spread": 3.5,
+      "AmmoType": "@ShotgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:ak_12",
+      "GunType": "Rifle",
+      "Damage": 8.25,
+      "RPM": 700,
+      "Magazine": 30,
+      "BypassesArmor": 0.3,
+      "Spread": 3.5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:ak_47",
+      "GunType": "Rifle",
+      "Damage": 9,
+      "RPM": 600,
+      "Magazine": 30,
+      "BypassesArmor": 0.2,
+      "Spread": 4,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:awm",
+      "GunType": "Sniper",
+      "Damage": 36,
+      "RPM": null,
+      "Magazine": 5,
+      "BypassesArmor": 0.8,
+      "Spread": 6,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:bocek",
+      "GunType": "Special",
+      "Damage": 48,
+      "RPM": null,
+      "Magazine": 1,
+      "BypassesArmor": 0.25,
+      "Spread": 4,
+      "AmmoType": "minecraft:arrow",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:devotion",
+      "GunType": "MachineGun",
+      "Damage": 9.5,
+      "RPM": 400,
+      "Magazine": 55,
+      "BypassesArmor": 0.25,
+      "Spread": 5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:glock_17",
+      "GunType": "Handgun",
+      "Damage": 5.5,
+      "RPM": 400,
+      "Magazine": 17,
+      "BypassesArmor": 0.15,
+      "Spread": 2.5,
+      "AmmoType": "@HandgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:glock_18",
+      "GunType": "Handgun",
+      "Damage": 5.5,
+      "RPM": 1300,
+      "Magazine": 17,
+      "BypassesArmor": 0.15,
+      "Spread": 2.5,
+      "AmmoType": "@HandgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:hk_416",
+      "GunType": "Rifle",
+      "Damage": 8,
+      "RPM": 900,
+      "Magazine": 30,
+      "BypassesArmor": 0.25,
+      "Spread": 3.5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:homemade_shotgun",
+      "GunType": "Shotgun",
+      "Damage": 5,
+      "RPM": 600,
+      "Magazine": 2,
+      "BypassesArmor": 0.01,
+      "Spread": 4,
+      "AmmoType": "@ShotgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:hunting_rifle",
+      "GunType": "Sniper",
+      "Damage": 65,
+      "RPM": null,
+      "Magazine": 1,
+      "BypassesArmor": 0.7,
+      "Spread": 7,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:igla_9k38",
+      "GunType": "DirectLauncher",
+      "Damage": 260,
+      "RPM": null,
+      "Magazine": 1,
+      "BypassesArmor": null,
+      "Spread": 5,
+      "AmmoType": "superbwarfare:medium_anti_air_missile",
+      "Projectile": "superbwarfare:igla_9k38_missile",
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:insidious",
+      "GunType": "Rifle",
+      "Damage": 11,
+      "RPM": 900,
+      "Magazine": 48,
+      "BypassesArmor": 0.4,
+      "Spread": 4,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Burst"
+    },
+    {
+      "id": "superbwarfare:javelin",
+      "GunType": "DirectLauncher",
+      "Damage": 650,
+      "RPM": null,
+      "Magazine": 1,
+      "BypassesArmor": null,
+      "Spread": 5,
+      "AmmoType": "superbwarfare:javelin_missile",
+      "Projectile": "superbwarfare:javelin_missile",
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:k_98",
+      "GunType": "Sniper",
+      "Damage": 35,
+      "RPM": null,
+      "Magazine": 5,
+      "BypassesArmor": 0.5,
+      "Spread": 5,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:marlin",
+      "GunType": "Rifle",
+      "Damage": 16,
+      "RPM": null,
+      "Magazine": 8,
+      "BypassesArmor": 0.3,
+      "Spread": 2,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:minigun",
+      "GunType": "MachineGun",
+      "Damage": 8,
+      "RPM": 1200,
+      "Magazine": null,
+      "BypassesArmor": 0.3,
+      "Spread": 1.5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:mk_14",
+      "GunType": "Rifle",
+      "Damage": 12,
+      "RPM": 700,
+      "Magazine": 20,
+      "BypassesArmor": 0.4,
+      "Spread": 5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:mosin_nagant",
+      "GunType": "Sniper",
+      "Damage": 33,
+      "RPM": null,
+      "Magazine": 5,
+      "BypassesArmor": 0.54,
+      "Spread": 4.8,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:mp_443",
+      "GunType": "Handgun",
+      "Damage": 5.5,
+      "RPM": 400,
+      "Magazine": 17,
+      "BypassesArmor": 0.15,
+      "Spread": 2.5,
+      "AmmoType": "@HandgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:mp_5",
+      "GunType": "Smg",
+      "Damage": 6.5,
+      "RPM": 900,
+      "Magazine": 30,
+      "BypassesArmor": 0.12,
+      "Spread": 2.1,
+      "AmmoType": "@HandgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:m_1911",
+      "GunType": "Handgun",
+      "Damage": 9.5,
+      "RPM": 400,
+      "Magazine": 7,
+      "BypassesArmor": 0.2,
+      "Spread": 2.5,
+      "AmmoType": "@HandgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:m_2_hb",
+      "GunType": "MachineGun",
+      "Damage": 40,
+      "RPM": 360,
+      "Magazine": 100,
+      "BypassesArmor": 0.4,
+      "Spread": 5,
+      "AmmoType": "@HeavyAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:m_4",
+      "GunType": "Rifle",
+      "Damage": 8,
+      "RPM": 850,
+      "Magazine": 30,
+      "BypassesArmor": 0.25,
+      "Spread": 4,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:m_60",
+      "GunType": "MachineGun",
+      "Damage": 10,
+      "RPM": 600,
+      "Magazine": 100,
+      "BypassesArmor": 0.25,
+      "Spread": 5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:m_79",
+      "GunType": "CurvedLauncher",
+      "Damage": 100,
+      "RPM": 180,
+      "Magazine": 1,
+      "BypassesArmor": null,
+      "Spread": 3.5,
+      "AmmoType": "superbwarfare:grenade_40mm",
+      "Projectile": "superbwarfare:gun_grenade",
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:m_870",
+      "GunType": "Shotgun",
+      "Damage": 3,
+      "RPM": null,
+      "Magazine": 8,
+      "BypassesArmor": 0.05,
+      "Spread": 3,
+      "AmmoType": "@ShotgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:m_98b",
+      "GunType": "Sniper",
+      "Damage": 38,
+      "RPM": null,
+      "Magazine": 5,
+      "BypassesArmor": 0.6,
+      "Spread": 6,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:ntw_20",
+      "GunType": "Sniper",
+      "Damage": 140,
+      "RPM": null,
+      "Magazine": 3,
+      "BypassesArmor": 1,
+      "Spread": 8,
+      "AmmoType": "@HeavyAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:qbz_191",
+      "GunType": "Rifle",
+      "Damage": 8.5,
+      "RPM": 750,
+      "Magazine": 30,
+      "BypassesArmor": 0.28,
+      "Spread": 3.5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:qbz_95",
+      "GunType": "Rifle",
+      "Damage": 8.5,
+      "RPM": 650,
+      "Magazine": 30,
+      "BypassesArmor": 0.28,
+      "Spread": 3.7,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:ql_1031",
+      "GunType": "Sniper",
+      "Damage": 9,
+      "RPM": 700,
+      "Magazine": null,
+      "BypassesArmor": 0.5,
+      "Spread": 4,
+      "AmmoType": "FE",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:repair_tool",
+      "GunType": "Special",
+      "Damage": 3,
+      "RPM": 1200,
+      "Magazine": null,
+      "BypassesArmor": null,
+      "Spread": 2,
+      "AmmoType": "FE",
+      "Projectile": "ray",
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:rpg",
+      "GunType": "DirectLauncher",
+      "Damage": 300,
+      "RPM": 120,
+      "Magazine": 1,
+      "BypassesArmor": null,
+      "Spread": 5,
+      "AmmoType": [
+        "superbwarfare:rpg_rocket_tbg",
+        {
+          "Ammo": "superbwarfare:rpg_rocket_standard",
+          "Projectile": "superbwarfare:rpg_rocket_standard",
+          "Override": {
+            "Damage": 450,
+            "ExplosionDamage": 40,
+            "ExplosionRadius": 5,
+            "Velocity": 6,
+            "Gravity": 0.015,
+            "Icon": "superbwarfare:textures/gun_icon/rpg_standard_icon.png"
+          }
+        }
+      ],
+      "Projectile": "superbwarfare:rpg_rocket_tbg",
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:rpk",
+      "GunType": "MachineGun",
+      "Damage": 9.5,
+      "RPM": 600,
+      "Magazine": 40,
+      "BypassesArmor": 0.23,
+      "Spread": 5.5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:secondary_cataclysm",
+      "GunType": "CurvedLauncher",
+      "Damage": 80,
+      "RPM": 300,
+      "Magazine": 8,
+      "BypassesArmor": null,
+      "Spread": 5,
+      "AmmoType": [
+        "superbwarfare:grenade_40mm",
+        {
+          "Ammo": "@ShotgunAmmo",
+          "AmmoSlot": "Default",
+          "Projectile": "superbwarfare:projectile",
+          "Override": {
+            "Damage": 10,
+            "BypassesArmor": 0.2,
+            "ExplosionDamage": 0,
+            "ProjectileAmount": 6,
+            "Velocity": 10,
+            "RecoilX": 0.006,
+            "RecoilY": 0.018,
+            "Crosshair": "@GunDefault"
+          }
+        },
+        {
+          "AmmoSlot": "Melee",
+          "Override": {
+            "ProjectileAmount": 0,
+            "MeleeDuration": 15,
+            "Crosshair": "@GunDefault"
+          }
+        }
+      ],
+      "Projectile": "superbwarfare:gun_grenade",
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:sentinel",
+      "GunType": "Sniper",
+      "Damage": 45,
+      "RPM": null,
+      "Magazine": 5,
+      "BypassesArmor": 0.8,
+      "Spread": 6,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:sks",
+      "GunType": "Rifle",
+      "Damage": 10.5,
+      "RPM": 400,
+      "Magazine": 20,
+      "BypassesArmor": 0.23,
+      "Spread": 4.5,
+      "AmmoType": "@RifleAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:super_star_shooter",
+      "GunType": "DirectLauncher",
+      "Damage": 60,
+      "RPM": 300,
+      "Magazine": 300,
+      "BypassesArmor": null,
+      "Spread": 0,
+      "AmmoType": "100 minecraft:nether_star",
+      "Projectile": "superbwarfare:super_star_projectile",
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    },
+    {
+      "id": "superbwarfare:svd",
+      "GunType": "Sniper",
+      "Damage": 18,
+      "RPM": 300,
+      "Magazine": 10,
+      "BypassesArmor": 0.45,
+      "Spread": 5.5,
+      "AmmoType": "@SniperAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:taser",
+      "GunType": "Special",
+      "Damage": 5,
+      "RPM": 240,
+      "Magazine": 1,
+      "BypassesArmor": null,
+      "Spread": 2,
+      "AmmoType": "superbwarfare:taser_electrode",
+      "Projectile": "superbwarfare:taser_bullet",
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:trachelium",
+      "GunType": "Handgun",
+      "Damage": 24,
+      "RPM": 240,
+      "Magazine": 6,
+      "BypassesArmor": 0.5,
+      "Spread": 3,
+      "AmmoType": [
+        "@RifleAmmo",
+        {
+          "Ammo": "@ShotgunAmmo",
+          "AmmoSlot": "Default",
+          "Override": {
+            "Damage": 6.5,
+            "Headshot": 2,
+            "BypassesArmor": 0.25,
+            "ProjectileAmount": 4,
+            "Velocity": 12
+          }
+        }
+      ],
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": null
+    },
+    {
+      "id": "superbwarfare:vector",
+      "GunType": "Smg",
+      "Damage": 6,
+      "RPM": 1200,
+      "Magazine": 13,
+      "BypassesArmor": 0.15,
+      "Spread": 2.3,
+      "AmmoType": "@HandgunAmmo",
+      "Projectile": null,
+      "Explosion": null,
+      "DefaultFireMode": "Auto"
+    }
+  ],
+  "proposal": {
+    "tacz:aa12": {
+      "proposed_unlock": "DROP",
+      "reason": "Automatic shotgun; test spread, pellets and extended magazines."
+    },
+    "tacz:ai_awp": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:ak12": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:ak47": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:ak74m": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:aug": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:b93r": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:cz75": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:db_long": {
+      "proposed_unlock": "L1",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:db_short": {
+      "proposed_unlock": "L1",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:deagle": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:deagle_golden": {
+      "proposed_unlock": "DROP",
+      "reason": "Collectible reserve; its base damage is LOWER than ordinary Deagle."
+    },
+    "tacz:fn_evolys": {
+      "proposed_unlock": "DROP",
+      "reason": "750 RPM, 12 base damage, 75-round feed."
+    },
+    "tacz:fn_fal": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:g36k": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:glock_17": {
+      "proposed_unlock": "Starter",
+      "reason": "Keep existing starter access through the later physical starter counter."
+    },
+    "tacz:hcar": {
+      "proposed_unlock": "DROP",
+      "reason": "18 base damage / 40% armor ignore; reserve heavy-rifle candidate."
+    },
+    "tacz:hk416d": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:hk_g3": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:hk_mk23": {
+      "proposed_unlock": "L3",
+      "reason": "Raw RPM 50; script/burst behavior needs runtime measurement."
+    },
+    "tacz:hk_mp5a5": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:hk_mp7a1": {
+      "proposed_unlock": "L5",
+      "reason": "65% armor ignore: candidate top shop PDW, subject to armored TTK tests."
+    },
+    "tacz:hm50b": {
+      "proposed_unlock": "DROP",
+      "reason": "70 base damage; high-caliber reserve."
+    },
+    "tacz:kar98": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:lonetrail": {
+      "proposed_unlock": "DROP",
+      "reason": "Special collectible; single-shot rifle-caliber pistol."
+    },
+    "tacz:m1014": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m107": {
+      "proposed_unlock": "DROP",
+      "reason": "55 base damage, semi-automatic .50 BMG."
+    },
+    "tacz:m16a1": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m16a4": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m1866": {
+      "proposed_unlock": "L1",
+      "reason": "Source category DMR; manual action/5-round feed."
+    },
+    "tacz:m1897": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m1911": {
+      "proposed_unlock": "L1",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m249": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m320": {
+      "proposed_unlock": "L4",
+      "reason": "Conditional: explosive/damage contract and ammo limits required."
+    },
+    "tacz:m4a1": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m700": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m870": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:m95": {
+      "proposed_unlock": "DROP",
+      "reason": "75 base damage / 75% armor ignore."
+    },
+    "tacz:m9a4": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:mcx_spear_lt": {
+      "proposed_unlock": "DROP",
+      "reason": "1000 RPM, 8 base damage; reserve strong automatic-rifle candidate."
+    },
+    "tacz:minigun": {
+      "proposed_unlock": "DROP",
+      "reason": "1200 RPM; special feed/heat/spin-up must be evaluated."
+    },
+    "tacz:mk14": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:mk18": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:mrad": {
+      "proposed_unlock": "DROP",
+      "reason": "45 base damage / 75% armor ignore."
+    },
+    "tacz:p320": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:p90": {
+      "proposed_unlock": "DROP",
+      "reason": "50-round capacity / 70% armor ignore."
+    },
+    "tacz:pkm": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:qbz_191": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:qbz_95": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:qr_24": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:rhino357": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:rpg7": {
+      "proposed_unlock": "L5",
+      "reason": "Conditional: explosive/damage contract and ammo limits required."
+    },
+    "tacz:rpk": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:scar_h": {
+      "proposed_unlock": "DROP",
+      "reason": "14 base damage / 50% armor ignore automatic-capable rifle."
+    },
+    "tacz:scar_l": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:scar_mk20": {
+      "proposed_unlock": "DROP",
+      "reason": "18 base damage / 50% armor ignore precision role."
+    },
+    "tacz:sks_tactical": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:spas_12": {
+      "proposed_unlock": "L5",
+      "reason": "48 base damage, manual-action/burst modes; compare against AA12 natively."
+    },
+    "tacz:spr15hb": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:springfield1873": {
+      "proposed_unlock": "L1",
+      "reason": "35 base damage but one-shot feed/90 RPM; do not rank on damage alone."
+    },
+    "tacz:svd": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:taurus500": {
+      "proposed_unlock": "DROP",
+      "reason": "40 base damage / 50% armor ignore sidearm."
+    },
+    "tacz:taurus943": {
+      "proposed_unlock": "L1",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:tec_9": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:timeless50": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:type_81": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:ump45": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:urgi": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:uzi": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "tacz:vector45": {
+      "proposed_unlock": "DROP",
+      "reason": "1200 RPM / 8 base damage."
+    },
+    "superbwarfare:aa_12": {
+      "proposed_unlock": "DROP",
+      "reason": "25-round automatic shotgun, 12 projectiles per shot."
+    },
+    "superbwarfare:ak_12": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:ak_47": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:awm": {
+      "proposed_unlock": "L5",
+      "reason": "36 base damage / 80% bypass: candidate top shop sniper."
+    },
+    "superbwarfare:bocek": {
+      "proposed_unlock": "DROP",
+      "reason": "Special bow; 48 listed base damage."
+    },
+    "superbwarfare:devotion": {
+      "proposed_unlock": "L5",
+      "reason": "Raw 400 RPM is not final performance: spin-up/item behavior must be tested."
+    },
+    "superbwarfare:glock_17": {
+      "proposed_unlock": "L1",
+      "reason": "Alternative mod implementation; do not silently substitute for existing TaCZ starter."
+    },
+    "superbwarfare:glock_18": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:hk_416": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:homemade_shotgun": {
+      "proposed_unlock": "L1",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:hunting_rifle": {
+      "proposed_unlock": "DROP",
+      "reason": "65 base damage / 70% bypass / one round: not a beginner gun despite name."
+    },
+    "superbwarfare:igla_9k38": {
+      "proposed_unlock": "L5",
+      "reason": "Conditional: anti-air counter availability, guidance and ammo tests."
+    },
+    "superbwarfare:insidious": {
+      "proposed_unlock": "DROP",
+      "reason": "11 base damage / 900 RPM burst / 48 rounds."
+    },
+    "superbwarfare:javelin": {
+      "proposed_unlock": "DROP",
+      "reason": "Guided missile; 650 listed direct damage."
+    },
+    "superbwarfare:k_98": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:marlin": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:minigun": {
+      "proposed_unlock": "DROP",
+      "reason": "1200 RPM; special feed/heat/spin-up."
+    },
+    "superbwarfare:mk_14": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:mosin_nagant": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:mp_443": {
+      "proposed_unlock": "L1",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:mp_5": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:m_1911": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:m_2_hb": {
+      "proposed_unlock": "DROP",
+      "reason": "40 base damage / 100 rounds; emplacement/handling review."
+    },
+    "superbwarfare:m_4": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:m_60": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:m_79": {
+      "proposed_unlock": "L4",
+      "reason": "Conditional: explosives and damage-boundary tests."
+    },
+    "superbwarfare:m_870": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:m_98b": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:ntw_20": {
+      "proposed_unlock": "DROP",
+      "reason": "140 base damage / 100% armor bypass."
+    },
+    "superbwarfare:qbz_191": {
+      "proposed_unlock": "L4",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:qbz_95": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:ql_1031": {
+      "proposed_unlock": "DROP",
+      "reason": "FE-powered automatic weapon; energy limits must be audited."
+    },
+    "superbwarfare:repair_tool": {
+      "proposed_unlock": "HOLD",
+      "reason": "Utility, not combat progression; separate FE/vehicle-maintenance offer review."
+    },
+    "superbwarfare:rpg": {
+      "proposed_unlock": "L5",
+      "reason": "Conditional: different rocket types override direct/explosion damage."
+    },
+    "superbwarfare:rpk": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:secondary_cataclysm": {
+      "proposed_unlock": "DROP",
+      "reason": "Eight-round launcher with alternate firing feeds."
+    },
+    "superbwarfare:sentinel": {
+      "proposed_unlock": "DROP",
+      "reason": "45 base damage / 80% bypass; special behavior requires testing."
+    },
+    "superbwarfare:sks": {
+      "proposed_unlock": "L2",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:super_star_shooter": {
+      "proposed_unlock": "HOLD",
+      "reason": "Exclude ordinary catalog and initial loot: special star ammunition/projectile needs separate balance review."
+    },
+    "superbwarfare:svd": {
+      "proposed_unlock": "L3",
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    "superbwarfare:taser": {
+      "proposed_unlock": "L2",
+      "reason": "Conditional: stun/control behavior and counterplay need tests."
+    },
+    "superbwarfare:trachelium": {
+      "proposed_unlock": "DROP",
+      "reason": "24 base damage / 50% bypass; alternate shotgun feed."
+    },
+    "superbwarfare:vector": {
+      "proposed_unlock": "L5",
+      "reason": "Provisional role/handling comparison within this tier."
+    }
+  },
+  "excluded_internal_sbw_ids": [
+    "superbwarfare:empty_gun",
+    "superbwarfare:vehicle_gun"
+  ],
+  "counts": {
+    "tacz": 70,
+    "sbw": 43,
+    "drop_candidates": 28
+  },
+  "tacz_verified_git_blobs": 140,
+  "tacz_files_git_blob_sha1": {
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/aa12_data.json": "6a4a030cd558054cf8baba56ac56bd249a4054bd",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ai_awp_data.json": "1e22713ffe9472cb7fd17cd08fd25067519bae79",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ak12_data.json": "729ea78927dad0cb1ac516fd90dc558f28af997e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ak47_data.json": "46d1e3610b0e55bab5a776a79e46f938ceadb30f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ak74m_data.json": "fe75c7a60222ea0b1dd93a0c9d6dbec1afa20700",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/aug_data.json": "60e19485847d7ead1ec80b9289e26e12ddce4ffb",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/b93r_data.json": "de0d8c2e452af9e4c1120b8df633d0e94c92cd18",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/cz75_data.json": "9c098b81174a0dec78a323fb3ce3895c50259e29",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/db_long_data.json": "00de6d821521d0b6ff978dc6a62f5d37b0da342a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/db_short_data.json": "7cf9a8443cd3243dcd289a04bbe7e6183d5fe5ed",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/deagle_data.json": "fb2d038118687617bcc01d41bb445bf9cfccdf0a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/deagle_golden_data.json": "bbfcc1827a600752f4ec635dcaec52c89e8c661f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/fn_evolys_data.json": "5f8c13ba635f0e0a0fd415bcc5a4d24651503293",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/fn_fal_data.json": "e76b6f4d36ee17dbddfb1032efd3584faa1db74f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/g36k_data.json": "4e6372ba98e8d9c93bd74676608e5973588a8c42",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/glock_17_data.json": "6453a2261e1e0494f81a6168fab3f20d7e2a4546",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hcar_data.json": "d141cb012384fc6e8a063623cc5b054ffcc7411d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk416d_data.json": "9233d18178ed2114e4d6b522021fc4bf9597a31f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_g3_data.json": "515ca8c6294e96a5fa32432a13f13555ad9c718a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_mk23_data.json": "132e8fe322df4bc161bf5ed64731c5404f7fa887",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_mp5a5_data.json": "97b795d0da1c1c9f74ef8c9bc37dce1837d6f747",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hk_mp7a1_data.json": "9fc193d2ee8f3fbf24cce0998981917c976929c6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/hm50b_data.json": "c489e15ac4564625f054c318499b23daa68a7383",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/kar98_data.json": "1057a8c858495b410dd3d5d13264aa5c98d68a38",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/lonetrail_data.json": "26ffd18671d3664e15713b048e51341215fa913c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1014_data.json": "e29c9e89f76f6bc4f3272fafc4fa9e4189b18217",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m107_data.json": "84b4e1f7c81ccc5be573a0e26eed7f7d00a41c5a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m16a1_data.json": "c575fb660bef4314af32bfc2b1c22cba3bc5f0a4",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m16a4_data.json": "41c53878a1020d58727944fe82ce44f6c0955c31",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1866_data.json": "9c95999276197bfdbd8ba557f790bbda08ef8d7f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1897_data.json": "a28613472be16cf654eb83dc6bbc1d3184e7eeac",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m1911_data.json": "a033e9a2c905eaedc70aa83b2b286ce4f3d54367",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m249_data.json": "87f9de97f43f4dee5061dd86f8df8fbb9d1bbdb9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m320_data.json": "39dcbb27c4a7e5a35139f05fa7daffa39b40a8fa",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m4a1_data.json": "215a759b834267e97639e99b2071ce5f47a5020a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m700_data.json": "931783c40881ac1fdeebf55df141b7da92839cd6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m870_data.json": "b7ffd7ab677ce0c8963811aab9918792f3c3166e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m95_data.json": "fb2782ed5c07e13c4eaa36308a4b593adcd3c55c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/m9a4_data.json": "a1f497ea3904129edb4ead8ca7ee8b61848c50b6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mcx_spear_lt_data.json": "11a77bc0e24ec61d97110adaea344a718b18e4c6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/minigun_data.json": "8cc3a5f654d8b7ce0a9fc095b5a3e27d501ea5e5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mk14_data.json": "cdc8c700818579df8dea17dc27c9bdf183c41013",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mk18_data.json": "6e6c3e709053a2ae3a0d19fe1317f2af09619f61",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/mrad_data.json": "bc4bfd108d7b10bfbf6a4e8a325d1d719f0a14c7",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/p320_data.json": "424272f9b5f8e3c3113b911a3dbade8ee7d49421",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/p90_data.json": "f56369213be727a1681838bdbfdf76fc718fecb5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/pkm_data.json": "38d3bd7dfb4dd9914f63ac8e237bf533ef15be5f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/qbz_191_data.json": "882c8afb4778b34ab59540349121cd1e216523ef",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/qbz_95_data.json": "29d93bc74888c1d4f350fc7bd70c75fbb82bcb52",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/qr_24_data.json": "6381a452dfe6139f6f7b8c26d3b59bcd9a44dfbc",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/rhino357_data.json": "8380020442d1219aa13801040ec711df9a201a16",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/rpg7_data.json": "aa00e3317f6b7a7f552152e0cf6824949f055ff0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/rpk_data.json": "9a7a1cbc1817a686f39dc0475bda0262a0de7495",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/scar_h_data.json": "116ca7423a99a8366f1a355337a4a273d413412c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/scar_l_data.json": "72265883a0930f947d7ae31a75871520144f8a43",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/scar_mk20_data.json": "ea14847d1fede652f72fe28efe7fa98cebfa2789",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/sks_tactical_data.json": "20a62d767a5558547fd8bde0b472fb0b94458f7e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/spas_12_data.json": "5d5342431b780df6ccf97a943e7163110f18fef0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/spr15hb_data.json": "7afd536f903884128c37294680cc72268b9c9b87",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/springfield1873_data.json": "5bc37b3d49ea4f6fc0b966ea0b5b583658149b6c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/svd_data.json": "0beabf7b6a8744ee9e91179cb85a6cf0e7ce3a4d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/taurus500_data.json": "9a8e79cb72b32845730c87b3a5ac2efe74975168",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/taurus943_data.json": "20c49eef2f51e72d9b4df9e9d4891d8023ddebf5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/tec_9_data.json": "3b61fe55dea44cb4d8d2daac8eb393feda612fa8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/timeless50_data.json": "65685f1d8e02318f9af7d88aa124f91a13ba0a41",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/type_81_data.json": "0558b5f07fb51ccac0687bdb148a218068185734",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/ump45_data.json": "6eac2934aed8def621ea51c63e7f6a869471216d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/urgi_data.json": "05e0a12f1e810a1794c911d54e57af15d748189b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/uzi_data.json": "0774d8f326165b1495efcbf002403eb8dd86650a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/data/guns/vector45_data.json": "71f5f8ffce283808156676b141178ae88a6e7861",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/aa12.json": "753c57692be64b84fed46c295d9c231e8a961892",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ai_awp.json": "5303ee821d1dfac16b39c302f6010ac06561de4d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ak12.json": "3384d1dca3b068826e3dff018fe4bee9a9b83451",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ak47.json": "64adb9ba372e19f29bf92fba430722d17ea12e33",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ak74m.json": "d0c69171d280ea79ed45c656dc96bc537ee43797",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/aug.json": "e7f0f4ae3fc152228cd66a607336a7bf94a7cf62",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/b93r.json": "17fcef12edf41b5307be7f77ec752a95249db222",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/cz75.json": "ffd9e2045f63f6e0a562ba587ecccc2fa61ea553",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/db_long.json": "2b8428e939f509e0ff5883e6a84df6378acc7b1d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/db_short.json": "6f7bbd80bfa0965d5bf96b5f90c05d16991343c3",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/deagle.json": "7642dd8361dd1a50957242887c8bb500c71177a3",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/deagle_golden.json": "14793b790a7a09fd936fea856f615dfcd64f6993",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/fn_evolys.json": "d24273335ca43c8c2e0e7a6f7382d06c8c461da9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/fn_fal.json": "0c2dd35c20081e88ca6a47e7755d2fa99935c910",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/g36k.json": "b77c8599712f5caba3a8c7f467cec03361bfd48b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/glock_17.json": "f004a61fe0d17b367ee450e6a3b110bc7f589901",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hcar.json": "75a9ac1115b628ee3792bfe8049ec24587abca26",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk416d.json": "74ae5768eabd56d7de7deab49a60953868cd9d01",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_g3.json": "91c8b97c70a5486f38dabe24d30a538d800ed078",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_mk23.json": "ebdfc95878972c2635b8894c5f8ec7ccc4a36fb0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_mp5a5.json": "78a9095ce4c993a63bf15327630341eb39c764e3",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hk_mp7a1.json": "aa51b262616c397dd6a72030ada684461905e795",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/hm50b.json": "0080b996bf127b60310a23225b708622cf8b5f20",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/kar98.json": "7deb5cc92893b9f957b11f94de924681b87a29b6",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/lonetrail.json": "9eb89594eaa1bd3f83ba8645f9bc910b13815ad1",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1014.json": "2edac8d3b1472e53ba3c7f6098daf2e5670a6ee0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m107.json": "98104c51ebfefee103cd12ab6f57931d5cb0547a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m16a1.json": "f47677b96320a9914bc67adfaa3f15851fa77879",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m16a4.json": "38ef6a23ba6670497678d1b2b3371b9fd07d136c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1866.json": "222266b2297907059b1c4b1355db0a2aeb194850",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1897.json": "3e2704f94e5c3ebfca3abaafbb627728f16d5a97",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m1911.json": "1471e6f497a27a16359b5158b9d070c74df323f3",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m249.json": "ad8168f27876b25dcacf742af531a43703a425ec",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m320.json": "79c22dd5926d81c3c449d08e434364dfb9e64b2b",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m4a1.json": "6bc597ef154cba635f4b24f4f3cfb4163e22282f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m700.json": "cc6ad93c89a90e902847a7445e218183583fc8fd",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m870.json": "76fc7c0abd4dc73d41f7966c099e47f69e1b379c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m95.json": "c759c598baadfc1e5b0f65edb51574ef4eefc386",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/m9a4.json": "b3359f8d29b7b6fecaf9622c379721130024ff72",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mcx_spear_lt.json": "296a57fe2412247faf7d1b4ff91fbc4ef02213ed",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/minigun.json": "0f1d6a5f36862ad709c5c7a5e1d31d6ffb2577b9",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mk14.json": "251e101ed31086c47463364c6af79dce41b0f95a",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mk18.json": "d9b95e1f51004d0d24a0ee2a3d0d5976b8e372ab",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/mrad.json": "3354eaffc324b6ce51bc21acfe9407af94a25e8f",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/p320.json": "23912602ee3322a34eddd4546ec1f33bf017cc28",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/p90.json": "7051d6bfc5082d4d8e72c17fca7aea8e1b050509",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/pkm.json": "08d4d107a66e3ab637c2c5acff39184899eda446",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/qbz_191.json": "f3725dff7386ce7c2c1c2264a9f565d8ca4df468",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/qbz_95.json": "06806b9dc50e476bd3483262dfb66d43ab210562",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/qr_24.json": "f405e0ca79725de795bfa74a5731dbbfe567e5c8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/rhino357.json": "34c5fabe1e5aa00ed54b54398068fe2cda0f374e",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/rpg7.json": "3b1731d4fc050973418ec6743b6653fd6d1a8582",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/rpk.json": "15442596f3ac6eeb7dca29643cb69b8fdffbbaef",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/scar_h.json": "782822a23d752ffaa944fccdaa848725ed0b1286",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/scar_l.json": "2c1ecb497b9df42caa447998aac2388d3b6cfb8c",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/scar_mk20.json": "33e150721b33b7d937fa13a78e82674732f7fcb2",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/sks_tactical.json": "c381262e25d2840acfcf2fabbf469c2004d45a8d",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/spas_12.json": "af77e1337b519d7a01521e5363639d2637c46ef4",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/spr15hb.json": "ecc0d85b878d6eff4ba14056a021a6e2090333e5",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/springfield1873.json": "72d791af04544faef0c79831d0c75acc15c42aa3",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/svd.json": "15dcac1ca3d589066a17cc9a0a6e1115c48145f1",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/taurus500.json": "853626bb586516350ccfc9a20dc551205e30cfa0",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/taurus943.json": "ec025ad8101e63a1e711b3701eb905606cc689fe",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/tec_9.json": "fa1b89aa848d3e38edd8a88d4a98fe50dc371f49",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/timeless50.json": "1563e07b8d5e6f749fa723c8301f67ec00de14d7",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/type_81.json": "9b24c03d9b6beb8ef14b3e9af7ca0299f9f8f8b1",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/ump45.json": "c4bfd6c41b5b60eb4ee22998b710b34a51f87ecc",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/urgi.json": "61c60ddc8478d80f6bd93eaa22a3ec9602e913cb",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/uzi.json": "833b5fe797ea07532f91f9d14747e18eb54a78a8",
+    "src/main/resources/assets/tacz/custom/tacz_default_gun/data/tacz/index/guns/vector45.json": "aa5151014ee20c8358fa12ce497f8c3bf63828e6"
+  }
+}

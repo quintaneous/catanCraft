@@ -29,7 +29,7 @@ Four-write slices do not imply a frame-time guarantee: whole-plan scans, prefix 
 
 ## Validation scope
 
-The dedicated workflow builds exact committed source on Java17 / Gradle8.8 / Minecraft1.20.1 / Forge47.4.10. Planned matrix: new snapshot22, retained session38 22, gate35 12 and baseline50, plus one distinct-JVM restart scenario in two phases: 107 unique scenarios / 108 phase executions. Counts become evidence only when actual logs and artifacts pass inspection.
+The dedicated workflow builds exact committed source on Java17 / Gradle8.8 / Minecraft1.20.1 / Forge47.4.10. Executed matrix: new snapshot22, retained session38 22, gate35 12 and baseline50, plus one distinct-JVM restart scenario in two phases: 107 unique scenarios / 108 phase executions. All 108 phase executions passed in workflow `42888843335`; independently checked artifacts and source are recorded in [the checkpoint](SIEGE_RESTORATION_039_CHECKPOINT.md).
 
 The restart scenario uses eight mixed structural cells and a protected barrel with actual inventory/full NBT. First JVM saves four restored/four AIR cells. The second JVM checks those physical saved blocks and original snapshot/journal bytes before reopening, restores the remaining four and verifies inert completion. It never copies, reseeds or clears the fixture in the second phase. Synthetic authority and no-drop AIR damage are not connected players or weapon integration.
 
