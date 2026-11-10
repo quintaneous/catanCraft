@@ -38,9 +38,10 @@ final class NativeSbw42 {
         ItemStack original = quoted.item();
         UUID identity = offer.kind() == WeaponShopCatalog40.Kind.GUN ? nativeIdentity(original) : null;
         Built rebuilt = inspect(server, offer, identity);
-        if (!rebuilt.fingerprint().equals(quoted.fingerprint())
-                || !rebuilt.item().save(new CompoundTag()).equals(original.save(new CompoundTag())))
+        if (!rebuilt.fingerprint().equals(quoted.fingerprint()))
             throw invalid("The SBW weapon data changed; review this item again.");
+        if (!rebuilt.item().save(new CompoundTag()).equals(original.save(new CompoundTag())))
+            throw invalid("The native SBW stack changed; review this item again.");
     }
 
     private static Built inspect(MinecraftServer server, WeaponStock42.Offer offer, UUID identity) throws IOException {
@@ -73,9 +74,9 @@ final class NativeSbw42 {
             if (raw == null || live.get(gunId) != raw || !defaultClass.isInstance(raw)
                     || Boolean.TRUE.equals(call(raw, "isDefaultData")) || !gunId.equals(call(raw, "getId")))
                 throw invalid("Fallback SBW gun data cannot authorize a purchase.");
-            String rawBefore = NativeWeapon42.canonical(gson.toJsonTree(raw));
+            String rawBefore = rawSnapshot(raw, gson);
             Object expected = decodeReference(nativeReference.json(), defaultClass);
-            if (!rawBefore.equals(NativeWeapon42.canonical(gson.toJsonTree(expected))))
+            if (!rawBefore.equals(rawSnapshot(expected, gson)))
                 throw invalid("The effective SBW gun definition differs from its qualified reference.");
             String configBefore = configuration(gson);
 
@@ -131,6 +132,7 @@ final class NativeSbw42 {
                         || field(mode, "mode") == null) throw invalid("Special SBW fire-mode overrides are held out.");
             }
             JsonObject fingerprint = new JsonObject();
+            fingerprint.addProperty("fingerprintSchema", "sbw42_native_semantics_v2");
             fingerprint.addProperty("provider", "superbwarfare"); fingerprint.addProperty("version", VERSION);
             fingerprint.addProperty("qualification", RESOURCE_SHA); fingerprint.addProperty("referenceGun", gunId);
             fingerprint.addProperty("gunClass", registeredGun.getClass().getName());
@@ -164,7 +166,7 @@ final class NativeSbw42 {
             // SBW replaces this map during datapack prepare. Reject a changed
             // object, a changed object in place, or a changed global config.
             if (!live.containsKey(gunId) || live.get(gunId) != raw
-                    || !rawBefore.equals(NativeWeapon42.canonical(gson.toJsonTree(raw)))
+                    || !rawBefore.equals(rawSnapshot(raw, gson))
                     || !configBefore.equals(configuration(gson)))
                 throw invalid("SBW data changed during supply validation.");
             return new Built(readback, NativeWeapon42.sha(NativeWeapon42.canonical(fingerprint).getBytes(StandardCharsets.UTF_8)));
@@ -181,6 +183,16 @@ final class NativeSbw42 {
         Object nativeJson = call(loader, "getJSON");
         return Class.forName("kotlinx.serialization.json.Json").getMethod("decodeFromString",
                 Class.forName("kotlinx.serialization.DeserializationStrategy"), String.class).invoke(nativeJson, serializer, json);
+    }
+
+    private static String rawSnapshot(Object raw, Gson gson) throws ReflectiveOperationException, IOException {
+        JsonObject snapshot = gson.toJsonTree(raw).getAsJsonObject();
+        // Native reloadTypes is a Set. Its iteration order is not a weapon
+        // setting, unlike fire-mode/consumer lists whose order selects defaults.
+        Object reloadTypes = call(raw, "getReloadTypes");
+        if (!(reloadTypes instanceof Set<?>)) throw invalid("Unknown SBW reload-type representation.");
+        snapshot.add("ReloadTypes", json(reloadTypes, gson));
+        return NativeWeapon42.canonical(snapshot);
     }
 
     private static void emptyGun(Object data, ItemStack stack) throws ReflectiveOperationException, IOException {
@@ -286,18 +298,33 @@ final class NativeSbw42 {
             entry.addProperty("type", ((Enum<?>) call(perk, "getType")).name());
             result.add(entry);
         }
-        return result;
+        // SBW discovers perk JSONs with Files.list and expands @Ammo from a
+        // registry entry set. That incidental order can differ in a new JVM.
+        // No perks are active on these supplied guns; retain every available
+        // identity and duplicate count, but canonicalize this membership list.
+        // Authored AvailablePerks order remains covered by the full raw policy.
+        return unordered(result);
     }
 
     private static JsonElement json(Object value, Gson gson) throws ReflectiveOperationException, IOException {
         if (value == null) return JsonNull.INSTANCE;
         if (value instanceof JsonElement element) return element.deepCopy();
         if (value instanceof Collection<?> list) {
-            JsonArray result = new JsonArray(); for (Object item : list) result.add(json(item, gson)); return result;
+            JsonArray result = new JsonArray(); for (Object item : list) result.add(json(item, gson));
+            return value instanceof Set<?> ? unordered(result) : result;
         }
         if (value instanceof Number number && !Double.isFinite(number.doubleValue())) throw invalid("Non-finite SBW data.");
         if (value.getClass().getName().equals(BASE + "data.StringToObject")) return json(field(value, "value"), gson);
         return gson.toJsonTree(value);
+    }
+
+    private static JsonArray unordered(JsonArray values) throws IOException {
+        List<Map.Entry<String, JsonElement>> sorted = new ArrayList<>();
+        for (JsonElement value : values) sorted.add(Map.entry(NativeWeapon42.canonical(value), value));
+        sorted.sort(Map.Entry.comparingByKey());
+        JsonArray result = new JsonArray();
+        for (var entry : sorted) result.add(entry.getValue());
+        return result;
     }
 
     private static Item registered(String id) throws IOException {

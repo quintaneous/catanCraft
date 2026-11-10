@@ -160,8 +160,11 @@ final class WeaponStock42 {
             WeaponTierCatalog41.Entry gun = mapping.getValue();
             AmmoSpec spec = AMMO.get(mapping.getKey());
             WeaponTierCatalog41.requireShop(gun.id(), level(gun), WeaponTierCatalog41.CANDIDATE_REVISION);
+            // Published TaCZ .338 has a native stack limit of 30. This is an explicit
+            // bundle quantity, never a builder-side truncation of a paid amount.
+            int count = mapping.getKey().equals("tacz:338") ? 30 : 32;
             offers.add(new Offer(sku(gun.provider(), "ammo", mapping.getKey()), spec.title(), WeaponShopCatalog40.Kind.AMMO,
-                    gun.provider(), mapping.getKey(), gun.id(), 32, level(gun), "", spec.price(), REVISION));
+                    gun.provider(), mapping.getKey(), gun.id(), count, level(gun), "", spec.price(), REVISION));
         }
         if (offers.size() != 97) throw invalid("Provisional weapon stock is incomplete.");
         offers.sort(Comparator.comparingInt(Offer::requiredLevel).thenComparing(Offer::kind)

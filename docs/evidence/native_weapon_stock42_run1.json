@@ -1,0 +1,31 @@
+{
+  "source": "111532c48e8bb519a32232b5b0d0d26900bd87bd",
+  "run": 42912799018,
+  "artifact": 13808232809,
+  "artifact_sha256": "3997b73125ead0ba45e8868fddda5686d77b6ae08f890297e6cc05e5e0e2c546",
+  "all_passed": false,
+  "expected_executions": 178,
+  "executed": 176,
+  "passed": 172,
+  "failed": 4,
+  "manifest_files_checked": 154,
+  "source_files_checked": 434,
+  "failures": [
+    {
+      "log": "native_combined/stock42-evidence/native_combined.log",
+      "message": "all_97_offers_qualify_with_both_published_providers failed! The native builder did not produce the requested stack."
+    },
+    {
+      "log": "native_tacz/stock42-evidence/native_tacz.log",
+      "message": "all_17_native_ammunition_offers_roundtrip failed! The native builder did not produce the requested stack."
+    },
+    {
+      "log": "native_sbw/stock42-evidence/native_sbw_verify.log",
+      "message": "original_native_uuid_gun_and_receipts_recover_across_distinct_jvms failed! The SBW weapon data changed; review this item again."
+    },
+    {
+      "log": "catancraft_shop40/stock42-evidence/catancraft_shop40.log",
+      "message": "starter_tier_and_exact_existing_catalog_do_not_activate_reference_guns failed! Read-only catalog lost item kinds"
+    }
+  ]
+}

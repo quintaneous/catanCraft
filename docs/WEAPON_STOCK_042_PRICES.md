@@ -134,7 +134,7 @@ Legacy rows use revision 040; all other rows use revision 042. Their reference g
 
 ## Compatible ammunition products
 
-All ammunition products contain **32 actual rounds**. TaCZ ammo identities come from each eligible gun's exact `ammo` JSON string. The four SBW mappings below come from the pinned Superb Warfare 0.8.9.2 source artifact, SHA-256 `06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5`: `ModItems.kt` registers each as `AmmoSupplierItem(type, 1, Item.Properties())`, so one native item supplies one round. Ordinary native stack size is 64; the delivery provider must still verify the effective item, count, ammo type, one-round unit and maximum stack size. These source facts do not substitute for effective installed native-data validation.
+Ammunition products contain **32 actual rounds**, except **TaCZ .338: 30 rounds**, matching its published native stack limit of 30. The .338 provisional bundle price remains $450 + 5 Steel + 3 Explosives; the displayed quantity is explicit before purchase. TaCZ ammo identities come from each eligible gun's exact `ammo` JSON string. The four SBW mappings below come from the pinned Superb Warfare 0.8.9.2 source artifact, SHA-256 `06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5`: `ModItems.kt` registers each as `AmmoSupplierItem(type, 1, Item.Properties())`, so one native item supplies one round. Ordinary native stack size is 64; the delivery provider must still verify the effective item, count, ammo type, one-round unit and maximum stack size. These source facts do not substitute for effective installed native-data validation.
 
 | SBW gun-data token | Actual registry ID | Native ammo type | Rounds per item |
 |---|---|---|---:|
@@ -166,14 +166,14 @@ TaCZ and SBW ammunition remains separate even when gun names or nominal calibers
 | `tacz_ammo_50ae` | `tacz:50ae` | `tacz:deagle` | L4 | 32 | $280 + 3 Steel + 2 Explosives |
 | `tacz_ammo_58x42` | `tacz:58x42` | `tacz:qbz_191` | L4 | 32 | $240 + 3 Steel + 1 Explosives |
 | `tacz_ammo_762x54` | `tacz:762x54` | `tacz:svd` | L4 | 32 | $300 + 3 Steel + 2 Explosives |
-| `tacz_ammo_338` | `tacz:338` | `tacz:ai_awp` | L5 | 32 | $450 + 5 Steel + 3 Explosives |
+| `tacz_ammo_338` | `tacz:338` | `tacz:ai_awp` | L5 | 30 | $450 + 5 Steel + 3 Explosives |
 | `tacz_ammo_46x30` | `tacz:46x30` | `tacz:hk_mp7a1` | L5 | 32 | $320 + 3 Steel + 2 Explosives |
 
 ## Price-testing interpretation
 
 Every new ammo offer has a fixed, explicit cash/Steel/Explosives cost; its unlock is derived only from qualified ordinary consumers. Sharing ammunition does not grant access to an excluded gun. Some eligible guns share ammunition with DROP-reserved guns; this catalog sells no reserved gun, skin substitute, alternate feed or attachment package. The existing legacy 9mm price intentionally retains its Stone-only material cost.
 
-For playtests, compare money and material affordability, useful engagements per 32-round bundle, replacement frequency, reload/manual-action behavior, armor interactions, hit rate and ordinary national production at each completed factory level. Compare same-role TaCZ/SBW choices together. A later numerical change must create a new price revision while historical intent recovery continues using the original recorded price and item.
+For playtests, compare money and material affordability, useful engagements per displayed bundle (30 rounds for .338; 32 otherwise), replacement frequency, reload/manual-action behavior, armor interactions, hit rate and ordinary national production at each completed factory level. Compare same-role TaCZ/SBW choices together. A later numerical change must create a new price revision while historical intent recovery continues using the original recorded price and item.
 
 This document records the deterministic provisional schedule and source evidence only. It does not claim combat calibration, economy acceptance, native delivery/restart acceptance or owner visual/modpack approval. Validation results belong in the current integration evidence and must distinguish synthetic policy checks from exact installed native tests.
 

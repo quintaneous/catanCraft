@@ -89,6 +89,13 @@ final class NativeTacz42 {
             if (((Number) call(ammoIndex, "getStackSize")).intValue()
                     != Math.max(expectedAmmo.getAsJsonObject().get("stack_size").getAsInt(), 1))
                 throw unavailable("The parsed ammunition capacity differs from the reference.");
+            int ammoStackLimit = ((Number) call(ammoIndex, "getStackSize")).intValue();
+            // AmmoItemBuilder preserves the requested amount; it does not cap it.
+            // AmmoItem.getMaxStackSize reads this native pack index. The catalog
+            // must offer an explicit legal amount (not silently truncate a purchase).
+            if (offer.kind() == WeaponShopCatalog40.Kind.AMMO && offer.count() > ammoStackLimit)
+                throw unavailable("The TaCZ ammunition offer " + offer.nativeId() + " requests " + offer.count()
+                        + " rounds, exceeding its native stack limit of " + ammoStackLimit + ".");
             qualifyDefaultAttachments(api, gson, cache, gunId, reference);
             List<?> modes = (List<?>) call(data, "getFireModeSet");
             JsonArray modeNames = new JsonArray();
@@ -322,8 +329,12 @@ final class NativeTacz42 {
             builderClass.getMethod("putAllVirtualAttachment", EnumMap.class).invoke(builder, defaults);
         }
         Object built = builderClass.getMethod("build").invoke(builder);
-        if (!(built instanceof ItemStack stack) || stack.isEmpty() || stack.getCount() != offer.count() || stack.getCount() > stack.getMaxStackSize())
-            throw unavailable("The native builder did not produce the requested stack.");
+        if (!(built instanceof ItemStack stack) || stack.isEmpty())
+            throw unavailable("The native builder did not produce " + offer.nativeId() + ".");
+        if (stack.getCount() != offer.count() || stack.getCount() > stack.getMaxStackSize())
+            throw unavailable("The native builder produced an invalid amount for " + offer.nativeId()
+                    + ": requested=" + offer.count() + ", actual=" + stack.getCount()
+                    + ", nativeStackLimit=" + stack.getMaxStackSize() + ".");
         Class<?> itemApi = Class.forName("com.tacz.guns.api.item." + (gun ? "IGun" : "IAmmo"));
         if (!itemApi.isInstance(stack.getItem()) || !id.equals(itemApi.getMethod(gun ? "getGunId" : "getAmmoId", ItemStack.class).invoke(stack.getItem(), stack)))
             throw unavailable("The built TaCZ item has the wrong native identity.");

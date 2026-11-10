@@ -91,10 +91,9 @@ public final class PhysicalWeaponShop40 {
     public static int review(CommandSourceStack source, String offer) { return command(source, "review", offer); }
     /** Read-only discovery rows for the legacy catalog. Listing stock never grants shopping authority. */
     public static List<String> catalogRows() {
-        try { return List.of("Weapon counters offer " + WeaponStock42.offers().size() + " gun and ammunition products.",
-                "Visit the physical counter to browse factory tiers and provisional playtest prices.",
-                "Guns reserved for special drops and items awaiting qualification are excluded."); }
-        catch (IOException failure) { return List.of("Weapon stock is unavailable: " + message(failure)); }
+        return WeaponShopCatalog40.offers().stream().map(offer -> offer.kindName() + ": " + offer.description()
+                + (offer.requiredLevel() == 0 ? " · Starter or Weapons Factory counter"
+                : " · Local Weapons Factory Level " + offer.requiredLevel())).toList();
     }
     public static int command(CommandSourceStack source, String action, String selection) {
         if (!(source.getEntity() instanceof ServerPlayer player)) {

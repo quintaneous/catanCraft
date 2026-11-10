@@ -1,3 +1,4 @@
+# Run 2: native stack quantities, stable provider recovery, legacy catalog regression.
 name: Stock42 native weapon supply and purchase validation
 on:
   push:

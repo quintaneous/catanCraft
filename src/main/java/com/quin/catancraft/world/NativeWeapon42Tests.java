@@ -1,6 +1,8 @@
 package com.quin.catancraft.world;
 
 import com.electronwill.nightconfig.core.UnmodifiableConfig;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
@@ -15,6 +17,7 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.NbtIo;
 import net.minecraft.nbt.Tag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
@@ -37,7 +40,9 @@ import java.nio.file.LinkOption;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -160,6 +165,7 @@ public final class NativeWeapon42Tests {
     private static void effectiveMutation(GameTestHelper h,String provider)throws Exception {
         controlled(h.getLevel(),provider,false);var offer=sample(provider,true);var server=h.getLevel().getServer();
         var supply=NativeWeapon42.quote(server,offer);
+        if(provider.equals("superbwarfare"))unorderedNativeProperties(server,supply);
         try(AutoCloseable ignored=mutateEffective(offer)){
             refuse(()->NativeWeapon42.quote(server,offer));refuse(()->NativeWeapon42.recheck(server,offer,supply));
         }
@@ -169,6 +175,58 @@ public final class NativeWeapon42Tests {
             refuse(()->NativeWeapon42.recheck(server,offer,supply));
         }
         NativeWeapon42.recheck(server,offer,supply);h.succeed();
+    }
+
+    /** Use real native computed values, then a real quote over the native multi-member
+     * reload-type Set. This distinguishes incidental registry/Set iteration from
+     * changed membership, duplicate multiplicity, and ordered firing-mode lists. */
+    private static void unorderedNativeProperties(MinecraftServer server,NativeWeapon42.Supply supply)throws Exception {
+        Class<?> dataClass=Class.forName("com.atsuishio.superbwarfare.data.gun.GunData"),propClass=Class.forName("com.atsuishio.superbwarfare.data.gun.GunProp");
+        Object data=dataClass.getMethod("from",ItemStack.class).invoke(null,supply.item());
+        var get=dataClass.getMethod("get",propClass);
+        List<?> nativePerks=(List<?>)get.invoke(data,propClass.getField("AVAILABLE_PERKS").get(null));
+        require(nativePerks.size()>1,"Regression requires several actual registry-expanded native perks");
+        var serializePerks=NativeSbw42.class.getDeclaredMethod("perks",Object.class);
+        require(serializePerks.trySetAccessible(),"Cannot inspect native available-perk fingerprint boundary");
+        List<Object> reversedPerks=new ArrayList<>(nativePerks);Collections.reverse(reversedPerks);
+        require(!reversedPerks.equals(nativePerks),"Native perk reordering fixture did not alter enumeration order");
+        String originalPerks=NativeWeapon42.canonical((JsonElement)serializePerks.invoke(null,nativePerks));
+        require(originalPerks.equals(NativeWeapon42.canonical((JsonElement)serializePerks.invoke(null,reversedPerks))),
+                "Semantically unordered native perk enumeration changed its fingerprint input");
+        List<Object> missingPerk=new ArrayList<>(nativePerks);missingPerk.remove(0);
+        List<Object> duplicatePerk=new ArrayList<>(nativePerks);duplicatePerk.add(nativePerks.get(0));
+        require(!originalPerks.equals(NativeWeapon42.canonical((JsonElement)serializePerks.invoke(null,missingPerk)))
+                &&!originalPerks.equals(NativeWeapon42.canonical((JsonElement)serializePerks.invoke(null,duplicatePerk))),
+                "Native perk fingerprint discarded membership or duplicate multiplicity");
+
+        List<?> nativeModes=(List<?>)get.invoke(data,propClass.getField("AVAILABLE_FIRE_MODES").get(null));
+        require(nativeModes.size()>1,"Regression requires actual multiple native firing modes");
+        List<Object> reversedModes=new ArrayList<>(nativeModes);Collections.reverse(reversedModes);
+        Gson gson=(Gson)Class.forName("com.atsuishio.superbwarfare.data.DataLoader").getField("GSON").get(null);
+        var serializeProperty=NativeSbw42.class.getDeclaredMethod("json",Object.class,Gson.class);
+        require(serializeProperty.trySetAccessible(),"Cannot inspect native property fingerprint boundary");
+        require(!NativeWeapon42.canonical((JsonElement)serializeProperty.invoke(null,nativeModes,gson))
+                .equals(NativeWeapon42.canonical((JsonElement)serializeProperty.invoke(null,reversedModes,gson))),
+                "Native ordered firing-mode lists were incorrectly normalized as sets");
+
+        WeaponStock42.Offer setOffer=WeaponStock42.offers().stream().filter(o->o.kind()==WeaponShopCatalog40.Kind.GUN
+                &&o.nativeId().equals("superbwarfare:k_98")).findFirst().orElseThrow();
+        NativeWeapon42.Supply setSupply=NativeWeapon42.quote(server,setOffer);CompoundTag frozen=setSupply.item().save(new CompoundTag());
+        Object raw=sbwData().get(setOffer.referenceGun());Set<?> original=(Set<?>)call(raw,"getReloadTypes");
+        require(original.size()>1,"Native k_98 reload-type Set lacks the qualified multiple members");
+        List<Object> order=new ArrayList<>(original);Collections.reverse(order);Set<Object> reversed=new LinkedHashSet<>(order);
+        require(reversed.equals(original)&&!new ArrayList<>(reversed).equals(new ArrayList<>(original)),"Native Set iteration fixture did not preserve membership while reversing order");
+        var setReloadTypes=raw.getClass().getMethod("setReloadTypes",Set.class);
+        try{
+            setReloadTypes.invoke(raw,reversed);
+            NativeWeapon42.recheck(server,setOffer,setSupply);
+            require(frozen.equals(setSupply.item().save(new CompoundTag())),"Set-order-only recheck changed original native item or UUID");
+            Set<Object> changed=new LinkedHashSet<>(reversed);changed.remove(order.get(0));setReloadTypes.invoke(raw,changed);
+            refuse(()->NativeWeapon42.quote(server,setOffer));
+            refuse(()->NativeWeapon42.recheck(server,setOffer,setSupply));
+        }finally{setReloadTypes.invoke(raw,original);}
+        require(call(raw,"getReloadTypes")==original,"Native reload-type mutation did not restore the exact original Set");
+        NativeWeapon42.recheck(server,setOffer,setSupply);
     }
 
     private static void purchase(GameTestHelper h,String provider)throws Exception {

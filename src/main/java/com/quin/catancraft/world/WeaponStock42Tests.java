@@ -39,7 +39,8 @@ public final class WeaponStock42Tests {
         var all=WeaponStock42.offers();Map<String,String> sbw=Map.of("@HandgunAmmo","superbwarfare:handgun_ammo","@RifleAmmo","superbwarfare:rifle_ammo","@ShotgunAmmo","superbwarfare:shotgun_ammo","@SniperAmmo","superbwarfare:sniper_ammo");
         for(var a:all)if(a.kind()==WeaponShopCatalog40.Kind.AMMO){int minimum=99;boolean found=false;
             for(var g:all)if(g.kind()==WeaponShopCatalog40.Kind.GUN){String consumer=JsonParser.parseString(WeaponTierCatalog41.entry(g.referenceGun()).ammoJson()).getAsString();String nativeAmmo=g.provider().equals("tacz")?consumer:sbw.get(consumer);if(a.nativeId().equals(nativeAmmo)){minimum=Math.min(minimum,g.requiredLevel());found|=g.nativeId().equals(a.referenceGun());}}
-            h.assertTrue(found&&a.requiredLevel()==minimum&&a.count()==32,"Ammunition has no qualified reference or incorrect minimum tier");
+            int expectedCount=a.nativeId().equals("tacz:338")?30:32;
+            h.assertTrue(found&&a.requiredLevel()==minimum&&a.count()==expectedCount,"Ammunition has no qualified reference or incorrect minimum tier/quantity");
         }h.succeed();
     }
     @GameTest(template="townhall_state_empty")
