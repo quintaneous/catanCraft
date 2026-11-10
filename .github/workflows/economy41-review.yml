@@ -1,0 +1,172 @@
+name: Economy41 tier policy and saved reward validation
+on:
+  push:
+    branches: [chatgpt/combined-shop-acceptance]
+    paths: ['.github/workflows/economy41-review.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_shop40, count: 35}
+          - {ns: shop_restart, count: 2}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_paid_recovery, count: 19}
+          - {ns: catancraft_rewards41, count: 32}
+          - {ns: rewards_restart, count: 2}
+          - {ns: sbw_restart, count: 9}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact committed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p build/economy41-evidence
+          git rev-parse HEAD > build/economy41-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/economy41-evidence/source.zip
+          gradle build -PreleaseCommit="$GITHUB_SHA" --no-daemon --max-workers=4 2>&1 | tee build/economy41-evidence/build.log
+          sha256sum build/libs/*.jar > build/economy41-evidence/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/economy41-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/economy41-evidence/assets-3.log
+          exit 1
+      - name: Prepare pinned published optional SBW runtime
+        if: matrix.suite.ns == 'sbw_restart'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/sec01_035/prepare_runtime.py --root build/sec01-035-runtime > build/economy41-evidence/runtime-prepare.json
+          python3 tools/sec01_035/prepare_runtime.py --root build/sec01-035-runtime --verify-only > build/economy41-evidence/runtime-verify.json
+          cp build/sec01-035-runtime/runtime-artifacts.json build/sec01-035-runtime/download-provenance.json build/economy41-evidence/
+      - name: Execute selected native checks once
+        shell: bash
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -euo pipefail
+          run_check() {
+            local label="$1" expected="$2" status=0
+            shift 2
+            timeout 1600s gradle runGameTestServer -PcontrolledGameTests=true --daemon --max-workers=4 "$@" > "build/economy41-evidence/$label.log" 2>&1 || status=$?
+            echo "$status" > "build/economy41-evidence/$label.exit"
+            echo "$expected" > "build/economy41-evidence/$label.expected"
+            cat "build/economy41-evidence/$label.log"
+            test "$status" = 0
+            grep -Fq "$expected GAME TESTS COMPLETE" "build/economy41-evidence/$label.log"
+            grep -Fq "All $expected required tests passed" "build/economy41-evidence/$label.log"
+          }
+          if test "$NS" = rewards_restart; then
+            run_check rewards_seed 1 -PgameTestNamespace=catancraft_rewards41_restart -PrewardsRestartPhase=seed -PrewardsRestartSource="$GITHUB_SHA"
+            grep -Fq REWARDS41_RESTART_SEED_PASS build/economy41-evidence/rewards_seed.log
+            run_check rewards_verify 1 -PgameTestNamespace=catancraft_rewards41_restart -PrewardsRestartPhase=verify -PrewardsRestartSource="$GITHUB_SHA"
+            grep -Fq REWARDS41_RESTART_VERIFY_PASS build/economy41-evidence/rewards_verify.log
+          elif test "$NS" = shop_restart; then
+            run_check shop_seed 1 -PgameTestNamespace=catancraft_shop40_restart -PshopRestartPhase=seed -PshopRestartSource="$GITHUB_SHA"
+            grep -Fq SHOP40_RESTART_SEED_PASS build/economy41-evidence/shop_seed.log
+            run_check shop_verify 1 -PgameTestNamespace=catancraft_shop40_restart -PshopRestartPhase=verify -PshopRestartSource="$GITHUB_SHA"
+            grep -Fq SHOP40_RESTART_VERIFY_PASS build/economy41-evidence/shop_verify.log
+          elif test "$NS" = sbw_restart; then
+            run_check catancraft_sbw 7 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw
+            run_check procurement_seed 1 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw_procurement35 -PsbwRestartPhase=seed
+            grep -Fq SEC01_PROCUREMENT35_SEED_PASS build/economy41-evidence/procurement_seed.log
+            # Same world, a separate JavaExec process. No copying, deletion, reset or NBT injection.
+            run_check procurement_verify 1 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw_procurement35 -PsbwRestartPhase=verify
+            grep -Fq SEC01_PROCUREMENT35_VERIFY_PASS build/economy41-evidence/procurement_verify.log
+            cp build/controlled-catancraft_sbw_procurement35-run/world/data/catancraft_sec01_procurement35_*.dat build/economy41-evidence/
+          else
+            run_check "$NS" "$COUNT" -PgameTestNamespace="$NS"
+          fi
+      - name: Retain restart files even after failure
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p build/economy41-evidence/restart
+          shopt -s nullglob
+          for proof in build/controlled-catancraft_shop40_restart-run/world/data/catancraft_shop40_* build/controlled-catancraft_shop40_restart-run/world/data/catancraft.dat build/controlled-catancraft_shop40_restart-run/world/playerdata/40000000-0000-0000-0000-0000000000{a,b}1.dat; do
+            if test -f "$proof"; then cp "$proof" build/economy41-evidence/restart/; fi
+          done
+          mkdir -p build/economy41-evidence/rewards-restart
+          for proof in build/controlled-catancraft_rewards41_restart-run/world/data/catancraft_reward* build/controlled-catancraft_rewards41_restart-run/world/data/catancraft.dat; do
+            if test -f "$proof"; then cp "$proof" build/economy41-evidence/rewards-restart/; fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: economy41-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/economy41-evidence/
+          if-no-files-found: error
+  collect:
+    needs: validate
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: economy41-*
+          path: evidence
+      - name: Retain every result and verify common source and JAR
+        env:
+          SOURCE: ${{ github.sha }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import hashlib,json,os,shutil
+          root=Path('delivery');root.mkdir()
+          expected={'catancraft_shop40':35,'shop_seed':1,'shop_verify':1,'catancraft':50,'catancraft_paid_recovery':19,'catancraft_rewards41':32,'rewards_seed':1,'rewards_verify':1,'catancraft_sbw':7,'procurement_seed':1,'procurement_verify':1}
+          records=[];results={};source_errors=[];jars=set()
+          for folder in sorted(Path('evidence').iterdir()):
+              group=folder.name.removeprefix('economy41-');ev=folder/'economy41-evidence'
+              source=ev/'SOURCE_COMMIT.txt'
+              if not source.exists() or source.read_text().strip()!=os.environ['SOURCE']:source_errors.append(group)
+              for label,count in expected.items():
+                  log=ev/(label+'.log');status=ev/(label+'.exit')
+                  if not log.exists():continue
+                  text=log.read_text(errors='replace')
+                  if label in results:raise SystemExit('Duplicate suite result')
+                  ok=status.exists() and status.read_text().strip()=='0' and f'{count} GAME TESTS COMPLETE' in text and f'All {count} required tests passed' in text
+                  if label.startswith('procurement_'):ok=ok and ('SEC01_PROCUREMENT35_'+label.removeprefix('procurement_').upper()+'_PASS') in text
+                  if label.startswith('shop_'):ok=ok and ('SHOP40_RESTART_'+label.removeprefix('shop_').upper()+'_PASS') in text
+                  if label.startswith('rewards_'):ok=ok and ('REWARDS41_RESTART_'+label.removeprefix('rewards_').upper()+'_PASS') in text
+                  results[label]={'expected':count,'passed':ok}
+              for p in sorted(folder.rglob('*')):
+                  if not p.is_file():continue
+                  digest=hashlib.sha256(p.read_bytes()).hexdigest();rel=p.relative_to(folder)
+                  if p.name=='source.zip' or p.suffix=='.jar':
+                      target=root/'shared'/p.name
+                      if p.suffix=='.jar':jars.add(digest)
+                      if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()!=digest:raise SystemExit('Different source/JAR across exact-source jobs')
+                  else:target=root/group/rel
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  if not target.exists():shutil.copy2(p,target)
+                  records.append({'group':group,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
+          passed=set(results)==set(expected) and all(r['passed'] for r in results.values()) and not source_errors and len(jars)==1
+          (root/'MANIFEST.json').write_text(json.dumps({'source':os.environ['SOURCE'],'results':results,'expected_phase_executions':sum(expected.values()),'expected_unique_scenarios':sum(expected.values())-3,'all_passed':passed,'source_errors':source_errors,'files':records},indent=2))
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: economy41-combined-source-and-evidence
+          path: delivery/
+          if-no-files-found: error

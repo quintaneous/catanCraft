@@ -40,6 +40,9 @@ final class WeaponShopCatalog40 {
      * AmmoItemBuilder itself does not validate its pack index, so both indices are checked here. */
     @SuppressWarnings({"unchecked", "rawtypes"})
     static ItemStack build(Offer offer) throws IOException {
+        // A price or alias must never authorize a reserved/unknown gun. Existing040
+        // tiers remain explicit while the candidate catalog is qualified separately.
+        WeaponTierCatalog41.requireExistingOffer(offer.nativeId(), offer.requiredLevel());
         if (!ModList.get().isLoaded("tacz")) throw new IOException("The weapon mod is unavailable; no purchase was made.");
         try {
             ResourceLocation id = new ResourceLocation(offer.nativeId());

@@ -1,6 +1,7 @@
 package com.quin.catancraft.data;
 
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
 import javax.annotation.Nullable;
 import java.util.UUID;
 
@@ -15,6 +16,13 @@ public final class MonumentData {
     private final int radius;
     @Nullable private UUID capturingNationId;
     private int captureProgressTicks;
+    // Preserve unknown/corrupt records verbatim so recovery can hold them rather
+    // than silently drop an activation, winner or pending reward on load.
+    @Nullable private Tag rewardActivation41;
+
+    @Nullable public Tag rewardActivation41() { return rewardActivation41 == null ? null : rewardActivation41.copy(); }
+    public void setRewardActivation41(@Nullable Tag value) { rewardActivation41 = value == null ? null : value.copy(); }
+
 
     public MonumentData(String id, String name, MonumentType type, String dimensionId,
                         int x, int y, int z, int radius) {
@@ -75,6 +83,7 @@ public final class MonumentData {
         tag.putInt("radius", radius);
         if (capturingNationId != null) tag.putUUID("capturingNationId", capturingNationId);
         tag.putInt("captureProgressTicks", captureProgressTicks);
+        if (rewardActivation41 != null) tag.put("rewardActivation41", rewardActivation41.copy());
         return tag;
     }
 
@@ -88,6 +97,7 @@ public final class MonumentData {
             data.capturingNationId = tag.getUUID("capturingNationId");
         }
         data.captureProgressTicks = Math.max(0, tag.getInt("captureProgressTicks"));
+        if (tag.contains("rewardActivation41")) data.rewardActivation41 = tag.get("rewardActivation41").copy();
         return data;
     }
 }

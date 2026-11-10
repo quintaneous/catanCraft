@@ -268,6 +268,9 @@ public final class CatanSavedData extends SavedData {
             if (previous != null) {
                 synced.setCapturingNationId(previous.capturingNationId());
                 synced.setCaptureProgressTicks(previous.captureProgressTicks());
+                // Preserve unknown/malformed reward history verbatim; the reward service
+                // rechecks the bound geometry and holds changed definitions.
+                synced.setRewardActivation41(previous.rewardActivation41());
             }
             monuments.put(definition.id(), synced);
         }

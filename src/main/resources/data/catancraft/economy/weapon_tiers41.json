@@ -1,0 +1,2187 @@
+{
+  "schema": 1,
+  "revision": "weapon_tiers41_reference_candidate_v1",
+  "status": "REFERENCE_ONLY_NOT_RUNTIME_OR_BALANCE_ACCEPTANCE",
+  "source": {
+    "auditSHA256": "3e6e15cd57bf16da5b1976608ec56f0bec70204535348578171c1a2cf34c8b0c",
+    "taczCommit": "42af1be5bbe4127c083cfa19b57482f8aae23df2",
+    "sbwSHA256": "06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5",
+    "idSetSHA256": "6bc571cd770b0ba7b737192c8b5aa402eb876e370a6eacd27e2197375b36607b"
+  },
+  "excludedInternalIds": [
+    "superbwarfare:empty_gun",
+    "superbwarfare:vehicle_gun"
+  ],
+  "entries": [
+    {
+      "id": "superbwarfare:aa_12",
+      "provider": "superbwarfare",
+      "category": "Shotgun",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:aa_12",
+      "ammo": "@ShotgunAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "25-round automatic shotgun, 12 projectiles per shot."
+    },
+    {
+      "id": "superbwarfare:ak_12",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "superbwarfare:ak_12",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:ak_47",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "superbwarfare:ak_47",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:awm",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:awm",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "36 base damage / 80% bypass: candidate top shop sniper."
+    },
+    {
+      "id": "superbwarfare:bocek",
+      "provider": "superbwarfare",
+      "category": "Special",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:bocek",
+      "ammo": "minecraft:arrow",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY",
+        "SPECIAL_BEHAVIOR"
+      ],
+      "reason": "Special bow; 48 listed base damage."
+    },
+    {
+      "id": "superbwarfare:devotion",
+      "provider": "superbwarfare",
+      "category": "MachineGun",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:devotion",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY",
+        "SPECIAL_HANDLING"
+      ],
+      "reason": "Raw 400 RPM is not final performance: spin-up/item behavior must be tested."
+    },
+    {
+      "id": "superbwarfare:glock_17",
+      "provider": "superbwarfare",
+      "category": "Handgun",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "superbwarfare:glock_17",
+      "ammo": "@HandgunAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Alternative mod implementation; do not silently substitute for existing TaCZ starter."
+    },
+    {
+      "id": "superbwarfare:glock_18",
+      "provider": "superbwarfare",
+      "category": "Handgun",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "superbwarfare:glock_18",
+      "ammo": "@HandgunAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:hk_416",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:hk_416",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:homemade_shotgun",
+      "provider": "superbwarfare",
+      "category": "Shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "superbwarfare:homemade_shotgun",
+      "ammo": "@ShotgunAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:hunting_rifle",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:hunting_rifle",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "65 base damage / 70% bypass / one round: not a beginner gun despite name."
+    },
+    {
+      "id": "superbwarfare:igla_9k38",
+      "provider": "superbwarfare",
+      "category": "DirectLauncher",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:igla_9k38",
+      "ammo": "superbwarfare:medium_anti_air_missile",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Conditional: anti-air counter availability, guidance and ammo tests."
+    },
+    {
+      "id": "superbwarfare:insidious",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:insidious",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Burst"
+      ],
+      "declaredDefaultFireMode": "Burst",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "11 base damage / 900 RPM burst / 48 rounds."
+    },
+    {
+      "id": "superbwarfare:javelin",
+      "provider": "superbwarfare",
+      "category": "DirectLauncher",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:javelin",
+      "ammo": "superbwarfare:javelin_missile",
+      "fireModes": [
+        "Dir",
+        "Top"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Guided missile; 650 listed direct damage."
+    },
+    {
+      "id": "superbwarfare:k_98",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "superbwarfare:k_98",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:m_1911",
+      "provider": "superbwarfare",
+      "category": "Handgun",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "superbwarfare:m_1911",
+      "ammo": "@HandgunAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:m_2_hb",
+      "provider": "superbwarfare",
+      "category": "MachineGun",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:m_2_hb",
+      "ammo": "@HeavyAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "40 base damage / 100 rounds; emplacement/handling review."
+    },
+    {
+      "id": "superbwarfare:m_4",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:m_4",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:m_60",
+      "provider": "superbwarfare",
+      "category": "MachineGun",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "superbwarfare:m_60",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:m_79",
+      "provider": "superbwarfare",
+      "category": "CurvedLauncher",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "superbwarfare:m_79",
+      "ammo": "superbwarfare:grenade_40mm",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Conditional: explosives and damage-boundary tests."
+    },
+    {
+      "id": "superbwarfare:m_870",
+      "provider": "superbwarfare",
+      "category": "Shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:m_870",
+      "ammo": "@ShotgunAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:m_98b",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "superbwarfare:m_98b",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:marlin",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:marlin",
+      "ammo": "@RifleAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:minigun",
+      "provider": "superbwarfare",
+      "category": "MachineGun",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:minigun",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "1200 RPM; special feed/heat/spin-up."
+    },
+    {
+      "id": "superbwarfare:mk_14",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:mk_14",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:mosin_nagant",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "superbwarfare:mosin_nagant",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:mp_443",
+      "provider": "superbwarfare",
+      "category": "Handgun",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "superbwarfare:mp_443",
+      "ammo": "@HandgunAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:mp_5",
+      "provider": "superbwarfare",
+      "category": "Smg",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:mp_5",
+      "ammo": "@HandgunAmmo",
+      "fireModes": [
+        "Semi",
+        "Burst",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:ntw_20",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:ntw_20",
+      "ammo": "@HeavyAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "140 base damage / 100% armor bypass."
+    },
+    {
+      "id": "superbwarfare:qbz_191",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "superbwarfare:qbz_191",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:qbz_95",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:qbz_95",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:ql_1031",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:ql_1031",
+      "ammo": "FE",
+      "fireModes": [
+        "Auto",
+        {
+          "Mode": "Semi",
+          "Name": "Semi",
+          "Override": {
+            "RecoilX": 0.004,
+            "RecoilY": 0.009,
+            "Spread": 6,
+            "Damage": 19.5,
+            "SoundRadius": 12,
+            "Headshot": 2.5,
+            "Velocity": 51,
+            "BypassesArmor": 0.7,
+            "HeatPerShoot": 5,
+            "RPM": 300,
+            "AmmoCostPerShoot": 1000,
+            "SoundInfo": {
+              "Fire1P": "superbwarfare:ql_1031_fire_1p_semi",
+              "Fire3P": "superbwarfare:ql_1031_fire_3p_semi",
+              "Fire3PFar": "superbwarfare:ql_1031_far_semi",
+              "Fire3PVeryFar": "superbwarfare:ql_1031_veryfar_semi",
+              "Fire1PSilent": "superbwarfare:ql_1031_fire_1p_s_semi",
+              "Fire3PSilent": "superbwarfare:ql_1031_fire_3p_s_semi",
+              "Fire3PFarSilent": "superbwarfare:ql_1031_far_s_semi",
+              "Fire3PVeryFarSilent": "superbwarfare:ql_1031_veryfar_s_semi"
+            }
+          }
+        },
+        {
+          "Mode": "Semi",
+          "Name": "Hold",
+          "Override": {
+            "Spread": 8,
+            "RecoilX": 0.01,
+            "RecoilY": 0.038,
+            "ShootDelay": 20,
+            "ClearHoldProgressAfterShoot": true,
+            "Damage": 100,
+            "SoundRadius": 16,
+            "Headshot": 3,
+            "Velocity": 74,
+            "BypassesArmor": 1.3,
+            "HeatPerShoot": 20,
+            "AmmoCostPerShoot": 5000,
+            "RPM": 1200,
+            "SoundInfo": {
+              "Fire1P": "superbwarfare:ql_1031_fire_1p_hold",
+              "Fire3P": "superbwarfare:ql_1031_fire_3p_hold",
+              "Fire3PFar": "superbwarfare:ql_1031_far_hold",
+              "Fire3PVeryFar": "superbwarfare:ql_1031_veryfar_hold",
+              "Fire1PSilent": "superbwarfare:ql_1031_fire_1p_s_hold",
+              "Fire3PSilent": "superbwarfare:ql_1031_fire_3p_s_hold",
+              "Fire3PFarSilent": "superbwarfare:ql_1031_far_s_hold",
+              "Fire3PVeryFarSilent": "superbwarfare:ql_1031_veryfar_s_hold"
+            }
+          }
+        }
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "ENERGY_CONSUMER",
+        "FIRE_MODE_OVERRIDES",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "FE-powered automatic weapon; energy limits must be audited."
+    },
+    {
+      "id": "superbwarfare:repair_tool",
+      "provider": "superbwarfare",
+      "category": "Special",
+      "disposition": "HOLD",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:repair_tool",
+      "ammo": "FE",
+      "fireModes": [
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "ENERGY_CONSUMER",
+        "REFERENCE_ONLY",
+        "SPECIAL_BEHAVIOR"
+      ],
+      "reason": "Utility, not combat progression; separate FE/vehicle-maintenance offer review."
+    },
+    {
+      "id": "superbwarfare:rpg",
+      "provider": "superbwarfare",
+      "category": "DirectLauncher",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:rpg",
+      "ammo": [
+        "superbwarfare:rpg_rocket_tbg",
+        {
+          "Ammo": "superbwarfare:rpg_rocket_standard",
+          "Projectile": "superbwarfare:rpg_rocket_standard",
+          "Override": {
+            "Damage": 450,
+            "ExplosionDamage": 40,
+            "ExplosionRadius": 5,
+            "Velocity": 6,
+            "Gravity": 0.015,
+            "Icon": "superbwarfare:textures/gun_icon/rpg_standard_icon.png"
+          }
+        }
+      ],
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "ALTERNATE_AMMO",
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Conditional: different rocket types override direct/explosion damage."
+    },
+    {
+      "id": "superbwarfare:rpk",
+      "provider": "superbwarfare",
+      "category": "MachineGun",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:rpk",
+      "ammo": "@RifleAmmo",
+      "fireModes": [
+        "Semi",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:secondary_cataclysm",
+      "provider": "superbwarfare",
+      "category": "CurvedLauncher",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:secondary_cataclysm",
+      "ammo": [
+        "superbwarfare:grenade_40mm",
+        {
+          "Ammo": "@ShotgunAmmo",
+          "AmmoSlot": "Default",
+          "Projectile": "superbwarfare:projectile",
+          "Override": {
+            "Damage": 10,
+            "BypassesArmor": 0.2,
+            "ExplosionDamage": 0,
+            "ProjectileAmount": 6,
+            "Velocity": 10,
+            "RecoilX": 0.006,
+            "RecoilY": 0.018,
+            "Crosshair": "@GunDefault"
+          }
+        },
+        {
+          "AmmoSlot": "Melee",
+          "Override": {
+            "ProjectileAmount": 0,
+            "MeleeDuration": 15,
+            "Crosshair": "@GunDefault"
+          }
+        }
+      ],
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "ALTERNATE_AMMO",
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Eight-round launcher with alternate firing feeds."
+    },
+    {
+      "id": "superbwarfare:sentinel",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:sentinel",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "45 base damage / 80% bypass; special behavior requires testing."
+    },
+    {
+      "id": "superbwarfare:sks",
+      "provider": "superbwarfare",
+      "category": "Rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "superbwarfare:sks",
+      "ammo": "@RifleAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:super_star_shooter",
+      "provider": "superbwarfare",
+      "category": "DirectLauncher",
+      "disposition": "HOLD",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:super_star_shooter",
+      "ammo": "100 minecraft:nether_star",
+      "fireModes": "Auto",
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Exclude ordinary catalog and initial loot: special star ammunition/projectile needs separate balance review."
+    },
+    {
+      "id": "superbwarfare:svd",
+      "provider": "superbwarfare",
+      "category": "Sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "superbwarfare:svd",
+      "ammo": "@SniperAmmo",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "superbwarfare:taser",
+      "provider": "superbwarfare",
+      "category": "Special",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "superbwarfare:taser",
+      "ammo": "superbwarfare:taser_electrode",
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY",
+        "SPECIAL_BEHAVIOR"
+      ],
+      "reason": "Conditional: stun/control behavior and counterplay need tests."
+    },
+    {
+      "id": "superbwarfare:trachelium",
+      "provider": "superbwarfare",
+      "category": "Handgun",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "superbwarfare:trachelium",
+      "ammo": [
+        "@RifleAmmo",
+        {
+          "Ammo": "@ShotgunAmmo",
+          "AmmoSlot": "Default",
+          "Override": {
+            "Damage": 6.5,
+            "Headshot": 2,
+            "BypassesArmor": 0.25,
+            "ProjectileAmount": 4,
+            "Velocity": 12
+          }
+        }
+      ],
+      "fireModes": null,
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "ALTERNATE_AMMO",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "24 base damage / 50% bypass; alternate shotgun feed."
+    },
+    {
+      "id": "superbwarfare:vector",
+      "provider": "superbwarfare",
+      "category": "Smg",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "superbwarfare:vector",
+      "ammo": "@HandgunAmmo",
+      "fireModes": [
+        "Semi",
+        "Burst",
+        "Auto"
+      ],
+      "declaredDefaultFireMode": "Auto",
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:aa12",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:aa12_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "semi",
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Automatic shotgun; test spread, pellets and extended magazines."
+    },
+    {
+      "id": "tacz:ai_awp",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:ai_awp_data",
+      "ammo": "tacz:338",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:ak12",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:ak12_data",
+      "ammo": "tacz:545x39",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:ak47",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:ak47_data",
+      "ammo": "tacz:762x39",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:ak74m",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:ak74m_data",
+      "ammo": "tacz:545x39",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:aug",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:aug_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:b93r",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:b93r_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:cz75",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:cz75_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:db_long",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "tacz:db_long_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:db_short",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "tacz:db_short_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:db_short_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:deagle",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:deagle_data",
+      "ammo": "tacz:50ae",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:deagle_golden",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:deagle_golden_data",
+      "ammo": "tacz:357mag",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Collectible reserve; its base damage is LOWER than ordinary Deagle."
+    },
+    {
+      "id": "tacz:fn_evolys",
+      "provider": "tacz",
+      "category": "mg",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:fn_evolys_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "750 RPM, 12 base damage, 75-round feed."
+    },
+    {
+      "id": "tacz:fn_fal",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:fn_fal_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "semi",
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:g36k",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:g36k_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:glock_17",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "STARTER",
+      "proposedLevel": 0,
+      "dataId": "tacz:glock_17_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Keep existing starter access through the later physical starter counter."
+    },
+    {
+      "id": "tacz:hcar",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:hcar_data",
+      "ammo": "tacz:30_06",
+      "fireModes": [
+        "auto",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "18 base damage / 40% armor ignore; reserve heavy-rifle candidate."
+    },
+    {
+      "id": "tacz:hk416d",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:hk416d_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:hk_g3",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:hk_g3_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "semi",
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:hk_mk23",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:hk_mk23_data",
+      "ammo": "tacz:45acp",
+      "fireModes": [
+        "semi",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:hk_mk23_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Raw RPM 50; script/burst behavior needs runtime measurement."
+    },
+    {
+      "id": "tacz:hk_mp5a5",
+      "provider": "tacz",
+      "category": "smg",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:hk_mp5a5_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:hk_mp7a1",
+      "provider": "tacz",
+      "category": "smg",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:hk_mp7a1_data",
+      "ammo": "tacz:46x30",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "65% armor ignore: candidate top shop PDW, subject to armored TTK tests."
+    },
+    {
+      "id": "tacz:hm50b",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:hm50b_data",
+      "ammo": "tacz:50bmg",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "70 base damage; high-caliber reserve."
+    },
+    {
+      "id": "tacz:kar98",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:kar98_data",
+      "ammo": "tacz:792x57",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:kar98_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:lonetrail",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:lonetrail_data",
+      "ammo": "tacz:30_06",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Special collectible; single-shot rifle-caliber pistol."
+    },
+    {
+      "id": "tacz:m1014",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:m1014_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:m1014_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m107",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:m107_data",
+      "ammo": "tacz:50bmg",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "55 base damage, semi-automatic .50 BMG."
+    },
+    {
+      "id": "tacz:m16a1",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:m16a1_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m16a4",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:m16a4_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m1866",
+      "provider": "tacz",
+      "category": "dmr",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "tacz:m1866_data",
+      "ammo": "tacz:45acp",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:m1866_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Source category DMR; manual action/5-round feed."
+    },
+    {
+      "id": "tacz:m1897",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:m1897_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:m870_unload_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m1911",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "tacz:m1911_data",
+      "ammo": "tacz:45acp",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m249",
+      "provider": "tacz",
+      "category": "mg",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:m249_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m320",
+      "provider": "tacz",
+      "category": "rpg",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:m320_data",
+      "ammo": "tacz:40mm",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Conditional: explosive/damage contract and ammo limits required."
+    },
+    {
+      "id": "tacz:m4a1",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:m4a1_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m700",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:m700_data",
+      "ammo": "tacz:30_06",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m870",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:m870_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:m870_unload_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:m95",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:m95_data",
+      "ammo": "tacz:50bmg",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "75 base damage / 75% armor ignore."
+    },
+    {
+      "id": "tacz:m9a4",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:m9a4_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:mcx_spear_lt",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:mcx_spear_lt_data",
+      "ammo": "tacz:300blk",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "1000 RPM, 8 base damage; reserve strong automatic-rifle candidate."
+    },
+    {
+      "id": "tacz:minigun",
+      "provider": "tacz",
+      "category": "mg",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:minigun_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "auto",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "1200 RPM; special feed/heat/spin-up must be evaluated."
+    },
+    {
+      "id": "tacz:mk14",
+      "provider": "tacz",
+      "category": "dmr",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:mk14_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "semi",
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:mk18",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:mk18_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:mrad",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:mrad_data",
+      "ammo": "tacz:338",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "45 base damage / 75% armor ignore."
+    },
+    {
+      "id": "tacz:p320",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:p320_data",
+      "ammo": "tacz:45acp",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:p90",
+      "provider": "tacz",
+      "category": "smg",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:p90_data",
+      "ammo": "tacz:57x28",
+      "fireModes": [
+        "auto",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "50-round capacity / 70% armor ignore."
+    },
+    {
+      "id": "tacz:pkm",
+      "provider": "tacz",
+      "category": "mg",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:pkm_data",
+      "ammo": "tacz:762x54",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:qbz_191",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:qbz_191_data",
+      "ammo": "tacz:58x42",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:qbz_95",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:qbz_95_data",
+      "ammo": "tacz:58x42",
+      "fireModes": [
+        "auto",
+        "semi",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:qr_24",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:qr_24_data",
+      "ammo": "tacz:545x39",
+      "fireModes": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:rhino357",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:rhino357_data",
+      "ammo": "tacz:357mag",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:rpg7",
+      "provider": "tacz",
+      "category": "rpg",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:rpg7_data",
+      "ammo": "tacz:rpg_rocket",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "EXPLOSIVE_DAMAGE",
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Conditional: explosive/damage contract and ammo limits required."
+    },
+    {
+      "id": "tacz:rpk",
+      "provider": "tacz",
+      "category": "mg",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:rpk_data",
+      "ammo": "tacz:762x39",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:scar_h",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:scar_h_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "semi",
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "14 base damage / 50% armor ignore automatic-capable rifle."
+    },
+    {
+      "id": "tacz:scar_l",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:scar_l_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:scar_mk20",
+      "provider": "tacz",
+      "category": "dmr",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:scar_mk20_data",
+      "ammo": "tacz:308",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "18 base damage / 50% armor ignore precision role."
+    },
+    {
+      "id": "tacz:sks_tactical",
+      "provider": "tacz",
+      "category": "dmr",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:sks_tactical_data",
+      "ammo": "tacz:762x39",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:spas_12",
+      "provider": "tacz",
+      "category": "shotgun",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:spas_12_data",
+      "ammo": "tacz:12g",
+      "fireModes": [
+        "semi",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:spas_12_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "48 base damage, manual-action/burst modes; compare against AA12 natively."
+    },
+    {
+      "id": "tacz:spr15hb",
+      "provider": "tacz",
+      "category": "dmr",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:spr15hb_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "semi",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:springfield1873",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "tacz:springfield1873_data",
+      "ammo": "tacz:45_70",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "35 base damage but one-shot feed/90 RPM; do not rank on damage alone."
+    },
+    {
+      "id": "tacz:svd",
+      "provider": "tacz",
+      "category": "sniper",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:svd_data",
+      "ammo": "tacz:762x54",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:taurus500",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:taurus500_data",
+      "ammo": "tacz:500mag",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "40 base damage / 50% armor ignore sidearm."
+    },
+    {
+      "id": "tacz:taurus943",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 1,
+      "dataId": "tacz:taurus943_data",
+      "ammo": "tacz:22wmr",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:taurus943_gun_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:tec_9",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:tec_9_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:timeless50",
+      "provider": "tacz",
+      "category": "pistol",
+      "disposition": "SHOP",
+      "proposedLevel": 5,
+      "dataId": "tacz:timeless50_data",
+      "ammo": "tacz:50ae",
+      "fireModes": [
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:type_81",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 3,
+      "dataId": "tacz:type_81_data",
+      "ammo": "tacz:762x39",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:ump45",
+      "provider": "tacz",
+      "category": "smg",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:ump45_data",
+      "ammo": "tacz:45acp",
+      "fireModes": [
+        "auto",
+        "burst"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:urgi",
+      "provider": "tacz",
+      "category": "rifle",
+      "disposition": "SHOP",
+      "proposedLevel": 4,
+      "dataId": "tacz:urgi_data",
+      "ammo": "tacz:556x45",
+      "fireModes": [
+        "auto",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:uzi",
+      "provider": "tacz",
+      "category": "smg",
+      "disposition": "SHOP",
+      "proposedLevel": 2,
+      "dataId": "tacz:uzi_data",
+      "ammo": "tacz:9mm",
+      "fireModes": [
+        "auto"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": null,
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "Provisional role/handling comparison within this tier."
+    },
+    {
+      "id": "tacz:vector45",
+      "provider": "tacz",
+      "category": "smg",
+      "disposition": "DROP",
+      "proposedLevel": -1,
+      "dataId": "tacz:vector45_data",
+      "ammo": "tacz:45acp",
+      "fireModes": [
+        "auto",
+        "burst",
+        "semi"
+      ],
+      "declaredDefaultFireMode": null,
+      "script": "tacz:xmag_reload_logic",
+      "qualificationFlags": [
+        "REFERENCE_ONLY"
+      ],
+      "reason": "1200 RPM / 8 base damage."
+    }
+  ]
+}

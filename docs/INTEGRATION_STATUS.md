@@ -1,3 +1,7 @@
+## ECO-03 / MON-01 — 0.1.41 implementation in progress, 2026-11-10
+
+Continues verified040 documentation head `44f194c577940f2064c21f574d7007882b9d4a51`, freshly matched against the remote before edits. Implements the pinned 113-gun reference policy and durable hidden monument outcome/winner/credit persistence. The existing four shop offers, prices and default monument payouts remain unchanged; weighted equipment outcomes are pending references only. [Contract](ECONOMY_041_CONTRACT.md), [validation checkpoint](ECONOMY_041_CHECKPOINT.md). Native execution is pending; no041 pass or owner acceptance is claimed. Preserve one combined playable release/checklist, accepted City A state and all purchase recovery. SEC-01 remains UNRESOLVED / HIGH PRIORITY.
+
 ## 2026-11-10 — owner requests combined shop/crowbar in-game acceptance
 
 ## ECO-03 — physical shop implementation, 2026-11-10

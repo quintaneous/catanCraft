@@ -4,18 +4,16 @@ import com.quin.catancraft.CatanCraft;
 import com.quin.catancraft.data.CatanSavedData;
 import com.quin.catancraft.data.MonumentData;
 import com.quin.catancraft.data.MonumentType;
-import com.quin.catancraft.data.ResourceType;
+import com.quin.catancraft.world.MonumentRewards41;
+import java.io.IOException;
 import com.quin.catancraft.data.NationData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerPlayer;
 
-import java.text.NumberFormat;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Locale;
-import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,16 +22,30 @@ public final class MonumentManager {
     public static final int CAPTURE_TICKS = CAPTURE_SECONDS * 20;
     public static final long ROTATION_GAP_TICKS = 5L * 60L * 20L;
     private static long lastProcessedSecond = Long.MIN_VALUE;
+    private static MinecraftServer clockOwner;
+    private static long lastRewardWarning = Long.MIN_VALUE;
+    private static String lastRewardProblem = "";
 
     private MonumentManager() {}
 
     public static void tick(MinecraftServer server) {
+        if (clockOwner != server) {
+            clockOwner = server; lastProcessedSecond = Long.MIN_VALUE;
+            lastRewardWarning = Long.MIN_VALUE; lastRewardProblem = "";
+        }
         long gameTime = server.overworld().getGameTime();
         long second = gameTime / 20L;
         if (second == lastProcessedSecond) return;
         lastProcessedSecond = second;
 
         CatanSavedData data = CatanSavedData.get(server);
+        try { tickSecond(server, data, gameTime); }
+        catch (IOException | RuntimeException failure) { rewardHold(server, second, failure); }
+    }
+
+    private static void tickSecond(MinecraftServer server, CatanSavedData data, long gameTime) throws IOException {
+        // Settle the recorded winner before considering present players or another round.
+        if (MonumentRewards41.recover(server, data)) return;
         MonumentData active = data.activeMonument();
 
         if (active == null) {
@@ -43,6 +55,7 @@ public final class MonumentManager {
             return;
         }
 
+        if (!MonumentRewards41.readyActivation(server, data, active)) return;
         Set<UUID> present = nationsPresent(server, data, active);
         if (present.size() > 1) {
             sendZoneStatus(server, active, "CONTESTED • " + progressPercent(active) + "%");
@@ -78,17 +91,36 @@ public final class MonumentManager {
         }
     }
 
+    private static void rewardHold(MinecraftServer server, long second, Exception failure) {
+        String problem = String.valueOf(failure.getMessage());
+        if (!problem.equals(lastRewardProblem) || lastRewardWarning == Long.MIN_VALUE
+                || second < lastRewardWarning || second - lastRewardWarning >= 60) {
+            lastRewardProblem = problem; lastRewardWarning = second;
+            CatanCraft.LOGGER.warn("Monument reward held; preserving saved capture and reward history", failure);
+        }
+        MonumentData active = CatanSavedData.get(server).activeMonument();
+        if (active != null) sendZoneStatus(server, active, "REWARD RECOVERY PENDING");
+    }
+
     public static boolean forceActivate(MinecraftServer server, CatanSavedData data, MonumentData monument) {
-        if (monument == null) return false;
-        MonumentData previous = data.activeMonument();
-        if (previous != null) previous.resetCapture();
-        monument.resetCapture();
-        data.setActiveMonumentId(monument.id());
-        data.setLastActivatedMonumentId(monument.id());
-        data.setNextMonumentActivationGameTime(0);
-        data.setDirty();
-        announceActivation(server, monument);
-        return true;
+        if (monument == null || data.monument(monument.id()) != monument) return false;
+        try {
+            MonumentData previous = data.activeMonument();
+            for (MonumentData existing : data.monuments())
+                if (!MonumentRewards41.canReplace(server, data, existing)) return false;
+            if (previous != null) previous.resetCapture();
+            monument.resetCapture();
+            data.setActiveMonumentId(monument.id());
+            data.setLastActivatedMonumentId(monument.id());
+            data.setNextMonumentActivationGameTime(0);
+            data.setDirty();
+            MonumentRewards41.prepareActivation(server, data, monument);
+            announceActivation(server, monument);
+            return true;
+        } catch (IOException | RuntimeException failure) {
+            rewardHold(server, server.overworld().getGameTime() / 20, failure);
+            return false;
+        }
     }
 
     private static void activateNext(MinecraftServer server, CatanSavedData data) {
@@ -109,11 +141,7 @@ public final class MonumentManager {
         }
 
         MonumentData next = monuments.get(nextIndex);
-        next.resetCapture();
-        data.setActiveMonumentId(next.id());
-        data.setLastActivatedMonumentId(next.id());
-        data.setDirty();
-        announceActivation(server, next);
+        forceActivate(server, data, next);
     }
 
     private static Set<UUID> nationsPresent(MinecraftServer server, CatanSavedData data, MonumentData monument) {
@@ -153,63 +181,20 @@ public final class MonumentManager {
     }
 
     private static void completeCapture(MinecraftServer server, CatanSavedData data,
-                                        MonumentData monument, UUID nationId) {
+                                        MonumentData monument, UUID nationId) throws IOException {
+        MonumentRewards41.Result result = MonumentRewards41.completeCapture(server, data, monument, nationId);
+        if (!result.complete()) return;
         NationData nation = data.nation(nationId);
-        if (nation == null) {
-            monument.resetCapture();
-            data.setDirty();
-            return;
-        }
-
-        MonumentType type = monument.type();
-        nation.addTreasury(type.moneyReward());
-        type.resourceRewards().forEach(nation::addResource);
-
-        server.getPlayerList().broadcastSystemMessage(
-                Component.literal("[CatanCraft] " + nation.name() + " secured " +
-                        monument.name() + " and received its national reward."), false);
-
-        // Keep exact rewards private to the capturing nation, while the public
-        // capture announcement still informs the entire server.
-        StringBuilder rewards = new StringBuilder()
-                .append("+$")
-                .append(NumberFormat.getIntegerInstance(Locale.US).format(type.moneyReward()))
-                .append(" treasury");
-        type.resourceRewards().entrySet().stream()
-                .sorted(Map.Entry.comparingByKey())
-                .forEach(reward -> rewards.append(", +")
-                        .append(reward.getValue())
-                        .append(" ")
-                        .append(displayResource(reward.getKey())));
-        Component payout = Component.literal(
-                "[CatanCraft] " + monument.name() + " capture rewards: " + rewards)
+        if (nation == null) throw new IOException("Recorded reward winner is unavailable");
+        server.getPlayerList().broadcastSystemMessage(Component.literal(
+                "[CatanCraft] " + nation.name() + " secured " + monument.name() + " and received its national reward."), false);
+        Component payout = Component.literal("[CatanCraft] " + monument.name() + " capture rewards: " + result.description())
                 .withStyle(ChatFormatting.GREEN);
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
             NationData playerNation = data.nationForPlayer(player.getUUID());
-            if (playerNation != null && nation.id().equals(playerNation.id())) {
-                player.sendSystemMessage(payout);
-            }
+            if (playerNation != null && nation.id().equals(playerNation.id())) player.sendSystemMessage(payout);
         }
-
-        monument.resetCapture();
-        data.setActiveMonumentId(null);
-        data.setNextMonumentActivationGameTime(
-                server.overworld().getGameTime() + ROTATION_GAP_TICKS);
-        data.setDirty();
-
-        CatanCraft.LOGGER.info("Nation {} captured monument {} ({})",
-                nation.name(), monument.id(), type.id());
-    }
-
-    private static String displayResource(ResourceType resource) {
-        String[] words = resource.id().split("_");
-        StringBuilder label = new StringBuilder();
-        for (String word : words) {
-            if (label.length() > 0) label.append(' ');
-            label.append(Character.toUpperCase(word.charAt(0)))
-                    .append(word.substring(1));
-        }
-        return label.toString();
+        CatanCraft.LOGGER.info("Nation {} captured monument {} with saved reward {}", nation.name(), monument.id(), result.rewardId());
     }
 
     private static void announceActivation(MinecraftServer server, MonumentData monument) {
