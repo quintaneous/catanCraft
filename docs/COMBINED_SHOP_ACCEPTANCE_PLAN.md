@@ -32,3 +32,8 @@ The exact checklist will be rewritten around the final delivered features. Insta
 ## This preparation's evidence
 
 Fresh local/remote heads matched 0.1.39 before work. Existing factory art was decoded read-only from the pinned construction bundle; counter geometry and rotation mappings were inspected. The retained published SBW test-runtime verifier passed read-only for nine artifacts and its expected manifest. No new build, native GameTest, connected-client action, live-world change, shop implementation or newly written crowbar fix is claimed by this planning/survey commit. The current runtime keeps its existing command purchases and fixed monument rewards until their replacements are implemented and validated together.
+
+
+## Validated041 dependency checkpoint
+
+[0.1.41 source and evidence](ECONOMY_041_CHECKPOINT.md) adds the versioned 113-gun reference policy and durable monument outcome/winner/credit recovery, with 149/149 native phases passed. It preserves the current four stock offers/prices and fixed compatibility payouts. Synthetic weighted gun/ammo/vehicle results retain pending references; they do not grant equipment. Full native tier stock, actual-pack qualification, production prices/odds and claims remain before this plan's combined owner checklist. SEC-01 stays UNRESOLVED / HIGH PRIORITY; no new owner installation is requested for041.

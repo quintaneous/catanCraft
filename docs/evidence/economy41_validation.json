@@ -1,0 +1,79 @@
+{
+  "source": "880acefc0ea6c43de100afbedec47fdc54e4930f",
+  "run": 42907852441,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42907852441",
+  "artifact_id": 13806750955,
+  "archive_sha256": "8d67d0a663653727bb37ca162f3bd0c5e74b48c9a4eaf2867098258441663445",
+  "unique_scenarios": 146,
+  "phase_executions": 149,
+  "passed_phase_executions": 149,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_paid_recovery": {
+      "expected": 19,
+      "passed": true
+    },
+    "catancraft_rewards41": {
+      "expected": 32,
+      "passed": true
+    },
+    "catancraft_shop40": {
+      "expected": 35,
+      "passed": true
+    },
+    "rewards_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "rewards_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "catancraft_sbw": {
+      "expected": 7,
+      "passed": true
+    },
+    "procurement_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "procurement_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.41-economy-foundation.jar",
+  "jar_bytes": 3266697,
+  "jar_sha256": "811211af67628449daba93a9889b0e9cc6e70d0d884f573224eb2011608ae369",
+  "source_files_byte_compared": 415,
+  "all_manifest_files_verified": 96,
+  "identical_preexisting_classes_vs_040": 508,
+  "changed_preexisting_jar_entries_vs_040": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml",
+    "com/quin/catancraft/command/CatanCommands.class",
+    "com/quin/catancraft/data/CatanSavedData.class",
+    "com/quin/catancraft/data/MonumentData.class",
+    "com/quin/catancraft/monument/MonumentManager.class",
+    "com/quin/catancraft/world/WeaponShopCatalog40.class"
+  ],
+  "restart_proof_verified": true,
+  "weighted_reward_component_restart_verified": true,
+  "reward_seed_process": "3360:1794347167473",
+  "reward_verify_process": "3518:1794347190066",
+  "seed_process": "3124:1794347144263",
+  "verify_process": "3280:1794347159605",
+  "scope": "Controlled native saves, tier policy and two-JVM component restarts; pinned published SBW regression; production rewards keep compatibility values; no equipment delivery, authenticated client, native TaCZ, installed-pack or owner acceptance"
+}
