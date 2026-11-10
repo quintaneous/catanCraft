@@ -173,7 +173,7 @@ public final class ShopFacility40Tests {
     public static void detached_fake_dead_and_spectator_actors_cannot_open_physical_shopping(GameTestHelper h) throws Exception {
         controlled(h); ServerLevel level=h.getLevel();
         FakePlayer fake=new FakePlayer(level,new GameProfile(UUID.randomUUID(),"Shop40Refusal"));
-        var server=level.getServer();server.getPlayerList().getPlayers().add(fake);
+        var server=level.getServer();
         try {
             for(GameType mode:List.of(GameType.SURVIVAL,GameType.ADVENTURE,GameType.CREATIVE,GameType.SPECTATOR)) {
                 fake.setGameMode(mode);fake.setHealth(20);fake.setPos(-805.5,81,-732.5);
@@ -185,7 +185,7 @@ public final class ShopFacility40Tests {
             ServerPlayer detached=new ServerPlayer(server,level,new GameProfile(UUID.randomUUID(),"Shop40Detached"));
             refuse(()->ShopFacility40.actor(detached));detached.setHealth(0);refuse(()->ShopFacility40.actor(detached));
             h.assertTrue(!ShopFacility40.connected(null),"Null actor became a connected player");
-        } finally {server.getPlayerList().getPlayers().remove(fake);PhysicalWeaponShop40.stopped(server);}
+        } finally {PhysicalWeaponShop40.stopped(server);}
         h.succeed();
     }
 

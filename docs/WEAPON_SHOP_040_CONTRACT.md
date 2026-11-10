@@ -92,8 +92,11 @@ server runs these operations synchronously; there is no new latency guarantee.
 
 ## Validation and owner acceptance
 
-Controlled tests use vanilla items and synchronous FakePlayers registered only
-for native save/readback. They do not establish an authenticated counter click,
+Controlled tests use vanilla items and detached FakePlayers saved through the
+server's actual native PlayerDataStorage. Forge exposes an unmodifiable roster;
+a tightly guarded fixture helper accesses the unique storage field by type and
+verifies its directory before calling the native save method. It never adds a
+synthetic actor to the connected/ticking roster or manufactures a native file. They do not establish an authenticated counter click,
 client screen rendering, TaCZ compatibility, actual-pack weapon balance or owner
 acceptance. Separate-process tests preserve original player files, native ledger,
 intent/progress bytes and source-bound proofs between JVMs without copying or

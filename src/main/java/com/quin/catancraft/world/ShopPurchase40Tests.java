@@ -1,6 +1,7 @@
 package com.quin.catancraft.world;
 
 import com.mojang.authlib.GameProfile;
+import com.quin.catancraft.CatanCraft;
 import com.quin.catancraft.data.*;
 import com.quin.catancraft.world.ShopPurchase40.*;
 import net.minecraft.gametest.framework.*;
@@ -21,8 +22,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /** Controlled native player-data/SavedData persistence, with synthetic counter
- * authority and vanilla items. FakePlayers join the save roster synchronously
- * only; these tests do not establish connected-player or TaCZ compatibility. */
+ * authority and vanilla items. The guarded fixture invokes native player storage;
+ * these tests do not establish connected-player or TaCZ compatibility. */
 @GameTestHolder("catancraft_shop40") @PrefixGameTestTemplate(false)
 public final class ShopPurchase40Tests {
     private static final AtomicInteger NAMES=new AtomicInteger();
@@ -351,7 +352,9 @@ public final class ShopPurchase40Tests {
     private interface Attempt { void run() throws Exception; }
     private interface Body { void run(Fixture f) throws Exception; }
     private static void run(GameTestHelper h,Body body) {
-        try(Fixture f=new Fixture(h)){body.run(f);h.succeed();}catch(Exception error){throw new RuntimeException(error);}
+        try(Fixture f=new Fixture(h)){body.run(f);h.succeed();}catch(Exception error){
+            CatanCraft.LOGGER.error("Controlled Shop40 purchase test failed",error);throw new RuntimeException(error);
+        }
     }
     private static void refuse(Attempt attempt)throws Exception {try{attempt.run();}catch(IOException expected){return;}throw new AssertionError("Expected guarded shop refusal");}
     private static void invalid(Attempt attempt)throws Exception {try{attempt.run();}catch(IllegalArgumentException expected){return;}throw new AssertionError("Expected invalid price rejection");}
@@ -375,7 +378,6 @@ public final class ShopPurchase40Tests {
             player.getInventory().clearContent();player.setPos(0.5,140,0.5);
             data=CatanSavedData.get(level.getServer());nation=data.createNation("Shop40_"+NAMES.incrementAndGet(),player.getUUID());nation.setTreasury(MONEY);nation.addResource(ResourceType.WOOD,WOOD);
             facility=new CompoundTag();facility.putString("city","fixture");facility.putString("id","synthetic-shop40-v1");facility.putUUID("owner",nation.id());
-            level.getServer().getPlayerList().getPlayers().add(player);
             try{persistLedger();persistPlayer();}catch(Exception error){close();throw error;}
         }
         Request request(){return new Request(UUID.randomUUID(),"fixture_diamonds","synthetic-shop40-v1",facility,new Price(100,Map.of(ResourceType.WOOD,2L)),item());}
@@ -390,7 +392,7 @@ public final class ShopPurchase40Tests {
             ledgerSaves++;if(suppressLedger)return;data.setDirty();level.getDataStorage().save();if(throwAfterLedger)throw new IOException("Injected callback after actual ledger save");
         }
         public void persistPlayer()throws IOException {
-            playerSaves++;if(suppressPlayer)return;hook(beforePlayer);level.getServer().getPlayerList().saveAll();hook(afterPlayer);
+            playerSaves++;if(suppressPlayer)return;hook(beforePlayer);ShopNativePlayerFixture40.save(player);hook(afterPlayer);
             if(throwAfterPlayer)throw new IOException("Injected callback after native player replacement");
         }
         private void hook(Attempt callback)throws IOException {if(callback!=null)try{callback.run();}catch(IOException error){throw error;}catch(Exception error){throw new IOException(error);}}
@@ -401,7 +403,7 @@ public final class ShopPurchase40Tests {
         int diamonds(){int result=0;for(int i=0;i<36;i++)if(player.getInventory().getItem(i).is(Items.DIAMOND))result+=player.getInventory().getItem(i).getCount();return result;}
         void assertPaidOnce(){h.assertTrue(nation.treasury()==MONEY-100&&nation.resource(ResourceType.WOOD)==WOOD-2,"Original price was not charged exactly once");}
         void assertExactItem(int slot){h.assertTrue(ItemStack.matches(item(),player.getInventory().getItem(slot)),"Delivered stack count or full native NBT differs from the immutable offer");}
-        void replacePlayer(FakePlayer replacement){level.getServer().getPlayerList().getPlayers().remove(player);player=replacement;level.getServer().getPlayerList().getPlayers().add(player);}
-        public void close(){level.getServer().getPlayerList().getPlayers().remove(player);}
+        void replacePlayer(FakePlayer replacement){player=replacement;}
+        public void close(){}
     }
 }

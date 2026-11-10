@@ -98,7 +98,7 @@ jobs:
           mkdir -p build/shop40-evidence/restart
           shopt -s nullglob
           for proof in build/controlled-catancraft_shop40_restart-run/world/data/catancraft_shop40_* build/controlled-catancraft_shop40_restart-run/world/data/catancraft.dat build/controlled-catancraft_shop40_restart-run/world/playerdata/40000000-0000-0000-0000-0000000000{a,b}1.dat; do
-            cp "$proof" build/shop40-evidence/restart/
+            if test -f "$proof"; then cp "$proof" build/shop40-evidence/restart/; fi
           done
       - uses: actions/upload-artifact@v4
         if: always()

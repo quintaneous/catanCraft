@@ -37,7 +37,7 @@ import java.util.Set;
 import java.util.UUID;
 
 /** One synthetic transaction scenario in two distinct JVMs and one retained native
- * world. Both actors use actual PlayerList.saveAll/playerdata and CatanSavedData.
+ * world. Both actors use the actual server PlayerDataStorage/playerdata and CatanSavedData.
  * A stops after durable payment. B stops after durable delivery, then consumes its
  * item while retaining its native player receipt. Verify loads those original
  * files; it never recreates nations, requests, player inventory or proof state.
@@ -399,10 +399,9 @@ public final class ShopPurchase40RestartTests {
             guard(facility);
             List<ServerPlayer> players = level.getServer().getPlayerList().getPlayers();
             if (!players.isEmpty()) throw new IOException("Controlled restart fixture requires no connected/ticking players");
-            playerSaves++; players.add(player);
-            try { nativeRuntime.persistPlayer(); }
-            finally { players.remove(player); }
-            require(players.isEmpty(), "Temporary native player-save registration was not removed");
+            playerSaves++;
+            ShopNativePlayerFixture40.save(player);
+            require(players.isEmpty(), "Native fixture must not register a synthetic ticking player");
         }
     }
 }
