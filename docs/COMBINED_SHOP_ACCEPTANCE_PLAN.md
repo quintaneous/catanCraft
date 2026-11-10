@@ -17,7 +17,7 @@ It reduces installations and repeats, and exercises the systems together in the 
 | Siege/gates | Continue bounded development; include a player-facing test only once its actual interaction, geometry, damage/restoration and outcome flow is validated | Keep current039 backend tests automated. This scheduling decision does not make unregistered primitives playable, approve unsurveyed damage regions, or waive defender-win behavior. |
 | Combined restart | Same delivered purchases/rewards, ownership/protection and completed state survive a normal save/stop/restart without replay | Focus the checklist on the shared persistence boundary; no forced crash or repeated accepted city purchases. |
 
-Facility/session binding, durable quote/payment/item delivery, the physical counter GUI and shared command gate are implemented and automatically validated in040. Next is exact effective-catalog tier/price integration and the linked saved randomized reward/claim flow, followed by native client/mod validation. Fixed vehicle bays require their own initialized-model/exit-clearance contract; a nearby-player spawn is not an acceptable substitute. The minimal existing crafting-table counter and preserved management terminal offer starting points without new art, subject to native interaction/route verification.
+Facility/session binding, durable quote/payment/item delivery, the physical counter GUI and shared command gate are implemented and automatically validated in040. Native tier/price integration is now validated against published TaCZ/SBW inputs in 042. Next is the linked saved randomized reward/claim flow and the observed startup-config write-coordination follow-up, followed by exact installed-pack/client validation. Fixed vehicle bays require their own initialized-model/exit-clearance contract; a nearby-player spawn is not an acceptable substitute. The minimal existing crafting-table counter and preserved management terminal offer starting points without new art, subject to native interaction/route verification.
 
 ## One focused owner checklist, issued only with the playable build
 
@@ -37,3 +37,10 @@ Fresh local/remote heads matched 0.1.39 before work. Existing factory art was de
 ## Validated041 dependency checkpoint
 
 [0.1.41 source and evidence](ECONOMY_041_CHECKPOINT.md) adds the versioned 113-gun reference policy and durable monument outcome/winner/credit recovery, with 149/149 native phases passed. It preserves the current four stock offers/prices and fixed compatibility payouts. Synthetic weighted gun/ammo/vehicle results retain pending references; they do not grant equipment. Full native tier stock, actual-pack qualification, production prices/odds and claims remain before this plan's combined owner checklist. SEC-01 stays UNRESOLVED / HIGH PRIORITY; no new owner installation is requested for041.
+
+
+## Validated042 native stock checkpoint
+
+[0.1.42 source and evidence](NATIVE_WEAPON_STOCK_042_CHECKPOINT.md) connects 97 offers to native TaCZ/SBW supply and physical tiered browsing, with explicit provisional prices and retained old purchase recovery. All 178 selected native phases passed, including both-provider coexistence and separate-JVM native gun recovery. First-run failures/logs remain retained. The previous 041 four-stock limitation is superseded; current default monument compatibility payouts and pending equipment references are unchanged.
+
+The first combined startup exposed a pre-existing terrain-config watcher race, retained as unresolved even though run2 did not reproduce it. Address that observation, actual reward claims/production odds, installed-pack/client matching and balance before owner release. Vehicle bays and player-facing siege retain their own contracts. No intermediate installation/checklist is issued; SEC-01 remains UNRESOLVED / HIGH PRIORITY.

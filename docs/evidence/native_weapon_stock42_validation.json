@@ -1,0 +1,135 @@
+{
+  "source": "9b3eb646a494348632e4b5c6a692c57f9a9f2f16",
+  "run": 42914749967,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42914749967",
+  "artifact_id": 13807659810,
+  "archive_sha256": "df07f5c41980cbcac7143e039413fd064748d67e5334557d9554713dc4459a2e",
+  "unique_scenarios": 173,
+  "phase_executions": 178,
+  "passed_phase_executions": 178,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_paid_recovery": {
+      "expected": 19,
+      "passed": true
+    },
+    "catancraft_shop40": {
+      "expected": 35,
+      "passed": true
+    },
+    "catancraft_stock42": {
+      "expected": 8,
+      "passed": true
+    },
+    "native_combined": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_sbw": {
+      "expected": 8,
+      "passed": true
+    },
+    "native_sbw_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_sbw_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_tacz": {
+      "expected": 8,
+      "passed": true
+    },
+    "native_tacz_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_tacz_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "catancraft_rewards41": {
+      "expected": 32,
+      "passed": true
+    },
+    "rewards_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "rewards_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "catancraft_sbw": {
+      "expected": 7,
+      "passed": true
+    },
+    "procurement_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "procurement_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.42-native-weapon-stock.jar",
+  "jar_bytes": 3394043,
+  "jar_sha256": "af1a2def5eb3fc8db5088e21d41a8ceeb2bfa551f33b143413b022d287b50c80",
+  "source_files_byte_compared": 435,
+  "all_manifest_files_verified": 168,
+  "identical_preexisting_classes_vs_041": 533,
+  "changed_preexisting_jar_entries_vs_041": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml",
+    "com/quin/catancraft/CatanCraft.class",
+    "com/quin/catancraft/world/PhysicalWeaponShop40$Quote.class",
+    "com/quin/catancraft/world/PhysicalWeaponShop40$Session.class",
+    "com/quin/catancraft/world/PhysicalWeaponShop40.class",
+    "com/quin/catancraft/world/ShopNativePlayerFixture40.class",
+    "com/quin/catancraft/world/ShopPurchase40$Lock.class",
+    "com/quin/catancraft/world/ShopPurchase40.class"
+  ],
+  "native_weapon_restart_proofs": {
+    "tacz": {
+      "source": "9b3eb646a494348632e4b5c6a692c57f9a9f2f16",
+      "seed_process": "3386:1794349849183",
+      "verify_process": "3550:1794349873346",
+      "item_id": "tacz:modern_kinetic_gun",
+      "fingerprint": "8bb5d666713716c7eb095de4251e9b268d1b5f0437a2c2db6dc2d3579659feb8",
+      "native_uuid": null,
+      "first_recovery_ledger_saves": 1,
+      "completed_retry_saves": 0
+    },
+    "sbw": {
+      "source": "9b3eb646a494348632e4b5c6a692c57f9a9f2f16",
+      "seed_process": "3708:1794349854079",
+      "verify_process": "3872:1794349882299",
+      "item_id": "superbwarfare:ak_47",
+      "fingerprint": "79f1192902547613add06d25612d70cc9bae34a542df0e7f94e7b2d29552e28a",
+      "native_uuid": "67f043c5-4c1f-4922-bc24-752754d0250d",
+      "first_recovery_ledger_saves": 1,
+      "completed_retry_saves": 0
+    }
+  },
+  "restart_proof_verified": true,
+  "weighted_reward_component_restart_verified": true,
+  "reward_seed_process": "3310:1794349815918",
+  "reward_verify_process": "3471:1794349831129",
+  "seed_process": "3139:1794349782634",
+  "verify_process": "3292:1794349798328",
+  "scope": "Controlled native TaCZ1.2.0/SBW0.8.9.2 gun/ammo supply, purchase recovery, provider coexistence and separate-JVM restarts; provisional prices; no owner installed-pack, authenticated client, combat balance, monument equipment claims or owner acceptance"
+}
