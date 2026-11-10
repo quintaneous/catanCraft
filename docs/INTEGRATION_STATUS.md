@@ -1,5 +1,11 @@
 # Combined integration status
 
+## SIE-04 / SIE-05 — 0.1.38 durable objective state, 2026-11-10
+
+Branch `chatgpt/siege-recovery-0.1.38` continues validated 0.1.37 head `ff7307ffc2f2b60ea7950fefc7f8da5afac36bfc`. Adds full original-profile/rules/progress/result persistence, current-revision and consecutive-observation checks, exclusive city writer and explicit revalidation on reopen. Reuses the existing sealed atomic writer unchanged. No automatic recovery, combat, block restoration or ownership settlement is enabled; this is bounded objective-state recovery, not completion of SIE-02/SIE-05. [Contract](SIEGE_RECOVERY_038_CONTRACT.md) and [checkpoint](SIEGE_RECOVERY_038_CHECKPOINT.md).
+
+Implementation/review/tests are in progress; no new build/native pass is claimed yet. Selected validation includes a same-world second-JVM recovery scenario, two failed-save boundaries and retained presence/rules/baseline tests. Durations/objective positions remain synthetic; offline-clock and settlement policies remain unselected. Existing City A wall acceptance and purchase/recovery work stay preserved. No live-world/mod changes, reset, imports, accepted-purchase replay, multiplayer or Blender assignment. SEC-01 remains unresolved/high priority. ECO-03 physical gun/ammunition counters and fixed vehicle deployment bays remain formalized requirements in Phase 3, not implemented shops.
+
 ## SIE-01 / SIE-04 — 0.1.37 objective registration and server presence, 2026-11-06
 
 Branch `chatgpt/siege-objectives-0.1.37` continues `a51b1f8e8a6b41e878731130464a724b8c969984`, the validated 0.1.36 documentation head. Adds immutable explicit city objective profiles, bounded territory/height validation, world/owner binding and read-only server roster/membership/position sampling. The active objective alone counts; defenders contest without freezing the shared clock. No production profile, player command, siege scheduler, damage, transfer or restoration is enabled. [Contract and precise limits](SIEGE_OBJECTIVES_037_CONTRACT.md).

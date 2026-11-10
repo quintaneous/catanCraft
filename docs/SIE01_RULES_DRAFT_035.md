@@ -136,3 +136,13 @@ implementation recommendations, not acceptance of live geometry. No production
 profile, active siege service or player controls are registered. See the
 [0.1.37 contract](SIEGE_OBJECTIVES_037_CONTRACT.md) for binding, fixture and durable
 controller limits. Actual locations/durations and safe restoration remain pending.
+
+## 0.1.38 bounded objective-state recovery, 2026-11-10
+
+The next storage adapter retains the full original profile/rules, capture
+progress and outcome. Reopened active state requires explicit revalidation; no
+downtime interval is automatically applied. This is conservative infrastructure,
+not selection of the live offline-clock policy. Damage snapshots, restoration,
+ownership settlement and player-facing activation remain separate. See the
+[0.1.38 contract](SIEGE_RECOVERY_038_CONTRACT.md). Physical gun/ammunition counters
+and fixed vehicle deployment bays remain the agreed ECO-03 Phase 3 scope.

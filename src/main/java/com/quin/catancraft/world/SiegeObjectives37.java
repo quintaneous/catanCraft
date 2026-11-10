@@ -140,6 +140,7 @@ final class SiegeObjectives37 {
         private Bound(Registry registry, Profile profile, Contract contract) {
             this.registry = registry; this.profile = profile; this.contract = contract;
         }
+        ServerLevel level() { return registry.level; }
         Profile profile() { return profile; }
         Contract contract() { return contract; }
     }
