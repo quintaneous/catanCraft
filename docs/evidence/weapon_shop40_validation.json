@@ -1,0 +1,70 @@
+{
+  "source": "56e54c7d5371f78b4c6789d69d267e5ef0baec91",
+  "run": 42897946825,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42897946825",
+  "artifact_id": 13800673590,
+  "archive_sha256": "5c2f068ceba678e117c9e8eaf10acfde15dcc99df067835a89963494484f5574",
+  "unique_scenarios": 135,
+  "phase_executions": 137,
+  "passed_phase_executions": 137,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_paid_recovery": {
+      "expected": 19,
+      "passed": true
+    },
+    "catancraft_shop40": {
+      "expected": 35,
+      "passed": true
+    },
+    "catancraft_snapshot39": {
+      "expected": 22,
+      "passed": true
+    },
+    "catancraft_sbw": {
+      "expected": 7,
+      "passed": true
+    },
+    "procurement_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "procurement_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.40-weapon-shop.jar",
+  "jar_bytes": 3165039,
+  "jar_sha256": "819ccc3c52cb15dfe24f3a95e0ff7138d818be45e76e2e43bbde89387128aa0d",
+  "source_files_byte_compared": 402,
+  "all_manifest_files_verified": 78,
+  "identical_preexisting_classes_vs_039": 475,
+  "changed_preexisting_jar_entries_vs_039": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml",
+    "com/quin/catancraft/CatanCraft.class",
+    "com/quin/catancraft/client/ClientNationDashboardHandler.class",
+    "com/quin/catancraft/command/NationProcurement$Kind.class",
+    "com/quin/catancraft/command/NationProcurement$Offer.class",
+    "com/quin/catancraft/command/NationProcurement.class",
+    "com/quin/catancraft/network/NationNetwork.class",
+    "com/quin/catancraft/world/MapInteractionHandler.class"
+  ],
+  "restart_proof_verified": true,
+  "seed_process": "3134:1794343489722",
+  "verify_process": "3286:1794343507833",
+  "scope": "Controlled native saves and two-JVM restarts; pinned published SBW regression; no authenticated client, native TaCZ, actual installed-pack or owner acceptance"
+}
