@@ -17,13 +17,15 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 public final class MapInteractionHandler {
-    @SubscribeEvent
+    @SubscribeEvent(priority = net.minecraftforge.eventbus.api.EventPriority.LOWEST)
     public void onRightClickBlock(PlayerInteractEvent.RightClickBlock event) {
         if (event.getLevel().isClientSide()) return;
         if (event.getHand() != InteractionHand.MAIN_HAND) return;
         if (!(event.getEntity() instanceof ServerPlayer player)) return;
 
+        if (event.isCanceled()) return;
         BlockPos pos = event.getPos();
+        if (PhysicalWeaponShop40.openCounter(player, pos)) { finish(event); return; }
         if (!event.getLevel().getBlockState(pos).is(Blocks.LECTERN)) return;
 
         TerritoryDefinition definition = findManagementTerritory(player, pos);

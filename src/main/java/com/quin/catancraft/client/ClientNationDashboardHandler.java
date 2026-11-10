@@ -7,6 +7,7 @@ public final class ClientNationDashboardHandler {
     private ClientNationDashboardHandler() {}
     public static void open(List<String> lines) {
         Minecraft client=Minecraft.getInstance();
+        if(lines.contains("V|weapon_shop")) { client.setScreen(new WeaponShopScreen(lines)); return; }
         NationDashboardScreen dashboard=client.screen instanceof NationDashboardScreen existing?existing
                 :client.screen instanceof DefenseConfirmationScreen confirmation?confirmation.parentDashboard():null;
         if(lines.contains("V|defense_confirmation")) {

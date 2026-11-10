@@ -3,7 +3,7 @@ package com.quin.catancraft.command;
 import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import com.quin.catancraft.CatanCraft;
+import com.quin.catancraft.world.PhysicalWeaponShop40;
 import com.quin.catancraft.data.BuildingInstance;
 import com.quin.catancraft.data.BuildingType;
 import com.quin.catancraft.data.CatanSavedData;
@@ -21,11 +21,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.registries.ForgeRegistries;
 
-import java.lang.reflect.Method;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -80,22 +78,23 @@ public final class NationProcurement {
     private NationProcurement() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> node() {
-        return Commands.literal("procure")
+        return PhysicalWeaponShop40.addRoutes(Commands.literal("procure")
                 .executes(ctx -> list(ctx.getSource()))
                 .then(Commands.literal("list")
                         .executes(ctx -> list(ctx.getSource())))
                 .then(Commands.argument("item", StringArgumentType.word())
                         .executes(ctx -> buy(ctx.getSource(),
-                                StringArgumentType.getString(ctx, "item"))));
+                                StringArgumentType.getString(ctx, "item")))));
     }
 
     private static int list(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
-                "Nation procurement (leader only). Buy with /nation procure <id>:"), false);
-        CATALOG.forEach((id, offer) -> source.sendSuccess(
+                "Weapons: visit your management lectern or Weapons Factory counter. Legacy vehicles: /nation procure <id>."), false);
+        PhysicalWeaponShop40.catalogRows().forEach(row -> source.sendSuccess(() -> Component.literal(row), false));
+        CATALOG.forEach((id, offer) -> { if (offer.kind() == Kind.VEHICLE) source.sendSuccess(
                 () -> Component.literal(id + " - " + offer.name() + ": " +
                         offer.cost().describe() + (offer.facility() == null ? ""
-                        : " [requires " + offer.facility().displayName() + "]")), false));
+                        : " [requires " + offer.facility().displayName() + "]")), false); });
         return 1;
     }
 
@@ -106,6 +105,7 @@ public final class NationProcurement {
             source.sendFailure(Component.literal("Unknown offer. Use /nation procure list."));
             return 0;
         }
+        if (offer.kind() != Kind.VEHICLE) return PhysicalWeaponShop40.review(source, key.toLowerCase(java.util.Locale.ROOT));
         ServerPlayer player = source.getPlayerOrException();
         CatanSavedData data = CatanSavedData.get(source.getServer());
         NationData nation = data.nationForPlayer(player.getUUID());
@@ -129,9 +129,6 @@ public final class NationProcurement {
                     ". Need: " + offer.cost().describe()));
             return 0;
         }
-        if (offer.kind() != Kind.VEHICLE) {
-            return buyTacz(source, player, data, nation, offer);
-        }
         return buyVehicle(source, player, data, nation, offer);
     }
 
@@ -144,62 +141,6 @@ public final class NationProcurement {
             }
         }
         return false;
-    }
-
-    private static int buyTacz(CommandSourceStack source, ServerPlayer player,
-                               CatanSavedData data, NationData nation, Offer offer) {
-        if (player.getInventory().getFreeSlot() < 0) {
-            source.sendFailure(Component.literal(
-                    "Keep at least one empty inventory slot for procurement."));
-            return 0;
-        }
-        ItemStack stack;
-        try {
-            String builderName = offer.kind() == Kind.GUN
-                    ? "com.tacz.guns.api.item.builder.GunItemBuilder"
-                    : "com.tacz.guns.api.item.builder.AmmoItemBuilder";
-            Class<?> builderClass = Class.forName(builderName);
-            Object builder = builderClass.getMethod("create").invoke(null);
-            builder = builderClass.getMethod("setId", ResourceLocation.class)
-                    .invoke(builder, new ResourceLocation(offer.objectId()));
-            if (offer.kind() == Kind.GUN) {
-                @SuppressWarnings({"rawtypes", "unchecked"})
-                Class<? extends Enum> modeClass =
-                        (Class<? extends Enum>) Class.forName(
-                                "com.tacz.guns.api.item.gun.FireMode");
-                @SuppressWarnings({"rawtypes", "unchecked"})
-                Enum<?> mode = Enum.valueOf((Class) modeClass, offer.fireMode());
-                Method setMode = builderClass.getMethod("setFireMode", modeClass);
-                builder = setMode.invoke(builder, mode);
-            } else {
-                builder = builderClass.getMethod("setCount", int.class)
-                        .invoke(builder, offer.count());
-            }
-            stack = (ItemStack) builderClass.getMethod("build").invoke(builder);
-            if (stack == null || stack.isEmpty()) {
-                source.sendFailure(Component.literal(
-                        "TaCZ did not recognize " + offer.objectId() +
-                        "; check your gun pack. No funds charged."));
-                return 0;
-            }
-        } catch (ReflectiveOperationException | IllegalArgumentException ex) {
-            CatanCraft.LOGGER.error("TaCZ procurement integration failed", ex);
-            source.sendFailure(Component.literal(
-                    "TaCZ gun pack/API unavailable. No funds charged; see server log."));
-            return 0;
-        }
-
-        if (!player.getInventory().add(stack)) {
-            source.sendFailure(Component.literal(
-                    "Not enough inventory space. No funds charged."));
-            return 0;
-        }
-        offer.cost().charge(nation);
-        data.setDirty();
-        source.sendSuccess(() -> Component.literal(
-                "Purchased " + offer.name() + " for " + offer.cost().describe() +
-                ". Item delivered to your inventory."), false);
-        return 1;
     }
 
     private static int buyVehicle(CommandSourceStack source, ServerPlayer player,

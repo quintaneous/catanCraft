@@ -57,6 +57,11 @@ public final class CatanCraft {
     }
 
     @SubscribeEvent
+    public void onServerStopped(net.minecraftforge.event.server.ServerStoppedEvent event) {
+        com.quin.catancraft.world.PhysicalWeaponShop40.stopped(event.getServer());
+    }
+
+    @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
             EconomyEngine.tick(event.getServer());
