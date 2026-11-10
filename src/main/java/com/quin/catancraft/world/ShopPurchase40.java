@@ -205,6 +205,15 @@ final class ShopPurchase40 {
         if(result.size()>1)throw new IOException("Multiple pending shop purchases; preserve records");return List.copyOf(result);
     }
     static List<UUID> pending(Environment e)throws IOException {try(Lock ignored=lock(e)){return pendingInternal(e);}}
+    /** Read the original frozen request; never recompute its price or replace its item. */
+    static Request inspect(Environment e,UUID id)throws IOException {
+        try(Lock ignored=lock(e)) {
+            CompoundTag n=load(e,id,read(intentPath(e,id)));
+            if(!identity(e).equals(n.getCompound("identity")))throw new IOException("Original purchase nation/world changed");
+            return new Request(id,n.getString("offer"),n.getString("catalog"),n.getCompound("facility"),
+                    price(n.getCompound("price")),item(n.getCompound("item")));
+        }
+    }
     static UUID create(Environment e,Request r)throws IOException{return create(e,r,NONE);}
     static Result resume(Environment e,UUID id)throws IOException{return resume(e,id,NONE);}
     static UUID fixtureCreate(Environment e,Request r,Fault f)throws IOException{fixture(e);return create(e,r,f);}
@@ -212,7 +221,9 @@ final class ShopPurchase40 {
     private static void fixture(Environment e)throws IOException {
         thread(e);Path p=root(e);
         if(!(e.player().server instanceof GameTestServer)||!p.getFileName().toString().equals("world")
-                ||!Set.of("controlled-catancraft_shop40-run","controlled-catancraft_shop40_restart-run").contains(p.getParent().getFileName().toString())
+                ||!Set.of("controlled-catancraft_shop40-run","controlled-catancraft_shop40_restart-run",
+                        "controlled-catancraft_native42_tacz-run","controlled-catancraft_native42_sbw-run",
+                        "controlled-catancraft_native42_tacz_restart-run","controlled-catancraft_native42_sbw_restart-run").contains(p.getParent().getFileName().toString())
                 ||!Files.readString(p.getParent().resolve(".catancraft-controlled-fixture-v1")).equals("CatanCraft synthetic flat fixture v1\n"))throw new IOException("Controlled shop fixture required");
     }
     private static UUID create(Environment e,Request r,Fault fault)throws IOException {

@@ -1,0 +1,23 @@
+# ECO-03 — native weapon stock 0.1.42
+
+Continues validated 041 on `chatgpt/combined-shop-acceptance`, preserving the 113-entry reference, reward recovery and accepted city/purchase state. This batch connects ordinary tier stock to native TaCZ/SBW builders and the existing physical counter. It is part of the combined playable release; no intermediate owner installation is requested.
+
+## Stock and purchase behavior
+
+The catalog contains 76 ordinary guns (52 TaCZ, 24 SBW) and 21 native ammunition products. Factory unlocks are cumulative: 2/19/37/63/85/97 total offers at Starter/L1/L2/L3/L4/L5. All 28 DROP reservations, two HOLD entries and seven special/conditional guns remain excluded. Existing Glock/AK/9mm/7.62x39 aliases, levels and prices remain unchanged; the AK's legacy L1 gate stays separate from the immutable candidate L2 proposal. [Full provisional price schedule](WEAPON_STOCK_042_PRICES.md) is explicit and versioned. These are test prices, not calibrated final balance.
+
+The physical counter shows eight offers per page. Page and confirmation selections bind the original server-created session. The server rechecks current owner, completed local factory level, location, route, quote, price, inventory and native item configuration. Remote command aliases cannot create shopping authority. Unknown aliases, changed fields, unqualified special entries and missing providers refuse before creating an order.
+
+New quotes use native item builders and exact native item serialization. TaCZ qualification compares the pinned effective raw and parsed gun/ammo data, scripts and built-in attachment dependencies. SBW qualification compares complete native-deserialized defaults, computed properties, consumer identity and configuration; native initialization supplies its UUID and firing mode. Rechecks preserve the original SBW UUID instead of creating a different gun. The SBW k_98 declaration of Auto conflicts with its implicit available Semi mode; the native initialized mode is preserved and verified.
+
+Each new immutable purchase stores its catalog revision plus native fingerprint in the existing bounded catalog field. The original item, price and facility stay frozen. Native configuration is checked again at transaction boundaries and during recovery; changed or missing original native data holds the existing record rather than substituting equipment or charging a new price. Old unbound 040 records retain their existing recovery semantics and historical prices. No journal schema migration or full-ledger rollback is added.
+
+A HIGHEST-priority reload-begin gate precedes provider mutation. A transaction lease serializes reload start with the whole confirmation/payment/delivery operation. Successful server tag publication retires one reload; overlapping reloads must all finish. A failed reload retains a hold until server restart, preventing a later successful reload from hiding the unfinished one. Same-thread reentrant reload from inside a purchase refuses before provider handlers. This does not promise recovery from arbitrary host corruption or externally mutated native VM state.
+
+## Qualification and validation boundary
+
+Published test inputs are TaCZ 1.2.0 Forge 1.20.1 and SBW 0.8.9.2; original JARs are hash-pinned and used only beneath build directories. Both-provider coexistence selects SimpleBedrockModel 2.6.2 within SBW's accepted range. No installed mods are read or changed. A different provider version or changed reference data is held, not upgraded or silently treated as qualified. Exact owner/add-on-pack matching remains separate.
+
+Native tests target every ordinary offer, native gun/ammo transactions, original saved player/ledger/intent bytes across separate JVMs, consumed-item non-regrant and SBW UUID stability. A separate both-provider case covers all 97 offers in one runtime. Retained purchase, baseline, monument and published-SBW protection tests accompany them. Executed results belong in NATIVE_WEAPON_STOCK_042_CHECKPOINT.md; test declarations are not passes. Connected-client clicks, weapon performance/price calibration and owner acceptance remain separate.
+
+Monument compatibility payouts and pending equipment references remain unchanged. Reward claims/production loot odds, fixed vehicle bays and finished player-facing siege remain before the combined release/checklist. SEC-01 remains UNRESOLVED / HIGH PRIORITY pending installed-pack acceptance. No live-world/mod changes, accepted-purchase replay, reset, imports, multiplayer or Blender work.

@@ -1,0 +1,50 @@
+// Explicit isolated TaCZ test runtime; ordinary builds never apply this init script.
+import groovy.json.JsonSlurper
+
+beforeProject { project ->
+    def namespace = project.findProperty('gameTestNamespace')
+    if (!(namespace in ['catancraft_native42_tacz', 'catancraft_native42_tacz_restart'])) {
+        throw new GradleException('TaCZ042 accepts only its isolated native test namespaces')
+    }
+    if (project.findProperty('controlledGameTests') != 'true') {
+        throw new GradleException('TaCZ042 requires controlledGameTests=true; no implicit world selection')
+    }
+    File root = project.file(project.findProperty('taczAuditRoot') ?: 'build/shop42-tacz-runtime')
+    File verifier = project.file('tools/shop42/prepare_tacz_runtime.py')
+    def output = new ByteArrayOutputStream()
+    def errors = new ByteArrayOutputStream()
+    def checkedProcess = project.exec {
+        commandLine 'python3', verifier.absolutePath, '--root', root.absolutePath, '--verify-only', '--emit-manifest'
+        standardOutput = output
+        errorOutput = errors
+        ignoreExitValue = true
+    }
+    if (checkedProcess.exitValue != 0) throw new GradleException('Pinned TaCZ runtime refused: ' + errors.toString('UTF-8'))
+    def checked = new JsonSlurper().parseText(output.toString('UTF-8'))
+    if (checked.result != 'PASS' || checked.runtime_artifact_count != 7
+            || checked.manifest.schema != 'catancraft-tacz42-published-runtime-v1') {
+        throw new GradleException('Unexpected TaCZ runtime verification response')
+    }
+    project.plugins.withId('net.minecraftforge.gradle') {
+        project.repositories.maven {
+            name = 'catancraftPinnedTaCZ042'
+            url = project.uri(new File(root, 'maven'))
+            content { includeGroup 'audit.catancraft.shop42_tacz' }
+            metadataSources { mavenPom(); artifact() }
+        }
+        checked.manifest.artifacts.each { item ->
+            project.dependencies.add('runtimeOnly', item.deobfuscate
+                    ? project.extensions.getByName('fg').deobf(item.coordinate) : item.coordinate)
+        }
+        project.afterEvaluate {
+            project.tasks.configureEach { task ->
+                if (task.name == 'runGameTestServer') task.dependsOn('createSrgToMcp')
+            }
+            project.minecraft.runs.gameTestServer {
+                property 'mixin.env.remapRefMap', 'true'
+                property 'mixin.env.refMapRemappingFile', project.file('build/createSrgToMcp/output.srg').absolutePath
+                property 'catancraft.taczRuntimeManifestSHA256', checked.manifest_sha256.toString()
+            }
+        }
+    }
+}

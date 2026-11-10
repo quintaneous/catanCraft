@@ -23,7 +23,9 @@ final class ShopNativePlayerFixture40 {
         var server=player.server;Path root=server.getWorldPath(LevelResource.ROOT).toRealPath();
         if(!(player instanceof FakePlayer)||!(server instanceof GameTestServer)||!server.isSameThread()
                 ||!server.getPlayerList().getPlayers().isEmpty()||!root.getFileName().toString().equals("world")
-                ||!Set.of("controlled-catancraft_shop40-run","controlled-catancraft_shop40_restart-run").contains(root.getParent().getFileName().toString())
+                ||!Set.of("controlled-catancraft_shop40-run","controlled-catancraft_shop40_restart-run",
+                        "controlled-catancraft_native42_tacz-run","controlled-catancraft_native42_sbw-run",
+                        "controlled-catancraft_native42_tacz_restart-run","controlled-catancraft_native42_sbw_restart-run").contains(root.getParent().getFileName().toString())
                 ||!Files.readString(root.getParent().resolve(".catancraft-controlled-fixture-v1")).equals("CatanCraft synthetic flat fixture v1\n"))
             throw new IOException("Native player fixture requires its empty marked disposable GameTest server");
         try {

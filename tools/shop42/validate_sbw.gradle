@@ -1,0 +1,67 @@
+// Optional isolated published-SBW audit; ordinary builds/releases never apply this init.
+import groovy.json.JsonSlurper
+
+beforeProject { project ->
+    def namespace = project.findProperty('gameTestNamespace')
+    if (!(namespace in ['catancraft_native42_sbw', 'catancraft_native42_sbw_restart'])) {
+        throw new GradleException('Native42 SBW init accepts only its isolated gun test namespaces')
+    }
+    if (project.findProperty('controlledGameTests') != 'true') {
+        throw new GradleException('SEC01 035 requires -PcontrolledGameTests=true; no implicit world selection')
+    }
+    def restartPhase = project.findProperty('sbwRestartPhase')
+    if (namespace == 'catancraft_sbw_procurement35' && !(restartPhase in ['seed', 'verify'])) {
+        throw new GradleException('Procurement/restart test requires explicit -PsbwRestartPhase=seed or verify')
+    }
+    if (namespace == 'catancraft_sbw' && restartPhase != null) {
+        throw new GradleException('Restart phase is only valid for catancraft_sbw_procurement35')
+    }
+    File auditRoot = project.file(project.findProperty('sbwAuditRoot') ?: 'build/sec01-035-runtime')
+    File verifier = project.file('tools/sec01_035/prepare_runtime.py')
+    if (!verifier.isFile()) throw new GradleException('Missing pinned-runtime verifier')
+    def output = new ByteArrayOutputStream()
+    def errors = new ByteArrayOutputStream()
+    def result = project.exec {
+        commandLine 'python3', verifier.absolutePath, '--root', auditRoot.absolutePath, '--verify-only', '--emit-manifest'
+        standardOutput = output
+        errorOutput = errors
+        ignoreExitValue = true
+    }
+    if (result.exitValue != 0) throw new GradleException('SEC01 pinned runtime verification refused: ' + errors.toString('UTF-8'))
+    // Recomputed from hard-pinned original JARs and their exact embedded records.
+    // The verifier checks every staged JAR/POM byte and rejects unknown paths,
+    // symlinks or manifest changes; no arbitrary manifest flags are trusted.
+    def checked = new JsonSlurper().parseText(output.toString('UTF-8'))
+    if (checked.result != 'PASS' || checked.runtime_artifact_count != 9
+            || checked.manifest.schema != 'catancraft-sec01-published-runtime-v1') {
+        throw new GradleException('Unexpected pinned-runtime verifier response')
+    }
+    def artifacts = checked.manifest.artifacts
+    project.plugins.withId('net.minecraftforge.gradle') {
+        project.repositories.maven {
+            name = 'sec01PinnedPublished035'
+            url = project.uri(new File(auditRoot, 'maven'))
+            content { includeGroup 'audit.catancraft.sec01_035' }
+            metadataSources { mavenPom(); artifact() }
+        }
+        artifacts.each { item ->
+            project.dependencies.add('runtimeOnly', item.deobfuscate
+                    ? project.extensions.getByName('fg').deobf(item.coordinate)
+                    : item.coordinate)
+        }
+        project.afterEvaluate {
+            project.tasks.configureEach { task ->
+                if (task.name == 'runGameTestServer') task.dependsOn('createSrgToMcp')
+            }
+            project.minecraft.runs.gameTestServer {
+                args '--mixin', 'catancraft.mixins.json'
+                property 'mixin.debug.export', 'true'
+                property 'mixin.debug.verbose', 'true'
+                property 'mixin.env.remapRefMap', 'true'
+                property 'mixin.env.refMapRemappingFile', project.file('build/createSrgToMcp/output.srg').absolutePath
+                property 'catancraft.sbwRuntimeManifestSHA256', checked.manifest_sha256.toString()
+                if (restartPhase != null) property 'catancraft.sbwRestartPhase', restartPhase.toString()
+            }
+        }
+    }
+}

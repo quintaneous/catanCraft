@@ -30,6 +30,8 @@ public final class CatanCraft {
     public CatanCraft() {
         NationNetwork.register();
         MinecraftForge.EVENT_BUS.register(this);
+        MinecraftForge.EVENT_BUS.addListener(net.minecraftforge.eventbus.api.EventPriority.HIGHEST, com.quin.catancraft.world.NativeWeapon42::addReloadListener);
+        MinecraftForge.EVENT_BUS.addListener(com.quin.catancraft.world.NativeWeapon42::tagsUpdated);
         MinecraftForge.EVENT_BUS.register(new WorldProtection());
         MinecraftForge.EVENT_BUS.register(new MapInteractionHandler());
         MinecraftForge.EVENT_BUS.register(new NationVehicleProtection());
@@ -59,6 +61,7 @@ public final class CatanCraft {
     @SubscribeEvent
     public void onServerStopped(net.minecraftforge.event.server.ServerStoppedEvent event) {
         com.quin.catancraft.world.PhysicalWeaponShop40.stopped(event.getServer());
+        com.quin.catancraft.world.NativeWeapon42.stopped(event.getServer());
     }
 
     @SubscribeEvent
