@@ -1,0 +1,447 @@
+{
+  "source": "0b1be0f76339a2fbcaaaebabda27edd7263f27a4",
+  "run": 42938632615,
+  "workflow_url": "https://github.com/quintaneous/catanCraft/actions/runs/42938632615",
+  "artifact_id": 13819886742,
+  "archive_sha256": "6db6a730de5aeb56a52836aec8b18626a3afa27e5cc16ba64134bb8b7d893764",
+  "unique_scenarios": 213,
+  "phase_executions": 220,
+  "passed_phase_executions": 220,
+  "failed": 0,
+  "results": {
+    "catancraft": {
+      "expected": 50,
+      "passed": true
+    },
+    "catancraft_active44": {
+      "expected": 6,
+      "passed": true
+    },
+    "catancraft_claims43": {
+      "expected": 10,
+      "passed": true
+    },
+    "catancraft_handheld44": {
+      "expected": 7,
+      "passed": true
+    },
+    "catancraft_paid_recovery": {
+      "expected": 19,
+      "passed": true
+    },
+    "catancraft_shop40": {
+      "expected": 35,
+      "passed": true
+    },
+    "catancraft_stock42": {
+      "expected": 8,
+      "passed": true
+    },
+    "catancraft_supply43": {
+      "expected": 8,
+      "passed": true
+    },
+    "catancraft_terrain43": {
+      "expected": 3,
+      "passed": true
+    },
+    "claims_sbw": {
+      "expected": 2,
+      "passed": true
+    },
+    "claims_sbw_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "claims_sbw_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "claims_tacz": {
+      "expected": 2,
+      "passed": true
+    },
+    "claims_tacz_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "claims_tacz_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_combined": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_sbw": {
+      "expected": 8,
+      "passed": true
+    },
+    "native_sbw_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_sbw_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_tacz": {
+      "expected": 8,
+      "passed": true
+    },
+    "native_tacz_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "native_tacz_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "catancraft_rewards41": {
+      "expected": 32,
+      "passed": true
+    },
+    "rewards_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "rewards_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "catancraft_sbw": {
+      "expected": 7,
+      "passed": true
+    },
+    "procurement_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "procurement_verify": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_seed": {
+      "expected": 1,
+      "passed": true
+    },
+    "shop_verify": {
+      "expected": 1,
+      "passed": true
+    }
+  },
+  "jar_file": "catancraft-0.1.44-tacz-only.jar",
+  "jar_bytes": 3593446,
+  "jar_sha256": "0bf75d12f145bdb795c221a81ee4a3fcb3251cc8bd9879d66cfb67cc15d76afe",
+  "source_files_byte_compared": 476,
+  "all_manifest_files_verified": 289,
+  "baseline_043_jar_sha256": "9941d561cb201de84bd352137320420a2bdc3119cc897d5955e775ba0d78e866",
+  "identical_preexisting_classes_vs_043": 596,
+  "changed_preexisting_jar_entries_vs_043": [
+    "META-INF/MANIFEST.MF",
+    "META-INF/mods.toml",
+    "catancraft.mixins.json",
+    "com/quin/catancraft/world/MonumentRewards41.class",
+    "com/quin/catancraft/world/MonumentSupply43Tests.class",
+    "com/quin/catancraft/world/NativeReward43$Catalog.class",
+    "com/quin/catancraft/world/NativeReward43$Qualified.class",
+    "com/quin/catancraft/world/NativeReward43$Rare.class",
+    "com/quin/catancraft/world/NativeReward43.class",
+    "com/quin/catancraft/world/PhysicalWeaponShop40.class",
+    "com/quin/catancraft/world/RewardClaim43RestartTests$Sbw.class",
+    "com/quin/catancraft/world/RewardClaim43RestartTests.class",
+    "com/quin/catancraft/world/RewardClaim43Tests$Fixture$1.class",
+    "com/quin/catancraft/world/RewardClaim43Tests$Fixture.class",
+    "com/quin/catancraft/world/RewardClaim43Tests$Sbw.class",
+    "com/quin/catancraft/world/RewardClaim43Tests.class"
+  ],
+  "native_weapon_restart_proofs": {
+    "tacz": {
+      "source": "0b1be0f76339a2fbcaaaebabda27edd7263f27a4",
+      "seed_process": "3593:1794360408760",
+      "verify_process": "3756:1794360435024",
+      "item_id": "tacz:modern_kinetic_gun",
+      "fingerprint": "8bb5d666713716c7eb095de4251e9b268d1b5f0437a2c2db6dc2d3579659feb8",
+      "native_uuid": null,
+      "first_recovery_ledger_saves": 1,
+      "completed_retry_saves": 0
+    },
+    "sbw": {
+      "source": "0b1be0f76339a2fbcaaaebabda27edd7263f27a4",
+      "seed_process": "3586:1794360423226",
+      "verify_process": "3744:1794360448532",
+      "item_id": "superbwarfare:ak_47",
+      "fingerprint": "7c1462f1ae21063ba8dd5fe314a55c5603b673aa811d2a6fbc325f145f893e19",
+      "native_uuid": "fb2ec32d-eaae-4b67-9c2f-c89e9d4eaed1",
+      "first_recovery_ledger_saves": 1,
+      "completed_retry_saves": 0
+    }
+  },
+  "added_jar_entries_vs_043": [
+    "com/quin/catancraft/mixin/SbwHandheldFireMixin.class",
+    "com/quin/catancraft/mixin/SbwHandheldLootMixin.class",
+    "com/quin/catancraft/mixin/SbwHandheldPacketMixin.class",
+    "com/quin/catancraft/mixin/SbwHandheldRecipesMixin.class",
+    "com/quin/catancraft/mixin/SbwHandheldReleaseMixin.class",
+    "com/quin/catancraft/world/ActiveWeapon44Tests$1.class",
+    "com/quin/catancraft/world/ActiveWeapon44Tests$Attempt.class",
+    "com/quin/catancraft/world/ActiveWeapon44Tests.class",
+    "com/quin/catancraft/world/ActiveWeaponStock44.class",
+    "com/quin/catancraft/world/HandheldWeapons44$Creative.class",
+    "com/quin/catancraft/world/HandheldWeapons44.class",
+    "com/quin/catancraft/world/HandheldWeapons44Tests.class",
+    "com/quin/catancraft/world/MonumentSupply44$1.class",
+    "com/quin/catancraft/world/MonumentSupply44.class",
+    "com/quin/catancraft/world/RewardClaim43Tests$1.class",
+    "data/catancraft_active44/structures/townhall_state_empty.nbt",
+    "data/catancraft_handheld44/structures/townhall_state_empty.nbt"
+  ],
+  "native_handheld_policy": {
+    "registered_sbw_guns_blocked": 45,
+    "scenario_count": 7,
+    "native_packet_handlers_blocked": 5,
+    "native_release_paths_blocked": 2,
+    "actual_vehicle_projectile_and_ammo_verified": true,
+    "legacy_native_item_preserved_and_inert": true,
+    "packaged_recipe_selectors": [
+      "apply(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V",
+      "m_5787_(Ljava/util/Map;Lnet/minecraft/server/packs/resources/ResourceManager;Lnet/minecraft/util/profiling/ProfilerFiller;)V"
+    ],
+    "packaged_recipe_remap": false,
+    "packaged_recipe_require": 1
+  },
+  "native_claim_restart_proofs": {
+    "tacz": {
+      "policy": "DELIVERED_ONCE",
+      "source": "0b1be0f76339a2fbcaaaebabda27edd7263f27a4",
+      "actor": "43000000-0000-0000-0000-0000000000a1",
+      "winner": "44db3c47-d176-4d6d-84ee-8960de057e66",
+      "reward": "43000000-0000-0000-0000-0000000000a2",
+      "claim": "f20e8116-814a-3448-8d54-9ae015455499",
+      "source_intent_sha256": "9676aba7041203140875c210d63e775dbc77fa9b30e45ff19ebe2797e6275787",
+      "claim_intent_sha256": "2f7728c45f8194bf97980114daf4c142095a7dad9e628687c8cf44ed947c5f70",
+      "fingerprint": "8bb5d666713716c7eb095de4251e9b268d1b5f0437a2c2db6dc2d3579659feb8",
+      "seed_process": "3381:1794360384507",
+      "verify_process": "3570:1794360406346",
+      "native_uuid": null,
+      "additional_charge": 0,
+      "additional_credit": 0,
+      "new_items": 0,
+      "recovery_saves": 0
+    },
+    "sbw": {
+      "policy": "TACZ_ONLY_HELD",
+      "source": "0b1be0f76339a2fbcaaaebabda27edd7263f27a4",
+      "actor": "43000000-0000-0000-0000-0000000000b1",
+      "winner": "3b0233f2-6f60-4cc1-a37d-2576826874ea",
+      "reward": "43000000-0000-0000-0000-0000000000b2",
+      "claim": "becc8a72-ae5a-38b8-b47a-45d436deee25",
+      "source_intent_sha256": "2bbff8e418e3211b97af71894a7667024979b2b5356c3da3a83267883e8828d0",
+      "claim_intent_sha256": "b9df63cc788912c6db364a7880ca12b06dc4adffcb9cebed623c41dffb622a11",
+      "fingerprint": "07348647a1db77810d1e507fa1f6fb2246b65036275af20ac5d2c1d34aa3f804",
+      "seed_process": "3525:1794360409907",
+      "verify_process": "3694:1794360433586",
+      "native_uuid": "2f38bd41-c42e-496a-b804-c771cd7bd5b5",
+      "additional_charge": 0,
+      "additional_credit": 0,
+      "new_items": 0,
+      "recovery_saves": 0
+    }
+  },
+  "stock42_compatibility_fixtures": {
+    "tacz": {
+      "sha256": "43a980b0d707a1b95a52457c953ed70c87d8f45e09f43106c0667ea590000d9a",
+      "bytes": 556,
+      "original_fingerprint": "8bb5d666713716c7eb095de4251e9b268d1b5f0437a2c2db6dc2d3579659feb8"
+    },
+    "sbw": {
+      "sha256": "517663b5a9fc7c0a9e81e0d24334562292d2f3a95d4bafc429e9423121c02f6d",
+      "bytes": 550,
+      "original_fingerprint": "79f1192902547613add06d25612d70cc9bae34a542df0e7f94e7b2d29552e28a"
+    }
+  },
+  "published_runtime_proofs": {
+    "tacz": {
+      "manifest_sha256": "1f3a4c5b31e1c0893f30f333a602b4334a82ba3c25ea23784ab16257b4080891",
+      "artifacts": 7,
+      "published_inputs": 1,
+      "verified_groups": [
+        "catancraft_handheld44",
+        "catancraft_terrain43",
+        "claims_tacz",
+        "native_combined",
+        "native_tacz"
+      ]
+    },
+    "sbw": {
+      "manifest_sha256": "6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452",
+      "artifacts": 9,
+      "published_inputs": 3,
+      "verified_groups": [
+        "catancraft_handheld44",
+        "catancraft_terrain43",
+        "claims_sbw",
+        "native_combined",
+        "native_sbw",
+        "sbw_restart"
+      ]
+    }
+  },
+  "terrain_config_proofs": {
+    "loaded": {
+      "schema": "catancraft-terrain43-native-config-v2",
+      "phase": "loaded",
+      "flags_false": 10,
+      "detail": "raw rebuild regression; 32 cache resets; ten native getters false; no authored-byte changes",
+      "providers": {
+        "tacz": {
+          "file": "tacz-common.toml",
+          "authored_sha256": "e241064d39c443857113c7f386011b37611937dfcd9aabdc6d4387a3b4ee3ed1",
+          "restored_sha256": "e241064d39c443857113c7f386011b37611937dfcd9aabdc6d4387a3b4ee3ed1",
+          "observed_reloads": 4,
+          "effective_guards": {
+            "ammo.DestroyGlass": false,
+            "ammo.IgniteBlock": false,
+            "ammo.ExplosiveAmmoDestroysBlock": false
+          }
+        },
+        "superbwarfare": {
+          "file": "superbwarfare-server.toml",
+          "authored_sha256": "7bf765528fc45a4ceb62b6c83a29699cd0327974e6d61ca071b4ff040e681ecc",
+          "restored_sha256": "7bf765528fc45a4ceb62b6c83a29699cd0327974e6d61ca071b4ff040e681ecc",
+          "observed_reloads": 3,
+          "effective_guards": {
+            "vehicle.collision.collision_destroy_soft_blocks": false,
+            "vehicle.collision.collision_destroy_normal_blocks": false,
+            "vehicle.collision.collision_destroy_hard_blocks": false,
+            "vehicle.collision.collision_destroy_blocks_beastly": false,
+            "projectile.allow_projectile_destroy_blocks": false,
+            "explosion.explosion_destroy": false,
+            "explosion.extra_explosion_effect": false
+          }
+        }
+      }
+    },
+    "setters": {
+      "schema": "catancraft-terrain43-native-config-v2",
+      "phase": "setters",
+      "flags_false": 10,
+      "detail": "ten true writes rejected; false writes caused no IO; two unrelated edits persisted/reloaded",
+      "providers": {
+        "tacz": {
+          "file": "tacz-common.toml",
+          "authored_sha256": "e241064d39c443857113c7f386011b37611937dfcd9aabdc6d4387a3b4ee3ed1",
+          "restored_sha256": "e241064d39c443857113c7f386011b37611937dfcd9aabdc6d4387a3b4ee3ed1",
+          "observed_reloads": 8,
+          "effective_guards": {
+            "ammo.DestroyGlass": false,
+            "ammo.IgniteBlock": false,
+            "ammo.ExplosiveAmmoDestroysBlock": false
+          },
+          "reloads_before_edit": 4,
+          "reloads_after_edit": 7,
+          "reloads_after_restore": 8,
+          "edited_sha256": "a48bc58b6d940adb8fd9dec38e94b22c0de77b57ec470980229a4be43cc20823",
+          "ordinary_path": "gun.EnableGunSoundAnger",
+          "ordinary_before": true,
+          "ordinary_edited": false,
+          "ordinary_restored": true
+        },
+        "superbwarfare": {
+          "file": "superbwarfare-server.toml",
+          "authored_sha256": "7bf765528fc45a4ceb62b6c83a29699cd0327974e6d61ca071b4ff040e681ecc",
+          "restored_sha256": "7bf765528fc45a4ceb62b6c83a29699cd0327974e6d61ca071b4ff040e681ecc",
+          "observed_reloads": 7,
+          "effective_guards": {
+            "vehicle.collision.collision_destroy_soft_blocks": false,
+            "vehicle.collision.collision_destroy_normal_blocks": false,
+            "vehicle.collision.collision_destroy_hard_blocks": false,
+            "vehicle.collision.collision_destroy_blocks_beastly": false,
+            "projectile.allow_projectile_destroy_blocks": false,
+            "explosion.explosion_destroy": false,
+            "explosion.extra_explosion_effect": false
+          },
+          "reloads_before_edit": 3,
+          "reloads_after_edit": 6,
+          "reloads_after_restore": 7,
+          "edited_sha256": "3065fac2156d198556dd6b19bb5bd96166f253072908fd7f5f5e977a7aa38509",
+          "ordinary_path": "spawn.spawn_senpai",
+          "ordinary_before": false,
+          "ordinary_edited": true,
+          "ordinary_restored": false
+        }
+      }
+    },
+    "watcher": {
+      "schema": "catancraft-terrain43-native-config-v2",
+      "phase": "watcher",
+      "flags_false": 10,
+      "detail": "all ten authored flags true after real FileWatcher reload; all ten effective false; byte-exact restore reloaded",
+      "providers": {
+        "tacz": {
+          "file": "tacz-common.toml",
+          "authored_sha256": "e241064d39c443857113c7f386011b37611937dfcd9aabdc6d4387a3b4ee3ed1",
+          "restored_sha256": "e241064d39c443857113c7f386011b37611937dfcd9aabdc6d4387a3b4ee3ed1",
+          "observed_reloads": 4,
+          "effective_guards": {
+            "ammo.DestroyGlass": false,
+            "ammo.IgniteBlock": false,
+            "ammo.ExplosiveAmmoDestroysBlock": false
+          },
+          "reloads_before_edit": 2,
+          "reloads_after_edit": 3,
+          "reloads_after_restore": 4,
+          "edited_sha256": "859a958dca462118a38bbb8ec51bc980119b55ae9a9afc5355735b3d038f2ed3",
+          "ordinary_path": "gun.EnableGunSoundAnger",
+          "ordinary_before": true,
+          "ordinary_edited": false,
+          "ordinary_restored": true,
+          "authored_guards_after_edit": {
+            "ammo.DestroyGlass": true,
+            "ammo.IgniteBlock": true,
+            "ammo.ExplosiveAmmoDestroysBlock": true
+          }
+        },
+        "superbwarfare": {
+          "file": "superbwarfare-server.toml",
+          "authored_sha256": "7bf765528fc45a4ceb62b6c83a29699cd0327974e6d61ca071b4ff040e681ecc",
+          "restored_sha256": "7bf765528fc45a4ceb62b6c83a29699cd0327974e6d61ca071b4ff040e681ecc",
+          "observed_reloads": 3,
+          "effective_guards": {
+            "vehicle.collision.collision_destroy_soft_blocks": false,
+            "vehicle.collision.collision_destroy_normal_blocks": false,
+            "vehicle.collision.collision_destroy_hard_blocks": false,
+            "vehicle.collision.collision_destroy_blocks_beastly": false,
+            "projectile.allow_projectile_destroy_blocks": false,
+            "explosion.explosion_destroy": false,
+            "explosion.extra_explosion_effect": false
+          },
+          "reloads_before_edit": 1,
+          "reloads_after_edit": 2,
+          "reloads_after_restore": 3,
+          "edited_sha256": "1b0359bf737b078e10f83a8d958a86578c0a1db4fac2ea8b7c4e63869a5651f3",
+          "ordinary_path": "spawn.spawn_senpai",
+          "ordinary_before": false,
+          "ordinary_edited": true,
+          "ordinary_restored": false,
+          "authored_guards_after_edit": {
+            "vehicle.collision.collision_destroy_soft_blocks": true,
+            "vehicle.collision.collision_destroy_normal_blocks": true,
+            "vehicle.collision.collision_destroy_hard_blocks": true,
+            "vehicle.collision.collision_destroy_blocks_beastly": true,
+            "projectile.allow_projectile_destroy_blocks": true,
+            "explosion.explosion_destroy": true,
+            "explosion.extra_explosion_effect": true
+          }
+        }
+      }
+    }
+  },
+  "restart_proof_verified": true,
+  "weighted_reward_component_restart_verified": true,
+  "reward_seed_process": "3306:1794360388822",
+  "reward_verify_process": "3458:1794360406271",
+  "seed_process": "3366:1794360370141",
+  "verify_process": "3524:1794360395046",
+  "scope": "TaCZ-only current shop/reward catalogs, native handheld prohibition, preserved historical SBW reservation held across JVMs, TaCZ claim recovery and retained purchase/terrain/crowbar coverage. No owner installed-pack, authenticated client, combat balance or owner acceptance."
+}

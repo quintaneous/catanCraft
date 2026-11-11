@@ -4,7 +4,7 @@ The current gameplay policy is TaCZ handheld guns only. SBW remains installed fo
 
 ## Pinned native audit
 
-This implementation was audited against `superbwarfare-0.8.9.2-mc1.20.1-65d985a64-sources.jar`, SHA-256 `06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5`, the source paired with the existing SEC01 native runtime manifest. It does not infer SBW behavior from the old catalog alone. The expected native registry contains 43 catalog gun items plus the internal empty and vehicle gun items. The test rejects a changed count.
+This implementation was audited against `superbwarfare-0.8.9.2-mc1.20.1-65d985a64-sources.jar`, SHA-256 `06b4bc749e540879265e3f3829c6c242da81512b19a80de0fbd9b089847893d5`, the source paired with the existing SEC01 native runtime manifest. It does not infer SBW behavior from the old catalog alone. The expected native registry contains 43 catalog gun items plus the internal empty and vehicle gun items. The test rejects a changed count. The native `repair_tool` also inherits GunItem and can damage entities, so its handheld repair/damage beam is included in this prohibition; it is not an exception for vehicle maintenance.
 
 `GunData.shoot` delegates directly to `GunItem.shoot`; it does not debit ammunition first. All normal overloads converge on `shoot(ShootParameters)`. Its HEAD precedes canShoot, perks/events, projectiles, ammunition and heat updates. The overrides in IglaItem, JavelinItem and BocekItem are also intercepted. Bocek's distinct `onFireKeyRelease` route is intercepted separately. `ShootEvent.Pre` is not cancelable and therefore cannot implement this policy by itself.
 
@@ -50,7 +50,7 @@ Seven `catancraft_handheld44` GameTests run with both pinned native providers, e
 3. Five real native packet handlers plus both release implementations return before accessing context or changing gun state.
 4. Loaded recipes contain no prohibited output; actual RecipeManager accepts an immutable caller map without mutating it; actual final Forge loot hook removes only prohibited results.
 5. Both-hand interaction, pickup preservation and genuine Forge creative entry filtering retain TaCZ and vehicle supply controls.
-6. Genuine LAV native weapon data fires a real projectile and consumes native ammunition; a handheld gun while riding that vehicle and detached vehicle data remain denied.
+6. Genuine mounted LAV Cannon data fires a real projectile and consumes exactly one physical native small_shell_ap shell (eight become seven); a handheld gun while riding that vehicle and detached vehicle data remain denied.
 7. A serialized/reloaded legacy native stack remains byte-for-byte represented in NBT and cannot fire through GunData.shoot.
 
 Each case emits a HANDHELD44_*_PASS marker only after its assertions. These are controlled native checks, not owner in-game acceptance, balance testing, a live-world migration or a promise about unsupported provider versions. Consult the release validation report for actual execution results; writing this contract alone is not a test pass.
