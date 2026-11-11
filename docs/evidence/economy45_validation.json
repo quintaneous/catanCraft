@@ -1,0 +1,148 @@
+{
+  "source": "c04f7bc7bd9e1306fe446bac85c01d60db9e2f32",
+  "run": 43112426119,
+  "archive_sha256": "8b946715ab983aa2243b14127ab33800315b1681bd5b7e355e01df20c643eeb1",
+  "jar_file": "catancraft-0.1.45-economy-bays.jar",
+  "jar_sha256": "cad8c1a504951142bfb80fe22a2662acff3fb234c486fc9864e67e5e1c862ce0",
+  "jar_bytes": 3623264,
+  "phases": 73,
+  "failed": 0,
+  "suites": {
+    "catancraft_economy45": 6,
+    "catancraft_vehicle45": 8,
+    "catancraft_economy_clock": 9,
+    "catancraft": 50
+  },
+  "source_files_verified": 488,
+  "unchanged_044_classes": 624,
+  "unchanged_044_data_entries": 224,
+  "native_economy_vectors": [
+    {
+      "case": "starter_8_cycles",
+      "cash": 1000,
+      "cycles": 8,
+      "stock": {
+        "wood": 40,
+        "stone": 40,
+        "agriculture": 32,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "dependency_chain",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 0,
+        "stone": 0,
+        "agriculture": 10,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 4,
+        "electronics": 6,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "starter_l4_rounding",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 23,
+        "stone": 23,
+        "agriculture": 18,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "logistics_target_pause",
+      "cash": 700,
+      "cycles": 2,
+      "stock": {
+        "wood": 0,
+        "stone": 10,
+        "agriculture": 20,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 15,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "partial_upkeep",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 18,
+        "stone": 0,
+        "agriculture": 0,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "unowned_reload",
+      "cash": 250,
+      "cycles": 2,
+      "stock": {
+        "wood": 0,
+        "stone": 0,
+        "agriculture": 20,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    }
+  ],
+  "scope": "Native economy parity and unregistered fixed-bay policy; no vehicle UI/transactions activated; no live world or installed mods accessed."
+}

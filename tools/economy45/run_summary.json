@@ -1,0 +1,145 @@
+{
+  "all_industries_to_level5": {
+    "purchases": 83,
+    "unfinished": 20,
+    "last_event": {
+      "action": [
+        "producer",
+        "g",
+        4
+      ],
+      "hour": 197.75,
+      "price": {
+        "concrete": 80,
+        "mechanical_parts": 5,
+        "money": 12000,
+        "steel": 30
+      }
+    }
+  },
+  "commercial_only": {
+    "purchases": 1,
+    "unfinished": 0,
+    "last_event": {
+      "action": [
+        "build",
+        "a",
+        "COMMERCIAL_DISTRICT"
+      ],
+      "hour": 2.5,
+      "price": {
+        "money": 3000,
+        "stone": 50,
+        "wood": 50
+      }
+    }
+  },
+  "managed_targets_2_players": {
+    "purchases": 41,
+    "unfinished": 0,
+    "last_event": {
+      "action": [
+        "buy",
+        "a",
+        "sector_reinforced_increment"
+      ],
+      "hour": 66.25,
+      "price": {
+        "concrete": 50,
+        "money": 4000,
+        "steel": 15
+      }
+    }
+  },
+  "managed_targets_all_industries_to_level5": {
+    "purchases": 83,
+    "unfinished": 20,
+    "last_event": {
+      "action": [
+        "producer",
+        "g",
+        4
+      ],
+      "hour": 197.75,
+      "price": {
+        "concrete": 80,
+        "mechanical_parts": 5,
+        "money": 12000,
+        "steel": 30
+      }
+    }
+  },
+  "managed_targets_stone_2_players": {
+    "purchases": 42,
+    "unfinished": 0,
+    "last_event": {
+      "action": [
+        "buy",
+        "a",
+        "sector_reinforced_increment"
+      ],
+      "hour": 59.25,
+      "price": {
+        "concrete": 50,
+        "money": 4000,
+        "steel": 15
+      }
+    }
+  },
+  "no_purchases": {
+    "purchases": 0,
+    "unfinished": 0,
+    "last_event": null
+  },
+  "progression_2_players": {
+    "purchases": 41,
+    "unfinished": 0,
+    "last_event": {
+      "action": [
+        "buy",
+        "a",
+        "sector_reinforced_increment"
+      ],
+      "hour": 86.0,
+      "price": {
+        "concrete": 50,
+        "money": 4000,
+        "steel": 15
+      }
+    }
+  },
+  "progression_4_players": {
+    "purchases": 51,
+    "unfinished": 0,
+    "last_event": {
+      "action": [
+        "buy",
+        "a",
+        "sector_reinforced_increment"
+      ],
+      "hour": 86.0,
+      "price": {
+        "concrete": 50,
+        "money": 4000,
+        "steel": 15
+      }
+    }
+  },
+  "stone_expansion_2_players": {
+    "purchases": 42,
+    "unfinished": 0,
+    "last_event": {
+      "action": [
+        "buy",
+        "a",
+        "sector_reinforced_increment"
+      ],
+      "hour": 58.75,
+      "price": {
+        "concrete": 50,
+        "money": 4000,
+        "steel": 15
+      }
+    }
+  }
+}
