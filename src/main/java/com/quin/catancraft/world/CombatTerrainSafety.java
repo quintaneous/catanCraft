@@ -2,6 +2,7 @@ package com.quin.catancraft.world;
 
 import com.quin.catancraft.CatanCraft;
 import com.electronwill.nightconfig.core.CommentedConfig;
+import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.electronwill.nightconfig.core.file.CommentedFileConfig;
 import com.electronwill.nightconfig.core.utils.CommentedConfigWrapper;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -124,17 +125,21 @@ public final class CombatTerrainSafety {
                 if (field.getType() != ForgeConfigSpec.BooleanValue.class
                         || !(value instanceof ForgeConfigSpec.BooleanValue setting)
                         || spec.getValues().getRaw(setting.getPath()) != setting
+                        || !(spec.getSpec().getRaw(setting.getPath()) instanceof ForgeConfigSpec.ValueSpec definition)
+                        || !definition.test(Boolean.FALSE)
                         || !paths.add(List.copyOf(setting.getPath())))
                     throw new IllegalStateException("Unexpected native terrain config field " + guard.type() + "." + guard.field());
                 settings.add(setting);
             }
             CommentedConfig raw = config.getConfigData();
-            PolicyConfig overlay = raw instanceof CommentedFileConfig file
-                    ? new FilePolicyConfig(file, paths) : new PolicyConfig(raw, paths);
-            // Lifecycle events follow Forge's own correction. Refuse a changed
-            // contract instead of letting setConfig correct/autosave through us.
-            if (!spec.isCorrect(raw) || !spec.isCorrect(overlay))
-                throw new IllegalStateException("Native config was not corrected before its lifecycle event");
+            CommentedConfig overlay = policyView(spec, raw, paths);
+            // Forge starts watching BEFORE its initial correction and Loading
+            // event. A watcher parser may therefore be rebuilding the raw map
+            // even here. Validate the effective view, whose structure/comments
+            // come from the immutable spec and whose missing-value behavior is
+            // the same native default used by ConfigValue.get, not that map.
+            if (!spec.isCorrect(overlay))
+                throw new IllegalStateException("Native effective config does not satisfy its Forge spec");
             spec.setConfig(overlay); // Public API also clears every ConfigValue cache.
             Binding previous = BINDINGS.get(provider);
             long reloads = (previous == null ? 0 : previous.reloads())
@@ -190,24 +195,69 @@ public final class CombatTerrainSafety {
         };
     }
 
+    private record Schema(Map<String, Schema> children, ForgeConfigSpec.ValueSpec value, String comment) {
+        Schema at(List<String> path) {
+            Schema result = this;
+            for (String part : path) {
+                result = result.children().get(part);
+                if (result == null) return null;
+            }
+            return result;
+        }
+    }
+
+    private static Schema schema(ForgeConfigSpec spec, UnmodifiableConfig definitions, List<String> prefix) {
+        Map<String, Schema> children = new LinkedHashMap<>();
+        for (var entry : definitions.valueMap().entrySet()) {
+            List<String> path = append(prefix, List.of(entry.getKey()));
+            Object definition = entry.getValue();
+            if (definition instanceof ForgeConfigSpec.ValueSpec value)
+                children.put(entry.getKey(), new Schema(Map.of(), value, value.getComment()));
+            else if (definition instanceof UnmodifiableConfig nested)
+                children.put(entry.getKey(), schema(spec, nested, path));
+            else throw new IllegalStateException("Unknown native config schema node " + path);
+        }
+        return new Schema(Collections.unmodifiableMap(children), null, spec.getLevelComment(prefix));
+    }
+
+    private static List<String> append(List<String> prefix, List<String> path) {
+        List<String> result = new ArrayList<>(prefix);
+        result.addAll(path);
+        return List.copyOf(result);
+    }
+
+    // Package visibility permits a deterministic regression against a raw map
+    // that is being cleared/repopulated, without replacing the live native spec.
+    static CommentedConfig policyView(ForgeConfigSpec spec, CommentedConfig raw, Set<List<String>> paths) {
+        Schema schema = schema(spec, spec.getSpec(), List.of());
+        return raw instanceof CommentedFileConfig file ? new FilePolicyConfig(file, paths, schema)
+                : new PolicyConfig(raw, paths, schema, List.of());
+    }
+
     /** Only the spec receives this view; ModConfig keeps its original watched data. */
     private static class PolicyConfig extends CommentedConfigWrapper<CommentedConfig> {
         private final Set<List<String>> paths;
+        private final Schema schema;
+        private final List<String> prefix;
 
-        PolicyConfig(CommentedConfig config, Set<List<String>> paths) {
+        PolicyConfig(CommentedConfig config, Set<List<String>> paths, Schema schema, List<String> prefix) {
             super(config);
             this.paths = Set.copyOf(paths);
+            this.schema = schema;
+            this.prefix = prefix;
         }
 
         @Override @SuppressWarnings("unchecked")
         public <T> T getRaw(List<String> path) {
-            if (paths.contains(path)) return (T) Boolean.FALSE;
-            T value = super.getRaw(path);
-            Set<List<String>> descendants = descendants(path);
-            if (descendants.isEmpty()) return value;
-            if (!(value instanceof CommentedConfig nested))
-                throw new IllegalStateException("Unexpected native config section " + path);
-            return (T) new PolicyConfig(nested, descendants);
+            List<String> full = append(prefix, path);
+            if (paths.contains(full)) return (T) Boolean.FALSE;
+            Schema node = schema.at(path);
+            if (node == null) return null;
+            if (node.value() == null) return (T) new PolicyConfig(config, paths, node, full);
+            // A missing leaf during the watcher's clear/repopulate has exactly
+            // the same fallback as Forge ConfigValue.get. Never iterate the
+            // watched map or retain one of its replaceable nested configs.
+            return config.getOrElse(full, () -> (T) node.value().getDefault());
         }
 
         private Set<List<String>> descendants(List<String> prefix) {
@@ -220,13 +270,14 @@ public final class CombatTerrainSafety {
 
         @Override @SuppressWarnings("unchecked")
         public <T> T set(List<String> path, Object value) {
-            if (paths.contains(path)) {
+            List<String> full = append(prefix, path);
+            if (paths.contains(full)) {
                 // Throw before ConfigValue.set reaches its cachedValue assignment.
                 if (!Boolean.FALSE.equals(value)) throw new IllegalArgumentException("CatanCraft requires terrain protection: " + path);
                 return (T) Boolean.FALSE;
             }
-            rejectProtectedTree(path);
-            return super.set(path, value);
+            rejectProtectedTree(full);
+            return super.set(full, value);
         }
 
         private void rejectProtectedTree(List<String> path) {
@@ -235,29 +286,45 @@ public final class CombatTerrainSafety {
         }
 
         @Override public boolean add(List<String> path, Object value) {
-            rejectProtectedTree(path);
-            return super.add(path, value);
+            List<String> full = append(prefix, path);
+            rejectProtectedTree(full);
+            return super.add(full, value);
         }
 
         @Override public <T> T remove(List<String> path) {
-            rejectProtectedTree(path);
-            return super.remove(path);
+            List<String> full = append(prefix, path);
+            rejectProtectedTree(full);
+            return super.remove(full);
         }
 
         @Override public void clear() { throw new IllegalArgumentException("Cannot clear a protected native config"); }
+
+        @Override public boolean contains(List<String> path) { return schema.at(path) != null; }
+        @Override public int size() { return schema.children().size(); }
+        @Override public boolean isEmpty() { return schema.children().isEmpty(); }
+        @Override public String getComment(List<String> path) {
+            Schema node = schema.at(path);
+            return node == null ? null : node.comment();
+        }
+        @Override public boolean containsComment(List<String> path) { return getComment(path) != null; }
+        @Override public Map<String, String> commentMap() {
+            Map<String, String> result = new LinkedHashMap<>();
+            schema.children().forEach((key, node) -> { if (node.comment() != null) result.put(key, node.comment()); });
+            return Collections.unmodifiableMap(result);
+        }
 
         // Forge validates through valueMap; copies and nested reads must observe
         // the same policy as ConfigValue.get. Bulk views are read-only, while
         // unrelated ConfigValue.set/save continue through the normal delegate.
         @Override public Map<String, Object> valueMap() {
             Map<String, Object> result = new LinkedHashMap<>();
-            for (String key : config.valueMap().keySet()) result.put(key, getRaw(List.of(key)));
+            for (String key : schema.children().keySet()) result.put(key, getRaw(List.of(key)));
             return Collections.unmodifiableMap(result);
         }
 
         @Override public Set<? extends CommentedConfig.Entry> entrySet() {
             Set<CommentedConfig.Entry> result = new LinkedHashSet<>();
-            for (String key : config.valueMap().keySet()) result.add(new CommentedConfig.Entry() {
+            for (String key : schema.children().keySet()) result.add(new CommentedConfig.Entry() {
                 public String getKey() { return key; }
                 public <T> T getRawValue() { return PolicyConfig.this.getRaw(List.of(key)); }
                 public String getComment() { return PolicyConfig.this.getComment(List.of(key)); }
@@ -272,7 +339,10 @@ public final class CombatTerrainSafety {
     /** Retains ForgeConfigSpec.save() behavior for unrelated file-backed settings. */
     private static final class FilePolicyConfig extends PolicyConfig implements CommentedFileConfig {
         private final CommentedFileConfig file;
-        FilePolicyConfig(CommentedFileConfig file, Set<List<String>> paths) { super(file, paths); this.file = file; }
+        FilePolicyConfig(CommentedFileConfig file, Set<List<String>> paths, Schema schema) {
+            super(file, paths, schema, List.of());
+            this.file = file;
+        }
         public File getFile() { return file.getFile(); }
         public Path getNioPath() { return file.getNioPath(); }
         public void save() { file.save(); }

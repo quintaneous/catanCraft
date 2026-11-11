@@ -1,7 +1,8 @@
 # SEC-01: native terrain configuration policy, 0.1.43
 
-Implementation checkpoint, 2026-11-11. Native execution is pending; this document
-does not claim a passing watcher run, clean startup, owner acceptance, or release
+Corrective checkpoint, 2026-11-11, after failed native run 2 at `bcc85c2`.
+The corrected source has not yet completed native validation; this document does
+not claim a passing watcher run, clean startup, owner acceptance, or release
 qualification. Preserve the failed 0.1.42 observation and all new failed runs.
 
 The 0.1.42 combined run retained at
@@ -9,6 +10,15 @@ The 0.1.42 combined run retained at
 reported a FileWatcher `ConfigLoadingException`, caused by a NightConfig
 `ParsingException` for duplicate `[ammo]`, after the old guard called
 `BooleanValue.set(false)`. The old periodic setter has been removed.
+
+Native 0.1.43 run 2 proved two further defects in the first overlay/tests:
+fresh SBW startup could throw `ConcurrentModificationException` while overlay
+validation iterated the watched map, or incorrectly report that correction had
+not completed. Forge installs its watcher before initial correction and Loading;
+the watcher can clear/repopulate that map during our Loading callback. Also,
+terrain tests executed in batch order 03, 01, 02; two tests exhausted their tick
+polls in about two wall-clock seconds without observing a reload. These failures
+remain in the complete run-2 artifacts, not replaced by the corrective source.
 
 ## Exact mechanism and sources
 
@@ -52,9 +62,16 @@ At Loading/Reloading, every expected public native field must be exactly a
 `ForgeConfigSpec.BooleanValue`, belong by identity to the current spec, and have
 a distinct path. TaCZ's independent `tacz-pre.toml` COMMON preload event is
 explicitly excluded; it contains no gameplay terrain flags. The target contracts
-are TaCZ COMMON and SBW SERVER. Both the raw config and its policy view must pass
-the spec's existing validation before `setConfig()` is called, so installation
-does not run correction or autosave.
+are TaCZ COMMON and SBW SERVER. Each guard's native ValueSpec must accept false.
+The overlay uses the immutable Forge definition tree for its structure and
+comments. It never enumerates the watched map or retains a replaceable raw
+subsection. Ordinary leaves read the current raw root by full path and use the
+native ValueSpec default when absent, matching `ConfigValue.getOrElse` during
+watcher clear/repopulation. The effective view must still pass `spec.isCorrect`
+before `setConfig()`; invalid present ordinary values are not hidden or accepted.
+Forge retains its own raw-file validation/correction. The unsafe redundant raw
+revalidation was replaced by effective-view validation, not a retry or exception
+suppression. Installation does not correct or autosave the watched config.
 
 The policy view supplies false for all ten paths:
 
@@ -85,7 +102,9 @@ still delegate to the original config. File-backed views retain the
 `entrySet()` expose the same effective guarded values, so validation and
 NightConfig copies cannot accidentally read raw true values through those views.
 Bulk views are read-only; protected branches cannot be replaced or removed.
-Unexpected protected section types fail visibly.
+Unknown schema node types or incompatible native fields fail visibly. A
+temporarily absent raw section during parsing uses the native defaults rather
+than being mistaken for provider-version drift.
 
 The periodic `enforce()` now checks loaded bindings and native cached/uncached
 getters without mutating the watched map. Missing or incomplete policy throws
@@ -93,7 +112,8 @@ visibly. Native procurement calls `requireProtected(provider)` and translates a
 failure to its ordinary refused-supply result. A failed lifecycle installation
 cannot leave a valid native procurement qualification.
 
-This removes the proven guard-induced autosave contention. It does not claim to
+Enforcement performs no guard-induced autosave. The corrective native run must
+still verify startup and reload behavior. This does not claim to
 repair every possible third-party config writer or malformed external TOML.
 Normal unrelated writes and file watching retain upstream Forge semantics.
 
@@ -107,7 +127,10 @@ fresh, with native config files absent before launch, to cover their creation an
 initial loading. No owner-world or installed-mod directory is an input.
 
 1. Verify ten actual native getters after initial loading and 32 full cache
-   resets/rechecks. Assert authored file bytes are unchanged.
+   resets/rechecks. Assert authored file bytes are unchanged. A deterministic
+   view regression forbids raw map/comment enumeration, simulates an empty then
+   repopulated raw config, verifies current nested reads, and proves an invalid
+   ordinary boolean still fails native spec validation.
 2. Refuse all ten guarded true setters without poisoning caches; accept false
    setters without file writes. Change one unrelated real setting per provider,
    wait for actual FileWatcher Reloading callbacks, verify normal persistence,
@@ -118,14 +141,35 @@ initial loading. No owner-world or installed-mod directory is an input.
    remain false. Recheck cache resets, preserve edited bytes, then restore exact
    originals and observe another reload.
 
+Exact NightConfig 3.6.4
+[FileWatcher](https://github.com/TheElectronWill/night-config/blob/16ceeae4d2438b922dc6692f086991f7c6e026a8/core/src/main/java/com/electronwill/nightconfig/core/file/FileWatcher.java)
+listens only for `ENTRY_MODIFY` and drops coalesced events with count greater than
+one. Atomic rename alone is therefore not a reload stimulus. Tests now rewrite
+one identical existing byte after each complete atomic replacement, producing a
+MODIFY event while retaining valid, byte-identical TOML throughout. For ordinary
+autosave writes, a 100 ms test-only scheduler turn precedes that explicit editor
+notification so coalesced save events can drain. No success is inferred from the
+delay: actual per-provider callbacks, raw values, effective values and restored
+bytes must all match. Polling uses a ten-second monotonic wall-clock deadline and
+a 2 ms test-only yield; the tick timeout is only an outer ceiling. Failure reports
+before/current reload counts and expected/current ordinary values. Neither the
+watcher handler nor its exception reporting is replaced.
+
 Only successful cases write
-`world/data/catancraft_terrain43_{loaded,setters,watcher}.json`, recording actual
-paths/values, original and restored file hashes, and observed reload counts. A
+`world/data/catancraft_terrain43_{loaded,setters,watcher}.json`, with schema
+`catancraft-terrain43-native-config-v2`, recording actual paths/values, original
+and restored file hashes, and observed reload counts. The two edit scenarios also
+record their own before-edit, after-edit and after-restoration counters, edited
+hash, ordinary path and before/edited/restored values. The watcher scenario records
+the observed authored guard values after editing. Each scenario must prove its
+own strictly increasing edit/restoration counts; no batch order or cross-scenario
+count/hash relationship is assumed. The loaded scenario has no edit fields. A
 timed-out or failed reload remains failed evidence. Parent validation must scan
 the full startup/runtime log and reject `ConfigLoadingException`,
 `ParsingException`, or FileWatcher exceptions; a three-test count alone cannot
 establish a clean watcher run. Published input JAR manifests must be reverified
 unchanged after the run. Existing 0.1.42 failure evidence remains retained.
 
-At this checkpoint only static source/API review and `git diff --check` have
-completed. Builds and writable native worlds are owned by the parent runner.
+At this corrective checkpoint static source/API review and `git diff --check`
+have completed. The previous build/native failures remain failures; the corrected
+source awaits the parent runner's full build and writable-world validation.
