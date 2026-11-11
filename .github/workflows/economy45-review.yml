@@ -1,0 +1,66 @@
+name: Economy45 simulation and fixed bay policy validation
+on:
+  push:
+    branches: [chatgpt/combined-shop-acceptance]
+    paths: ['.github/workflows/economy45-review.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact source
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p build/economy45-evidence
+          git rev-parse HEAD > build/economy45-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/economy45-evidence/source.zip
+          gradle build -PreleaseCommit="$GITHUB_SHA" --no-daemon --max-workers=4 2>&1 | tee build/economy45-evidence/build.log
+          sha256sum build/libs/*.jar > build/economy45-evidence/JAR_SHA256.txt
+      - name: Fetch game assets
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/economy45-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/economy45-evidence/assets-3.log
+          exit 1
+      - name: Validate controlled native policies
+        shell: bash
+        run: |
+          set -euo pipefail
+          run_check() {
+            local ns="$1" count="$2" status=0
+            timeout 600s gradle runGameTestServer -PcontrolledGameTests=true -PgameTestNamespace="$ns" --daemon --max-workers=4 > "build/economy45-evidence/$ns.log" 2>&1 || status=$?
+            echo "$status" > "build/economy45-evidence/$ns.exit"
+            echo "$count" > "build/economy45-evidence/$ns.expected"
+            cat "build/economy45-evidence/$ns.log"
+            test "$status" = 0
+            grep -Fq "$count GAME TESTS COMPLETE" "build/economy45-evidence/$ns.log"
+            grep -Fq "All $count required tests passed" "build/economy45-evidence/$ns.log"
+          }
+          run_check catancraft_economy45 6
+          run_check catancraft_vehicle45 8
+          run_check catancraft_economy_clock 9
+          run_check catancraft 50
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: economy45-source-and-evidence
+          path: |
+            build/economy45-evidence
+            build/libs/*.jar
+          if-no-files-found: error
