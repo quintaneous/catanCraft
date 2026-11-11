@@ -1,3 +1,4 @@
+# Run3: verify mounted vehicle firing consumes physical native shells.
 # Run2: correct 1.20.1 LootContext.Builder nullable ResourceLocation API in native test.
 name: TaCZ44 only handheld weapons and retained recovery validation
 on:

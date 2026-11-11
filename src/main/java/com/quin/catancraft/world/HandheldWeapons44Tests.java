@@ -102,20 +102,28 @@ public final class HandheldWeapons44Tests {
     public static void genuine_vehicle_weapon_fires_but_forged_handheld_vehicle_context_cannot(GameTestHelper h)throws Exception{
         controlled(h);Player player=player(h);Entity vehicle=ForgeRegistries.ENTITY_TYPES.getValue(new ResourceLocation("superbwarfare","lav_150")).create(h.getLevel());
         require(vehicle!=null,"Missing native LAV");var p=h.absolutePos(new BlockPos(2,4,2));vehicle.setPos(p.getX(),p.getY(),p.getZ());
-        Map<?,?> map=(Map<?,?>)vehicle.getClass().getMethod("getGunDataMap").invoke(vehicle);require(!map.isEmpty(),"Native vehicle weapons did not initialize");
-        Object data=map.values().iterator().next();ItemStack nativeStack=(ItemStack)data.getClass().getMethod("stack").invoke(data);setInt(data,"ammo",100);setInt(data,"backupAmmoCount",100);
-        require((Boolean)data.getClass().getMethod("canShoot",Entity.class).invoke(data,vehicle),"Loaded native vehicle gun is not fire-ready");
+        // Native LAV Cannon has Magazine=0 and consumes physical small_shell_ap inventory.
+        // Do not seed backupAmmoCount: mounting must derive it from the inserted native shells.
+        var inventory=(net.minecraftforge.items.IItemHandler)vehicle.getClass().getMethod("getInventory").invoke(vehicle);
+        ItemStack shells=stack("superbwarfare:small_shell_ap");shells.setCount(8);
+        require(inventory.insertItem(0,shells,false).isEmpty()&&inventory.getStackInSlot(0).getCount()==8,"Native vehicle shell insertion failed");
+        require(player.startRiding(vehicle,true)&&player.getVehicle()==vehicle,"Native rider fixture failed");
+        Map<?,?> map=(Map<?,?>)vehicle.getClass().getMethod("getGunDataMap").invoke(vehicle);Object data=map.get("Cannon");require(data!=null,"Native LAV Cannon did not initialize");
+        ItemStack nativeStack=(ItemStack)data.getClass().getMethod("stack").invoke(data);
+        require((Boolean)data.getClass().getMethod("canShoot",Entity.class).invoke(data,vehicle),"Physically loaded native vehicle gun is not fire-ready");
         Object params=parameters(h,data,vehicle,player);long allowed=HandheldWeapons44.allowed();int ammo=((Number)vehicle.getClass().getMethod("getAmmo",data.getClass()).invoke(vehicle,data)).intValue();Set<UUID> entities=entities(h.getLevel());
+        require(ammo==8,"Native vehicle did not derive its ammunition count from the inserted shells");
         data.getClass().getMethod("shoot",params.getClass()).invoke(data,params);
-        require(HandheldWeapons44.allowed()==allowed+1&&((Number)vehicle.getClass().getMethod("getAmmo",data.getClass()).invoke(vehicle,data)).intValue()<ammo,"Vehicle gun did not reach real native firing/ammo use");
+        require(HandheldWeapons44.allowed()==allowed+1&&((Number)vehicle.getClass().getMethod("getAmmo",data.getClass()).invoke(vehicle,data)).intValue()==7
+                &&inventory.getStackInSlot(0).is(shells.getItem())&&inventory.getStackInSlot(0).getCount()==7,"Vehicle gun did not consume exactly one physical native shell");
         Set<UUID> after=entities(h.getLevel());after.removeAll(entities);require(!after.isEmpty(),"Native vehicle firing produced no actual projectile");
         for(Entity e:h.getLevel().getAllEntities())if(after.contains(e.getUUID()))e.discard();
         ItemStack handheld=stack("superbwarfare:glock_17");Object handData=data(handheld);setInt(handData,"ammo",100);CompoundTag before=handheld.save(new CompoundTag());
-        require(player.startRiding(vehicle,true)&&player.getVehicle()==vehicle,"Native rider fixture failed");
+        require(player.getVehicle()==vehicle,"Rider unexpectedly dismounted during native shot");
         Object forged=parameters(h,handData,vehicle,player);long denied=HandheldWeapons44.denied();handheld.getItem().getClass().getMethod("shoot",forged.getClass()).invoke(handheld.getItem(),forged);
         require(HandheldWeapons44.denied()==denied+1&&before.equals(handheld.save(new CompoundTag())),"Vehicle supplier granted handheld exemption");
         Object detached=data(nativeStack.copy());require(!HandheldWeapons44.allowNativeShot(nativeStack.getItem(),parameters(h,detached,vehicle,player)),"Copied vehicle weapon data gained owner authority");
-        CatanCraft.LOGGER.info("HANDHELD44_VEHICLE_PASS actualNativeProjectile=true nativeAmmoConsumed=true forgedHandheldDenied=true detachedVehicleDataDenied=true");player.stopRiding();vehicle.discard();h.succeed();
+        CatanCraft.LOGGER.info("HANDHELD44_VEHICLE_PASS actualNativeProjectile=true nativeAmmoConsumed=true forgedHandheldDenied=true detachedVehicleDataDenied=true physicalShellsBefore=8 physicalShellsAfter=7 mounted=true");player.stopRiding();vehicle.discard();h.succeed();
     }
     @GameTest(template="townhall_state_empty",batch="handheld44_07",timeoutTicks=600)
     public static void serialized_legacy_sbw_gun_remains_preserved_and_inert(GameTestHelper h)throws Exception{

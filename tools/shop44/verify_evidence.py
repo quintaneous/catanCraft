@@ -194,8 +194,11 @@ for label, count in expected.items():
 assert m["all_passed"] is True
 handheld_markers = (
     "HANDHELD44_CATALOG_PASS blockedSBWGuns=45 taczAllowed=true sharedVehicleAmmoAllowed=true",
+    "HANDHELD44_FIRE_PASS nativeGunItems=45 unchangedAmmoNBT=true unchangedEntities=true",
     "HANDHELD44_PACKETS_PASS nativeHandlers=5 nativeReleasePaths=2",
-    "HANDHELD44_VEHICLE_PASS actualNativeProjectile=true nativeAmmoConsumed=true forgedHandheldDenied=true detachedVehicleDataDenied=true",
+    "HANDHELD44_ACQUISITION_PASS loadedGunRecipes=0 immutableInputPreserved=true finalForgeLootFiltered=true",
+    "HANDHELD44_EVENTS_PASS bothHandsDenied=true nativeCreativeFiltered=true legacyPickupPreserved=true taczAllowed=true",
+    "HANDHELD44_VEHICLE_PASS actualNativeProjectile=true nativeAmmoConsumed=true forgedHandheldDenied=true detachedVehicleDataDenied=true physicalShellsBefore=8 physicalShellsAfter=7 mounted=true",
     "HANDHELD44_LEGACY_PASS nativeNBT=preserved nativeFiring=blocked noDeletion=true",
 )
 for marker in handheld_markers:
@@ -648,6 +651,8 @@ record = {
     "native_handheld_policy": {"registered_sbw_guns_blocked": 45, "scenario_count": 7,
                                "native_packet_handlers_blocked": 5, "native_release_paths_blocked": 2,
                                "actual_vehicle_projectile_and_ammo_verified": True,
+                               "mounted_vehicle_physical_ammo": {"item": "superbwarfare:small_shell_ap",
+                                                                 "before": 8, "after": 7},
                                "legacy_native_item_preserved_and_inert": True,
                                "packaged_recipe_selectors": recipe_hook["method"],
                                "packaged_recipe_remap": False, "packaged_recipe_require": 1},
