@@ -5,7 +5,7 @@ plugins {
     id 'net.minecraftforge.gradle' version '[6.0,6.2)'
 }
 
-version = '0.1.42-native-weapon-stock'
+version = '0.1.43-monument-supplies'
 group = 'com.quin.catancraft'
 
 base {
@@ -16,6 +16,14 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()
 def controlledGameTests = providers.gradleProperty('controlledGameTests').orElse('false').get().toBoolean()
+def native43RestartPhase = providers.gradleProperty('native43RestartPhase').orElse('').get()
+def native43RestartSource = providers.gradleProperty('native43RestartSource').orElse('').get()
+def native43RestartProvider = providers.gradleProperty('native43RestartProvider').orElse('').get()
+if (gameTestNamespace in ['catancraft_native43_tacz_restart', 'catancraft_native43_sbw_restart']) {
+    def expectedProvider = gameTestNamespace == 'catancraft_native43_tacz_restart' ? 'tacz' : 'superbwarfare'
+    if (!controlledGameTests || !(native43RestartPhase in ['seed', 'verify']) || !(native43RestartSource ==~ /[0-9a-f]{40}/) || native43RestartProvider != expectedProvider)
+        throw new GradleException('Claim43 restart needs its controlled world, seed|verify, exact source SHA and matching provider')
+}
 def native42RestartPhase = providers.gradleProperty('native42RestartPhase').orElse('').get()
 def native42RestartSource = providers.gradleProperty('native42RestartSource').orElse('').get()
 def native42RestartProvider = providers.gradleProperty('native42RestartProvider').orElse('').get()
@@ -72,6 +80,11 @@ minecraft {
         gameTestServer {
             workingDirectory controlledGameTests ? contractTestDirectory : project.file(gameTestNamespace == 'catancraft' ? 'build/gametest-run' : gameTestNamespace == 'catancraft_public27' ? 'build/public-gametest-run' : "build/${gameTestNamespace}-run")
             property 'forge.enabledGameTestNamespaces', gameTestNamespace
+            if (gameTestNamespace in ['catancraft_native43_tacz_restart', 'catancraft_native43_sbw_restart']) {
+                property 'catancraft.native43RestartPhase', native43RestartPhase
+                property 'catancraft.native43RestartSource', native43RestartSource
+                property 'catancraft.native43RestartProvider', native43RestartProvider
+            }
             if (gameTestNamespace in ['catancraft_native42_tacz_restart', 'catancraft_native42_sbw_restart']) {
                 property 'catancraft.native42RestartPhase', native42RestartPhase
                 property 'catancraft.native42RestartSource', native42RestartSource
@@ -138,7 +151,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Integration native tests run in a third disposable namespace/world, retaining both suites.
 tasks.named('processResources', ProcessResources).configure {
-    ['catancraft_stock42','catancraft_native42_combined','catancraft_native42_tacz','catancraft_native42_sbw','catancraft_native42_tacz_restart','catancraft_native42_sbw_restart','catancraft_rewards41','catancraft_rewards41_restart','catancraft_shop40','catancraft_shop40_restart','catancraft_snapshot39','catancraft_snapshot39_restart','catancraft_session38','catancraft_session38_restart','catancraft_objectives37','catancraft_siege36','catancraft_gate35','catancraft_sbw_procurement35','catancraft_producer_source34','catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
+    ['catancraft_supply43','catancraft_claims43','catancraft_claims43_tacz','catancraft_claims43_sbw','catancraft_native43_tacz_restart','catancraft_native43_sbw_restart','catancraft_terrain43','catancraft_stock42','catancraft_native42_combined','catancraft_native42_tacz','catancraft_native42_sbw','catancraft_native42_tacz_restart','catancraft_native42_sbw_restart','catancraft_rewards41','catancraft_rewards41_restart','catancraft_shop40','catancraft_shop40_restart','catancraft_snapshot39','catancraft_snapshot39_restart','catancraft_session38','catancraft_session38_restart','catancraft_objectives37','catancraft_siege36','catancraft_gate35','catancraft_sbw_procurement35','catancraft_producer_source34','catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
         from('src/main/resources/data/catancraft/structures') {
             include 'townhall_state_empty.nbt'
             into "data/${ns}/structures"

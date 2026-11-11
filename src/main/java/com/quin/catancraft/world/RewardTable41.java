@@ -8,8 +8,8 @@ import net.minecraft.resources.ResourceLocation;
 import java.io.IOException;
 import java.util.*;
 
-/** Strict weighted reward model. Production currently selects the explicit
- * one-entry compatibility table; numeric randomized profiles are not enabled. */
+/** Strict weighted reward model. Historical compatibility tables remain available;
+ * new production profiles are explicit and versioned in MonumentSupply43. */
 public final class RewardTable41 {
     private static final long MAX_AMOUNT=1_000_000_000_000L;
     public enum Kind { GUN, AMMO, VEHICLE }
@@ -51,7 +51,7 @@ public final class RewardTable41 {
         public String describe(){
             List<String> parts=new ArrayList<>();if(money>0)parts.add("+$"+money+" treasury");
             for(ResourceType type:ResourceType.values())if(resources.containsKey(type))parts.add("+"+resources.get(type)+" "+type.id());
-            if(!entitlements.isEmpty())parts.add(entitlements.size()+" pending equipment entitlement(s); delivery unavailable");return String.join(", ",parts);
+            if(!entitlements.isEmpty())parts.add(entitlements.size()+" equipment reward(s); your nation leader can view claims at the weapon counter");return String.join(", ",parts);
         }
     }
     public record Entry(String id,int weight,Bundle reward) {

@@ -12,6 +12,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ConfigTracker;
 import net.minecraftforge.fml.config.ModConfig;
@@ -34,16 +35,45 @@ final class NativeTacz42 {
     private static final int MAX_RESOURCE = 512 * 1024;
     private static final int MAX_STATE = 16 * 1024 * 1024;
 
+    /** Native construction parameters only; reward requests carry no purchase price. */
+    private record Request(String id, WeaponShopCatalog40.Kind kind, String provider, String nativeId,
+                           String referenceGun, int count, int requiredLevel, String fireMode, String revision) {}
+
     private NativeTacz42() {}
 
     static NativeWeapon42.Supply quote(MinecraftServer server, WeaponStock42.Offer offer) throws IOException {
+        WeaponStock42.requireCurrent(offer);
+        return inspect(server, new Request(offer.id(), offer.kind(), offer.provider(), offer.nativeId(),
+                offer.referenceGun(), offer.count(), offer.requiredLevel(), offer.fireMode(), offer.revision()), false);
+    }
+
+    static NativeWeapon42.Supply quoteReward(MinecraftServer server, RewardTable41.Entitlement entitlement) throws IOException {
+        NativeReward43.Rare rare = NativeReward43.requireRare(entitlement);
+        return inspect(server, new Request("monument43_rare_" + rare.id(), WeaponShopCatalog40.Kind.GUN, "tacz",
+                rare.id(), rare.id(), 1, -1, rare.fireMode(), NativeReward43.REVISION), true);
+    }
+
+    static void recheckReward(MinecraftServer server, RewardTable41.Entitlement entitlement,
+                              NativeWeapon42.Supply quoted) throws IOException {
+        NativeWeapon42.Supply current = quoteReward(server, entitlement);
+        if (!current.fingerprint().equals(quoted.fingerprint())
+                || !current.item().save(new CompoundTag()).equals(quoted.item().save(new CompoundTag())))
+            throw unavailable("The TaCZ reward resources changed; the original reward remains pending.");
+    }
+
+    private static NativeWeapon42.Supply inspect(MinecraftServer server, Request offer, boolean reward) throws IOException {
         if (server == null || !server.isSameThread()) throw unavailable("Native supply requires the server thread.");
         if (!"tacz".equals(offer.provider())) throw unavailable("Wrong native weapon provider.");
         if (!ModList.get().isLoaded("tacz")) throw unavailable("The TaCZ weapon mod is unavailable.");
         String version = ModList.get().getModContainerById("tacz").orElseThrow().getModInfo().getVersion().toString();
         if (!version.equals("1.2.0")) throw unavailable("This TaCZ version has not been qualified.");
         WeaponTierCatalog41.Entry tier = WeaponTierCatalog41.entry(offer.referenceGun());
-        if (WeaponTierCatalog41.LEGACY_REVISION.equals(offer.revision())) {
+        if (reward) {
+            // Only quoteReward can construct this private request, after the exact
+            // revision/kind/id/count allowlist gate. DROP is never a shop fallback.
+            if (tier.disposition() != WeaponTierCatalog41.Disposition.DROP || tier.requiresSpecialQualification())
+                throw unavailable("This reserved gun has not been qualified for monument rewards.");
+        } else if (WeaponTierCatalog41.LEGACY_REVISION.equals(offer.revision())) {
             WeaponTierCatalog41.requireExistingOffer(offer.nativeId(), offer.requiredLevel());
         } else {
             WeaponTierCatalog41.requireShop(offer.referenceGun(), offer.requiredLevel(), WeaponTierCatalog41.CANDIDATE_REVISION);
@@ -232,12 +262,16 @@ final class NativeTacz42 {
     }
 
     private static JsonObject configState() throws IOException {
+        CombatTerrainSafety.requireProtected("tacz");
         JsonObject result = new JsonObject();
         for (ModConfig.Type type : List.of(ModConfig.Type.COMMON, ModConfig.Type.SERVER)) {
             for (ModConfig config : ConfigTracker.INSTANCE.configSets().get(type)) {
                 if (config.getModId().equals("tacz")) {
-                    if (config.getConfigData() == null) throw unavailable("The TaCZ server configuration is not loaded.");
-                    result.add(type.name() + ":" + config.getFileName(), configValue(config.getConfigData(), 0));
+                    if (config.getConfigData() == null || !(config.getSpec() instanceof ForgeConfigSpec spec) || !spec.isLoaded())
+                        throw unavailable("The TaCZ server configuration is not loaded.");
+                    // Native behavior reads ConfigValue.get(), including the runtime
+                    // terrain-policy overlay. The on-disk TOML remains untouched.
+                    result.add(type.name() + ":" + config.getFileName(), configValue(spec.getValues(), 0));
                 }
             }
         }
@@ -248,6 +282,7 @@ final class NativeTacz42 {
     private static JsonElement configValue(Object value, int depth) throws IOException {
         if (depth > 24) throw unavailable("The native configuration is too deeply nested.");
         if (value == null) return JsonNull.INSTANCE;
+        if (value instanceof ForgeConfigSpec.ConfigValue<?> setting) return configValue(setting.get(), depth + 1);
         if (value instanceof UnmodifiableConfig config) return configValue(config.valueMap(), depth + 1);
         if (value instanceof Map<?, ?> values) {
             JsonObject result = new JsonObject();
@@ -310,7 +345,7 @@ final class NativeTacz42 {
     }
 
     @SuppressWarnings({"rawtypes", "unchecked"})
-    private static ItemStack build(WeaponStock42.Offer offer, Class<?> api) throws ReflectiveOperationException, IOException {
+    private static ItemStack build(Request offer, Class<?> api) throws ReflectiveOperationException, IOException {
         boolean gun = offer.kind() == WeaponShopCatalog40.Kind.GUN;
         ResourceLocation id = new ResourceLocation(offer.nativeId());
         Class<?> builderClass = Class.forName("com.tacz.guns.api.item.builder." + (gun ? "GunItemBuilder" : "AmmoItemBuilder"));

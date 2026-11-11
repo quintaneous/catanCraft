@@ -16,8 +16,8 @@ import java.security.SecureRandom;
 import java.util.*;
 
 /** Frozen hidden reward, durable winner, and same-native-ledger nation credit.
- * The compatibility profile preserves current numeric rewards. Equipment entries
- * are retained references only: no inventory delivery, vehicle spawn or claim API. */
+ * New rounds use explicit provisional supply pools; legacy open rounds keep their
+ * frozen outcome. Equipment delivery is a separate winner-bound claim operation. */
 public final class MonumentRewards41 {
     private static final int MAX_HISTORY=4096,MAX_MONUMENTS=64,MAX_FILE=8*1024*1024+40;
     private static final SecureRandom RANDOM=new SecureRandom();
@@ -34,11 +34,14 @@ public final class MonumentRewards41 {
     };}
     public static void stopped(MinecraftServer server) { /* No server/player cache. */ }
     public static void prepareActivation(MinecraftServer server,CatanSavedData data,MonumentData monument)throws IOException {
-        prepare(runtime(server,data),monument,RewardTable41.compatibility(monument.type()),RANDOM.nextLong(),UUID.randomUUID(),NONE,false);
+        prepare(runtime(server,data),monument,MonumentSupply43.table(monument.type()),RANDOM.nextLong(),UUID.randomUUID(),NONE,false);
     }
     public static boolean readyActivation(MinecraftServer server,CatanSavedData data,MonumentData monument)throws IOException {
         Environment e=runtime(server,data);if(controlledRecord(e,monument))return false;
-        if(monument.rewardActivation41()==null)prepareActivation(server,data,monument);
+        // An already-active pre-journal round retains its original fixed payout.
+        // New rounds have their supply table frozen by prepareActivation above.
+        if(monument.rewardActivation41()==null)
+            prepare(e,monument,RewardTable41.compatibility(monument.type()),RANDOM.nextLong(),UUID.randomUUID(),NONE,false);
         return readyActivation(e,monument,false);
     }
     private static boolean readyActivation(Environment e,MonumentData monument,boolean fixture)throws IOException {
@@ -91,6 +94,14 @@ public final class MonumentRewards41 {
     static boolean fixtureReadyActivation(Environment e,MonumentData m)throws IOException {fixture(e);return readyActivation(e,m,true);}
     static boolean fixtureCanReplace(Environment e,MonumentData m)throws IOException {fixture(e);return canReplace(e,m,true);}
     static List<CompoundTag> fixturePendingRewards(Environment e,UUID nationId)throws IOException {fixture(e);return pendingRewards(e,nationId,true);}
+    static List<CompoundTag> fixturePendingRewards43(MinecraftServer server,CatanSavedData data,UUID nationId)throws IOException {
+        Environment e=runtime(server,data);fixture(e);
+        if(!Set.of("controlled-catancraft_claims43-run","controlled-catancraft_claims43_tacz-run",
+                "controlled-catancraft_claims43_sbw-run","controlled-catancraft_native43_tacz_restart-run",
+                "controlled-catancraft_native43_sbw_restart-run").contains(root(e).getParent().getFileName().toString()))
+            throw new IOException("Controlled claim43 reward fixture required");
+        return pendingRewards(e,nationId,true);
+    }
     private static void prepare(Environment e,MonumentData m,RewardTable41 table,long seed,UUID id,Fault fault,boolean fixture)throws IOException {
         try(Lock lock=lock(e)){
             requireMonument(e,m);if(e.data().activeMonument()!=m)throw new IOException("Set the current monument before preparing its activation");
@@ -326,7 +337,10 @@ public final class MonumentRewards41 {
     private static void thread(Environment e)throws IOException {if(e.server()==null||!e.server().isSameThread()||e.data()!=CatanSavedData.get(e.server()))throw new IOException("Reward requires current native data/server thread");}
     private static void fixture(Environment e)throws IOException {
         thread(e);Path root=root(e);if(!(e.server() instanceof GameTestServer)||!root.getFileName().toString().equals("world")
-                ||!Set.of("controlled-catancraft_rewards41-run","controlled-catancraft_rewards41_restart-run").contains(root.getParent().getFileName().toString())
+                ||!Set.of("controlled-catancraft_rewards41-run","controlled-catancraft_rewards41_restart-run",
+                        "controlled-catancraft_claims43-run","controlled-catancraft_claims43_tacz-run",
+                        "controlled-catancraft_claims43_sbw-run","controlled-catancraft_native43_tacz_restart-run",
+                        "controlled-catancraft_native43_sbw_restart-run").contains(root.getParent().getFileName().toString())
                 ||!Files.readString(root.getParent().resolve(".catancraft-controlled-fixture-v1")).equals("CatanCraft synthetic flat fixture v1\n"))throw new IOException("Controlled reward fixture required");
     }
     private static boolean recordScope(Environment e,MonumentData m,boolean fixture)throws IOException {

@@ -79,8 +79,18 @@ public final class NativeWeapon42 {
     private static void unchanged(MinecraftServer server, long generation) throws IOException {
         if (ready(server) != generation) throw new IOException("Weapon packs changed during review. Open the counter again.");
     }
+    /** Reward qualification shares the same reload gate as paid stock. */
+    static long qualificationEpoch(MinecraftServer server) throws IOException { return ready(server); }
+    static void requireEpoch(MinecraftServer server, long generation) throws IOException { unchanged(server, generation); }
+    private static void protectedProvider(String provider) throws IOException {
+        try { CombatTerrainSafety.requireProtected(provider); }
+        catch (IllegalStateException | IllegalArgumentException failure) {
+            throw new IOException("Native combat protection is not ready; the equipment review is held.", failure);
+        }
+    }
     static Supply quote(MinecraftServer server, WeaponStock42.Offer offer) throws IOException {
         long generation = ready(server); WeaponStock42.requireCurrent(offer);
+        protectedProvider(offer.provider());
         Supply result = switch (offer.provider()) {
             case "tacz" -> NativeTacz42.quote(server, offer);
             case "superbwarfare" -> NativeSbw42.quote(server, offer);
@@ -90,6 +100,7 @@ public final class NativeWeapon42 {
     }
     static void recheck(MinecraftServer server, WeaponStock42.Offer offer, Supply supply) throws IOException {
         long generation = ready(server); WeaponStock42.requireCurrent(offer);
+        protectedProvider(offer.provider());
         if (supply == null) throw new IOException("The native weapon review is missing.");
         item(offer, supply.item());
         switch (offer.provider()) {

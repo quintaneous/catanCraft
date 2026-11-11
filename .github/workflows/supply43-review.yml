@@ -1,0 +1,240 @@
+name: Supply43 monument claims and terrain configuration validation
+on:
+  push:
+    branches: [chatgpt/combined-shop-acceptance]
+    paths: ['.github/workflows/supply43-review.yml']
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        suite:
+          - {ns: catancraft_supply43, count: 8}
+          - {ns: catancraft_claims43, count: 10}
+          - {ns: claims_tacz, count: 4}
+          - {ns: claims_sbw, count: 4}
+          - {ns: catancraft_terrain43, count: 3}
+          - {ns: catancraft_stock42, count: 8}
+          - {ns: native_tacz, count: 10}
+          - {ns: native_sbw, count: 10}
+          - {ns: native_combined, count: 1}
+          - {ns: catancraft_shop40, count: 35}
+          - {ns: shop_restart, count: 2}
+          - {ns: catancraft, count: 50}
+          - {ns: catancraft_paid_recovery, count: 19}
+          - {ns: rewards, count: 34}
+          - {ns: sbw_restart, count: 9}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.8'
+      - name: Build exact committed source
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$GITHUB_SHA"
+          mkdir -p build/supply43-evidence
+          git rev-parse HEAD > build/supply43-evidence/SOURCE_COMMIT.txt
+          git archive --format=zip HEAD -o build/supply43-evidence/source.zip
+          gradle build -PreleaseCommit="$GITHUB_SHA" --no-daemon --max-workers=4 2>&1 | tee build/supply43-evidence/build.log
+          sha256sum build/libs/*.jar > build/supply43-evidence/JAR_SHA256.txt
+      - name: Fetch assets with bounded network-only retry
+        shell: bash
+        run: |
+          for attempt in 1 2 3; do
+            gradle downloadAssets --daemon --max-workers=4 > build/supply43-evidence/assets-$attempt.log 2>&1 && exit 0
+          done
+          cat build/supply43-evidence/assets-3.log
+          exit 1
+      - name: Prepare pinned published optional SBW runtime
+        if: matrix.suite.ns == 'claims_sbw' || matrix.suite.ns == 'sbw_restart' || matrix.suite.ns == 'native_sbw' || matrix.suite.ns == 'native_combined' || matrix.suite.ns == 'catancraft_terrain43'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/sec01_035/prepare_runtime.py --root build/sec01-035-runtime > build/supply43-evidence/runtime-prepare.json
+          python3 tools/sec01_035/prepare_runtime.py --root build/sec01-035-runtime --verify-only > build/supply43-evidence/runtime-verify.json
+          cp build/sec01-035-runtime/runtime-artifacts.json build/sec01-035-runtime/download-provenance.json build/supply43-evidence/
+      - name: Prepare pinned published optional TaCZ runtime
+        if: matrix.suite.ns == 'claims_tacz' || matrix.suite.ns == 'native_tacz' || matrix.suite.ns == 'native_combined' || matrix.suite.ns == 'catancraft_terrain43'
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 tools/shop42/prepare_tacz_runtime.py > build/supply43-evidence/tacz-runtime-prepare.json
+          python3 tools/shop42/prepare_tacz_runtime.py --verify-only > build/supply43-evidence/tacz-runtime-verify.json
+          cp build/shop42-tacz-runtime/runtime-artifacts.json build/supply43-evidence/tacz-runtime-artifacts.json
+          cp build/shop42-tacz-runtime/download-provenance.json build/supply43-evidence/tacz-download-provenance.json
+      - name: Execute selected native checks once
+        shell: bash
+        env:
+          NS: ${{ matrix.suite.ns }}
+          COUNT: ${{ matrix.suite.count }}
+        run: |
+          set -euo pipefail
+          run_check() {
+            local label="$1" expected="$2" status=0
+            shift 2
+            timeout 1600s gradle runGameTestServer -PcontrolledGameTests=true --daemon --max-workers=4 "$@" > "build/supply43-evidence/$label.log" 2>&1 || status=$?
+            echo "$status" > "build/supply43-evidence/$label.exit"
+            echo "$expected" > "build/supply43-evidence/$label.expected"
+            cat "build/supply43-evidence/$label.log"
+            test "$status" = 0
+            grep -Fq "$expected GAME TESTS COMPLETE" "build/supply43-evidence/$label.log"
+            grep -Fq "All $expected required tests passed" "build/supply43-evidence/$label.log"
+          }
+          if test "$NS" = claims_tacz || test "$NS" = claims_sbw; then
+            provider=tacz
+            suffix=tacz
+            init=tools/shop43/validate_tacz.gradle
+            if test "$NS" = claims_sbw; then provider=superbwarfare; suffix=sbw; init=tools/shop43/validate_sbw.gradle; fi
+            run_check "$NS" 2 -I "$init" -PgameTestNamespace="catancraft_claims43_$suffix"
+            grep -Fq "CLAIMS43_${suffix^^}_STOCK42_FROZEN_SUPPLY_PASS" "build/supply43-evidence/$NS.log"
+            run_check "${NS}_seed" 1 -I "$init" -PgameTestNamespace="catancraft_native43_${suffix}_restart" -Pnative43RestartPhase=seed -Pnative43RestartProvider="$provider" -Pnative43RestartSource="$GITHUB_SHA"
+            grep -Fq "NATIVE43_${suffix^^}_RESTART_SEED_PASS" "build/supply43-evidence/${NS}_seed.log"
+            run_check "${NS}_verify" 1 -I "$init" -PgameTestNamespace="catancraft_native43_${suffix}_restart" -Pnative43RestartPhase=verify -Pnative43RestartProvider="$provider" -Pnative43RestartSource="$GITHUB_SHA"
+            grep -Fq "NATIVE43_${suffix^^}_RESTART_VERIFY_PASS" "build/supply43-evidence/${NS}_verify.log"
+          elif test "$NS" = catancraft_terrain43; then
+            run_check "$NS" 3 -I tools/shop43/validate_combined.gradle -PgameTestNamespace="$NS"
+            if grep -Eq 'ConfigLoadingException|ParsingException|Exception.*FileWatcher' "build/supply43-evidence/$NS.log"; then exit 1; fi
+          elif test "$NS" = native_tacz || test "$NS" = native_sbw; then
+            provider=tacz
+            suffix=tacz
+            init=tools/shop42/validate_tacz.gradle
+            if test "$NS" = native_sbw; then provider=superbwarfare; suffix=sbw; init=tools/shop42/validate_sbw.gradle; fi
+            run_check "$NS" 8 -I "$init" -PgameTestNamespace="catancraft_native42_$suffix"
+            run_check "${NS}_seed" 1 -I "$init" -PgameTestNamespace="catancraft_native42_${suffix}_restart" -Pnative42RestartPhase=seed -Pnative42RestartProvider="$provider" -Pnative42RestartSource="$GITHUB_SHA"
+            grep -Fq "NATIVE42_${suffix^^}_RESTART_SEED_PASS" "build/supply43-evidence/${NS}_seed.log"
+            run_check "${NS}_verify" 1 -I "$init" -PgameTestNamespace="catancraft_native42_${suffix}_restart" -Pnative42RestartPhase=verify -Pnative42RestartProvider="$provider" -Pnative42RestartSource="$GITHUB_SHA"
+            grep -Fq "NATIVE42_${suffix^^}_RESTART_VERIFY_PASS" "build/supply43-evidence/${NS}_verify.log"
+          elif test "$NS" = native_combined; then
+            run_check native_combined 1 -I tools/shop42/validate_combined.gradle -PgameTestNamespace=catancraft_native42_combined
+            grep -Fq NATIVE42_COMBINED_PASS build/supply43-evidence/native_combined.log
+          elif test "$NS" = rewards; then
+            run_check catancraft_rewards41 32 -PgameTestNamespace=catancraft_rewards41
+            run_check rewards_seed 1 -PgameTestNamespace=catancraft_rewards41_restart -PrewardsRestartPhase=seed -PrewardsRestartSource="$GITHUB_SHA"
+            grep -Fq REWARDS41_RESTART_SEED_PASS build/supply43-evidence/rewards_seed.log
+            run_check rewards_verify 1 -PgameTestNamespace=catancraft_rewards41_restart -PrewardsRestartPhase=verify -PrewardsRestartSource="$GITHUB_SHA"
+            grep -Fq REWARDS41_RESTART_VERIFY_PASS build/supply43-evidence/rewards_verify.log
+          elif test "$NS" = shop_restart; then
+            run_check shop_seed 1 -PgameTestNamespace=catancraft_shop40_restart -PshopRestartPhase=seed -PshopRestartSource="$GITHUB_SHA"
+            grep -Fq SHOP40_RESTART_SEED_PASS build/supply43-evidence/shop_seed.log
+            run_check shop_verify 1 -PgameTestNamespace=catancraft_shop40_restart -PshopRestartPhase=verify -PshopRestartSource="$GITHUB_SHA"
+            grep -Fq SHOP40_RESTART_VERIFY_PASS build/supply43-evidence/shop_verify.log
+          elif test "$NS" = sbw_restart; then
+            run_check catancraft_sbw 7 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw
+            run_check procurement_seed 1 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw_procurement35 -PsbwRestartPhase=seed
+            grep -Fq SEC01_PROCUREMENT35_SEED_PASS build/supply43-evidence/procurement_seed.log
+            # Same world, a separate JavaExec process. No copying, deletion, reset or NBT injection.
+            run_check procurement_verify 1 -I tools/sec01_035/validate.gradle -PgameTestNamespace=catancraft_sbw_procurement35 -PsbwRestartPhase=verify
+            grep -Fq SEC01_PROCUREMENT35_VERIFY_PASS build/supply43-evidence/procurement_verify.log
+            cp build/controlled-catancraft_sbw_procurement35-run/world/data/catancraft_sec01_procurement35_*.dat build/supply43-evidence/
+          else
+            run_check "$NS" "$COUNT" -PgameTestNamespace="$NS"
+          fi
+      - name: Retain restart files even after failure
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p build/supply43-evidence/restart
+          shopt -s nullglob
+          for proof in build/controlled-catancraft_shop40_restart-run/world/data/catancraft_shop40_* build/controlled-catancraft_shop40_restart-run/world/data/catancraft.dat build/controlled-catancraft_shop40_restart-run/world/playerdata/40000000-0000-0000-0000-0000000000{a,b}1.dat; do
+            if test -f "$proof"; then cp "$proof" build/supply43-evidence/restart/; fi
+          done
+          mkdir -p build/supply43-evidence/rewards-restart
+          for proof in build/controlled-catancraft_rewards41_restart-run/world/data/catancraft_reward* build/controlled-catancraft_rewards41_restart-run/world/data/catancraft.dat; do
+            if test -f "$proof"; then cp "$proof" build/supply43-evidence/rewards-restart/; fi
+          done
+          mkdir -p build/supply43-evidence/native-restart
+          for proof in build/controlled-catancraft_native42_*_restart-run/world/data/catancraft_native42* build/controlled-catancraft_native42_*_restart-run/world/data/catancraft_shop40* build/controlled-catancraft_native42_*_restart-run/world/data/catancraft.dat build/controlled-catancraft_native42_*_restart-run/world/playerdata/*.dat; do
+            if test -f "$proof"; then cp "$proof" build/supply43-evidence/native-restart/; fi
+          done
+      - name: Retain claim and configuration proofs
+        if: always()
+        shell: bash
+        run: |
+          mkdir -p build/supply43-evidence/claim-restart build/supply43-evidence/terrain-config
+          shopt -s nullglob
+          for proof in build/controlled-catancraft_native43_*_restart-run/world/data/catancraft_native43* build/controlled-catancraft_native43_*_restart-run/world/data/catancraft_reward* build/controlled-catancraft_native43_*_restart-run/world/data/catancraft.dat build/controlled-catancraft_native43_*_restart-run/world/playerdata/*.dat; do
+            if test -f "$proof"; then cp "$proof" build/supply43-evidence/claim-restart/; fi
+          done
+          for proof in build/controlled-catancraft_terrain43-run/world/data/catancraft_terrain43_*.json; do
+            if test -f "$proof"; then cp "$proof" build/supply43-evidence/terrain-config/; fi
+          done
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: supply43-${{ matrix.suite.ns }}
+          path: |
+            build/libs/*.jar
+            build/supply43-evidence/
+          if-no-files-found: error
+  collect:
+    needs: validate
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: supply43-*
+          path: evidence
+      - name: Retain every result and verify common source and JAR
+        env:
+          SOURCE: ${{ github.sha }}
+        run: |
+          python3 - <<'PYCODE'
+          from pathlib import Path
+          import hashlib,json,os,shutil
+          root=Path('delivery');root.mkdir()
+          expected={'catancraft_supply43':8,'catancraft_claims43':10,'claims_tacz':2,'claims_tacz_seed':1,'claims_tacz_verify':1,'claims_sbw':2,'claims_sbw_seed':1,'claims_sbw_verify':1,'catancraft_terrain43':3,'catancraft_stock42':8,'native_tacz':8,'native_tacz_seed':1,'native_tacz_verify':1,'native_sbw':8,'native_sbw_seed':1,'native_sbw_verify':1,'native_combined':1,'catancraft_shop40':35,'shop_seed':1,'shop_verify':1,'catancraft':50,'catancraft_paid_recovery':19,'catancraft_rewards41':32,'rewards_seed':1,'rewards_verify':1,'catancraft_sbw':7,'procurement_seed':1,'procurement_verify':1}
+          records=[];results={};source_errors=[];jars=set()
+          for folder in sorted(Path('evidence').iterdir()):
+              group=folder.name.removeprefix('supply43-');ev=folder/'supply43-evidence'
+              source=ev/'SOURCE_COMMIT.txt'
+              if not source.exists() or source.read_text().strip()!=os.environ['SOURCE']:source_errors.append(group)
+              for label,count in expected.items():
+                  log=ev/(label+'.log');status=ev/(label+'.exit')
+                  if not log.exists():continue
+                  text=log.read_text(errors='replace')
+                  if label in results:raise SystemExit('Duplicate suite result')
+                  ok=status.exists() and status.read_text().strip()=='0' and f'{count} GAME TESTS COMPLETE' in text and f'All {count} required tests passed' in text
+                  if label.startswith('procurement_'):ok=ok and ('SEC01_PROCUREMENT35_'+label.removeprefix('procurement_').upper()+'_PASS') in text
+                  if label.startswith('shop_'):ok=ok and ('SHOP40_RESTART_'+label.removeprefix('shop_').upper()+'_PASS') in text
+                  if label.startswith('rewards_'):ok=ok and ('REWARDS41_RESTART_'+label.removeprefix('rewards_').upper()+'_PASS') in text
+                  if label.startswith('native_') and label.endswith(('_seed','_verify')):
+                      _,provider,phase=label.split('_');ok=ok and f'NATIVE42_{provider.upper()}_RESTART_{phase.upper()}_PASS' in text
+                  if label=='native_combined':ok=ok and 'NATIVE42_COMBINED_PASS' in text
+                  if label.startswith('claims_') and label.endswith(('_seed','_verify')):
+                      _,provider,phase=label.split('_');ok=ok and f'NATIVE43_{provider.upper()}_RESTART_{phase.upper()}_PASS' in text
+                  if label in ('claims_tacz','claims_sbw'):ok=ok and ('CLAIMS43_'+('TACZ' if label=='claims_tacz' else 'SBW')+'_STOCK42_FROZEN_SUPPLY_PASS') in text
+                  if label=='catancraft_terrain43':ok=ok and not any(s in text for s in ['ConfigLoadingException','ParsingException','Exception in thread "FileWatcher'])
+                  results[label]={'expected':count,'passed':ok}
+              for p in sorted(folder.rglob('*')):
+                  if not p.is_file():continue
+                  digest=hashlib.sha256(p.read_bytes()).hexdigest();rel=p.relative_to(folder)
+                  if p.name=='source.zip' or p.suffix=='.jar':
+                      target=root/'shared'/p.name
+                      if p.suffix=='.jar':jars.add(digest)
+                      if target.exists() and hashlib.sha256(target.read_bytes()).hexdigest()!=digest:raise SystemExit('Different source/JAR across exact-source jobs')
+                  else:target=root/group/rel
+                  target.parent.mkdir(parents=True,exist_ok=True)
+                  if not target.exists():shutil.copy2(p,target)
+                  records.append({'group':group,'file':str(rel),'sha256':digest,'saved_as':str(target.relative_to(root))})
+          passed=set(results)==set(expected) and all(r['passed'] for r in results.values()) and not source_errors and len(jars)==1
+          (root/'MANIFEST.json').write_text(json.dumps({'source':os.environ['SOURCE'],'results':results,'expected_phase_executions':sum(expected.values()),'expected_unique_scenarios':sum(expected.values())-7,'all_passed':passed,'source_errors':source_errors,'files':records},indent=2))
+          PYCODE
+      - uses: actions/upload-artifact@v4
+        with:
+          name: supply43-combined-source-and-evidence
+          path: delivery/
+          if-no-files-found: error

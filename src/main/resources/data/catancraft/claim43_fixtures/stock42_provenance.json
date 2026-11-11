@@ -1,0 +1,19 @@
+{
+  "scope": "Original native test purchase intents only; never real player/world data",
+  "source": "9b3eb646a494348632e4b5c6a692c57f9a9f2f16",
+  "run": 42914749967,
+  "artifact": 13807659810,
+  "archive_sha256": "df07f5c41980cbcac7143e039413fd064748d67e5334557d9554713dc4459a2e",
+  "records": {
+    "tacz": {
+      "file": "stock42_tacz.dat",
+      "sha256": "43a980b0d707a1b95a52457c953ed70c87d8f45e09f43106c0667ea590000d9a",
+      "bytes": 556
+    },
+    "sbw": {
+      "file": "stock42_sbw.dat",
+      "sha256": "517663b5a9fc7c0a9e81e0d24334562292d2f3a95d4bafc429e9423121c02f6d",
+      "bytes": 550
+    }
+  }
+}

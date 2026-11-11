@@ -1,6 +1,5 @@
 package com.quin.catancraft.world;
 
-import com.electronwill.nightconfig.core.UnmodifiableConfig;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -26,8 +25,6 @@ import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraftforge.common.util.FakePlayer;
-import net.minecraftforge.fml.config.ConfigTracker;
-import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.gametest.GameTestHolder;
 import net.minecraftforge.gametest.PrefixGameTestTemplate;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -324,25 +321,13 @@ public final class NativeWeapon42Tests {
             var value=(net.minecraftforge.common.ForgeConfigSpec.BooleanValue)Class.forName("com.atsuishio.superbwarfare.config.server.ProjectileConfig").getField("PROJECTILE_CHUNK_LOADING").get(null);
             boolean original=value.get();value.set(!original);return ()->value.set(original);
         }
-        for(ModConfig.Type type:List.of(ModConfig.Type.SERVER,ModConfig.Type.COMMON))for(ModConfig config:ConfigTracker.INSTANCE.configSets().get(type)){
-            if(!config.getModId().equals(provider)||config.getConfigData()==null)continue;
-            List<String> path=new ArrayList<>();Object old=findConfigLeaf(config.getConfigData(),path);
-            if(old==null)continue;
-            Object altered=old instanceof Boolean b?!b:old instanceof Integer n?n+1:old instanceof Long n?n+1L:old instanceof Double n?n+0.125:null;
-            if(altered==null)continue;
-            config.getConfigData().set(path,altered);return ()->config.getConfigData().set(path,old);
+        if(provider.equals("tacz")){
+            // Mutate native effective configuration, not the raw TOML beneath the
+            // server's protected terrain overlay. This setting is outside that policy.
+            var value=(net.minecraftforge.common.ForgeConfigSpec.BooleanValue)Class.forName("com.tacz.guns.config.common.AmmoConfig").getField("IGNORE_TEAM_FRIENDLY_FIRE").get(null);
+            boolean original=value.get();value.set(!original);return ()->value.set(original);
         }
-        throw new AssertionError("No actual native server/common configuration mutation target for "+provider);
-    }
-
-    private static Object findConfigLeaf(UnmodifiableConfig config,List<String> path){
-        for(var entry:config.valueMap().entrySet()){
-            Object value=entry.getValue();path.add(entry.getKey());
-            if(value instanceof Boolean||value instanceof Integer||value instanceof Long||value instanceof Double)return value;
-            if(value instanceof UnmodifiableConfig nested){Object found=findConfigLeaf(nested,path);if(found!=null)return found;}
-            path.remove(path.size()-1);
-        }
-        return null;
+        throw new AssertionError("No qualified native configuration mutation target for "+provider);
     }
 
     static Object call(Object target,String name)throws Exception{return target.getClass().getMethod(name).invoke(target);}

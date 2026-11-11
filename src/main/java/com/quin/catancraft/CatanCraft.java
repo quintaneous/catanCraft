@@ -28,6 +28,7 @@ public final class CatanCraft {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public CatanCraft() {
+        CombatTerrainSafety.register();
         NationNetwork.register();
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.addListener(net.minecraftforge.eventbus.api.EventPriority.HIGHEST, com.quin.catancraft.world.NativeWeapon42::addReloadListener);
