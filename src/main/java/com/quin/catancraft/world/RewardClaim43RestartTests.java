@@ -35,7 +35,7 @@ public final class RewardClaim43RestartTests {
     @GameTestHolder("catancraft_native43_sbw_restart") @PrefixGameTestTemplate(false)
     public static final class Sbw{
         @GameTest(template="townhall_state_empty",timeoutTicks=200)
-        public static void original_native_sbw_uuid_claim_recovers_without_charge_or_redelivery(GameTestHelper h)throws Exception{run(h,"superbwarfare");}
+        public static void original_sbw_reservation_stays_held_without_delivery_after_restart(GameTestHelper h)throws Exception{run(h,"superbwarfare");}
     }
 
     private static void run(GameTestHelper h,String provider)throws Exception{
@@ -44,7 +44,8 @@ public final class RewardClaim43RestartTests {
         require(phase.equals("seed")||phase.equals("verify"),"Explicit native43RestartPhase=seed|verify required");source();
         Path proof=root.resolve("data/"+namespace(provider,true)+"_seed.proof"),verified=root.resolve("data/"+namespace(provider,true)+"_verified.proof");
         require(!Files.exists(verified,LinkOption.NOFOLLOW_LINKS),"Already verified native claim world cannot be reused");
-        if(phase.equals("seed"))seed(level,provider,root,proof);else verify(level,provider,root,proof,verified);
+        if(provider.equals("superbwarfare")){if(phase.equals("seed"))seedHeld(level,root,proof);else verifyHeld(level,root,proof,verified);}
+        else if(phase.equals("seed"))seed(level,provider,root,proof);else verify(level,provider,root,proof,verified);
         require(level.getServer().getPlayerList().getPlayers().isEmpty(),"Synthetic claim actor entered connected/ticking roster");h.succeed();
     }
 
@@ -107,6 +108,66 @@ public final class RewardClaim43RestartTests {
         result.putInt("firstRecoveryPlayerSaves",f.playerSaves);result.putInt("firstRecoveryLedgerSaves",f.ledgerSaves);result.putInt("completedRetrySaves",0);
         if(provider.equals("superbwarfare"))result.putUUID("nativeGunUUID",NativeWeapon42Tests.gunUuid(supply.item()));ProducerJournal.write(verified,result,false);
         CatanCraft.LOGGER.info("NATIVE43_{}_RESTART_VERIFY_PASS distinctJVM=PASS originalSettledReward=PASS originalWinner=PASS originalNativePlayer=PASS originalNativeLedger=PASS immutableClaim=PASS originalProgress=PASS nativeItem=1 additionalCharge=0 additionalSourceCredit=0 newItems=0 recoveryPlayerSaves=0 recoveryLedgerSaves=0 completedRetrySaves=0 retries=3 uuid={} seedProcess={} verifyProcess={} source={}",marker(provider),provider.equals("superbwarfare")?NativeWeapon42Tests.gunUuid(supply.item()):"N/A",evidence.getString("process"),process(),source());
+    }
+
+    private static void seedHeld(ServerLevel level,Path root,Path proof)throws Exception{
+        String provider="superbwarfare";require(!Files.exists(proof,LinkOption.NOFOLLOW_LINKS),"Historical seed cannot overwrite evidence");
+        require(CatanSavedData.get(level.getServer()).nations().isEmpty(),"Historical seed requires a fresh native ledger");
+        var entitlement=sample(provider,true);Fixture f=new Fixture(level,namespace(provider,true),actor(provider),name(provider),reward(provider),List.of(entitlement),null,null);
+        f.settle();assertSourceCredit(f);var access=historicalAccess(f);NativeWeapon42.Supply supply;
+        try(var lease=NativeWeapon42.transaction(f.server())){
+            supply=access.quote(entitlement);assertNative(entitlement,supply);
+            RewardClaim43.fixturePrepare(f,f.selection(0),f.facility,supply,access,NONE);
+        }
+        byte[] player=bytes(f.playerPath()),ledger=bytes(f.ledgerPath());int saves=f.playerSaves+f.ledgerSaves;
+        refuse(()->f.claim(0,NONE));require(saves==f.playerSaves+f.ledgerSaves&&f.player.getInventory().isEmpty()&&f.receipts().isEmpty()
+                &&Arrays.equals(player,bytes(f.playerPath()))&&Arrays.equals(ledger,bytes(f.ledgerPath()))
+                &&!Files.exists(RewardClaim43.receiptPath(f,f.selection(0))),"Current policy delivered or changed historical SBW seed");
+        CompoundTag evidence=metadata(level,provider,root);evidence.putInt("schema",2);evidence.putString("policy","TACZ_ONLY_HELD");
+        evidence.putUUID("actor",actor(provider));evidence.putString("name",name(provider));evidence.putUUID("nation",f.nation.id());evidence.putString("monument",f.monument.id());
+        evidence.putUUID("reward",reward(provider));evidence.putUUID("claim",RewardClaim43.claimId(f.selection(0)));evidence.putInt("index",0);
+        evidence.put("nationAfterSourceCredit",f.nation.save());evidence.put("nativeLedger",f.ledger());evidence.put("item",supply.item().save(new CompoundTag()));
+        evidence.put("entitlement",entitlement.save());evidence.putString("fingerprint",supply.fingerprint());evidence.putUUID("nativeGunUUID",NativeWeapon42Tests.gunUuid(supply.item()));
+        retained(evidence,"sourceIntent",bytes(f.sourceIntent()));retained(evidence,"sourceReceipt",bytes(f.sourceReceipt()));
+        retained(evidence,"claimIntent",bytes(RewardClaim43.intentPath(f,f.selection(0))));retained(evidence,"nativePlayer",player);retained(evidence,"nativeLedger",ledger);
+        evidence.putString("result","SEEDED_PENDING_DISTINCT_JVM_VERIFICATION");ProducerJournal.write(proof,evidence,false);
+        CatanCraft.LOGGER.info("NATIVE43_SBW_RESTART_SEED_PASS policy=TACZ_ONLY_HELD nativeItem=0 claimCharge=0 immutableReservation=PASS process={} source={}",process(),source());
+    }
+    private static void verifyHeld(ServerLevel level,Path root,Path proof,Path verified)throws Exception{
+        String provider="superbwarfare";byte[] proofBytes=bytes(proof);CompoundTag e=ProducerJournal.read(proofBytes);
+        require(e.getInt("schema")==2&&e.getString("policy").equals("TACZ_ONLY_HELD")&&e.getString("source").equals(source())
+                &&e.getString("namespace").equals(namespace(provider,true))&&e.getString("provider").equals(provider)
+                &&e.getString("root").equals(root.toString())&&e.getLong("seed")==level.getSeed()
+                &&e.getString("dimension").equals(level.dimension().location().toString()),"Foreign held-reservation proof");
+        require(!e.getString("process").isBlank()&&!e.getString("process").equals(process()),"Held reservation requires a distinct JVM");
+        require(e.getUUID("actor").equals(actor(provider))&&e.getUUID("reward").equals(reward(provider))&&e.getInt("index")==0
+                &&e.getString("name").equals(name(provider)),"Original held actor/reward changed");
+        CatanSavedData data=CatanSavedData.get(level.getServer());NationData nation=data.nation(e.getUUID("nation"));MonumentData monument=data.monument(e.getString("monument"));
+        require(nation!=null&&nation==data.nationForPlayer(actor(provider))&&nation.isLeader(actor(provider))&&monument!=null
+                &&nation.save().equals(e.getCompound("nationAfterSourceCredit"))&&data.save(new CompoundTag()).equals(e.getCompound("nativeLedger")),"Held winner or credited ledger changed");
+        var entitlement=sample(provider,true);require(entitlement.save().equals(e.getCompound("entitlement")),"Historical entitlement changed");
+        Fixture f=new Fixture(level,namespace(provider,true),actor(provider),name(provider),reward(provider),List.of(entitlement),nation,monument);
+        var selection=f.selection(0);require(RewardClaim43.claimId(selection).equals(e.getUUID("claim")),"Original reservation identity changed");
+        verifyRetained(e,"sourceIntent",bytes(f.sourceIntent()));verifyRetained(e,"sourceReceipt",bytes(f.sourceReceipt()));verifyRetained(e,"claimIntent",bytes(RewardClaim43.intentPath(f,selection)));
+        byte[] player=bytes(f.playerPath()),ledger=bytes(f.ledgerPath());verifyRetained(e,"nativePlayer",player);
+        require(TownHallRevisions.sha(e.getByteArray("nativeLedgerBytes")).equals(e.getString("nativeLedgerSHA256"))
+                &&nativeNbt(e.getByteArray("nativeLedgerBytes")).getCompound("data").equals(e.getCompound("nativeLedger"))
+                &&nativeNbt(ledger).getCompound("data").equals(e.getCompound("nativeLedger")),"Historical credited native ledger changed");
+        var request=RewardClaim43.fixtureInspect(f,selection);var supply=request.supply();assertRequest(f,request,entitlement,supply);assertNative(entitlement,supply);
+        require(supply.fingerprint().equals(e.getString("fingerprint"))&&supply.item().save(new CompoundTag()).equals(e.getCompound("item"))
+                &&NativeWeapon42Tests.gunUuid(supply.item()).equals(e.getUUID("nativeGunUUID")),"Historical item/UUID was rebound");
+        try(var lease=NativeWeapon42.transaction(f.server())){refuse(()->NativeReward43.quote(f.server(),entitlement));refuse(()->NativeReward43.recheck(f.server(),entitlement,supply));}
+        for(int retry=0;retry<3;retry++)refuse(()->f.claim(0,NONE));
+        assertSourceCredit(f);require(f.playerSaves==0&&f.ledgerSaves==0&&f.player.getInventory().isEmpty()&&f.receipts().isEmpty()
+                &&Arrays.equals(player,bytes(f.playerPath()))&&Arrays.equals(ledger,bytes(f.ledgerPath()))
+                &&!Files.exists(RewardClaim43.receiptPath(f,selection)),"Held retry delivered, saved, charged or completed SBW equipment");
+        verifyRetained(e,"sourceIntent",bytes(f.sourceIntent()));verifyRetained(e,"sourceReceipt",bytes(f.sourceReceipt()));verifyRetained(e,"claimIntent",bytes(RewardClaim43.intentPath(f,selection)));
+        require(Arrays.equals(proofBytes,bytes(proof)),"Held retry rewrote seed evidence");
+        CompoundTag result=metadata(level,provider,root);result.putInt("schema",2);result.putString("policy","TACZ_ONLY_HELD");result.putString("result","PASS");
+        result.putString("seedProcess",e.getString("process"));result.putString("seedProofSHA256",TownHallRevisions.sha(proofBytes));result.putString("claimIntentSHA256",e.getString("claimIntentSHA256"));
+        result.putInt("nativeItemCount",0);result.putInt("additionalCharge",0);result.putInt("additionalSourceCredit",0);result.putInt("newItemsAfterRecovery",0);result.putInt("refusedRetries",3);
+        result.putInt("recoveryPlayerSaves",f.playerSaves);result.putInt("recoveryLedgerSaves",f.ledgerSaves);result.putUUID("nativeGunUUID",e.getUUID("nativeGunUUID"));ProducerJournal.write(verified,result,false);
+        CatanCraft.LOGGER.info("NATIVE43_SBW_RESTART_VERIFY_PASS policy=TACZ_ONLY_HELD distinctJVM=PASS immutableReservation=PASS nativeItem=0 additionalCharge=0 additionalSourceCredit=0 newItems=0 recoveryPlayerSaves=0 recoveryLedgerSaves=0 refusedRetries=3 seedProcess={} verifyProcess={} source={}",e.getString("process"),process(),source());
     }
 
     private static byte[] interrupted(Fixture f,RewardClaim43.Selection selection,String hash)throws IOException{

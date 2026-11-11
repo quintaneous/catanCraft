@@ -34,7 +34,7 @@ public final class MonumentRewards41 {
     };}
     public static void stopped(MinecraftServer server) { /* No server/player cache. */ }
     public static void prepareActivation(MinecraftServer server,CatanSavedData data,MonumentData monument)throws IOException {
-        prepare(runtime(server,data),monument,MonumentSupply43.table(monument.type()),RANDOM.nextLong(),UUID.randomUUID(),NONE,false);
+        prepare(runtime(server,data),monument,MonumentSupply44.table(monument.type()),RANDOM.nextLong(),UUID.randomUUID(),NONE,false);
     }
     public static boolean readyActivation(MinecraftServer server,CatanSavedData data,MonumentData monument)throws IOException {
         Environment e=runtime(server,data);if(controlledRecord(e,monument))return false;

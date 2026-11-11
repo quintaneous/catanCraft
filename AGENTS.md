@@ -51,6 +51,14 @@ inventory and restart safety still require validation. Test fixtures must be
 labeled and must not be shipped as visually approved artwork. Missing artwork
 must not block independent accounting and interface development.
 
+Owner correction after043: TaCZ is the only enabled handheld gun provider.
+Superb Warfare remains for vehicles and their mounted weapons; its handheld
+guns and handheld explosives are disabled. SBW explosives may be considered
+later, not enabled by this note. Keep current shops/rewards TaCZ-only; retained
+042/043 SBW metadata exists for history, not current acquisition authority.
+Preserve old records without rerolling, repricing or silently delivering a
+disabled item. Do not remove the SBW mod or disable vehicle ammunition globally.
+
 SBW weapon identifiers/geometry/ammunition/anti-packing require the actual
 installed-version artifacts. The crowbar exploit is UNRESOLVED / HIGH PRIORITY.
 No NPC/Combined Arms research, dependencies or implementation. Siege is next

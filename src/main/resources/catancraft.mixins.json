@@ -5,7 +5,12 @@
   "compatibilityLevel": "JAVA_17",
   "mixins": [
     "VehicleCrowbarGuardMixin",
-    "CrowbarHelperGuardMixin"
+    "CrowbarHelperGuardMixin",
+    "SbwHandheldFireMixin",
+    "SbwHandheldReleaseMixin",
+    "SbwHandheldPacketMixin",
+    "SbwHandheldRecipesMixin",
+    "SbwHandheldLootMixin"
   ],
   "injectors": {
     "defaultRequire": 0

@@ -11,7 +11,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Exact production reward identities. These entries never authorize a shop offer or a charge. */
+/** Frozen 043 reward identity schema plus the current TaCZ-only delivery policy.
+ * Historical SBW entries remain readable metadata and never authorize delivery. */
 public final class NativeReward43 {
     public static final String REVISION = "monument_supply43_native_v1";
     record Rare(String id, String title, String category, String ammoId, String fireMode) {}
@@ -26,23 +27,46 @@ public final class NativeReward43 {
 
     private NativeReward43() {}
 
+    /** Historical schema only; new production pools must use activeEntitlements(). */
     public static List<RewardTable41.Entitlement> entitlements() throws IOException { return catalog().entitlements(); }
 
-    /** Returns the one canonical production amount/revision, never a caller-selected quantity. */
+    /** Returns a canonical frozen schema amount/revision, never current delivery authority. */
     public static RewardTable41.Entitlement entitlement(RewardTable41.Kind kind, String nativeId) throws IOException {
         Qualified entry = catalog().entries().get(key(kind, nativeId));
         if (entry == null) throw new IOException("This equipment is not in the monument supply pool.");
         return entry.entitlement();
     }
 
+    /** Historical schema validation, not authorization to deliver or activate a new pool. */
     public static void validate(RewardTable41.Entitlement entitlement) throws IOException { qualified(entitlement); }
 
+    public static List<RewardTable41.Entitlement> activeEntitlements() throws IOException {
+        List<RewardTable41.Entitlement> result = entitlements().stream()
+                .filter(entitlement -> entitlement.objectId().startsWith("tacz:")).toList();
+        if (result.size() != 72) throw new IOException("The audited TaCZ-only reward coverage changed.");
+        return result;
+    }
+
+    public static RewardTable41.Entitlement activeEntitlement(RewardTable41.Kind kind, String nativeId) throws IOException {
+        RewardTable41.Entitlement result = entitlement(kind, nativeId);
+        validateActive(result);
+        return result;
+    }
+
+    public static void validateActive(RewardTable41.Entitlement entitlement) throws IOException {
+        qualified(entitlement);
+        if (!entitlement.objectId().startsWith("tacz:"))
+            throw new IOException("This saved reward is retained, but Superb Warfare handheld weapons and ammunition are disabled.");
+    }
+
     public static String description(RewardTable41.Entitlement entitlement) throws IOException {
+        validateActive(entitlement);
         Qualified entry = qualified(entitlement);
         return entry.description() + " x" + entitlement.count();
     }
 
     static NativeWeapon42.Supply quote(MinecraftServer server, RewardTable41.Entitlement entitlement) throws IOException {
+        validateActive(entitlement);
         long epoch = NativeWeapon42.qualificationEpoch(server);
         Qualified entry = qualified(entitlement);
         NativeWeapon42.Supply supply = entry.ordinary() != null
@@ -54,10 +78,11 @@ public final class NativeReward43 {
 
     static void recheck(MinecraftServer server, RewardTable41.Entitlement entitlement,
                         NativeWeapon42.Supply supply) throws IOException {
+        validateActive(entitlement);
         long epoch = NativeWeapon42.qualificationEpoch(server);
         Qualified entry = qualified(entitlement);
         item(entitlement, supply);
-        // Reuse the frozen native UUID/item on recovery; never quote a replacement SBW gun.
+        // Recheck the original item; disabled historical SBW entitlements cannot reach native delivery.
         if (entry.ordinary() != null) NativeWeapon42.recheck(server, entry.ordinary(), supply);
         else NativeTacz42.recheckReward(server, entitlement, supply);
         NativeWeapon42.requireEpoch(server, epoch);

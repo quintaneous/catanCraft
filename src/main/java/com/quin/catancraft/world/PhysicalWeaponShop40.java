@@ -107,7 +107,7 @@ public final class PhysicalWeaponShop40 {
         try {
             Session session = session(player);
             switch (action) {
-                case "review" -> review(session, WeaponStock42.offer(selection));
+                case "review" -> review(session, ActiveWeaponStock44.offer(selection));
                 case "confirm" -> confirm(session, token(selection));
                 case "cancel" -> {
                     if (session.quote == null || !session.quote.id().equals(token(selection)))
@@ -120,7 +120,7 @@ public final class PhysicalWeaponShop40 {
                 }
                 case "page" -> {
                     int requested = selectedPage(session.id, selection);
-                    WeaponStock42.page(requested, PAGE_SIZE); // Validate before changing the retained session.
+                    ActiveWeaponStock44.page(requested, PAGE_SIZE); // Validate before changing the retained session.
                     session.quote = null; session.page = requested; menu(session, "");
                 }
                 case "recover" -> recover(session, token(selection));
@@ -195,7 +195,7 @@ public final class PhysicalWeaponShop40 {
             check(session);
             // Historic facility and price stay frozen; the current physical counter must still be valid.
             ShopFacility40.guard(session.player, original);
-            if (supply != null) NativeWeapon42.recheck(session.player.server, offer, supply);
+            if (supply != null) { ActiveWeaponStock44.requireCurrent(offer); NativeWeapon42.recheck(session.player.server, offer, supply); }
         });
     }
     private static void menu(Session session, String notice) throws IOException {
@@ -213,10 +213,10 @@ public final class PhysicalWeaponShop40 {
             rows.add("Y|An earlier order is unfinished. Continue it before buying again.");
             for (UUID id : pending) rows.add("A|nation procure shop recover " + id + "|Continue unfinished order");
         } else {
-            int pages = (WeaponStock42.offers().size() + PAGE_SIZE - 1) / PAGE_SIZE;
+            int pages = (ActiveWeaponStock44.offers().size() + PAGE_SIZE - 1) / PAGE_SIZE;
             rows.add("G|Stock page " + (session.page + 1) + " of " + pages);
             rows.add("D|New stock uses provisional playtest prices. Native availability is checked at review.");
-            for (var offer : WeaponStock42.page(session.page, PAGE_SIZE)) {
+            for (var offer : ActiveWeaponStock44.page(session.page, PAGE_SIZE)) {
                 rows.add("P|" + offer.kindName() + ": " + offer.description());
                 if (!net.minecraftforge.fml.ModList.get().isLoaded(offer.provider())) rows.add("Y|This weapon mod is unavailable.");
                 else if (offer.requiredLevel() > session.facility.level()) rows.add("Y|Requires a local Weapons Factory (Level " + offer.requiredLevel() + ").");
@@ -347,6 +347,7 @@ public final class PhysicalWeaponShop40 {
         if (!ShopPurchase40.pending(environment(session)).isEmpty()) throw new IOException("Continue your unfinished order before buying again.");
         if (!RewardClaim43.pending(rewardEnvironment(session)).isEmpty()) throw new IOException("Continue your reserved monument equipment claim before buying again.");
         CompoundTag facility = session.facility.forOffer(offer.requiredLevel());
+        ActiveWeaponStock44.requireCurrent(offer);
         NativeWeapon42.Supply supply = NativeWeapon42.quote(session.player.server, offer);
         ShopFacility40.recheck(session.player, facility, true);
         var nation = ShopFacility40.leader(session.player);
@@ -370,6 +371,7 @@ public final class PhysicalWeaponShop40 {
         check(session); ShopFacility40.recheck(session.player, quote.facility(), true);
         ShopPurchase40.Result result;
         try (var lease = NativeWeapon42.transaction(session.player.server)) {
+            ActiveWeaponStock44.requireCurrent(quote.offer());
             NativeWeapon42.recheck(session.player.server, quote.offer(), quote.supply());
             ShopPurchase40.Environment env = environment(session, quote.offer(), quote.supply());
             UUID operation = ShopPurchase40.create(env, new ShopPurchase40.Request(quote.id(), quote.offer().id(),
@@ -387,7 +389,7 @@ public final class PhysicalWeaponShop40 {
         ShopPurchase40.Result result;
         if (supply == null) result = ShopPurchase40.resume(env, operation);
         else try (var lease = NativeWeapon42.transaction(session.player.server)) {
-            env = environment(session, WeaponStock42.offer(original.offer()), supply);
+            env = environment(session, ActiveWeaponStock44.offer(original.offer()), supply);
             result = ShopPurchase40.resume(env, operation);
         }
         menu(session, result.message());

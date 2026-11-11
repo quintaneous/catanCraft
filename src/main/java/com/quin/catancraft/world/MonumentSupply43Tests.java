@@ -321,7 +321,7 @@ public final class MonumentSupply43Tests {
             fixture.activate(fresh);
             MonumentRewards41.prepareActivation(fixture.server, fixture.data, fresh);
             CompoundTag first = state(fresh);
-            h.assertTrue(first.getString("tableRevision").equals(MonumentSupply43.table(fresh.type()).revision())
+            h.assertTrue(first.getString("tableRevision").equals(MonumentSupply44.table(fresh.type()).revision())
                     && first.getCompound("identity").getString("scope").equals("runtime"), "Public new activation did not freeze the production supply profile");
             h.assertTrue(MonumentRewards41.readyActivation(fixture.server, fixture.data, fresh), "Saved public supply round is not ready");
             MonumentRewards41.prepareActivation(fixture.server, fixture.data, fresh);

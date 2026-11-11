@@ -161,8 +161,8 @@ public final class RewardClaim43Tests {
     }
     @GameTestHolder("catancraft_claims43_sbw") @PrefixGameTestTemplate(false)
     public static final class Sbw{
-        @GameTest(template="townhall_state_empty",batch="claims43_native_01",timeoutTicks=600) public static void all_native_sbw_reward_supplies_preserve_item_uuid_and_roundtrip(GameTestHelper h)throws Exception{nativeCoverage(h,"superbwarfare");}
-        @GameTest(template="townhall_state_empty",batch="claims43_native_02",timeoutTicks=200) public static void real_sbw_gun_and_ammunition_claim_once_without_shop_debit(GameTestHelper h)throws Exception{nativeClaims(h,"superbwarfare");}
+        @GameTest(template="townhall_state_empty",batch="claims43_native_01",timeoutTicks=600) public static void historical_sbw_identities_remain_readable_but_current_rewards_refuse(GameTestHelper h)throws Exception{nativeCoverage(h,"superbwarfare");}
+        @GameTest(template="townhall_state_empty",batch="claims43_native_02",timeoutTicks=200) public static void historical_sbw_gun_and_ammo_claims_are_retained_without_delivery(GameTestHelper h)throws Exception{nativeClaims(h,"superbwarfare");}
     }
 
     private static void nativeCoverage(GameTestHelper h,String provider)throws Exception{
@@ -170,7 +170,11 @@ public final class RewardClaim43Tests {
         frozenStock42(h.getLevel().getServer(),provider);
         List<RewardTable41.Entitlement> all=NativeReward43.entitlements().stream().filter(e->e.objectId().startsWith(provider+":")).toList();
         require(all.size()==(provider.equals("tacz")?72:28),"Native production entitlement coverage changed: "+all.size());
-        for(var entitlement:all)try(var lease=NativeWeapon42.transaction(h.getLevel().getServer())){var supply=NativeReward43.quote(h.getLevel().getServer(),entitlement);assertNative(entitlement,supply);NativeReward43.recheck(h.getLevel().getServer(),entitlement,supply);}
+        for(var entitlement:all)try(var lease=NativeWeapon42.transaction(h.getLevel().getServer())){
+            if(provider.equals("tacz")){var supply=NativeReward43.quote(h.getLevel().getServer(),entitlement);assertNative(entitlement,supply);NativeReward43.recheck(h.getLevel().getServer(),entitlement,supply);}
+            else {var offer=historicalOffer(entitlement);var supply=NativeWeapon42.quote(h.getLevel().getServer(),offer);assertNative(entitlement,supply);
+                refuse(()->NativeReward43.quote(h.getLevel().getServer(),entitlement));refuse(()->NativeReward43.recheck(h.getLevel().getServer(),entitlement,supply));}
+        }
         if(provider.equals("tacz"))for(String rare:List.of("tacz:scar_h","tacz:scar_mk20","tacz:deagle_golden"))
             require(all.stream().anyMatch(e->e.kind()==RewardTable41.Kind.GUN&&e.objectId().equals(rare))&&WeaponStock42.offers().stream().noneMatch(o->o.nativeId().equals(rare)),"Rare monument entitlement leaked into ordinary paid stock");
         require(before.equals(CatanSavedData.get(h.getLevel().getServer()).save(new CompoundTag())),"Native reward qualification changed nation accounting");h.succeed();
@@ -199,6 +203,7 @@ public final class RewardClaim43Tests {
     }
 
     private static void nativeClaims(GameTestHelper h,String provider)throws Exception{
+        if(provider.equals("superbwarfare")){heldSbwClaims(h);return;}
         List<RewardTable41.Entitlement> entitlements=List.of(sample(provider,true),sample(provider,false));
         Fixture f=new Fixture(h.getLevel(),namespace(provider,false),UUID.randomUUID(),"CC43Native",UUID.randomUUID(),entitlements,null,null);
         f.settle();CompoundTag ledger=f.ledger();byte[] source=bytes(f.sourceIntent());
@@ -208,6 +213,39 @@ public final class RewardClaim43Tests {
             f.assertUnchangedLedger(ledger);inert(f,selection,intent,source);
         }
         require(f.player.getInventory().getItem(0).getCount()==1&&f.player.getInventory().getItem(1).getCount()==entitlements.get(1).count(),"Native claim changed gun/ammo quantities");h.succeed();
+    }
+
+    private static void heldSbwClaims(GameTestHelper h)throws Exception{
+        for(boolean gun:List.of(true,false)){
+            var entitlement=sample("superbwarfare",gun);
+            Fixture f=new Fixture(h.getLevel(),namespace("superbwarfare",false),UUID.randomUUID(),"CC44SbwHeld",UUID.randomUUID(),List.of(entitlement),null,null);
+            f.settle();var selection=f.selection(0);var historical=historicalAccess(f);NativeWeapon42.Supply supply;
+            try(var lease=NativeWeapon42.transaction(f.server())){supply=historical.quote(entitlement);}
+            assertNative(entitlement,supply);refuse(()->f.quote(0));refuse(()->f.prepare(0,supply,NONE));
+            require(!Files.exists(RewardClaim43.intentPath(f,selection)),"Current policy created an SBW reservation");
+            try(var lease=NativeWeapon42.transaction(f.server())){RewardClaim43.fixturePrepare(f,selection,f.facility,supply,historical,NONE);}
+            byte[] intent=bytes(RewardClaim43.intentPath(f,selection)),source=bytes(f.sourceIntent()),receipt=bytes(f.sourceReceipt()),player=bytes(f.playerPath()),ledger=bytes(f.ledgerPath());
+            int saves=f.playerSaves+f.ledgerSaves;
+            for(int retry=0;retry<3;retry++)refuse(()->f.claim(0,NONE));
+            require(saves==f.playerSaves+f.ledgerSaves&&f.player.getInventory().isEmpty()&&f.receipts().isEmpty()
+                    &&Arrays.equals(intent,bytes(RewardClaim43.intentPath(f,selection)))&&Arrays.equals(source,bytes(f.sourceIntent()))
+                    &&Arrays.equals(receipt,bytes(f.sourceReceipt()))&&Arrays.equals(player,bytes(f.playerPath()))&&Arrays.equals(ledger,bytes(f.ledgerPath()))
+                    &&!Files.exists(RewardClaim43.receiptPath(f,selection)),"Held historical SBW claim delivered, saved, charged or rewrote history");
+        }h.succeed();
+    }
+    static WeaponStock42.Offer historicalOffer(RewardTable41.Entitlement entitlement)throws IOException{
+        return WeaponStock42.offers().stream().filter(o->o.nativeId().equals(entitlement.objectId())
+                &&(o.kind()==WeaponShopCatalog40.Kind.GUN)==(entitlement.kind()==RewardTable41.Kind.GUN))
+                .findFirst().orElseThrow(()->new IOException("Missing frozen native supply identity"));
+    }
+    /** Fixture-only reproduction of a pre-policy reservation; never used by a live counter. */
+    static RewardClaim43.NativeAccess historicalAccess(Fixture f)throws IOException{
+        controlled(f.level,f.namespace);
+        if(!Set.of("catancraft_claims43_sbw","catancraft_native43_sbw_restart").contains(f.namespace))throw new IOException("Historical SBW seed requires its isolated fixture");
+        return new RewardClaim43.NativeAccess(){
+            public NativeWeapon42.Supply quote(RewardTable41.Entitlement e)throws IOException{NativeReward43.validate(e);return NativeWeapon42.quote(f.server(),historicalOffer(e));}
+            public void recheck(RewardTable41.Entitlement e,NativeWeapon42.Supply supply)throws IOException{NativeReward43.validate(e);NativeWeapon42.recheck(f.server(),historicalOffer(e),supply);}
+        };
     }
 
     static RewardTable41.Entitlement sample(String provider,boolean gun)throws IOException{
