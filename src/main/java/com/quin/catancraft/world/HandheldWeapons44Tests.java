@@ -77,7 +77,7 @@ public final class HandheldWeapons44Tests {
         apply.invoke(isolatedRecipes,immutable,h.getLevel().getServer().getResourceManager(),net.minecraft.util.profiling.InactiveProfiler.INSTANCE);
         require(immutable.size()==2&&isolatedRecipes.getRecipes().size()==1,"Native recipe filtering mutated its caller or kept a prohibited output");
         ObjectArrayList<ItemStack> loot=new ObjectArrayList<>();loot.add(stack("superbwarfare:glock_17"));loot.add(stack("superbwarfare:hand_grenade"));loot.add(new ItemStack(Items.DIAMOND));loot.add(stack("superbwarfare:heavy_ammo"));
-        LootContext context=new LootContext.Builder(new LootParams.Builder(h.getLevel()).create(LootContextParamSets.EMPTY)).create(Optional.empty());
+        LootContext context=new LootContext.Builder(new LootParams.Builder(h.getLevel()).create(LootContextParamSets.EMPTY)).create(null);
         ObjectArrayList<ItemStack> result=ForgeHooks.modifyLoot(new ResourceLocation("catancraft","handheld44_control"),loot,context);
         require(result.size()==2&&result.stream().noneMatch(HandheldWeapons44::blocked)&&result.stream().anyMatch(s->s.is(Items.DIAMOND)),"Final native Forge loot hook did not filter only prohibited results");CatanCraft.LOGGER.info("HANDHELD44_ACQUISITION_PASS loadedGunRecipes=0 immutableInputPreserved=true finalForgeLootFiltered=true");h.succeed();
     }
