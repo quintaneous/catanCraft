@@ -1,9 +1,10 @@
 # SEC-01: native terrain configuration policy, 0.1.43
 
-Corrective checkpoint, 2026-11-11, after failed native run 2 at `bcc85c2`.
-The corrected source has not yet completed native validation; this document does
-not claim a passing watcher run, clean startup, owner acceptance, or release
-qualification. Preserve the failed 0.1.42 observation and all new failed runs.
+Validated corrective checkpoint, 2026-11-11. Final source
+`581259acb84aecdd1ae77090ee61ba9dbdd62b5d` passed all three configuration cases
+and all 207 combined phases. See [exact evidence and retained failures](MONUMENT_SUPPLY_043_CHECKPOINT.md).
+This establishes scoped published-runtime behavior, not owner acceptance or a
+completely clean full-pack startup. Preserve the failed 042 observation and both 043 failed runs.
 
 The 0.1.42 combined run retained at
 `build/stock42-evidence/run1/expanded/native_combined/stock42-evidence/native_combined.log`
@@ -112,8 +113,7 @@ visibly. Native procurement calls `requireProtected(provider)` and translates a
 failure to its ordinary refused-supply result. A failed lifecycle installation
 cannot leave a valid native procurement qualification.
 
-Enforcement performs no guard-induced autosave. The corrective native run must
-still verify startup and reload behavior. This does not claim to
+Enforcement performs no guard-induced autosave. The corrective native run verified startup and reload behavior. This does not claim to
 repair every possible third-party config writer or malformed external TOML.
 Normal unrelated writes and file watching retain upstream Forge semantics.
 
@@ -170,6 +170,9 @@ the full startup/runtime log and reject `ConfigLoadingException`,
 establish a clean watcher run. Published input JAR manifests must be reverified
 unchanged after the run. Existing 0.1.42 failure evidence remains retained.
 
-At this corrective checkpoint static source/API review and `git diff --check`
-have completed. The previous build/native failures remain failures; the corrected
-source awaits the parent runner's full build and writable-world validation.
+Final execution: all three native cases passed, including real external edit/restoration
+and deterministic raw-map rebuild validation. Downloaded v2 proofs independently verify
+exact flags, hashes and per-scenario callback counts; full final logs contain no config
+parser/FileWatcher exception. Both published runtime manifests/provenance match the
+validated 042 inputs. The checkpoint records the unrelated optional SBW/Patchouli
+loot-table error. Prior failed attempts remain retained.

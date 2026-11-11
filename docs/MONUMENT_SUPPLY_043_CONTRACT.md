@@ -1,6 +1,6 @@
 # 0.1.43 monument supply rewards and terrain configuration contract
 
-Continues validated 0.1.42 source `9b3eb646a494348632e4b5c6a692c57f9a9f2f16` and documentation head `de492b863cfa5aeeafb98743f92a5b504cdccf82` on `chatgpt/combined-shop-acceptance`. MON-01 / ECO-03 implementation; SEC-01 remains **UNRESOLVED / HIGH PRIORITY**. Build/native validation is pending for this source commit; this document is a contract, not a pass report.
+Continues validated 0.1.42 source `9b3eb646a494348632e4b5c6a692c57f9a9f2f16` and documentation head `de492b863cfa5aeeafb98743f92a5b504cdccf82` on `chatgpt/combined-shop-acceptance`. MON-01 / ECO-03 implementation; SEC-01 remains **UNRESOLVED / HIGH PRIORITY**. The final source581259ac passed207/207 native phases; see the [validated checkpoint and retained failures](MONUMENT_SUPPLY_043_CHECKPOINT.md) for exact evidence and limits.
 
 ## Player behavior
 
@@ -20,10 +20,10 @@ Existing OPEN/CAPTURED/SETTLED 041 outcomes and their winners/credits remain fro
 
 ## Terrain configuration
 
-[Configuration audit](TERRAIN_CONFIG_043_AUDIT.md) describes the public Forge lifecycle overlay. Ten native terrain-damage getters (three TaCZ, seven SBW) remain false without periodic autosave writes to watched TOML. Authored file values may remain true; the effective getters consumed by native gameplay are false. Unrelated settings retain their normal setters/save/reload behavior. Unsupported native config contracts fail visibly and procurement holds while protection is unavailable. Actual load, setters, external FileWatcher reload and byte-exact file restoration require the native 043 suite; a source review alone does not resolve the observed 042 parser race.
+[Configuration audit](TERRAIN_CONFIG_043_AUDIT.md) describes the public Forge lifecycle overlay. Ten native terrain-damage getters (three TaCZ, seven SBW) remain false without periodic autosave writes to watched TOML. Authored file values may remain true; the effective getters consumed by native gameplay are false. Unrelated settings retain their normal setters/save/reload behavior. Unsupported native config contracts fail visibly and procurement holds while protection is unavailable. Actual load, setters, external FileWatcher reload and byte-exact file restoration passed the native043 suite; evidence is in the checkpoint.
 
 ## Validation and owner boundary
 
-The planned exact-source workflow contains 207 phase executions / 200 distinct scenarios, retaining all 178 validated 042 phases. New coverage includes eight pool/compatibility cases, ten claim failure/authority cases, four real native claim cases, two real native claim restart scenarios across separate JVMs (four phases), and three combined-provider config lifecycle cases. Build output, original logs, manifests, native journals/playerdata, terrain proofs and exact source/JAR hashes must be independently verified before a checkpoint is marked validated. Failures are retained with the corrective source.
+The validated exact-source workflow executed 207 phase executions / 200 distinct scenarios, retaining all 178 validated 042 phases. New coverage includes eight pool/compatibility cases, ten claim failure/authority cases, four real native claim cases, two real native claim restart scenarios across separate JVMs (four phases), and three combined-provider config lifecycle cases. Build output, original logs, manifests, native journals/playerdata, terrain proofs and exact source/JAR hashes must be independently verified before a checkpoint is marked validated. Failures are retained with the corrective source.
 
 This remains part of the combined playable release. No intermediate owner installation or repeated accepted purchase checklist is requested. Connected-client interaction, actual installed/add-on matching, balancing, fixed vehicle bays, player-facing siege integration and installed-pack crowbar acceptance remain separate. Preserve accepted City A North Reinforced and East/South/West Basic, purchase recovery and readiness. No live world, installed mod, reset, import, multiplayer test or Blender task is authorized by this checkpoint.
