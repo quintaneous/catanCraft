@@ -1,3 +1,4 @@
+# Exact-source rerun after correcting two test catalog references.
 name: Supply43 monument claims and terrain configuration validation
 on:
   push:

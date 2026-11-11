@@ -168,7 +168,7 @@ public final class RewardClaim43Tests {
     private static void nativeCoverage(GameTestHelper h,String provider)throws Exception{
         controlled(h.getLevel(),namespace(provider,false));CompoundTag before=CatanSavedData.get(h.getLevel().getServer()).save(new CompoundTag());
         frozenStock42(h.getLevel().getServer(),provider);
-        List<RewardTable41.Entitlement> all=MonumentSupply43.entitlements().stream().filter(e->e.objectId().startsWith(provider+":")).toList();
+        List<RewardTable41.Entitlement> all=NativeReward43.entitlements().stream().filter(e->e.objectId().startsWith(provider+":")).toList();
         require(all.size()==(provider.equals("tacz")?72:28),"Native production entitlement coverage changed: "+all.size());
         for(var entitlement:all)try(var lease=NativeWeapon42.transaction(h.getLevel().getServer())){var supply=NativeReward43.quote(h.getLevel().getServer(),entitlement);assertNative(entitlement,supply);NativeReward43.recheck(h.getLevel().getServer(),entitlement,supply);}
         if(provider.equals("tacz"))for(String rare:List.of("tacz:scar_h","tacz:scar_mk20","tacz:deagle_golden"))
@@ -212,7 +212,7 @@ public final class RewardClaim43Tests {
 
     static RewardTable41.Entitlement sample(String provider,boolean gun)throws IOException{
         String id=provider.equals("tacz")?(gun?"tacz:glock_17":"tacz:9mm"):(gun?"superbwarfare:ak_47":"superbwarfare:rifle_ammo");
-        return MonumentSupply43.entitlements().stream().filter(e->e.objectId().equals(id)&&(e.kind()==RewardTable41.Kind.GUN)==gun).findFirst().orElseThrow(()->new IOException("Missing real native entitlement "+id));
+        return NativeReward43.entitlements().stream().filter(e->e.objectId().equals(id)&&(e.kind()==RewardTable41.Kind.GUN)==gun).findFirst().orElseThrow(()->new IOException("Missing real native entitlement "+id));
     }
     static void assertNative(RewardTable41.Entitlement entitlement,NativeWeapon42.Supply supply)throws Exception{
         ItemStack item=supply.item();CompoundTag frozen=item.save(new CompoundTag());require(item.getCount()==entitlement.count()&&ItemStack.of(frozen.copy()).save(new CompoundTag()).equals(frozen),"Native reward item/count failed exact NBT roundtrip");
