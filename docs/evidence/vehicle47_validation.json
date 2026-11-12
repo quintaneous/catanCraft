@@ -1,0 +1,716 @@
+{
+  "source": "125cc823dfba778397b6d73e24fc7d919d319ed8",
+  "run": 43278587028,
+  "archive_sha256": "5e98f23808802f9d2144b78daabfa531f6ff7f33272c97dbfdb904d9f96d943e",
+  "jar_file": "catancraft-0.1.47-native-vehicles.jar",
+  "jar_sha256": "0da357e09e62697ffbe8f8d8bdc89974db50a33d89d5d5a223c1f1147d6f7b2a",
+  "jar_bytes": 3775864,
+  "phases": 118,
+  "failed": 0,
+  "suites": {
+    "catancraft_vehicle47_exit": 6,
+    "catancraft_vehicle47": 4,
+    "vehicle47_seed": 1,
+    "vehicle47_verify": 1,
+    "catancraft_vehicle46": 18,
+    "catancraft_vehicle46_native": 6,
+    "catancraft_sbw": 7,
+    "procurement_seed": 1,
+    "procurement_verify": 1,
+    "catancraft_economy45": 6,
+    "catancraft_vehicle45": 8,
+    "catancraft_economy_clock": 9,
+    "catancraft": 50
+  },
+  "source_files_verified": 525,
+  "packaged_source_version_and_jar_manifest_verified": true,
+  "unchanged_046_classes": 661,
+  "unchanged_046_data_entries": 235,
+  "native_economy_vectors": [
+    {
+      "case": "starter_8_cycles",
+      "cash": 1000,
+      "cycles": 8,
+      "stock": {
+        "wood": 40,
+        "stone": 40,
+        "agriculture": 32,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "dependency_chain",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 0,
+        "stone": 0,
+        "agriculture": 10,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 4,
+        "electronics": 6,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "starter_l4_rounding",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 23,
+        "stone": 23,
+        "agriculture": 18,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "logistics_target_pause",
+      "cash": 700,
+      "cycles": 2,
+      "stock": {
+        "wood": 0,
+        "stone": 10,
+        "agriculture": 20,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 15,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "partial_upkeep",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 18,
+        "stone": 0,
+        "agriculture": 0,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "unowned_reload",
+      "cash": 250,
+      "cycles": 2,
+      "stock": {
+        "wood": 0,
+        "stone": 0,
+        "agriculture": 20,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    }
+  ],
+  "native_vehicle47": {
+    "result": "PASS",
+    "source": "125cc823dfba778397b6d73e24fc7d919d319ed8",
+    "runtime_manifest_sha256": "6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452",
+    "base_original_intents": 11,
+    "base_native_entities_remaining": 7,
+    "retained_native_snapshots": 10,
+    "independent_canonical_fingerprints": 14,
+    "malformed_region_fixtures": 13,
+    "region_parser_controls": 3,
+    "restart_original_intents": 3,
+    "restored_original_uuids": 2,
+    "original_paid_first_spawn": 1,
+    "moved_pending_held": 1,
+    "completed_loss_replacements": 0,
+    "separate_jvms": true,
+    "seed_process": "3967:1794507751529",
+    "verify_process": "4125:1794507775273",
+    "actual_entity_region_files": [
+      {
+        "name": "r.-1.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.-1.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.-5.-5.mca",
+        "sha256": "d0211cbac51e6c8512650f4d87e676483739014cd407072fc239abee3d9ff3e5",
+        "bytes": 20480
+      },
+      {
+        "name": "r.-5.-6.mca",
+        "sha256": "8625ae849881107293967c8c85baa1e1dd67566ef5067f3c36395f394aa82e02",
+        "bytes": 32768
+      },
+      {
+        "name": "r.-5.-7.mca",
+        "sha256": "349b43dc4c74232438dd82d609545233f7b7c98c00ec8276c79704cfc00ceb64",
+        "bytes": 24576
+      },
+      {
+        "name": "r.0.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.0.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.-1.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.-1.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.-5.-7.mca",
+        "sha256": "c758b24f23c0f2b3e8a2149ccd959aa63073cfe86b6b0c7c48ab146c0d712478",
+        "bytes": 24576
+      },
+      {
+        "name": "r.0.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.0.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      }
+    ],
+    "scope": "Native transaction/region/accounting fixtures; not authored factory exit or installed-pack acceptance"
+  },
+  "pickup_exit47_rows": [
+    [
+      "0",
+      "0",
+      "(2037.3099999517203, 100.21000012457371, 2047.000000089407)",
+      "(2037.3099999517203, 100.0, 2046.875000089407)",
+      "0.125",
+      "200"
+    ],
+    [
+      "0",
+      "1",
+      "(2037.3099999517203, 100.21000012457371, 2049.999999910593)",
+      "(2037.3099999517203, 100.0, 2050.124999910593)",
+      "0.125",
+      "200"
+    ],
+    [
+      "0",
+      "2",
+      "(2035.8000000417233, 100.85000008642673, 2047.000000089407)",
+      "(2035.8000000417233, 100.0, 2046.875000089407)",
+      "0.125",
+      "208"
+    ],
+    [
+      "0",
+      "3",
+      "(2035.8000000417233, 100.85000008642673, 2049.999999910593)",
+      "(2035.8000000417233, 100.0, 2050.124999910593)",
+      "0.125",
+      "208"
+    ],
+    [
+      "0",
+      "4",
+      "(2034.320000129938, 100.85000008642673, 2047.000000089407)",
+      "(2034.320000129938, 100.0, 2046.875000089407)",
+      "0.125",
+      "200"
+    ],
+    [
+      "0",
+      "5",
+      "(2034.320000129938, 100.85000008642673, 2049.999999910593)",
+      "(2034.320000129938, 100.0, 2050.124999910593)",
+      "0.125",
+      "200"
+    ],
+    [
+      "0",
+      "6",
+      "(2033.500000178814, 100.85000008642673, 2048.5)",
+      "(2033.375000178814, 100.0, 2048.5)",
+      "0.125",
+      "196"
+    ],
+    [
+      "0",
+      "7",
+      "(2033.500000178814, 100.85000008642673, 2048.5)",
+      "(2033.375000178814, 100.0, 2048.5)",
+      "0.125",
+      "196"
+    ],
+    [
+      "180",
+      "0",
+      "(2187.6900000482797, 100.21000012457371, 2049.999999910593)",
+      "(2187.6900000482797, 100.0, 2050.124999910593)",
+      "0.125",
+      "200"
+    ],
+    [
+      "180",
+      "1",
+      "(2187.6900000482797, 100.21000012457371, 2047.000000089407)",
+      "(2187.6900000482797, 100.0, 2046.875000089407)",
+      "0.125",
+      "200"
+    ],
+    [
+      "180",
+      "2",
+      "(2189.1999999582767, 100.85000008642673, 2049.999999910593)",
+      "(2189.1999999582767, 100.0, 2050.124999910593)",
+      "0.125",
+      "208"
+    ],
+    [
+      "180",
+      "3",
+      "(2189.1999999582767, 100.85000008642673, 2047.000000089407)",
+      "(2189.1999999582767, 100.0, 2046.875000089407)",
+      "0.125",
+      "208"
+    ],
+    [
+      "180",
+      "4",
+      "(2190.6799998700617, 100.85000008642673, 2049.999999910593)",
+      "(2190.6799998700617, 100.0, 2050.124999910593)",
+      "0.125",
+      "200"
+    ],
+    [
+      "180",
+      "5",
+      "(2190.6799998700617, 100.85000008642673, 2047.000000089407)",
+      "(2190.6799998700617, 100.0, 2046.875000089407)",
+      "0.125",
+      "200"
+    ],
+    [
+      "180",
+      "6",
+      "(2191.499999821186, 100.85000008642673, 2048.5)",
+      "(2191.624999821186, 100.0, 2048.5)",
+      "0.125",
+      "196"
+    ],
+    [
+      "180",
+      "7",
+      "(2191.499999821186, 100.85000008642673, 2048.5)",
+      "(2191.624999821186, 100.0, 2048.5)",
+      "0.125",
+      "196"
+    ]
+  ],
+  "pickup_exit47_residency": {
+    "ready_rows": [
+      [
+        "0",
+        "12",
+        "85"
+      ],
+      [
+        "2",
+        "12",
+        "10"
+      ],
+      [
+        "1",
+        "12",
+        "10"
+      ],
+      [
+        "4",
+        "12",
+        "10"
+      ],
+      [
+        "3",
+        "12",
+        "15"
+      ],
+      [
+        "5",
+        "12",
+        "35"
+      ]
+    ],
+    "pending_refusal_cases": [
+      "0",
+      "2",
+      "1",
+      "4",
+      "3",
+      "5"
+    ],
+    "other_observations": []
+  },
+  "native_geometry_rows": [
+    [
+      "lav_150",
+      "0",
+      "10",
+      "5",
+      "117",
+      "16548"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "8",
+      "8",
+      "117",
+      "12462"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "8",
+      "8",
+      "117",
+      "12462"
+    ],
+    [
+      "lav_150",
+      "180",
+      "10",
+      "5",
+      "117",
+      "16548"
+    ]
+  ],
+  "delivery_markers": [
+    "PICKUP",
+    "COMPLETED_REPLAY",
+    "LAV",
+    "AUTHORITY",
+    "PAID_RESTART",
+    "JOURNAL_REFUSAL",
+    "PREPARED",
+    "DEBIT_UNCERTAINTY",
+    "DELIVERY_HOLD",
+    "ENTITY_READBACK",
+    "INTENT_SAVE",
+    "IMMUTABLE",
+    "SPAWN_MARKER",
+    "SPAWN_UNCERTAINTY",
+    "DEBIT_READBACK",
+    "PROVENANCE",
+    "DEBIT_MARKER",
+    "ENTITY_RESTART"
+  ],
+  "sealed_journal_files": 7,
+  "external_road_geometry_qualified": true,
+  "full_bay_qualified": false,
+  "native_view_minimum_raw_dot": 0.9999917000262836,
+  "native_routes": [
+    [
+      "lav_150",
+      "0",
+      "117"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "117"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "117"
+    ],
+    [
+      "lav_150",
+      "180",
+      "117"
+    ]
+  ],
+  "native_dismounts": [
+    [
+      "lav_150",
+      "0",
+      "5",
+      "0",
+      "true"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "8",
+      "8",
+      "false"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "8",
+      "8",
+      "false"
+    ],
+    [
+      "lav_150",
+      "180",
+      "5",
+      "0",
+      "true"
+    ]
+  ],
+  "native_seats": [
+    [
+      "lav_150",
+      "0",
+      "0",
+      "(1268.5, 100.0, 1027.2476205748203)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "0",
+      "1",
+      "(1268.5, 100.0, 1027.2476205748203)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "0",
+      "2",
+      "(1268.5, 100.0, 1027.2476205748203)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "0",
+      "3",
+      "(1268.5, 100.0, 1027.2476205748203)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "0",
+      "4",
+      "(1268.5, 100.0, 1027.2476205748203)",
+      "[]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "0",
+      "(1163.6900000482797, 100.21000012457371, 1025.999999910593)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "1",
+      "(1163.6900000482797, 100.21000012457371, 1023.000000089407)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "2",
+      "(1165.1999999582767, 100.85000008642673, 1025.999999910593)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "3",
+      "(1165.1999999582767, 100.85000008642673, 1023.000000089407)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "4",
+      "(1166.679999870062, 100.85000008642673, 1025.999999910593)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "5",
+      "(1166.679999870062, 100.85000008642673, 1023.000000089407)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "6",
+      "(1167.499999821186, 100.85000008642673, 1024.5)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "7",
+      "(1167.499999821186, 100.85000008642673, 1024.5)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "0",
+      "(1013.3099999517202, 100.21000012457371, 1023.000000089407)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "1",
+      "(1013.3099999517202, 100.21000012457371, 1025.999999910593)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "2",
+      "(1011.8000000417233, 100.85000008642673, 1023.000000089407)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "3",
+      "(1011.8000000417233, 100.85000008642673, 1025.999999910593)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "4",
+      "(1010.3200001299381, 100.85000008642673, 1023.000000089407)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "5",
+      "(1010.3200001299381, 100.85000008642673, 1025.999999910593)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "6",
+      "(1009.5000001788139, 100.85000008642673, 1024.5)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "7",
+      "(1009.5000001788139, 100.85000008642673, 1024.5)",
+      "[Native final dismount intersects own vehicle OBB 0 part=COLLISION]"
+    ],
+    [
+      "lav_150",
+      "180",
+      "0",
+      "(1420.5, 100.0, 1021.7523794251796)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "180",
+      "1",
+      "(1420.5, 100.0, 1021.7523794251796)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "180",
+      "2",
+      "(1420.5, 100.0, 1021.7523794251796)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "180",
+      "3",
+      "(1420.5, 100.0, 1021.7523794251796)",
+      "[]"
+    ],
+    [
+      "lav_150",
+      "180",
+      "4",
+      "(1420.5, 100.0, 1021.7523794251796)",
+      "[]"
+    ]
+  ],
+  "scope": "Native vehicle adapter and scoped voluntary pickup exits; retained 046 suites. Public counter activation and installed-pack acceptance remain separate.",
+  "artifact_id": 13972261958,
+  "artifact_bytes": 7820681,
+  "distinct_scenarios": 116,
+  "source_tree": "e756a404c4898b67bc798297610cd854cb2caf21",
+  "raw_evidence": {
+    "file": "vehicle47_run4_evidence.zip",
+    "bytes": 426524,
+    "sha256": "98158450abaf69c20af594b6e80619867ab0be44af3c6b91127e652cdb7bd673"
+  }
+}
