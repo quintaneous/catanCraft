@@ -1,4 +1,4 @@
-# Run3: exact authored junction sweeps and final native dismount safety observations.
+# Run4: normalize inherited sine-table view direction; retain OBB and route checks.
 name: Vehicle46 delivery and native junction validation
 on:
   push:

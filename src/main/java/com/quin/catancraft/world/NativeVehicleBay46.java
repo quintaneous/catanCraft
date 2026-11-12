@@ -76,7 +76,16 @@ final class NativeVehicleBay46 {
         entity.getClass().getMethod("updateOBB").invoke(entity);
         entity.getClass().getMethod("invalidateAABBCache").invoke(entity);
         entity.getClass().getMethod("refreshBoundingBoxFromOBBs").invoke(entity);
-        if(entity.getViewVector(1).dot(forward(yaw))<.999999)throw new IOException("Native forward vector differs from declared route heading");
+        requireViewDirection(entity.getViewVector(1),yaw);
+    }
+    static void requireViewDirection(Vec3 view,float yaw)throws IOException {
+        double length=view.length(),rawDot=view.dot(forward(yaw));
+        // Vanilla Mth sine/cosine table lookup can produce a slightly non-unit view vector.
+        // Compare directions as unit vectors; independently reject invalid/scaled native output.
+        double directionalDot=length>0?rawDot/length:Double.NaN;
+        if(!Double.isFinite(yaw)||!Double.isFinite(length)||Math.abs(length-1)>.0001
+                ||!Double.isFinite(directionalDot)||directionalDot<.999999)
+            throw new IOException("Native forward vector differs from declared route heading: yaw="+yaw+" view="+view+" length="+length+" rawDot="+rawDot+" directionalDot="+directionalDot);
     }
     private static Vec3 forward(float yaw){
         double radians=Math.toRadians(yaw);return new Vec3(-Math.sin(radians),0,Math.cos(radians));

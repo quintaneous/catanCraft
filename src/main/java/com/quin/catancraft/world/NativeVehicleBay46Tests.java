@@ -85,6 +85,19 @@ public final class NativeVehicleBay46Tests {
         refuse(()->NativeVehicleBay46.create(h.getLevel(),new NativeVehicleBay46.Spec("sodayo_pick_up","0".repeat(64),8,8)));
         Entity vehicle=NativeVehicleBay46.create(h.getLevel(),NativeVehicleBay46.PICKUP);
         try{
+            double minimumRawDot=1;int checkedHeadings=0;
+            for(float yaw:List.of(-175f,-135f,-95f,-85f,-45f,-5f,5f,45f,85f,95f,135f,175f)){
+                NativeVehicleBay46.pose(vehicle,NativeVehicleBay46.spawn(a,16),yaw);
+                NativeVehicleBay46.boxes(vehicle,NativeVehicleBay46.PICKUP);
+                double radians=Math.toRadians(yaw);
+                minimumRawDot=Math.min(minimumRawDot,vehicle.getViewVector(1).dot(new net.minecraft.world.phys.Vec3(-Math.sin(radians),0,Math.cos(radians))));checkedHeadings++;
+            }
+            require(minimumRawDot<.999999,"Pinned native view-vector regression was not exercised");
+            for(var bad:List.of(net.minecraft.world.phys.Vec3.ZERO,new net.minecraft.world.phys.Vec3(Double.NaN,0,1),new net.minecraft.world.phys.Vec3(0,0,.5),new net.minecraft.world.phys.Vec3(1,0,0)))
+                refuse(()->NativeVehicleBay46.requireViewDirection(bad,0));
+            // A changed declared yaw without native OBB initialization must still fail independently.
+            vehicle.setYRot(85);refuse(()->NativeVehicleBay46.boxes(vehicle,NativeVehicleBay46.PICKUP));
+            CatanCraft.LOGGER.info("VEHICLE46_NATIVE_VIEW_PASS checkedHeadings={} minimumRawDot={} normalizedDirection=true invalidViewHeld=true staleObbHeadingHeld=true",checkedHeadings,minimumRawDot);
             NativeVehicleBay46.pose(vehicle,a,27);var boxes=NativeVehicleBay46.boxes(vehicle,NativeVehicleBay46.PICKUP);
             refuse(()->NativeVehicleBay46.clear(h.getLevel(),vehicle,a,boxes));
             CatanCraft.LOGGER.info("VEHICLE46_NATIVE_BOUNDARY_PASS changedIdentity=true unstagedSourceHeld=true");h.succeed();
