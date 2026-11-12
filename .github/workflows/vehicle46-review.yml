@@ -1,3 +1,4 @@
+# Run2: preserve checked journal IO contract for native NBT crash wrappers in corrupt fixture.
 name: Vehicle46 delivery and native factory geometry validation
 on:
   push:

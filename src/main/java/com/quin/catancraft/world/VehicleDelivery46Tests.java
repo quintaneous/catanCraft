@@ -207,7 +207,15 @@ public final class VehicleDelivery46Tests {
     }
     private static byte[] identity(Intent i)throws IOException{return fingerprint(i).getBytes(java.nio.charset.StandardCharsets.US_ASCII);}
     private static byte[] bytes(CompoundTag n)throws IOException{var b=new ByteArrayOutputStream();NbtIo.writeCompressed(n,b);return b.toByteArray();}
-    private static CompoundTag tag(byte[] b)throws IOException{return NbtIo.readCompressed(new ByteArrayInputStream(b));}
+    private static CompoundTag tag(byte[] b)throws IOException{
+        try{return NbtIo.readCompressed(new ByteArrayInputStream(b));}
+        catch(net.minecraft.ReportedException failure){
+            // Minecraft's NBT loader can wrap a truncated compressed payload's IO error.
+            // Preserve the Journal adapter's checked-IO contract; all other crash reports escape.
+            if(failure.getCause() instanceof IOException io)throw new IOException("Malformed compressed fixture NBT",io);
+            throw failure;
+        }
+    }
     @FunctionalInterface private interface Action {void run()throws Exception;}
     private static void refuse(Action action)throws Exception{try{action.run();}catch(IOException|IllegalArgumentException expected){return;}throw new AssertionError("Unsafe operation accepted");}
     private static void invalid(Action action)throws Exception{try{action.run();}catch(UnsupportedOperationException|IllegalArgumentException expected){return;}throw new AssertionError("Mutable/invalid request accepted");}

@@ -33,6 +33,8 @@ for f in sealed:
 assert len(list((ev/'journals').rglob('*.foreign')))==1
 assert 'SEC01_PROCUREMENT35_SEED_PASS' in (ev/'procurement_seed.log').read_text()
 assert 'SEC01_PROCUREMENT35_VERIFY_PASS' in (ev/'procurement_verify.log').read_text()
+assert sha((ev/'runtime-artifacts.json').read_bytes())=='6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452'
+assert json.loads((ev/'runtime-verify.json').read_text())['result']=='PASS'
 proofs=[]
 for line in (ev/'catancraft_economy45.log').read_text().splitlines():
  if 'ECONOMY45_NATIVE_PASS ' in line:proofs.append(json.loads(line.split('ECONOMY45_NATIVE_PASS ',1)[1]))
