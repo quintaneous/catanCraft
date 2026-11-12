@@ -1,0 +1,32 @@
+[
+  {
+    "attempt": 1,
+    "source": "46e1467d6dc40bb70b3fc63a62fbf1044fe8d9de",
+    "workflow": 43263279084,
+    "artifact": 13964183447,
+    "archive_bytes": 7085265,
+    "archive_sha256": "f991b6a6f4ad2b409fd2271cafe771d4d1f1638941dc694bd9f0da70f9900405",
+    "source_files_verified": 503,
+    "build": "PASS",
+    "planned_phases": 106,
+    "executed": 18,
+    "passed": 17,
+    "failed": 1,
+    "unexecuted": 88
+  },
+  {
+    "attempt": 3,
+    "source": "b033d4d46f13aa5184ae917ca22aeb10f9c874a7",
+    "workflow": 43266012037,
+    "artifact": 13967210113,
+    "archive_bytes": 7114491,
+    "archive_sha256": "c9a49993d655f7e270ee9db084afbd43d155dc346f751134f606c88d93e388e1",
+    "source_files_verified": 503,
+    "build": "PASS",
+    "planned_phases": 106,
+    "executed": 24,
+    "passed": 22,
+    "failed": 2,
+    "unexecuted": 82
+  }
+]

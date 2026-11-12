@@ -1,0 +1,2643 @@
+{
+  "assumptions": {
+    "combat": "Fixed consumption sensitivity only; no firing, losses, capture, player behavior, trade or monument rewards modeled.",
+    "food_and_targets": "Upkeep frequency increases with production frequency; all physical slots and target caps stay enforced.",
+    "profile_labels": "Relative labels only:15/5/1-minute cycles are illustrative, not user-selected targets.",
+    "queue": "Same managed-target two-player41-action midgame queue as045, no search for an optimal order.",
+    "rules": "Every per-cycle output, income, upkeep, batch rule, target, price, starting balance and cap remains unchanged.",
+    "starter_experiments": "Fresh independent nations; starter spending is not silently added free to the separate41-action queue.",
+    "time": "Full scheduled cycles at20TPS, no offline/catchup grants, construction/travel/UI delays excluded.",
+    "vehicle": "Economic milestone only; native bay/ownership/geometry and complete purchase route readiness remain separate."
+  },
+  "model_sha256": "f79f843a920c5aae0b66f388d727623cc2263a65a172e9ca2c28eeb188fc14a6",
+  "profiles": {
+    "fast_hypothesis": {
+      "ammo_assumption_four_players_four_packs_each_per_active_hour": {
+        "explosives": 16,
+        "money": 2800,
+        "steel": 32
+      },
+      "ammo_cash_share_of_four_territory_commercial_income": 0.07466666666666667,
+      "cash_income": {
+        "four_territories_one_l1_commercial_per_hour": 37500.0,
+        "starter_per_hour": 7500.0
+      },
+      "cycle_frequency_vs_current": 15.0,
+      "cycle_minutes": 1,
+      "hypothetical": true,
+      "independent_starter_one_player": {
+        "completion_cycles": 2,
+        "completion_hours": 0.03333333333333333,
+        "events": [
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 1,
+            "cycle": 1,
+            "hour": 0.016666666666666666,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 2,
+            "cycle": 2,
+            "hour": 0.03333333333333333,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 8,
+          "money": 11800,
+          "stone": 0,
+          "wood": 5
+        },
+        "snapshots": {},
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "independent_starter_two_players": {
+        "completion_cycles": 4,
+        "completion_hours": 0.06666666666666667,
+        "events": [
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 1,
+            "cycle": 1,
+            "hour": 0.016666666666666666,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 2,
+            "cycle": 2,
+            "hour": 0.03333333333333333,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 3,
+            "cycle": 3,
+            "hour": 0.05,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 4,
+            "cycle": 4,
+            "hour": 0.06666666666666667,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 16,
+          "money": 11600,
+          "stone": 0,
+          "wood": 10
+        },
+        "snapshots": {},
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "managed_progression": {
+        "completion_cycles": 265,
+        "completion_hours": 4.416666666666667,
+        "events": [
+          {
+            "action": [
+              "build",
+              "a",
+              "COMMERCIAL_DISTRICT"
+            ],
+            "active_minutes": 10,
+            "cycle": 10,
+            "hour": 0.16666666666666666,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "a",
+              2
+            ],
+            "active_minutes": 26,
+            "cycle": 26,
+            "hour": 0.43333333333333335,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "producer",
+              "a",
+              2
+            ],
+            "active_minutes": 32,
+            "cycle": 32,
+            "hour": 0.5333333333333333,
+            "price": {
+              "money": 2000,
+              "stone": 30,
+              "wood": 30
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "b",
+              null
+            ],
+            "active_minutes": 39,
+            "cycle": 39,
+            "hour": 0.65,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "f",
+              null
+            ],
+            "active_minutes": 42,
+            "cycle": 42,
+            "hour": 0.7,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "g",
+              null
+            ],
+            "active_minutes": 46,
+            "cycle": 46,
+            "hour": 0.7666666666666667,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "STEEL_MILL"
+            ],
+            "active_minutes": 51,
+            "cycle": 51,
+            "hour": 0.85,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "CONCRETE_PLANT"
+            ],
+            "active_minutes": 57,
+            "cycle": 57,
+            "hour": 0.95,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "f",
+              2
+            ],
+            "active_minutes": 66,
+            "cycle": 66,
+            "hour": 1.1,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "REFINERY"
+            ],
+            "active_minutes": 71,
+            "cycle": 71,
+            "hour": 1.1833333333333333,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "g",
+              2
+            ],
+            "active_minutes": 80,
+            "cycle": 80,
+            "hour": 1.3333333333333333,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "WEAPONS_FACTORY"
+            ],
+            "active_minutes": 87,
+            "cycle": 87,
+            "hour": 1.45,
+            "price": {
+              "money": 3750,
+              "stone": 63,
+              "wood": 63
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "VEHICLE_FACTORY"
+            ],
+            "active_minutes": 97,
+            "cycle": 97,
+            "hour": 1.6166666666666667,
+            "price": {
+              "money": 5250,
+              "stone": 88,
+              "wood": 88
+            }
+          },
+          {
+            "action": [
+              "city",
+              "a",
+              3
+            ],
+            "active_minutes": 122,
+            "cycle": 122,
+            "hour": 2.033333333333333,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "MACHINE_SHOP"
+            ],
+            "active_minutes": 127,
+            "cycle": 127,
+            "hour": 2.1166666666666667,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "f",
+              3
+            ],
+            "active_minutes": 156,
+            "cycle": 156,
+            "hour": 2.6,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "ELECTRONICS_FACTORY"
+            ],
+            "active_minutes": 161,
+            "cycle": 161,
+            "hour": 2.683333333333333,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "CHEMICAL_PLANT"
+            ],
+            "active_minutes": 165,
+            "cycle": 165,
+            "hour": 2.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "tacz:ak47"
+            ],
+            "active_minutes": 167,
+            "cycle": 167,
+            "hour": 2.783333333333333,
+            "price": {
+              "money": 1200,
+              "steel": 12,
+              "wood": 10
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "tacz:ak47"
+            ],
+            "active_minutes": 169,
+            "cycle": 169,
+            "hour": 2.816666666666667,
+            "price": {
+              "money": 1200,
+              "steel": 12,
+              "wood": 10
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 170,
+            "cycle": 170,
+            "hour": 2.8333333333333335,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 170,
+            "cycle": 170,
+            "hour": 2.8333333333333335,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 170,
+            "cycle": 170,
+            "hour": 2.8333333333333335,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 170,
+            "cycle": 170,
+            "hour": 2.8333333333333335,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 171,
+            "cycle": 171,
+            "hour": 2.85,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 171,
+            "cycle": 171,
+            "hour": 2.85,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 172,
+            "cycle": 172,
+            "hour": 2.8666666666666667,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 172,
+            "cycle": 172,
+            "hour": 2.8666666666666667,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "procure_pickup"
+            ],
+            "active_minutes": 178,
+            "cycle": 178,
+            "hour": 2.966666666666667,
+            "price": {
+              "fuel": 8,
+              "mechanical_parts": 10,
+              "money": 4000,
+              "steel": 20
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "procure_lav150"
+            ],
+            "active_minutes": 192,
+            "cycle": 192,
+            "hour": 3.2,
+            "price": {
+              "electronics": 5,
+              "fuel": 20,
+              "mechanical_parts": 25,
+              "money": 8500,
+              "steel": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "g",
+              3
+            ],
+            "active_minutes": 220,
+            "cycle": 220,
+            "hour": 3.6666666666666665,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "TEXTILE_MILL"
+            ],
+            "active_minutes": 225,
+            "cycle": 225,
+            "hour": 3.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "LOGISTICS_CENTER"
+            ],
+            "active_minutes": 230,
+            "cycle": 230,
+            "hour": 3.8333333333333335,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 232,
+            "cycle": 232,
+            "hour": 3.8666666666666667,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 235,
+            "cycle": 235,
+            "hour": 3.9166666666666665,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 237,
+            "cycle": 237,
+            "hour": 3.95,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 240,
+            "cycle": 240,
+            "hour": 4.0,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 246,
+            "cycle": 246,
+            "hour": 4.1,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 252,
+            "cycle": 252,
+            "hour": 4.2,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 259,
+            "cycle": 259,
+            "hour": 4.316666666666666,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 265,
+            "cycle": 265,
+            "hour": 4.416666666666667,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 971,
+          "coal": 1857,
+          "concrete": 7,
+          "copper": 2182,
+          "electronics": 1,
+          "explosives": 4,
+          "fuel": 4,
+          "iron": 1580,
+          "mechanical_parts": 5,
+          "money": 200,
+          "oil": 2178,
+          "steel": 0,
+          "stone": 316,
+          "wood": 3386
+        },
+        "snapshots": {
+          "2.0": {
+            "next": [
+              "city",
+              "a",
+              3
+            ],
+            "purchases": 13,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 391,
+              "coal": 675,
+              "concrete": 160,
+              "copper": 740,
+              "iron": 650,
+              "money": 16875,
+              "oil": 780,
+              "steel": 104,
+              "stone": 11,
+              "wood": 961
+            }
+          },
+          "4.0": {
+            "next": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "purchases": 37,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 871,
+              "coal": 1637,
+              "concrete": 0,
+              "copper": 1932,
+              "electronics": 1,
+              "explosives": 4,
+              "fuel": 4,
+              "iron": 1390,
+              "mechanical_parts": 5,
+              "money": 575,
+              "oil": 1928,
+              "steel": 6,
+              "stone": 321,
+              "wood": 2911
+            }
+          }
+        },
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "milestones_hours": {
+        "commercial_in_41_action_queue": 0.16666666666666666,
+        "complete_41_action_queue": 4.416666666666667,
+        "independent_one_player_pistol_and_32_rounds": 0.03333333333333333,
+        "independent_two_player_pistols_and_32_rounds_each": 0.06666666666666667,
+        "lav_in_41_action_queue": 3.2,
+        "pickup_in_41_action_queue": 2.966666666666667,
+        "vehicle_factory_in_41_action_queue": 1.6166666666666667
+      },
+      "per_cycle_values_and_all_prices_unchanged": true
+    },
+    "long_baseline": {
+      "ammo_assumption_four_players_four_packs_each_per_active_hour": {
+        "explosives": 16,
+        "money": 2800,
+        "steel": 32
+      },
+      "ammo_cash_share_of_four_territory_commercial_income": 1.12,
+      "cash_income": {
+        "four_territories_one_l1_commercial_per_hour": 2500.0,
+        "starter_per_hour": 500.0
+      },
+      "cycle_frequency_vs_current": 1.0,
+      "cycle_minutes": 15,
+      "hypothetical": false,
+      "independent_starter_one_player": {
+        "completion_cycles": 2,
+        "completion_hours": 0.5,
+        "events": [
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 15,
+            "cycle": 1,
+            "hour": 0.25,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 30,
+            "cycle": 2,
+            "hour": 0.5,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 8,
+          "money": 11800,
+          "stone": 0,
+          "wood": 5
+        },
+        "snapshots": {},
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "independent_starter_two_players": {
+        "completion_cycles": 4,
+        "completion_hours": 1.0,
+        "events": [
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 15,
+            "cycle": 1,
+            "hour": 0.25,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 30,
+            "cycle": 2,
+            "hour": 0.5,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 45,
+            "cycle": 3,
+            "hour": 0.75,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 60,
+            "cycle": 4,
+            "hour": 1.0,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 16,
+          "money": 11600,
+          "stone": 0,
+          "wood": 10
+        },
+        "snapshots": {},
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "managed_progression": {
+        "completion_cycles": 265,
+        "completion_hours": 66.25,
+        "events": [
+          {
+            "action": [
+              "build",
+              "a",
+              "COMMERCIAL_DISTRICT"
+            ],
+            "active_minutes": 150,
+            "cycle": 10,
+            "hour": 2.5,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "a",
+              2
+            ],
+            "active_minutes": 390,
+            "cycle": 26,
+            "hour": 6.5,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "producer",
+              "a",
+              2
+            ],
+            "active_minutes": 480,
+            "cycle": 32,
+            "hour": 8.0,
+            "price": {
+              "money": 2000,
+              "stone": 30,
+              "wood": 30
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "b",
+              null
+            ],
+            "active_minutes": 585,
+            "cycle": 39,
+            "hour": 9.75,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "f",
+              null
+            ],
+            "active_minutes": 630,
+            "cycle": 42,
+            "hour": 10.5,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "g",
+              null
+            ],
+            "active_minutes": 690,
+            "cycle": 46,
+            "hour": 11.5,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "STEEL_MILL"
+            ],
+            "active_minutes": 765,
+            "cycle": 51,
+            "hour": 12.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "CONCRETE_PLANT"
+            ],
+            "active_minutes": 855,
+            "cycle": 57,
+            "hour": 14.25,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "f",
+              2
+            ],
+            "active_minutes": 990,
+            "cycle": 66,
+            "hour": 16.5,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "REFINERY"
+            ],
+            "active_minutes": 1065,
+            "cycle": 71,
+            "hour": 17.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "g",
+              2
+            ],
+            "active_minutes": 1200,
+            "cycle": 80,
+            "hour": 20.0,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "WEAPONS_FACTORY"
+            ],
+            "active_minutes": 1305,
+            "cycle": 87,
+            "hour": 21.75,
+            "price": {
+              "money": 3750,
+              "stone": 63,
+              "wood": 63
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "VEHICLE_FACTORY"
+            ],
+            "active_minutes": 1455,
+            "cycle": 97,
+            "hour": 24.25,
+            "price": {
+              "money": 5250,
+              "stone": 88,
+              "wood": 88
+            }
+          },
+          {
+            "action": [
+              "city",
+              "a",
+              3
+            ],
+            "active_minutes": 1830,
+            "cycle": 122,
+            "hour": 30.5,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "MACHINE_SHOP"
+            ],
+            "active_minutes": 1905,
+            "cycle": 127,
+            "hour": 31.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "f",
+              3
+            ],
+            "active_minutes": 2340,
+            "cycle": 156,
+            "hour": 39.0,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "ELECTRONICS_FACTORY"
+            ],
+            "active_minutes": 2415,
+            "cycle": 161,
+            "hour": 40.25,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "CHEMICAL_PLANT"
+            ],
+            "active_minutes": 2475,
+            "cycle": 165,
+            "hour": 41.25,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "tacz:ak47"
+            ],
+            "active_minutes": 2505,
+            "cycle": 167,
+            "hour": 41.75,
+            "price": {
+              "money": 1200,
+              "steel": 12,
+              "wood": 10
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "tacz:ak47"
+            ],
+            "active_minutes": 2535,
+            "cycle": 169,
+            "hour": 42.25,
+            "price": {
+              "money": 1200,
+              "steel": 12,
+              "wood": 10
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2550,
+            "cycle": 170,
+            "hour": 42.5,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2550,
+            "cycle": 170,
+            "hour": 42.5,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2550,
+            "cycle": 170,
+            "hour": 42.5,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2550,
+            "cycle": 170,
+            "hour": 42.5,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2565,
+            "cycle": 171,
+            "hour": 42.75,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2565,
+            "cycle": 171,
+            "hour": 42.75,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2580,
+            "cycle": 172,
+            "hour": 43.0,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 2580,
+            "cycle": 172,
+            "hour": 43.0,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "procure_pickup"
+            ],
+            "active_minutes": 2670,
+            "cycle": 178,
+            "hour": 44.5,
+            "price": {
+              "fuel": 8,
+              "mechanical_parts": 10,
+              "money": 4000,
+              "steel": 20
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "procure_lav150"
+            ],
+            "active_minutes": 2880,
+            "cycle": 192,
+            "hour": 48.0,
+            "price": {
+              "electronics": 5,
+              "fuel": 20,
+              "mechanical_parts": 25,
+              "money": 8500,
+              "steel": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "g",
+              3
+            ],
+            "active_minutes": 3300,
+            "cycle": 220,
+            "hour": 55.0,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "TEXTILE_MILL"
+            ],
+            "active_minutes": 3375,
+            "cycle": 225,
+            "hour": 56.25,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "LOGISTICS_CENTER"
+            ],
+            "active_minutes": 3450,
+            "cycle": 230,
+            "hour": 57.5,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 3480,
+            "cycle": 232,
+            "hour": 58.0,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 3525,
+            "cycle": 235,
+            "hour": 58.75,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 3555,
+            "cycle": 237,
+            "hour": 59.25,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 3600,
+            "cycle": 240,
+            "hour": 60.0,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 3690,
+            "cycle": 246,
+            "hour": 61.5,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 3780,
+            "cycle": 252,
+            "hour": 63.0,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 3885,
+            "cycle": 259,
+            "hour": 64.75,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 3975,
+            "cycle": 265,
+            "hour": 66.25,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 971,
+          "coal": 1857,
+          "concrete": 7,
+          "copper": 2182,
+          "electronics": 1,
+          "explosives": 4,
+          "fuel": 4,
+          "iron": 1580,
+          "mechanical_parts": 5,
+          "money": 200,
+          "oil": 2178,
+          "steel": 0,
+          "stone": 316,
+          "wood": 3386
+        },
+        "snapshots": {
+          "16.0": {
+            "next": [
+              "city",
+              "f",
+              2
+            ],
+            "purchases": 8,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 167,
+              "coal": 180,
+              "copper": 180,
+              "iron": 220,
+              "money": 5875,
+              "oil": 220,
+              "stone": 68,
+              "wood": 258
+            }
+          },
+          "2.0": {
+            "next": [
+              "build",
+              "a",
+              "COMMERCIAL_DISTRICT"
+            ],
+            "purchases": 0,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 32,
+              "money": 13000,
+              "stone": 40,
+              "wood": 40
+            }
+          },
+          "24.0": {
+            "next": [
+              "build",
+              "g",
+              "VEHICLE_FACTORY"
+            ],
+            "purchases": 12,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 295,
+              "coal": 500,
+              "copper": 500,
+              "iron": 540,
+              "money": 7125,
+              "oil": 540,
+              "stone": 83,
+              "wood": 593
+            }
+          },
+          "4.0": {
+            "next": [
+              "city",
+              "a",
+              2
+            ],
+            "purchases": 1,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 64,
+              "money": 11750,
+              "stone": 30,
+              "wood": 30
+            }
+          },
+          "48.0": {
+            "next": [
+              "city",
+              "g",
+              3
+            ],
+            "purchases": 30,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 679,
+              "coal": 1222,
+              "concrete": 0,
+              "copper": 1452,
+              "electronics": 1,
+              "explosives": 4,
+              "fuel": 4,
+              "iron": 1040,
+              "mechanical_parts": 5,
+              "money": 575,
+              "oil": 1448,
+              "steel": 2,
+              "stone": 309,
+              "wood": 2159
+            }
+          },
+          "8.0": {
+            "next": [
+              "claim",
+              "b",
+              null
+            ],
+            "purchases": 3,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 128,
+              "money": 7750,
+              "stone": 0,
+              "wood": 0
+            }
+          }
+        },
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "milestones_hours": {
+        "commercial_in_41_action_queue": 2.5,
+        "complete_41_action_queue": 66.25,
+        "independent_one_player_pistol_and_32_rounds": 0.5,
+        "independent_two_player_pistols_and_32_rounds_each": 1.0,
+        "lav_in_41_action_queue": 48.0,
+        "pickup_in_41_action_queue": 44.5,
+        "vehicle_factory_in_41_action_queue": 24.25
+      },
+      "per_cycle_values_and_all_prices_unchanged": true
+    },
+    "medium_hypothesis": {
+      "ammo_assumption_four_players_four_packs_each_per_active_hour": {
+        "explosives": 16,
+        "money": 2800,
+        "steel": 32
+      },
+      "ammo_cash_share_of_four_territory_commercial_income": 0.37333333333333335,
+      "cash_income": {
+        "four_territories_one_l1_commercial_per_hour": 7500.0,
+        "starter_per_hour": 1500.0
+      },
+      "cycle_frequency_vs_current": 3.0,
+      "cycle_minutes": 5,
+      "hypothetical": true,
+      "independent_starter_one_player": {
+        "completion_cycles": 2,
+        "completion_hours": 0.16666666666666666,
+        "events": [
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 5,
+            "cycle": 1,
+            "hour": 0.08333333333333333,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 10,
+            "cycle": 2,
+            "hour": 0.16666666666666666,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 8,
+          "money": 11800,
+          "stone": 0,
+          "wood": 5
+        },
+        "snapshots": {},
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "independent_starter_two_players": {
+        "completion_cycles": 4,
+        "completion_hours": 0.3333333333333333,
+        "events": [
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 5,
+            "cycle": 1,
+            "hour": 0.08333333333333333,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 10,
+            "cycle": 2,
+            "hour": 0.16666666666666666,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_pistol"
+            ],
+            "active_minutes": 15,
+            "cycle": 3,
+            "hour": 0.25,
+            "price": {
+              "money": 350,
+              "stone": 5,
+              "wood": 5
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "procure_ammo9"
+            ],
+            "active_minutes": 20,
+            "cycle": 4,
+            "hour": 0.3333333333333333,
+            "price": {
+              "money": 100,
+              "stone": 5
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 16,
+          "money": 11600,
+          "stone": 0,
+          "wood": 10
+        },
+        "snapshots": {},
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "managed_progression": {
+        "completion_cycles": 265,
+        "completion_hours": 22.083333333333332,
+        "events": [
+          {
+            "action": [
+              "build",
+              "a",
+              "COMMERCIAL_DISTRICT"
+            ],
+            "active_minutes": 50,
+            "cycle": 10,
+            "hour": 0.8333333333333334,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "a",
+              2
+            ],
+            "active_minutes": 130,
+            "cycle": 26,
+            "hour": 2.1666666666666665,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "producer",
+              "a",
+              2
+            ],
+            "active_minutes": 160,
+            "cycle": 32,
+            "hour": 2.6666666666666665,
+            "price": {
+              "money": 2000,
+              "stone": 30,
+              "wood": 30
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "b",
+              null
+            ],
+            "active_minutes": 195,
+            "cycle": 39,
+            "hour": 3.25,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "f",
+              null
+            ],
+            "active_minutes": 210,
+            "cycle": 42,
+            "hour": 3.5,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "claim",
+              "g",
+              null
+            ],
+            "active_minutes": 230,
+            "cycle": 46,
+            "hour": 3.8333333333333335,
+            "price": {
+              "agriculture": 40,
+              "money": 4000,
+              "stone": 40,
+              "wood": 60
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "STEEL_MILL"
+            ],
+            "active_minutes": 255,
+            "cycle": 51,
+            "hour": 4.25,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "CONCRETE_PLANT"
+            ],
+            "active_minutes": 285,
+            "cycle": 57,
+            "hour": 4.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "f",
+              2
+            ],
+            "active_minutes": 330,
+            "cycle": 66,
+            "hour": 5.5,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "REFINERY"
+            ],
+            "active_minutes": 355,
+            "cycle": 71,
+            "hour": 5.916666666666667,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "g",
+              2
+            ],
+            "active_minutes": 400,
+            "cycle": 80,
+            "hour": 6.666666666666667,
+            "price": {
+              "money": 6000,
+              "stone": 80,
+              "wood": 80
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "WEAPONS_FACTORY"
+            ],
+            "active_minutes": 435,
+            "cycle": 87,
+            "hour": 7.25,
+            "price": {
+              "money": 3750,
+              "stone": 63,
+              "wood": 63
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "VEHICLE_FACTORY"
+            ],
+            "active_minutes": 485,
+            "cycle": 97,
+            "hour": 8.083333333333334,
+            "price": {
+              "money": 5250,
+              "stone": 88,
+              "wood": 88
+            }
+          },
+          {
+            "action": [
+              "city",
+              "a",
+              3
+            ],
+            "active_minutes": 610,
+            "cycle": 122,
+            "hour": 10.166666666666666,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "MACHINE_SHOP"
+            ],
+            "active_minutes": 635,
+            "cycle": 127,
+            "hour": 10.583333333333334,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "f",
+              3
+            ],
+            "active_minutes": 780,
+            "cycle": 156,
+            "hour": 13.0,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "ELECTRONICS_FACTORY"
+            ],
+            "active_minutes": 805,
+            "cycle": 161,
+            "hour": 13.416666666666666,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "f",
+              "CHEMICAL_PLANT"
+            ],
+            "active_minutes": 825,
+            "cycle": 165,
+            "hour": 13.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "tacz:ak47"
+            ],
+            "active_minutes": 835,
+            "cycle": 167,
+            "hour": 13.916666666666666,
+            "price": {
+              "money": 1200,
+              "steel": 12,
+              "wood": 10
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "tacz:ak47"
+            ],
+            "active_minutes": 845,
+            "cycle": 169,
+            "hour": 14.083333333333334,
+            "price": {
+              "money": 1200,
+              "steel": 12,
+              "wood": 10
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 850,
+            "cycle": 170,
+            "hour": 14.166666666666666,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 850,
+            "cycle": 170,
+            "hour": 14.166666666666666,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 850,
+            "cycle": 170,
+            "hour": 14.166666666666666,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 850,
+            "cycle": 170,
+            "hour": 14.166666666666666,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 855,
+            "cycle": 171,
+            "hour": 14.25,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 855,
+            "cycle": 171,
+            "hour": 14.25,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 860,
+            "cycle": 172,
+            "hour": 14.333333333333334,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "ammo_tacz:762x39"
+            ],
+            "active_minutes": 860,
+            "cycle": 172,
+            "hour": 14.333333333333334,
+            "price": {
+              "explosives": 1,
+              "money": 175,
+              "steel": 2
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "procure_pickup"
+            ],
+            "active_minutes": 890,
+            "cycle": 178,
+            "hour": 14.833333333333334,
+            "price": {
+              "fuel": 8,
+              "mechanical_parts": 10,
+              "money": 4000,
+              "steel": 20
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "g",
+              "procure_lav150"
+            ],
+            "active_minutes": 960,
+            "cycle": 192,
+            "hour": 16.0,
+            "price": {
+              "electronics": 5,
+              "fuel": 20,
+              "mechanical_parts": 25,
+              "money": 8500,
+              "steel": 50
+            }
+          },
+          {
+            "action": [
+              "city",
+              "g",
+              3
+            ],
+            "active_minutes": 1100,
+            "cycle": 220,
+            "hour": 18.333333333333332,
+            "price": {
+              "concrete": 160,
+              "money": 18000,
+              "steel": 100
+            }
+          },
+          {
+            "action": [
+              "build",
+              "g",
+              "TEXTILE_MILL"
+            ],
+            "active_minutes": 1125,
+            "cycle": 225,
+            "hour": 18.75,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "build",
+              "a",
+              "LOGISTICS_CENTER"
+            ],
+            "active_minutes": 1150,
+            "cycle": 230,
+            "hour": 19.166666666666668,
+            "price": {
+              "money": 3000,
+              "stone": 50,
+              "wood": 50
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 1160,
+            "cycle": 232,
+            "hour": 19.333333333333332,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 1175,
+            "cycle": 235,
+            "hour": 19.583333333333332,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 1185,
+            "cycle": 237,
+            "hour": 19.75,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_basic"
+            ],
+            "active_minutes": 1200,
+            "cycle": 240,
+            "hour": 20.0,
+            "price": {
+              "money": 1500,
+              "stone": 30,
+              "wood": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 1230,
+            "cycle": 246,
+            "hour": 20.5,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 1260,
+            "cycle": 252,
+            "hour": 21.0,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 1295,
+            "cycle": 259,
+            "hour": 21.583333333333332,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          },
+          {
+            "action": [
+              "buy",
+              "a",
+              "sector_reinforced_increment"
+            ],
+            "active_minutes": 1325,
+            "cycle": 265,
+            "hour": 22.083333333333332,
+            "price": {
+              "concrete": 50,
+              "money": 4000,
+              "steel": 15
+            }
+          }
+        ],
+        "final_stock": {
+          "agriculture": 971,
+          "coal": 1857,
+          "concrete": 7,
+          "copper": 2182,
+          "electronics": 1,
+          "explosives": 4,
+          "fuel": 4,
+          "iron": 1580,
+          "mechanical_parts": 5,
+          "money": 200,
+          "oil": 2178,
+          "steel": 0,
+          "stone": 316,
+          "wood": 3386
+        },
+        "snapshots": {
+          "16.0": {
+            "next": [
+              "city",
+              "g",
+              3
+            ],
+            "purchases": 30,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 679,
+              "coal": 1222,
+              "concrete": 0,
+              "copper": 1452,
+              "electronics": 1,
+              "explosives": 4,
+              "fuel": 4,
+              "iron": 1040,
+              "mechanical_parts": 5,
+              "money": 575,
+              "oil": 1448,
+              "steel": 2,
+              "stone": 309,
+              "wood": 2159
+            }
+          },
+          "2.0": {
+            "next": [
+              "city",
+              "a",
+              2
+            ],
+            "purchases": 1,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 96,
+              "money": 13750,
+              "stone": 70,
+              "wood": 70
+            }
+          },
+          "4.0": {
+            "next": [
+              "build",
+              "a",
+              "STEEL_MILL"
+            ],
+            "purchases": 6,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 103,
+              "coal": 20,
+              "copper": 20,
+              "iron": 60,
+              "money": 1875,
+              "oil": 60,
+              "stone": 24,
+              "wood": 54
+            }
+          },
+          "8.0": {
+            "next": [
+              "build",
+              "g",
+              "VEHICLE_FACTORY"
+            ],
+            "purchases": 12,
+            "starved_territory_cycles": 0,
+            "stock": {
+              "agriculture": 295,
+              "coal": 500,
+              "copper": 500,
+              "iron": 540,
+              "money": 7125,
+              "oil": 540,
+              "stone": 83,
+              "wood": 593
+            }
+          }
+        },
+        "starved_territory_cycles": 0,
+        "unfinished": []
+      },
+      "milestones_hours": {
+        "commercial_in_41_action_queue": 0.8333333333333334,
+        "complete_41_action_queue": 22.083333333333332,
+        "independent_one_player_pistol_and_32_rounds": 0.16666666666666666,
+        "independent_two_player_pistols_and_32_rounds_each": 0.3333333333333333,
+        "lav_in_41_action_queue": 16.0,
+        "pickup_in_41_action_queue": 14.833333333333334,
+        "vehicle_factory_in_41_action_queue": 8.083333333333334
+      },
+      "per_cycle_values_and_all_prices_unchanged": true
+    }
+  },
+  "schema": 1,
+  "scope": "Offline hypothetical cadence comparison. No runtime changes, approved prices or chosen campaign duration.",
+  "source_commit_at_execution": "04821fe22b4f686519ce3a6b1f78bc581de41495",
+  "source_sha256": {
+    "src/main/java/com/quin/catancraft/command/CatanCommands.java": "cb625e66f109eaeceb9f02ea88db9fbc3ccdb0825bc0b160ee5cc1501498104d",
+    "src/main/java/com/quin/catancraft/command/NationProcurement.java": "3cc9c980dc3fd106eafd429231ffa9bdb99bd1c30ae1d57f03e07eedc0e51bcd",
+    "src/main/java/com/quin/catancraft/data/BuildingInstance.java": "7cbd7ba11552f027ca752cd57e5d037e366153ffe20ee9e9b52e06b9a3ffa42d",
+    "src/main/java/com/quin/catancraft/data/BuildingType.java": "696226d6bac19a273be8bd67a9f3247983becfdfabbc018698955b679def1d49",
+    "src/main/java/com/quin/catancraft/data/CatanSavedData.java": "54efb39c889c613154044160c0fdfba6424a201d1d638f6dd4ff3eccd822d1a4",
+    "src/main/java/com/quin/catancraft/economy/EconomyBalance.java": "cc1af462bad26193a501f9d0a4f0d1f010dc6aff1fdceab03967012cb1c9c139",
+    "src/main/java/com/quin/catancraft/economy/EconomyCatalog.java": "c32c20a0102a4a33dc9768b65be04fef462263db286c8c38b902aa43483734ab",
+    "src/main/java/com/quin/catancraft/economy/EconomyCost.java": "00d31b9077e9690565c6c7865e582014ba059a414f9b4816e065530b124423ea",
+    "src/main/java/com/quin/catancraft/economy/EconomyEngine.java": "8146ad0f045114413192a5528a478267bb45395ba356dd2e4aae1672991684ea",
+    "src/main/java/com/quin/catancraft/world/ActiveWeaponStock44.java": "4ad0b10ff4b60f5652e9e7976681594844688a1b5c9103485418ca4d96698697",
+    "src/main/java/com/quin/catancraft/world/DefenseCostCatalog.java": "8a11b66c730fe520f7d018c6b06bc297496b6b1bf3837de67069e462decc151a",
+    "src/main/java/com/quin/catancraft/world/IndustrialPlotService.java": "f53b1539e0334849d79e529689787fd3b926b64b69688fbcd7fdaaa7cec6175f",
+    "src/main/java/com/quin/catancraft/world/SectorPriceCatalog.java": "f768df35635e6bbf6c7d35efca96469fe08cb61c2f86219d6624b1b40a45237f",
+    "src/main/java/com/quin/catancraft/world/WeaponStock42.java": "ed0263daf3dcf1db2eca6f3828c5d998321d4960a72728cf52a3f351878825ea",
+    "src/main/resources/data/catancraft/economy/weapon_tiers41.json": "230d8a97e9b744902c97534009bb8b6089a7d89314010e23771755f3b205181a",
+    "src/main/resources/data/catancraft/maps/season1_river_bridges_v3.json": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986"
+  },
+  "validation": {
+    "fixed_real_hour_ammo_demand_preserved": true,
+    "identical_per_cycle_actions_debits_and_final_balances": true,
+    "physical_slot_caps_preserved": true,
+    "runtime_or_native_profile_test": false,
+    "time_conversion_and_nonnegative_balances_checked": true,
+    "validated_045_offline_baseline_265_cycles_reproduced": true
+  }
+}

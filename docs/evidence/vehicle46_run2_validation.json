@@ -1,0 +1,210 @@
+{
+  "source": "479a12da430771d5da0522434a95230eab65c0a0",
+  "run": 43264354720,
+  "archive_sha256": "b7f4b61ae64f558de62fa9c20b1f802f9a9e99e8b003e3113fff6f7e5b78c896",
+  "jar_file": "catancraft-0.1.46-vehicle-delivery.jar",
+  "jar_sha256": "d5800daf1f1a1ba2ecb6ad5f16c77043b58e3a1cbfeda714b3e094c4abcd4433",
+  "jar_bytes": 3683118,
+  "phases": 106,
+  "failed": 0,
+  "suites": {
+    "catancraft_vehicle46": 18,
+    "catancraft_vehicle46_native": 6,
+    "catancraft_sbw": 7,
+    "procurement_seed": 1,
+    "procurement_verify": 1,
+    "catancraft_economy45": 6,
+    "catancraft_vehicle45": 8,
+    "catancraft_economy_clock": 9,
+    "catancraft": 50
+  },
+  "source_files_verified": 503,
+  "unchanged_045_classes": 638,
+  "unchanged_045_data_entries": 230,
+  "native_economy_vectors": [
+    {
+      "case": "starter_8_cycles",
+      "cash": 1000,
+      "cycles": 8,
+      "stock": {
+        "wood": 40,
+        "stone": 40,
+        "agriculture": 32,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "dependency_chain",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 0,
+        "stone": 0,
+        "agriculture": 10,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 4,
+        "electronics": 6,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "starter_l4_rounding",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 23,
+        "stone": 23,
+        "agriculture": 18,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "logistics_target_pause",
+      "cash": 700,
+      "cycles": 2,
+      "stock": {
+        "wood": 0,
+        "stone": 10,
+        "agriculture": 20,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 15,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "partial_upkeep",
+      "cash": 125,
+      "cycles": 1,
+      "stock": {
+        "wood": 18,
+        "stone": 0,
+        "agriculture": 0,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    },
+    {
+      "case": "unowned_reload",
+      "cash": 250,
+      "cycles": 2,
+      "stock": {
+        "wood": 0,
+        "stone": 0,
+        "agriculture": 20,
+        "iron": 0,
+        "coal": 0,
+        "oil": 0,
+        "copper": 0,
+        "steel": 0,
+        "concrete": 0,
+        "fabric": 0,
+        "fuel": 0,
+        "mechanical_parts": 0,
+        "electronics": 0,
+        "explosives": 0
+      }
+    }
+  ],
+  "native_geometry_rows": [
+    [
+      "lav_150",
+      "0",
+      "10",
+      "5",
+      "17",
+      "1932"
+    ],
+    [
+      "sodayo_pick_up",
+      "180",
+      "8",
+      "8",
+      "17",
+      "1494"
+    ],
+    [
+      "sodayo_pick_up",
+      "0",
+      "8",
+      "8",
+      "17",
+      "1494"
+    ],
+    [
+      "lav_150",
+      "180",
+      "10",
+      "5",
+      "17",
+      "1932"
+    ]
+  ],
+  "delivery_markers": [
+    "PICKUP",
+    "COMPLETED_REPLAY",
+    "LAV",
+    "AUTHORITY",
+    "PAID_RESTART",
+    "JOURNAL_REFUSAL",
+    "PREPARED",
+    "DEBIT_UNCERTAINTY",
+    "DELIVERY_HOLD",
+    "ENTITY_READBACK",
+    "INTENT_SAVE",
+    "IMMUTABLE",
+    "SPAWN_MARKER",
+    "SPAWN_UNCERTAINTY",
+    "DEBIT_READBACK",
+    "PROVENANCE",
+    "DEBIT_MARKER",
+    "ENTITY_RESTART"
+  ],
+  "sealed_journal_files": 7,
+  "external_road_qualified": false,
+  "scope": "Vehicle delivery state machine and bounded native geometry checks, retained economy/bay/crowbar regressions; no public vehicle purchasing activation or installed-pack acceptance.",
+  "packaged_source_version_and_jar_manifest_verified": true
+}
