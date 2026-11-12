@@ -37,7 +37,8 @@ public final class NativeVehicleExit47Tests {
     @GameTest(template="townhall_state_empty",batch="vehicle47_exit02",timeoutTicks=600)
     public static void every_pickup_seat_rotated_uses_checked_actual_packet_exit(GameTestHelper h)throws Exception{everySeat(h,1,180);}
     private static void everySeat(GameTestHelper h,int index,int rotation)throws Exception {
-        MapAnchor anchor=stage(h,index,rotation);Entity vehicle=pickup(h,anchor,true);int completed=0;
+        withFixture(h,index,rotation,anchor->{
+        Entity vehicle=pickup(h,anchor,true);int completed=0;
         try{
             for(int seat=0;seat<8;seat++){
                 ExitPlayer player=player(h);player.setShiftKeyDown(true);
@@ -60,10 +61,12 @@ public final class NativeVehicleExit47Tests {
             require(completed==8,"Not every seat executed");landmarks(h,anchor);
             CatanCraft.LOGGER.info("VEHICLE47_EXIT_ALL_SEATS_PASS rotation={} seats={} actualPacket=true noLongTeleport=true",rotation,completed);h.succeed();
         }finally{vehicle.ejectPassengers();vehicle.discard();}
+        });
     }
     @GameTest(template="townhall_state_empty",batch="vehicle47_exit03",timeoutTicks=600)
     public static void blocked_fluid_support_and_entity_exits_retain_the_passenger(GameTestHelper h)throws Exception {
-        MapAnchor anchor=stage(h,2,0);Entity vehicle=pickup(h,anchor,true);ServerPlayer player=player(h);ride(vehicle,player,0);
+        withFixture(h,2,0,anchor->{
+        Entity vehicle=pickup(h,anchor,true);ServerPlayer player=player(h);ride(vehicle,player,0);
         try{
             var plan=NativeVehicleExit47.resolve(vehicle,player);BlockPos body=BlockPos.containing(plan.exit());var air=h.getLevel().getBlockState(body);
             for(var hazard:List.of(Blocks.STONE.defaultBlockState(),Blocks.WATER.defaultBlockState())){
@@ -78,10 +81,12 @@ public final class NativeVehicleExit47Tests {
             packet(player,false);require(player.getVehicle()==null&&player.position().distanceTo(plan.exit())<.0001,"Cleared exit could not be retried");landmarks(h,anchor);
             CatanCraft.LOGGER.info("VEHICLE47_EXIT_HAZARDS_PASS stone=true fluid=true fullFootprintSupport=true entity=true actualPacket=true retainedSeat=true retry=true");h.succeed();
         }finally{player.stopRiding();vehicle.discard();}
+        });
     }
     @GameTest(template="townhall_state_empty",batch="vehicle47_exit04",timeoutTicks=600)
     public static void ordinary_forced_ejection_death_and_other_provider_paths_are_unchanged(GameTestHelper h)throws Exception {
-        MapAnchor anchor=stage(h,3,0);Entity vehicle=pickup(h,anchor,false);ServerPlayer player=player(h);
+        withFixture(h,3,0,anchor->{
+        Entity vehicle=pickup(h,anchor,false);ServerPlayer player=player(h);
         try{
             ride(vehicle,player,0);Vec3 baseline=vehicle.getDismountLocationForPassenger(player);packet(player,false);
             require(player.getVehicle()==null&&player.position().distanceTo(baseline)<.0001,"Ordinary unpurchased provider exit changed");
@@ -101,10 +106,12 @@ public final class NativeVehicleExit47Tests {
             }finally{lav.ejectPassengers();lav.discard();}
             CatanCraft.LOGGER.info("VEHICLE47_EXIT_BYPASS_PASS ordinary=true forced=true ejection=true death=true malformedOwnership=true otherVehicle=true scopedStateCleared=true");h.succeed();
         }finally{player.setHealth(20);player.stopRiding();vehicle.discard();}
+        });
     }
     @GameTest(template="townhall_state_empty",batch="vehicle47_exit05",timeoutTicks=600)
     public static void changed_effective_geometry_seat_movement_and_unloaded_bounds_refuse(GameTestHelper h)throws Exception {
-        MapAnchor anchor=stage(h,4,0);Entity vehicle=pickup(h,anchor,true);ServerPlayer player=player(h);ride(vehicle,player,0);
+        withFixture(h,4,0,anchor->{
+        Entity vehicle=pickup(h,anchor,true);ServerPlayer player=player(h);ride(vehicle,player,0);
         try{
             List<?> parts=(List<?>)vehicle.getClass().getMethod("getOBBs").invoke(vehicle);Object extent=parts.get(1).getClass().getMethod("extents").invoke(parts.get(1));
             var x=extent.getClass().getField("x");double width=x.getDouble(extent);x.setDouble(extent,width+.125);
@@ -119,10 +126,12 @@ public final class NativeVehicleExit47Tests {
             require(player.getVehicle()==null&&player.position().distanceTo(restored.exit())<.0001,"Restored native identity did not recover");
             CatanCraft.LOGGER.info("VEHICLE47_EXIT_IDENTITY_PASS everyObbPinned=true changedGeometryHeld=true movingHeld=true nonfiniteMotionHeld=true seatHeld=true stalePoseHeld=true unloadedHeld=true noChunkLoads=true");h.succeed();
         }finally{player.stopRiding();vehicle.discard();}
+        });
     }
     @GameTest(template="townhall_state_empty",batch="vehicle47_exit06",timeoutTicks=600)
     public static void forge_pre_removal_drift_and_external_cancellation_preserve_seat(GameTestHelper h)throws Exception {
-        MapAnchor anchor=stage(h,5,0);Entity vehicle=pickup(h,anchor,true);ServerPlayer player=player(h);ride(vehicle,player,0);
+        withFixture(h,5,0,anchor->{
+        Entity vehicle=pickup(h,anchor,true);ServerPlayer player=player(h);ride(vehicle,player,0);
         try{
             var plan=NativeVehicleExit47.resolve(vehicle,player);BlockPos exit=BlockPos.containing(plan.exit());var air=h.getLevel().getBlockState(exit);
             Consumer<EntityMountEvent> drift=event->{if(event.isDismounting()&&event.getEntityMounting()==player&&event.getEntityBeingMounted()==vehicle)h.getLevel().setBlock(exit,Blocks.STONE.defaultBlockState(),2);};
@@ -135,6 +144,7 @@ public final class NativeVehicleExit47Tests {
             require(player.getVehicle()==null&&player.position().distanceTo(retry.exit())<.0001,"Scoped Forge refusal leaked across retry");
             CatanCraft.LOGGER.info("VEHICLE47_EXIT_FORGE_PASS actualOrdering=true lateObstacleHeld=true externalCancellation=true retainedSeat=true scopedRetry=true");h.succeed();
         }finally{player.stopRiding();vehicle.discard();}
+        });
     }
     private static void heldPacket(Entity vehicle,ServerPlayer player)throws Exception {
         Vec3 before=player.position();int seat=((Number)vehicle.getClass().getMethod("getSeatIndex",Entity.class).invoke(vehicle,player)).intValue();
@@ -163,6 +173,35 @@ public final class NativeVehicleExit47Tests {
     }
     private static ExitPlayer player(GameTestHelper h){return new ExitPlayer(h.getLevel(),new GameProfile(UUID.randomUUID(),"Exit47Probe"));}
     private static net.minecraft.world.phys.AABB body(Vec3 feet){return new net.minecraft.world.phys.AABB(feet.x-.3,feet.y,feet.z-.3,feet.x+.3,feet.y+1.8,feet.z+.3);}
+    @FunctionalInterface private interface FixtureWork{void run(MapAnchor anchor)throws Exception;}
+    private static void withFixture(GameTestHelper h,int index,int rotation,FixtureWork work)throws Exception {
+        MapAnchor anchor=stage(h,index,rotation);
+        BlockPos probe=BlockPos.containing(NativeVehicleBay46.spawn(anchor,0));
+        boolean blocks=h.getLevel().hasChunkAt(probe),entities=h.getLevel().areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(probe.getX()>>4,probe.getZ()>>4));
+        if(blocks&&!entities){
+            boolean refused=false;try{NativeVehicleExit47.requireResident(h.getLevel(),probe);}catch(IOException expected){refused=expected.getMessage().startsWith("Exit block/entity chunk is not resident");}
+            require(refused,"Resident blocks were accepted before saved entities finished loading");
+            CatanCraft.LOGGER.info("VEHICLE47_EXIT_RESIDENCY_PENDING_PASS case={} blockResident=true entitiesLoaded=false directGuardRefused=true",index);
+        }else CatanCraft.LOGGER.info("VEHICLE47_EXIT_RESIDENCY_OBSERVATION case={} blockResident={} entitiesLoaded={} pendingStateObserved=false",index,blocks,entities);
+        BlockPos one=NativeVehicleBay46.sourceCell(anchor,NativeVehicleBay46.MIN_X,NativeVehicleBay46.MIN_Y,NativeVehicleBay46.MIN_Z);
+        BlockPos two=NativeVehicleBay46.sourceCell(anchor,NativeVehicleBay46.MAX_X,NativeVehicleBay46.MAX_Y,NativeVehicleBay46.MAX_Z);
+        var bounds=new net.minecraft.world.phys.AABB(Math.min(one.getX(),two.getX()),Math.min(one.getY(),two.getY()),Math.min(one.getZ(),two.getZ()),Math.max(one.getX(),two.getX())+1,Math.max(one.getY(),two.getY())+1,Math.max(one.getZ(),two.getZ())+1);
+        SectorChunkLease lease=SectorChunkLease.acquire(h.getLevel(),bounds);
+        await(h,index,anchor,lease,0,work);
+    }
+    private static void await(GameTestHelper h,int index,MapAnchor anchor,SectorChunkLease lease,int ticks,FixtureWork work){
+        try{
+            lease.keepAlive();
+            if(lease.ready()){
+                for(var chunk:lease.positions())NativeVehicleExit47.requireResident(h.getLevel(),new BlockPos(chunk.x<<4,anchor.y(),chunk.z<<4));
+                CatanCraft.LOGGER.info("VEHICLE47_EXIT_RESIDENCY_READY case={} chunks={} waitedTicks={} blockAndEntityReady=true stagedOnce=true",index,lease.chunkCount(),ticks);
+                try{work.run(anchor);}finally{lease.close();}
+                return;
+            }
+            require(ticks<400,"Native exit fixture block/entity residency did not become ready");
+            h.runAfterDelay(5,()->await(h,index,anchor,lease,ticks+5,work));
+        }catch(Exception|AssertionError failure){lease.close();throw new RuntimeException(failure);}
+    }
     private static MapAnchor stage(GameTestHelper h,int index,int rotation)throws Exception {
         Path world=h.getLevel().getServer().getWorldPath(LevelResource.ROOT).toRealPath();
         require(h.getLevel().getServer() instanceof GameTestServer&&h.getLevel().getServer().isSameThread()

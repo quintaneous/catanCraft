@@ -181,7 +181,12 @@ public final class NativeVehicleExit47 {
         return checked;
     }
     private static void loaded(ServerLevel level,Entity vehicle,BlockPos p)throws IOException {
-        if(Math.abs(p.getX()-vehicle.getX())>7||Math.abs(p.getZ()-vehicle.getZ())>7||p.getY()<Math.floor(vehicle.getY())-1||p.getY()>Math.floor(vehicle.getY())+4||level.isOutsideBuildHeight(p)||!level.getWorldBorder().isWithinBounds(p)||!level.hasChunkAt(p))throw new IOException("Exit leaves bounded loaded neighborhood");
+        if(Math.abs(p.getX()-vehicle.getX())>7||Math.abs(p.getZ()-vehicle.getZ())>7||p.getY()<Math.floor(vehicle.getY())-1||p.getY()>Math.floor(vehicle.getY())+4||level.isOutsideBuildHeight(p)||!level.getWorldBorder().isWithinBounds(p))throw new IOException("Exit leaves bounded loaded neighborhood");
+        requireResident(level,p);
+    }
+    static void requireResident(ServerLevel level,BlockPos p)throws IOException {
+        if(!level.hasChunkAt(p)||!level.areEntitiesLoaded(net.minecraft.world.level.ChunkPos.asLong(p.getX()>>4,p.getZ()>>4)))
+            throw new IOException("Exit block/entity chunk is not resident at "+p);
     }
     private static Vec3 transform(Entity vehicle,double x,double y,double z){double a=Math.toRadians(vehicle.getYRot());return vehicle.position().add(Math.cos(a)*x-Math.sin(a)*z,y,Math.sin(a)*x+Math.cos(a)*z);}
     private static Vec3 vertex(Object vertices,int index)throws Exception {Object v=Array.get(vertices,index);return new Vec3(v.getClass().getField("x").getDouble(v),v.getClass().getField("y").getDouble(v),v.getClass().getField("z").getDouble(v));}

@@ -26,6 +26,13 @@ assert 'rawParserRefusals=13 rawParserControls=3 ambiguousMembershipRefusals=3 n
 assert 'VEHICLE47_RESTART_SEED_PASS' in (ev/'vehicle47_seed.log').read_text()
 assert 'VEHICLE47_RESTART_VERIFY_PASS' in (ev/'vehicle47_verify.log').read_text()
 exitlog=(ev/'catancraft_vehicle47_exit.log').read_text()
+readiness=re.findall(r'VEHICLE47_EXIT_RESIDENCY_READY case=(\d+) chunks=(\d+) waitedTicks=(\d+) blockAndEntityReady=true stagedOnce=true',exitlog)
+assert len(readiness)==6 and {int(r[0]) for r in readiness}==set(range(6))
+assert all(0<int(r[1])<=64 and 0<=int(r[2])<=400 for r in readiness)
+pending=re.findall(r'VEHICLE47_EXIT_RESIDENCY_PENDING_PASS case=(\d+) blockResident=true entitiesLoaded=false directGuardRefused=true',exitlog)
+observations=re.findall(r'VEHICLE47_EXIT_RESIDENCY_OBSERVATION case=(\d+) blockResident=(true|false) entitiesLoaded=(true|false) pendingStateObserved=false',exitlog)
+assert len(pending)+len(observations)==6 and set(map(int,pending))|{int(r[0]) for r in observations}==set(range(6))
+
 exitrows=re.findall(r'VEHICLE47_EXIT_SEAT_PASS rotation=(\d+) seat=(\d+) nativeExit=(.*?) checkedExit=(.*?) correction=([0-9.]+) checkedCells=(\d+) actualPacket=true baselinePreserved=true',exitlog)
 assert len(exitrows)==16 and {(int(r[0]),int(r[1])) for r in exitrows}=={(rot,seat) for rot in [0,180] for seat in range(8)}
 assert all(.125<=float(r[4])<=.5 and int(r[5])>0 for r in exitrows)
@@ -93,5 +100,5 @@ with zipfile.ZipFile(jar) as z,zipfile.ZipFile(old) as b:
    assert z.read(name)==b.read(name),name
    if name.endswith('.class'):classes+=1
    else:assets+=1
-record=dict(source=commit,run=int(run),archive_sha256=digest,jar_file=jar.name,jar_sha256=sha(jar.read_bytes()),jar_bytes=jar.stat().st_size,phases=sum(expected.values()),failed=0,suites=expected,source_files_verified=len(files),packaged_source_version_and_jar_manifest_verified=True,unchanged_046_classes=classes,unchanged_046_data_entries=assets,native_economy_vectors=proofs,native_vehicle47=native47proof,pickup_exit47_rows=exitrows,native_geometry_rows=rows,delivery_markers=marks,sealed_journal_files=len(sealed),external_road_geometry_qualified=True,full_bay_qualified=False,native_view_minimum_raw_dot=float(view[0]),native_routes=routes,native_dismounts=dismounts,native_seats=seats,scope='Native vehicle adapter and scoped voluntary pickup exits; retained 046 suites. Public counter activation and installed-pack acceptance remain separate.')
+record=dict(source=commit,run=int(run),archive_sha256=digest,jar_file=jar.name,jar_sha256=sha(jar.read_bytes()),jar_bytes=jar.stat().st_size,phases=sum(expected.values()),failed=0,suites=expected,source_files_verified=len(files),packaged_source_version_and_jar_manifest_verified=True,unchanged_046_classes=classes,unchanged_046_data_entries=assets,native_economy_vectors=proofs,native_vehicle47=native47proof,pickup_exit47_rows=exitrows,pickup_exit47_residency=dict(ready_rows=readiness,pending_refusal_cases=pending,other_observations=observations),native_geometry_rows=rows,delivery_markers=marks,sealed_journal_files=len(sealed),external_road_geometry_qualified=True,full_bay_qualified=False,native_view_minimum_raw_dot=float(view[0]),native_routes=routes,native_dismounts=dismounts,native_seats=seats,scope='Native vehicle adapter and scoped voluntary pickup exits; retained 046 suites. Public counter activation and installed-pack acceptance remain separate.')
 (archive.parent/'verification.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record,indent=2))

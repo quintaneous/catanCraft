@@ -1,4 +1,4 @@
-# Run3: recognize native empty/unpadded region storage with strict payload validation.
+# Run4: require native entity residency for every checked pickup exit cell.
 name: Vehicle47 native recovery and pickup exits
 on:
   push:
