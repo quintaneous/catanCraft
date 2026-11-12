@@ -1,5 +1,5 @@
-# Run2: preserve checked journal IO contract for native NBT crash wrappers in corrupt fixture.
-name: Vehicle46 delivery and native factory geometry validation
+# Run3: exact authored junction sweeps and final native dismount safety observations.
+name: Vehicle46 delivery and native junction validation
 on:
   push:
     branches: [chatgpt/combined-shop-acceptance]

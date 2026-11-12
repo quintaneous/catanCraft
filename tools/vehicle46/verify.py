@@ -23,9 +23,23 @@ native=(ev/'catancraft_vehicle46_native.log').read_text()
 rows=re.findall(r'VEHICLE46_NATIVE_PASS vehicle=(\w+) rotation=(\d+) obbs=(\d+) seats=(\d+) sweepSamples=(\d+) checkedCells=(\d+)',native)
 assert len(rows)==4 and {(r[0],int(r[1])) for r in rows}=={(v,r) for v in ['sodayo_pick_up','lav_150'] for r in [0,180]}
 for v,rot,boxes,seats,samples,cells in rows:
- assert int(boxes)==(8 if v=='sodayo_pick_up' else 10) and int(seats)==(8 if v=='sodayo_pick_up' else 5) and int(samples)==17 and int(cells)>0
+ assert int(boxes)==(8 if v=='sodayo_pick_up' else 10) and int(seats)==(8 if v=='sodayo_pick_up' else 5) and int(samples)==117 and int(cells)>0
 assert 'VEHICLE46_NATIVE_HAZARDS_PASS' in native and 'VEHICLE46_NATIVE_BOUNDARY_PASS' in native
-assert native.count('externalRoadQualified=false')==4
+assert native.count('externalRoadQualified=true')==4
+routes=re.findall(r'VEHICLE46_NATIVE_ROUTE_PASS vehicle=(\w+) rotation=(\d+) routePoses=(\d+) continuousAngularBound=true northAndSouth=true',native)
+assert len(routes)==4 and {(r[0],int(r[1])) for r in routes}=={(v,r) for v in ['sodayo_pick_up','lav_150'] for r in [0,180]}
+assert all(int(r[2])==117 for r in routes)
+seats=re.findall(r'VEHICLE46_NATIVE_SEAT vehicle=(\w+) rotation=(\d+) seat=(\d+) finalExit=(.*?) blockers=(.*?)\n',native)
+assert len(seats)==26 and len({tuple(r[:3]) for r in seats})==26
+for v,rot,seat,position,blockers in seats:
+ assert int(seat) in range(8 if v=='sodayo_pick_up' else 5)
+ assert (blockers=='[]') if v=='lav_150' else 'Native final dismount intersects own vehicle OBB ' in blockers
+dismounts=re.findall(r'VEHICLE46_NATIVE_DISMOUNT vehicle=(\w+) rotation=(\d+) checkedSeats=(\d+) blockedSeats=(\d+) qualified=(true|false) firstSeatBoarded=true fullBayQualified=false',native)
+assert len(dismounts)==4 and {(r[0],int(r[1])) for r in dismounts}=={(v,r) for v in ['sodayo_pick_up','lav_150'] for r in [0,180]}
+for v,rot,checked,blocked,qualified in dismounts:
+ assert (int(checked),int(blocked),qualified)==((8,8,'false') if v=='sodayo_pick_up' else (5,0,'true'))
+assert 'ownVehicle=true sourceDrift=true roadHazard=true authoredLandmarks=true' in native
+assert 'changedIdentity=true unstagedSourceHeld=true' in native
 marks=re.findall(r'VEHICLE46_DELIVERY_PASS (\w+)',(ev/'catancraft_vehicle46.log').read_text());assert len(marks)==len(set(marks))==18
 sealed=list((ev/'journals').rglob('*.dat'));assert len(sealed)==7
 for f in sealed:
@@ -52,5 +66,5 @@ with zipfile.ZipFile(jar) as z,zipfile.ZipFile(old) as b:
    assert z.read(name)==b.read(name),name
    if name.endswith('.class'):classes+=1
    else:assets+=1
-record=dict(source=commit,run=int(run),archive_sha256=digest,jar_file=jar.name,jar_sha256=sha(jar.read_bytes()),jar_bytes=jar.stat().st_size,phases=sum(expected.values()),failed=0,suites=expected,source_files_verified=len(files),unchanged_045_classes=classes,unchanged_045_data_entries=assets,native_economy_vectors=proofs,native_geometry_rows=rows,delivery_markers=marks,sealed_journal_files=len(sealed),external_road_qualified=False,scope='Vehicle delivery state machine and bounded native geometry checks, retained economy/bay/crowbar regressions; no public vehicle purchasing activation or installed-pack acceptance.')
+record=dict(source=commit,run=int(run),archive_sha256=digest,jar_file=jar.name,jar_sha256=sha(jar.read_bytes()),jar_bytes=jar.stat().st_size,phases=sum(expected.values()),failed=0,suites=expected,source_files_verified=len(files),unchanged_045_classes=classes,unchanged_045_data_entries=assets,native_economy_vectors=proofs,native_geometry_rows=rows,delivery_markers=marks,sealed_journal_files=len(sealed),external_road_geometry_qualified=True,full_bay_qualified=False,native_routes=routes,native_dismounts=dismounts,native_seats=seats,scope='Vehicle delivery state machine and bounded native geometry checks, retained economy/bay/crowbar regressions; no public vehicle purchasing activation or installed-pack acceptance.')
 (archive.parent/'verification.json').write_text(json.dumps(record,indent=2)+'\n');print(json.dumps(record,indent=2))
