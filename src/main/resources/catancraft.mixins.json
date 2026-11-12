@@ -10,7 +10,9 @@
     "SbwHandheldReleaseMixin",
     "SbwHandheldPacketMixin",
     "SbwHandheldRecipesMixin",
-    "SbwHandheldLootMixin"
+    "SbwHandheldLootMixin",
+    "SbwVehicleDismount47Mixin",
+    "SbwVoluntaryExit47Mixin"
   ],
   "injectors": {
     "defaultRequire": 0
