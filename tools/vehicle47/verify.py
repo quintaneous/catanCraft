@@ -22,7 +22,7 @@ import re,struct,gzip
 native47=(ev/'catancraft_vehicle47.log').read_text()
 for mark in ['PRICES','DEBIT','SAVE','HOLDS']:
  assert native47.count('VEHICLE47_NATIVE_'+mark+'_PASS ')==1
-assert 'rawParserRefusals=6 ambiguousMembershipRefusals=3 nativeRollHolds=2' in native47
+assert 'rawParserRefusals=13 rawParserControls=3 ambiguousMembershipRefusals=3 nativeRollHolds=2' in native47
 assert 'VEHICLE47_RESTART_SEED_PASS' in (ev/'vehicle47_seed.log').read_text()
 assert 'VEHICLE47_RESTART_VERIFY_PASS' in (ev/'vehicle47_verify.log').read_text()
 exitlog=(ev/'catancraft_vehicle47_exit.log').read_text()

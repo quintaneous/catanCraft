@@ -199,24 +199,36 @@ final class VehicleNativeDelivery47 implements VehicleDelivery46.Environment {
         if(!Files.exists(file,LinkOption.NOFOLLOW_LINKS))return null;
         if(!Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS))throw new IOException("Native entity region is not a file");
         BasicFileAttributes before=Files.readAttributes(file,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS);
-        if(before.fileKey()==null||before.size()<8192||before.size()>1024L*1024*1024||before.size()%4096!=0)throw new IOException("Invalid native region size/file identity");
+        if(before.fileKey()==null||(before.size()!=0&&before.size()<8192)||before.size()>1024L*1024*1024)throw new IOException("Invalid native region size/file identity");
         byte[] payload;
         try(FileChannel in=FileChannel.open(file,StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS)){
+            // Native RegionFile opens an empty file before its first chunk/header write.
+            // Only a stable exact zero-byte file is empty; a partial header is corrupt.
+            if(before.size()==0){stable(file,before,in,new byte[0],null,0);return null;}
             byte[] header=read(in,0,8192);int index=(chunk.x&31)+(chunk.z&31)*32;int location=ByteBuffer.wrap(header,index*4,4).getInt();
             // Validate all occupied extents, including when this chunk appears absent.
-            BitSet allocated=new BitSet((int)(before.size()/4096));allocated.set(0,2);
+            // Native writes reserve whole sectors but pad the physical tail only on close.
+            int sectorLimit=(int)((before.size()+4095)/4096);
+            BitSet allocated=new BitSet(sectorLimit);allocated.set(0,2);
+            Map<Integer,byte[]> prefixes=new HashMap<>();
             for(int n=0;n<1024;n++){
                 int entry=ByteBuffer.wrap(header,n*4,4).getInt();if(entry==0)continue;
                 int start=entry>>>8,count=entry&255,end=start+count;
-                if(start<2||count==0||(long)end*4096>before.size())throw new IOException("Invalid native region location");
+                if(start<2||count==0||end>sectorLimit)throw new IOException("Invalid native region location");
                 int overlap=allocated.nextSetBit(start);if(overlap>=0&&overlap<end)throw new IOException("Overlapping native region locations");allocated.set(start,end);
+                long position=(long)start*4096;if(position+5>before.size())throw new IOException("Truncated native entity payload header");
+                byte[] prefix=read(in,position,5);int length=ByteBuffer.wrap(prefix,0,4).getInt(),compression=prefix[4]&255;
+                if(length<2||length>count*4096-4||position+4L+length>before.size())throw new IOException("Invalid/truncated native entity payload length");
+                if(compression!=1&&compression!=2&&compression!=3)throw new IOException("Unknown/external native entity compression");
+                prefixes.put(start,prefix);
             }
-            if(location==0){stable(file,before,in,header,null,0);return null;}
-            int offset=location>>>8,sectors=location&255;
-            payload=read(in,(long)offset*4096,sectors*4096);int length=ByteBuffer.wrap(payload,0,4).getInt();
-            if(length<2||length>payload.length-4)throw new IOException("Invalid native entity payload length");
+            if(location==0){stablePrefixes(in,prefixes);stable(file,before,in,header,null,0);return null;}
+            int offset=location>>>8;
+            long position=(long)offset*4096;byte[] prefix=prefixes.get(offset);int length=ByteBuffer.wrap(prefix,0,4).getInt();
+            payload=read(in,position,4+length);
+            if(!Arrays.equals(prefix,Arrays.copyOf(payload,5)))throw new IOException("Native entity payload changed during readback");
             int compression=payload[4]&255;if((compression&128)!=0)throw new IOException("External native entity chunks are not qualified");
-            stable(file,before,in,header,payload,(long)offset*4096);
+            stablePrefixes(in,prefixes);stable(file,before,in,header,payload,position);
             try(InputStream bytes=new ByteArrayInputStream(payload,5,length-1);InputStream decoded=switch(compression){case 1->new GZIPInputStream(bytes);case 2->new InflaterInputStream(bytes);case 3->bytes;default->throw new IOException("Unknown native entity compression");}){
                 byte[] nbt=decoded.readNBytes(16*1024*1024+1);if(nbt.length>16*1024*1024)throw new IOException("Oversized decompressed native entity chunk");
                 try(DataInputStream data=new DataInputStream(new ByteArrayInputStream(nbt))){
@@ -228,8 +240,11 @@ final class VehicleNativeDelivery47 implements VehicleDelivery46.Environment {
     private static byte[] read(FileChannel in,long position,int count)throws IOException {
         ByteBuffer b=ByteBuffer.allocate(count);while(b.hasRemaining()){int n=in.read(b,position+b.position());if(n<0)throw new IOException("Truncated native region");if(n==0)throw new IOException("Unstable native region read");}return b.array();
     }
+    private static void stablePrefixes(FileChannel in,Map<Integer,byte[]> prefixes)throws IOException {
+        for(var entry:prefixes.entrySet())if(!Arrays.equals(entry.getValue(),read(in,(long)entry.getKey()*4096,5)))throw new IOException("Native entity payload header changed during readback");
+    }
     private static void stable(Path file,BasicFileAttributes before,FileChannel in,byte[] header,byte[] payload,long offset)throws IOException {
-        if(!Arrays.equals(header,read(in,0,8192))||(payload!=null&&!Arrays.equals(payload,read(in,offset,payload.length))))throw new IOException("Native entity region changed during readback");
+        if(!Arrays.equals(header,read(in,0,header.length))||(payload!=null&&!Arrays.equals(payload,read(in,offset,payload.length))))throw new IOException("Native entity region changed during readback");
         BasicFileAttributes after=Files.readAttributes(file,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS);
         if(!after.isRegularFile()||after.fileKey()==null||before.size()!=after.size()||!before.lastModifiedTime().equals(after.lastModifiedTime())||!Objects.equals(before.fileKey(),after.fileKey())||in.size()!=before.size())throw new IOException("Native entity region changed during readback");
     }

@@ -133,7 +133,7 @@ public final class VehicleNativeDelivery47Tests {
                 check(f.journal().read(i.id()).phase()==Phase.SPAWN_ATTEMPTED,"Held delivery phase was rewritten");
             }
             f.count(2);check(f.level.getEntity(gone.entity())==null,"Missing native entity was recreated");
-            f.charges(changed,moved,gone);f.assertDisk();f.finish("wrongProvenanceHeld=1 movedHeld=1 missingHeld=1 replacements=0 refunds=0 rawParserRefusals=6 ambiguousMembershipRefusals=3 nativeRollHolds=2");
+            f.charges(changed,moved,gone);f.assertDisk();f.finish("wrongProvenanceHeld=1 movedHeld=1 missingHeld=1 replacements=0 refunds=0 rawParserRefusals=13 rawParserControls=3 ambiguousMembershipRefusals=3 nativeRollHolds=2");
         });
     }
 
@@ -335,6 +335,14 @@ public final class VehicleNativeDelivery47Tests {
         CompoundTag entity=VehicleNativeDelivery47.savedEntity(f.level,i),valid=new CompoundTag();valid.putIntArray("Position",new int[]{0,0});
         ListTag entities=new ListTag();entities.add(entity.copy());valid.put("Entities",entities);
         Path good=region(dir,"valid",valid);check(entity.equals(VehicleNativeDelivery47.readEntityChunk(good,new net.minecraft.world.level.ChunkPos(0,0),i.entity())),"Independent native parser control failed");
+        // RegionFile may create a zero-byte file during a cache read before its first write.
+        Path empty=regionBytes(dir,"valid_empty",new byte[0]);
+        check(VehicleNativeDelivery47.readEntityChunk(empty,new net.minecraft.world.level.ChunkPos(0,0),i.entity())==null&&Files.size(empty)==0,"Stable native empty region did not remain absent/read-only");
+        // An open RegionFile writes the declared chunk bytes without padding its final sector.
+        byte[] padded=Files.readAllBytes(good);int declared=java.nio.ByteBuffer.wrap(padded,8192,4).getInt();
+        byte[] unpadded=Arrays.copyOf(padded,8192+4+declared);check(unpadded.length%4096!=0,"Unpadded native parser control unexpectedly has sector-aligned size");
+        Path tail=regionBytes(dir,"valid_unpadded",unpadded);
+        check(entity.equals(VehicleNativeDelivery47.readEntityChunk(tail,new net.minecraft.world.level.ChunkPos(0,0),i.entity()))&&Arrays.equals(unpadded,Files.readAllBytes(tail)),"Complete unpadded native payload was refused or modified");
         List<CompoundTag> bad=new ArrayList<>();
         CompoundTag wrongList=valid.copy();ListTag strings=new ListTag();strings.add(StringTag.valueOf("not-an-entity"));wrongList.put("Entities",strings);bad.add(wrongList);
         CompoundTag missingUuid=valid.copy();missingUuid.getList("Entities",Tag.TAG_COMPOUND).getCompound(0).remove("UUID");bad.add(missingUuid);
@@ -347,14 +355,30 @@ public final class VehicleNativeDelivery47Tests {
             refuse(()->VehicleNativeDelivery47.readEntityChunk(path,new net.minecraft.world.level.ChunkPos(0,0),i.entity()));
             check(Arrays.equals(before,Files.readAllBytes(path)),"Read-only refusal modified malformed region evidence");
         }
+        for(int size:List.of(1,4095,4096,8191)){
+            Path path=regionBytes(dir,"malformed_header_"+size,new byte[size]);
+            refuse(()->VehicleNativeDelivery47.readEntityChunk(path,new net.minecraft.world.level.ChunkPos(0,0),i.entity()));
+            check(Files.size(path)==size&&Arrays.equals(new byte[size],Files.readAllBytes(path)),"Partial-header refusal rewrote preserved bytes");
+        }
+        byte[] truncated=Arrays.copyOf(unpadded,unpadded.length-1),overlap=padded.clone(),extent=padded.clone();
+        int location=java.nio.ByteBuffer.wrap(padded,0,4).getInt();java.nio.ByteBuffer.wrap(overlap,4,4).putInt(location);
+        java.nio.ByteBuffer.wrap(extent,0,4).putInt(location+1);
+        List<byte[]> invalid=List.of(truncated,overlap,extent);List<String> names=List.of("payload_truncated","overlap","extent");
+        for(int n=0;n<invalid.size();n++){
+            byte[] before=invalid.get(n);Path path=regionBytes(dir,"malformed_"+names.get(n),before);
+            refuse(()->VehicleNativeDelivery47.readEntityChunk(path,new net.minecraft.world.level.ChunkPos(0,0),i.entity()));
+            refuse(()->VehicleNativeDelivery47.readEntityChunk(path,new net.minecraft.world.level.ChunkPos(2,0),i.entity()));
+            check(Arrays.equals(before,Files.readAllBytes(path)),"Physical-region refusal rewrote preserved bytes");
+        }
     }
     private static Path region(Path dir,String name,CompoundTag chunk)throws IOException {
         var raw=new java.io.ByteArrayOutputStream();NbtIo.write(chunk,new java.io.DataOutputStream(raw));
         var compressed=new java.io.ByteArrayOutputStream();try(var zip=new java.util.zip.DeflaterOutputStream(compressed)){zip.write(raw.toByteArray());}
         byte[] payload=compressed.toByteArray();int sectors=(payload.length+5+4095)/4096;
         var bytes=java.nio.ByteBuffer.allocate(8192+sectors*4096);bytes.putInt((2<<8)|sectors);bytes.position(8192);bytes.putInt(payload.length+1);bytes.put((byte)2);bytes.put(payload);
-        Path path=dir.resolve(name+".mca");Files.write(path,bytes.array(),StandardOpenOption.CREATE_NEW);return path;
+        return regionBytes(dir,name,bytes.array());
     }
+    private static Path regionBytes(Path dir,String name,byte[] bytes)throws IOException {Path path=dir.resolve(name+".mca");Files.write(path,bytes,StandardOpenOption.CREATE_NEW);return path;}
     private static ShopPurchase40.Price price(String offer){return offer.equals("pickup")?new ShopPurchase40.Price(4000,Map.of(ResourceType.STEEL,20L,ResourceType.MECHANICAL_PARTS,10L,ResourceType.FUEL,8L)):new ShopPurchase40.Price(8500,Map.of(ResourceType.STEEL,50L,ResourceType.MECHANICAL_PARTS,25L,ResourceType.FUEL,20L,ResourceType.ELECTRONICS,5L));}
     private static void assertSavedIdentity(Intent i,CompoundTag n)throws IOException {check(n!=null&&n.hasUUID("UUID")&&i.entity().equals(n.getUUID("UUID"))&&i.bay().vehicle().equals(n.getString("id"))&&n.getCompound("ForgeData").getBoolean(NationProcurement.PURCHASED_TAG)&&i.nation().toString().equals(n.getCompound("ForgeData").getString(NationProcurement.NATION_TAG))&&VehicleNativeDelivery47.provenance(i).equals(n.getCompound("ForgeData").getCompound(VehicleNativeDelivery47.PROVENANCE)),"Actual Anvil entity NBT lost original UUID/type/purchased/nation provenance");}
     private static void check(boolean condition,String message)throws IOException {if(!condition)throw new IOException(message);}

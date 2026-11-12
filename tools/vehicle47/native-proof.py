@@ -181,6 +181,36 @@ def uid(ints):
     return str(uuid.UUID(bytes=b"".join(struct.pack(">I", v & 0xffffffff) for v in ints)))
 
 
+def region_chunks(blob):
+    # A cache read may create a stable zero-byte RegionFile before its first write.
+    if not blob:
+        return []
+    require(len(blob) >= 8192, "Partial native region header")
+    occupied, entries = {0, 1}, []
+    physical_sectors = (len(blob) + 4095) // 4096
+    for index in range(1024):
+        location = struct.unpack(">I", blob[index * 4:index * 4 + 4])[0]
+        if not location:
+            continue
+        start, count = location >> 8, location & 255
+        require(start >= 2 and count > 0 and start + count <= physical_sectors, "Invalid native region extent")
+        allocation = set(range(start, start + count))
+        require(not occupied.intersection(allocation), "Overlapping region chunks")
+        occupied.update(allocation)
+        entries.append((index, start, count))
+    chunks = []
+    for index, start, count in entries:
+        offset = start * 4096
+        require(offset + 5 <= len(blob), "Truncated native region payload header")
+        length = struct.unpack(">I", blob[offset:offset + 4])[0]
+        require(1 < length <= count * 4096 - 4 and offset + 4 + length <= len(blob), "Truncated/invalid native region declared payload")
+        mode, payload = blob[offset + 4], blob[offset + 5:offset + 4 + length]
+        require(mode in (1, 2, 3), "External or unknown native entity compression")
+        raw = payload if mode == 3 else inflate(payload, 31 if mode == 1 else 15)
+        chunks.append((index, Reader(raw).root()))
+    return chunks
+
+
 def regions(directory):
     entities, files = {}, []
     for path in sorted(Path(directory).glob("r.*.*.mca")):
@@ -188,24 +218,7 @@ def regions(directory):
         require(match is not None, "Foreign entity-region filename")
         rx, rz = map(int, match.groups())
         blob = read(path)
-        require(len(blob) >= 8192 and len(blob) % 4096 == 0, "Malformed native region length")
-        occupied = {0, 1}
-        for index in range(1024):
-            location = struct.unpack(">I", blob[index * 4:index * 4 + 4])[0]
-            if not location:
-                continue
-            start, count = location >> 8, location & 255
-            require(start >= 2 and count > 0 and (start + count) * 4096 <= len(blob), "Invalid native region extent")
-            allocation = set(range(start, start + count))
-            require(not occupied.intersection(allocation), "Overlapping region chunks")
-            occupied.update(allocation)
-            offset = start * 4096
-            length = struct.unpack(">I", blob[offset:offset + 4])[0]
-            require(1 < length <= count * 4096 - 4, "Invalid native region payload length")
-            mode, payload = blob[offset + 4], blob[offset + 5:offset + 4 + length]
-            require(mode in (1, 2, 3), "External or unknown native entity compression")
-            raw = payload if mode == 3 else inflate(payload, 31 if mode == 1 else 15)
-            typed = Reader(raw).root()
+        for index, typed in region_chunks(blob):
             chunk = plain(typed)
             require(chunk["Position"] == [rx * 32 + index % 32, rz * 32 + index // 32], "Wrong entity chunk position")
             require(typed[1]["Entities"][0] == 9 and all(t[0] == 10 for t in typed[1]["Entities"][1]), "Invalid native entity list")
@@ -278,7 +291,11 @@ def metadata(proof, namespace, source, runtime):
 def parser_fixtures(directory):
     """Inspect retained malformed parser inputs without accepting them as native entities."""
     directory = Path(directory)
-    require({p.name for p in directory.glob("*.mca")} == {"valid.mca", *(f"malformed_{n}.mca" for n in range(6))},
+    headers = (1, 4095, 4096, 8191)
+    corrupt_physical = ("payload_truncated", "overlap", "extent")
+    expected = {"valid.mca", "valid_empty.mca", "valid_unpadded.mca", *(f"malformed_{n}.mca" for n in range(6)),
+                *(f"malformed_header_{n}.mca" for n in headers), *(f"malformed_{n}.mca" for n in corrupt_physical)}
+    require({p.name for p in directory.glob("*.mca")} == expected,
             "Missing or unexpected raw parser fixture files")
     rows = []
     for name in ["valid", *(f"malformed_{n}" for n in range(6))]:
@@ -288,6 +305,39 @@ def parser_fixtures(directory):
         length = struct.unpack(">I", blob[8192:8196])[0]
         rows.append(Reader(inflate(blob[8197:8196 + length], 15)).root())
     valid, *bad = rows
+    padded = read(directory / "valid.mca")
+    unpadded = read(directory / "valid_unpadded.mca")
+    length = struct.unpack_from(">I", padded, 8192)[0]
+    require(unpadded == padded[:8192 + 4 + length] and len(unpadded) % 4096 != 0 and
+            region_chunks(unpadded) == region_chunks(padded), "Faithful complete unpadded final sector control missing")
+    require(read(directory / "valid_empty.mca") == b"" and region_chunks(b"") == [], "Stable native empty-region control missing")
+    for size in headers:
+        blob = read(directory / f"malformed_header_{size}.mca")
+        require(blob == bytes(size), "Partial-header fixture corruption changed")
+        try:
+            region_chunks(blob)
+        except ValueError:
+            pass
+        else:
+            raise ValueError("Partial native header was accepted")
+    for name in corrupt_physical:
+        blob = read(directory / f"malformed_{name}.mca")
+        if name == "payload_truncated":
+            require(blob == unpadded[:-1], "Declared-payload truncation fixture changed")
+        elif name == "overlap":
+            expected_blob = bytearray(padded)
+            expected_blob[4:8] = padded[:4]
+            require(blob == expected_blob, "Overlapping allocation fixture changed")
+        else:
+            expected_blob = bytearray(padded)
+            struct.pack_into(">I", expected_blob, 0, struct.unpack_from(">I", padded)[0] + 1)
+            require(blob == expected_blob, "Out-of-file allocation fixture changed")
+        try:
+            region_chunks(blob)
+        except ValueError:
+            pass
+        else:
+            raise ValueError("Malformed physical native region was accepted")
     require(plain(valid)["Position"] == [0, 0] and len(plain(valid)["Entities"]) == 1, "Raw parser valid control missing")
     uid(plain(valid)["Entities"][0]["UUID"])
     require(bad[0][1]["Entities"][1][0][0] == 8, "Wrong-list native parser corruption missing")
@@ -406,7 +456,7 @@ def verify_native(evidence_directory, source_commit, runtime_sha256=None):
     require({k.removeprefix("vehicle47_paid:") for k in native_ledger["placedMapAssets"] if k.startswith("vehicle47_paid:")} == set(records), "Unexpected restart vehicle debit receipt")
     return dict(result="PASS", source=source_commit, runtime_manifest_sha256=runtime_sha256,
                 base_original_intents=11, base_native_entities_remaining=7, retained_native_snapshots=10,
-                independent_canonical_fingerprints=14, malformed_region_fixtures=6,
+                independent_canonical_fingerprints=14, malformed_region_fixtures=13, region_parser_controls=3,
                 restart_original_intents=3, restored_original_uuids=2, original_paid_first_spawn=1,
                 moved_pending_held=1, completed_loss_replacements=0, separate_jvms=True,
                 seed_process=seed["process"], verify_process=verified["process"],
