@@ -9,6 +9,7 @@ import net.minecraft.gametest.framework.*;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.item.ItemStack;
@@ -17,7 +18,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.storage.LevelResource;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.util.FakePlayerFactory;
+import net.minecraftforge.common.util.FakePlayer;
 import net.minecraftforge.event.entity.EntityMountEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.gametest.*;
@@ -39,8 +40,11 @@ public final class NativeVehicleExit47Tests {
         MapAnchor anchor=stage(h,index,rotation);Entity vehicle=pickup(h,anchor,true);int completed=0;
         try{
             for(int seat=0;seat<8;seat++){
-                ServerPlayer player=player(h);ride(vehicle,player,seat);
-                require(!player.wantsToStopRiding(),"Pinned provider no longer suppresses ordinary Shift dismount");
+                ExitPlayer player=player(h);player.setShiftKeyDown(true);
+                require(player.providerWantsToStopRiding(),"Unmounted Shift control did not request dismount");
+                ride(vehicle,player,seat);
+                require(!player.providerWantsToStopRiding(),"Pinned provider no longer suppresses ordinary Shift dismount");
+                player.setShiftKeyDown(false);
                 Vec3 baseline=vehicle.getDismountLocationForPassenger(player);
                 refuse(()->NativeVehicleBay46.clearOwnVehicle(vehicle,body(baseline)));
                 var plan=NativeVehicleExit47.resolve(vehicle,player);
@@ -153,7 +157,11 @@ public final class NativeVehicleExit47Tests {
     }
     private static Entity pickup(GameTestHelper h,MapAnchor anchor,boolean managed)throws Exception {Entity vehicle=NativeVehicleBay46.create(h.getLevel(),NativeVehicleBay46.PICKUP);NativeVehicleBay46.pose(vehicle,anchor,0);if(managed)mark(vehicle);return vehicle;}
     private static void mark(Entity vehicle){vehicle.getPersistentData().putBoolean(NationProcurement.PURCHASED_TAG,true);vehicle.getPersistentData().putString(NationProcurement.NATION_TAG,"47000000-0000-0000-0000-000000000047");}
-    private static ServerPlayer player(GameTestHelper h){return FakePlayerFactory.get(h.getLevel(),new GameProfile(UUID.randomUUID(),"Exit47Probe"));}
+    private static final class ExitPlayer extends FakePlayer {
+        ExitPlayer(ServerLevel level,GameProfile profile){super(level,profile);}
+        boolean providerWantsToStopRiding(){return super.wantsToStopRiding();}
+    }
+    private static ExitPlayer player(GameTestHelper h){return new ExitPlayer(h.getLevel(),new GameProfile(UUID.randomUUID(),"Exit47Probe"));}
     private static net.minecraft.world.phys.AABB body(Vec3 feet){return new net.minecraft.world.phys.AABB(feet.x-.3,feet.y,feet.z-.3,feet.x+.3,feet.y+1.8,feet.z+.3);}
     private static MapAnchor stage(GameTestHelper h,int index,int rotation)throws Exception {
         Path world=h.getLevel().getServer().getWorldPath(LevelResource.ROOT).toRealPath();

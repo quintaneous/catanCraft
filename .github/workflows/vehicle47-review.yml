@@ -1,4 +1,4 @@
-# Run1: native vehicle delivery readback and scoped voluntary pickup exits.
+# Run2: test-only protected Player access bridge; native safety checks retained.
 name: Vehicle47 native recovery and pickup exits
 on:
   push:
