@@ -39,7 +39,7 @@ def main():
         require(key[0] in ["sodayo_pick_up", "lav_150"], "vehicle")
         parts = 8 if key[0] == "sodayo_pick_up" else 10
         rows = proof["trajectory"]
-        require(100 <= len(rows) <= 1901, "bounded sample count")
+        require(100 <= len(rows) <= 3501, "bounded sample count")
         previous = None
         length = 0
         for row in rows:

@@ -14,7 +14,7 @@ import java.util.*;
 final class NativeVehicleDriving50 {
     record Decision(String phase,int keys,boolean complete) {}
     static final class Controller {
-        final int turn;String phase="NEUTRAL";int entered;Vec3 turnEnd;
+        final int turn;String phase="NEUTRAL";int entered;Vec3 turnEnd,legStart;boolean reversing;int legs;
         Controller(int turn){if(turn!=-1&&turn!=1)throw new IllegalArgumentException();this.turn=turn;}
         private void enter(String next,int tick){phase=next;entered=tick;}
         Decision next(int tick,Vec3 p,Vec3 origin,float yaw,float initialYaw,double speed)throws IOException {
@@ -27,10 +27,16 @@ final class NativeVehicleDriving50 {
             int steer=turn<0?1:2;
             switch(phase){
                 case "NEUTRAL" -> {if(tick>=20)enter("APPROACH",tick);else return new Decision(phase,0,false);}
-                case "APPROACH" -> {if(advance>=9.5)enter("STOP",tick);else return new Decision(phase,20,false);}
-                case "STOP" -> {if(speed<.002&&tick-entered>=20)enter("PRESTEER",tick);else return new Decision(phase,16,false);}
-                case "PRESTEER" -> {if(tick-entered>=60)enter("TURN",tick);else return new Decision(phase,16|steer,false);}
-                case "TURN" -> {if(angle>=87)enter("ALIGN",tick);else return new Decision(phase,20|steer,false);}
+                case "APPROACH" -> {if(advance>=16)enter("STOP",tick);else return new Decision(phase,20,false);}
+                case "STOP" -> {if(speed<.002&&tick-entered>=20){reversing=false;enter("PRESTEER",tick);}else return new Decision(phase,16,false);}
+                case "PRESTEER" -> {if(tick-entered>=30){legStart=p;enter("TURN",tick);}else return new Decision(phase,16|(reversing?(turn<0?2:1):steer),false);}
+                case "TURN" -> {
+                    if(angle>=88)enter("ALIGN_STOP",tick);
+                    else if(p.subtract(legStart).horizontalDistance()>=.65){if(++legs>50)throw new IOException("Bounded turn leg limit");enter("LEG_STOP",tick);}
+                    else return new Decision(phase,(reversing?24:20)|(reversing?(turn<0?2:1):steer),false);
+                }
+                case "LEG_STOP" -> {if(speed<.002&&tick-entered>=20){reversing=!reversing;enter("PRESTEER",tick);}else return new Decision(phase,16,false);}
+                case "ALIGN_STOP" -> {if(speed<.002&&tick-entered>=30)enter("ALIGN",tick);else return new Decision(phase,16,false);}
                 case "ALIGN" -> {if(Math.abs(error)<=2){turnEnd=p;enter("ROAD",tick);}else return new Decision(phase,20|(error<0?1:2),false);}
                 case "ROAD" -> {if(p.subtract(turnEnd).dot(road)>=6)enter("FINAL_BRAKE",tick);else return new Decision(phase,20|(Math.abs(error)>1?(error<0?1:2):0),false);}
                 case "FINAL_BRAKE" -> {if(speed<.002&&tick-entered>=20){if(Math.abs(error)>5)throw new IOException("Final departure heading differs from road");return new Decision(phase,16,true);}else return new Decision(phase,16,false);}

@@ -135,7 +135,7 @@ public final class VehicleService50 {
         lock(player.serverLevel(),q);
         if(q.kind()==Kind.PURCHASE){var journal=new VehicleDelivery46.FileJournal(dir.resolve("purchases"));var env=new Purchase(player,binding,q,journal);VehicleDelivery46.prepare(journal,q.purchase(),env);var result=VehicleDelivery46.execute(journal,q.id(),env);if(!result.complete())return "Vehicle purchase held: "+result.reason();}
         else {var env=new Refuel(player,binding,q,dir);if(VehicleRefueling49.execute(env,q.refill())!=VehicleRefueling49.Result.COMPLETE)return "Refueling is held for recovery; no charge or fuel will be repeated.";}
-        markComplete(dir,q);unlock(player.serverLevel(),q);
+        markComplete(dir,q);if(!finishCompleted(player,binding,q,dir,false))throw new IOException("Completion receipt was not retained");
         return q.kind()==Kind.PURCHASE?"Vehicle purchased with 25% fuel. Your nation was charged once.":"Refueling complete. Added "+q.refill().addedEnergy()*100/q.capacity()+"% capacity for "+q.fuelCost()+" Fuel.";
     }
     static boolean finishCompleted(ServerPlayer player,VehicleFactory50.Binding binding,Quote q,Path dir,boolean fixture)throws IOException{

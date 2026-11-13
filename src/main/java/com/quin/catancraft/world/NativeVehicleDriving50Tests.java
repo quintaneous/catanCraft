@@ -17,21 +17,21 @@ import java.util.*;
 
 @GameTestHolder("catancraft_vehicle50") @PrefixGameTestTemplate(false)
 public final class NativeVehicleDriving50Tests {
-    @GameTest(template="townhall_state_empty",batch="drive500",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive500",timeoutTicks=4000)
     public static void pickup_0_left(GameTestHelper h)throws Exception{start(h,0,0,NativeVehicleBay46.PICKUP,-1);}
-    @GameTest(template="townhall_state_empty",batch="drive501",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive501",timeoutTicks=4000)
     public static void pickup_0_right(GameTestHelper h)throws Exception{start(h,1,0,NativeVehicleBay46.PICKUP,1);}
-    @GameTest(template="townhall_state_empty",batch="drive502",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive502",timeoutTicks=4000)
     public static void pickup_180_left(GameTestHelper h)throws Exception{start(h,2,180,NativeVehicleBay46.PICKUP,-1);}
-    @GameTest(template="townhall_state_empty",batch="drive503",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive503",timeoutTicks=4000)
     public static void pickup_180_right(GameTestHelper h)throws Exception{start(h,3,180,NativeVehicleBay46.PICKUP,1);}
-    @GameTest(template="townhall_state_empty",batch="drive504",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive504",timeoutTicks=4000)
     public static void lav_0_left(GameTestHelper h)throws Exception{start(h,4,0,NativeVehicleBay46.LAV,-1);}
-    @GameTest(template="townhall_state_empty",batch="drive505",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive505",timeoutTicks=4000)
     public static void lav_0_right(GameTestHelper h)throws Exception{start(h,5,0,NativeVehicleBay46.LAV,1);}
-    @GameTest(template="townhall_state_empty",batch="drive506",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive506",timeoutTicks=4000)
     public static void lav_180_left(GameTestHelper h)throws Exception{start(h,6,180,NativeVehicleBay46.LAV,-1);}
-    @GameTest(template="townhall_state_empty",batch="drive507",timeoutTicks=2400)
+    @GameTest(template="townhall_state_empty",batch="drive507",timeoutTicks=4000)
     public static void lav_180_right(GameTestHelper h)throws Exception{start(h,7,180,NativeVehicleBay46.LAV,1);}
     private static void start(GameTestHelper h,int id,int rotation,NativeVehicleBay46.Spec spec,int turn)throws Exception {
         Path root=h.getLevel().getServer().getWorldPath(LevelResource.ROOT).toRealPath();
@@ -77,7 +77,7 @@ public final class NativeVehicleDriving50Tests {
             row.addProperty("phase",decision.phase());
             if(decision.phase().equals("TURN")&&!turning){turning=true;turnYaw=vehicle.getYRot();}
             if(decision.complete()){stop="QUALIFIED_DEPARTURE";finish();return;}
-            check(tick<1900,"Native departure exceeded tick budget in "+decision.phase());
+            check(tick<3500,"Native departure exceeded tick budget in "+decision.phase());
             int keys=decision.keys();row.addProperty("keys",keys);NativeVehicleDriving48.input(player,keys);
             h.runAfterDelay(1,()->step(tick+1));
         }catch(Exception|AssertionError failure){fail(failure);}}
