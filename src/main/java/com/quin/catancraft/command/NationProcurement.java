@@ -4,6 +4,7 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.quin.catancraft.world.PhysicalWeaponShop40;
+import com.quin.catancraft.world.PhysicalVehicleShop50;
 import com.quin.catancraft.data.BuildingInstance;
 import com.quin.catancraft.data.BuildingType;
 import com.quin.catancraft.data.CatanSavedData;
@@ -78,18 +79,18 @@ public final class NationProcurement {
     private NationProcurement() {}
 
     public static LiteralArgumentBuilder<CommandSourceStack> node() {
-        return PhysicalWeaponShop40.addRoutes(Commands.literal("procure")
+        return PhysicalVehicleShop50.addRoutes(PhysicalWeaponShop40.addRoutes(Commands.literal("procure")
                 .executes(ctx -> list(ctx.getSource()))
                 .then(Commands.literal("list")
                         .executes(ctx -> list(ctx.getSource())))
                 .then(Commands.argument("item", StringArgumentType.word())
                         .executes(ctx -> buy(ctx.getSource(),
-                                StringArgumentType.getString(ctx, "item")))));
+                                StringArgumentType.getString(ctx, "item"))))));
     }
 
     private static int list(CommandSourceStack source) {
         source.sendSuccess(() -> Component.literal(
-                "Weapons: visit your management lectern or Weapons Factory counter. Legacy vehicles: /nation procure <id>."), false);
+                "Weapons: visit your management lectern or Weapons Factory counter. Vehicles and refueling: visit your Vehicle Factory counter."), false);
         PhysicalWeaponShop40.catalogRows().forEach(row -> source.sendSuccess(() -> Component.literal(row), false));
         CATALOG.forEach((id, offer) -> { if (offer.kind() == Kind.VEHICLE) source.sendSuccess(
                 () -> Component.literal(id + " - " + offer.name() + ": " +
@@ -106,30 +107,7 @@ public final class NationProcurement {
             return 0;
         }
         if (offer.kind() != Kind.VEHICLE) return PhysicalWeaponShop40.review(source, key.toLowerCase(java.util.Locale.ROOT));
-        ServerPlayer player = source.getPlayerOrException();
-        CatanSavedData data = CatanSavedData.get(source.getServer());
-        NationData nation = data.nationForPlayer(player.getUUID());
-        if (nation == null || !nation.isLeader(player.getUUID())) {
-            source.sendFailure(Component.literal(
-                    "Only your nation's leader can spend the national procurement budget."));
-            return 0;
-        }
-        if (!ModList.get().isLoaded(offer.mod())) {
-            source.sendFailure(Component.literal("Required mod not installed: " +
-                    offer.mod() + ". No funds charged."));
-            return 0;
-        }
-        if (offer.facility() != null && !ownsFacility(data, nation, offer.facility())) {
-            source.sendFailure(Component.literal("Your nation must own a " +
-                    offer.facility().displayName() + " to purchase this item."));
-            return 0;
-        }
-        if (!offer.cost().canAfford(nation)) {
-            source.sendFailure(Component.literal("Cannot afford " + offer.name() +
-                    ". Need: " + offer.cost().describe()));
-            return 0;
-        }
-        return buyVehicle(source, player, data, nation, offer);
+        return PhysicalVehicleShop50.review(source, key.toLowerCase(java.util.Locale.ROOT));
     }
 
     private static boolean ownsFacility(CatanSavedData data, NationData nation,
@@ -141,6 +119,34 @@ public final class NationProcurement {
             }
         }
         return false;
+    }
+
+    /** Historical 035 restart fixture only. Never registered as a command or reachable
+     * from a normal server. Keeps the old paid entity path testable while public
+     * procurement aliases require the current physical factory session. */
+    public static int legacyFixturePurchase(ServerPlayer player, String key) throws java.io.IOException {
+        var server = player.server;
+        var level = player.serverLevel();
+        var root = server.getWorldPath(net.minecraft.world.level.storage.LevelResource.ROOT).toRealPath();
+        if (!(server instanceof net.minecraft.gametest.framework.GameTestServer)
+                || !(player instanceof net.minecraftforge.common.util.FakePlayer)
+                || !server.isSameThread() || !server.getPlayerList().getPlayers().isEmpty()
+                || !root.getFileName().toString().equals("world")
+                || !root.getParent().getFileName().toString().equals("controlled-catancraft_sbw_procurement35-run")
+                || !java.nio.file.Files.readString(root.getParent().resolve(".catancraft-controlled-fixture-v1"))
+                    .equals("CatanCraft synthetic flat fixture v1\n")
+                || !"seed".equals(System.getProperty("catancraft.sbwRestartPhase", ""))
+                || !System.getProperty("catancraft.sbwRuntimeManifestSHA256", "").matches("[0-9a-f]{64}")
+                || !level.dimension().location().toString().equals("minecraft:overworld") || level.getSeed() != 0)
+            throw new java.io.IOException("Historical procurement is restricted to the exact isolated 035 fixture");
+        Offer offer = CATALOG.get(key);
+        if (offer == null || offer.kind() != Kind.VEHICLE || !ModList.get().isLoaded(offer.mod()))
+            throw new java.io.IOException("Missing historical vehicle offer/runtime");
+        CatanSavedData data = CatanSavedData.get(server);
+        NationData nation = data.nationForPlayer(player.getUUID());
+        if (nation == null || !nation.isLeader(player.getUUID()) || !ownsFacility(data, nation, offer.facility())
+                || !offer.cost().canAfford(nation)) throw new java.io.IOException("Historical fixture cannot afford or authorize purchase");
+        return buyVehicle(player.createCommandSourceStack(), player, data, nation, offer);
     }
 
     private static int buyVehicle(CommandSourceStack source, ServerPlayer player,

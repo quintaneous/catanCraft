@@ -1,3 +1,9 @@
+## ECO-02 / ECO-03 — 050 combined vehicle service integration (validation pending)
+
+Owner authorized proceeding through implementation, native validation and one combined owner build/checklist without intermediate checkpoint approvals. New physical factory sessions, versioned quarter-tank delivery, national Fuel refueling with prepaid fractional credit, native ledger/entity receipts and service locks are implemented for validation. Refueling recognizes the three existing City A factory slots; new delivery remains the original surveyed plot1 bay. Preserve original purchase histories and existing 033/034 recovery. No live world or installed mods touched.
+
+Required gates: actual driving departures with original source intact; native purchase/refueling tests and separate-JVM restart; physical authority/UI refusal; retained shop, TaCZ-only, crowbar and purchase-recovery regression suites; final artifact/source verification. Current source is not an accepted owner release. SEC-01 remains UNRESOLVED / HIGH PRIORITY until installed-pack acceptance. No repeated accepted purchase tests, manual imports, multiplayer or Blender work.
+
 ## ECO-02 / ECO-03 — 049 refueling accounting checkpoint (not a release)
 
 Owner approved national Fuel at factory service counters, 25%/fill actions and quarter-tank new delivery. Implemented versioned pure quote policy and adapter-independent transaction protocol. Provisional full tanks cost 32 Fuel pickup / 80 LAV; fractional prepaid credit prevents repeated top-off rounding. Old purchase catalogs remain unchanged. [Contract and integration requirements](VEHICLE_REFUELING_049_CONTRACT.md).

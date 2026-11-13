@@ -33,7 +33,9 @@ import java.util.*;
 
 /** One scenario, executed in explicitly separate seed and verify JVMs.
  * The seed phase is fixture preparation, not a claim that restart verification passed.
- * Real purchases are never replaced by manually tagged entities or NBT reconstruction.
+ * The retained historical paid path uses an exact-world fixture bridge after 050
+ * moved public aliases to physical sessions. No manually tagged entities or NBT
+ * reconstruction replace that old payment/spawn path. This does not qualify 050 purchasing.
  */
 @GameTestHolder("catancraft_sbw_procurement35") @PrefixGameTestTemplate(false)
 public final class SbwProcurement35Tests {
@@ -158,7 +160,7 @@ public final class SbwProcurement35Tests {
             for(Purchase p:PURCHASES){
                 positionPlayer(p.player());player.getInventory().clearContent();
                 CompoundTag before=nation.save().copy();Set<UUID> existing=purchasedEntities().keySet();
-                h.assertTrue(server.getCommands().getDispatcher().execute("nation procure "+p.key(),player.createCommandSourceStack())==1,"Actual procurement command refused "+p.key());
+                h.assertTrue(NationProcurement.legacyFixturePurchase(player,p.key())==1,"Historical paid procurement fixture refused "+p.key());
                 assertCharge(before,p);h.assertTrue(player.getInventory().isEmpty()&&drops().isEmpty(),"Procurement awarded a portable item or dropped an item");
                 Map<UUID,Entity> after=purchasedEntities();Set<UUID> created=new HashSet<>(after.keySet());created.removeAll(existing);
                 h.assertTrue(created.size()==1,"Real procurement did not create exactly one purchased vehicle");

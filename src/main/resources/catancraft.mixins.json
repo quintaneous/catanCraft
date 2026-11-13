@@ -12,7 +12,9 @@
     "SbwHandheldRecipesMixin",
     "SbwHandheldLootMixin",
     "SbwVehicleDismount47Mixin",
-    "SbwVoluntaryExit47Mixin"
+    "SbwVoluntaryExit47Mixin",
+    "SbwVehicleService50Mixin",
+    "SbwVehicleServiceEnergy50Mixin"
   ],
   "injectors": {
     "defaultRequire": 0

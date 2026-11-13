@@ -23,7 +23,7 @@ public final class WeaponShopScreen extends Screen {
     private record Action(Button button, int y) {}
 
     public WeaponShopScreen(List<String> lines) {
-        super(Component.literal("Weapon counter")); this.lines = List.copyOf(lines);
+        super(Component.literal(lines.contains("V|vehicle_shop") ? "Vehicle Factory" : "Weapon counter")); this.lines = List.copyOf(lines);
     }
     @Override protected void init() {
         text.clear(); actions.clear();

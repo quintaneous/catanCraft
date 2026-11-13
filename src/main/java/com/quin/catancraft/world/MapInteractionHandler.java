@@ -25,6 +25,7 @@ public final class MapInteractionHandler {
 
         if (event.isCanceled()) return;
         BlockPos pos = event.getPos();
+        if (PhysicalVehicleShop50.openCounter(player, pos)) { finish(event); return; }
         if (PhysicalWeaponShop40.openCounter(player, pos)) { finish(event); return; }
         if (!event.getLevel().getBlockState(pos).is(Blocks.LECTERN)) return;
 

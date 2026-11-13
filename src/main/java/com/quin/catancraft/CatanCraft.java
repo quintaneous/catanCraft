@@ -62,6 +62,7 @@ public final class CatanCraft {
     @SubscribeEvent
     public void onServerStopped(net.minecraftforge.event.server.ServerStoppedEvent event) {
         com.quin.catancraft.world.PhysicalWeaponShop40.stopped(event.getServer());
+        com.quin.catancraft.world.PhysicalVehicleShop50.stopped(event.getServer());
         com.quin.catancraft.world.NativeWeapon42.stopped(event.getServer());
     }
 
