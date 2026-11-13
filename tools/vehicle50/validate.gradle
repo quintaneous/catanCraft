@@ -3,7 +3,7 @@ import groovy.json.JsonSlurper
 
 beforeProject { project ->
     def namespace = project.findProperty('gameTestNamespace')
-    if (!(namespace in ['catancraft_vehicle50','catancraft_service50','catancraft_service50_restart','catancraft_factory50']) || project.findProperty('controlledGameTests') != 'true') {
+    if (!(namespace in ['catancraft_vehicle50_road','catancraft_vehicle50','catancraft_service50','catancraft_service50_restart','catancraft_factory50']) || project.findProperty('controlledGameTests') != 'true') {
         throw new GradleException('Vehicle50 requires its explicit controlled native namespace')
     }
     def restartPhase = null

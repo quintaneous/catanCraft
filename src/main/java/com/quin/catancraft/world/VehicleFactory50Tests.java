@@ -45,6 +45,14 @@ public final class VehicleFactory50Tests {
                 h.assertTrue(lane.contains(Vec3.atCenterOf(p)),"Refueling lane omits authored local cell after rotation");
             }
         }
+        List<AABB> serviceAreas=VehicleFactory50.serviceAreas(anchor);
+        h.assertTrue(serviceAreas.size()==2&&serviceAreas.get(1).equals(new AABB(-793,81,-784,-787,86,-764)),"Original plot1 roadside service rectangle changed");
+        AABB roadBody=new AABB(-792,81.03,-778,-789,84.3,-770);
+        h.assertTrue(VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(roadBody)),"Road-aligned vehicle body was refused");
+        h.assertTrue(!VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(new AABB(-795,81.03,-775,-791,84,-772))),"Vehicle bridging lane-road gap was accepted");
+        h.assertTrue(!VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(roadBody,new AABB(-810,81.03,-775,-805,84,-772))),"Separate parts in separate service rectangles were accepted");
+        h.assertTrue(!VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(new AABB(-792,81.03,-785,-789,84,-770))),"Roadside footprint beyond source service limit was accepted");
+        for(String plot:List.of("plot_3","plot_4"))h.assertTrue(VehicleFactory50.serviceAreas(IndustrialPlotService.anchorFor(BuildingType.VEHICLE_FACTORY,plot,definition)).size()==1,"Unsure external road was enabled for another plot");
         int count=0;
         for(int x=10;x<=29;x++)for(int z=12;z<=18;z++){
             h.assertTrue(volume.at(x,1,z).isFaceSturdy(h.getLevel(),h.absolutePos(BlockPos.ZERO),Direction.UP),"Authored lane floor changed");

@@ -103,9 +103,11 @@ final class VehicleFactory50 {
     }
     static List<Entity> serviceVehicles(ServerPlayer player,Binding binding)throws IOException {
         Binding current=revalidate(player,binding);ServerLevel level=player.serverLevel();
-        AABB area=serviceArea(current.anchor());loadedArea(level,area);
+        List<AABB> areas=serviceAreas(current.anchor());for(AABB area:areas)loadedArea(level,area);
+        Map<UUID,Entity> candidates=new LinkedHashMap<>();
+        for(AABB area:areas)for(Entity vehicle:level.getEntities((Entity)null,area,e->e.isAlive()))candidates.put(vehicle.getUUID(),vehicle);
         List<Entity> result=new ArrayList<>();
-        for(Entity vehicle:level.getEntities((Entity)null,area,e->e.isAlive())) {
+        for(Entity vehicle:candidates.values()) {
             if(specOrNull(vehicle)==null)continue;
             try{checkVehicleCurrent(level,current,vehicle);result.add(vehicle);}catch(IOException unavailable){/* unavailable vehicles are not offered */}
         }
@@ -128,15 +130,12 @@ final class VehicleFactory50 {
             throw new IOException("Stop the selected vehicle before refueling.");
         NativeVehicleBay46.Spec spec=specOrNull(vehicle);if(spec==null)throw new IOException("Unsupported vehicle type.");
         verifyDefinition(level,spec);
-        AABB area=serviceArea(binding.anchor());loadedArea(level,area);
+        List<AABB> areas=serviceAreas(binding.anchor());for(AABB area:areas)loadedArea(level,area);
         try{
             List<AABB> bounds=NativeVehicleDriving48.bounds(vehicle);
             if(bounds.size()!=spec.boxes())throw new IOException("Native vehicle geometry changed.");
-            for(AABB box:bounds){
-                if(!finite(box)||box.getXsize()<=0||box.getYsize()<=0||box.getZsize()<=0||!contains(area,box))
-                    throw new IOException("Park the whole vehicle inside the marked factory lane.");
-                clearBox(level,binding.anchor(),box,vehicle);
-            }
+            if(!insideOneServiceArea(areas,bounds))throw new IOException("Park the whole vehicle inside the factory lane or its approved roadside service area.");
+            for(AABB box:bounds)clearBox(level,binding.anchor(),box,vehicle);
         }catch(IOException e){throw e;}catch(Exception e){throw new IOException("Cannot verify native vehicle service geometry.",e);}
     }
     /** This is the existing surveyed straight lane, not a new placed pad. */
@@ -144,6 +143,19 @@ final class VehicleFactory50 {
         if(anchor.rotation()!=0&&anchor.rotation()!=180)throw new IllegalArgumentException("Unsupported factory orientation");
         return anchor.rotation()==0?new AABB(anchor.x()-19,anchor.y(),anchor.z()-3,anchor.x()+1,anchor.y()+5,anchor.z()+4)
                 :new AABB(anchor.x(),anchor.y(),anchor.z()-3,anchor.x()+20,anchor.y()+5,anchor.z()+4);
+    }
+    /** The adjacent road rectangle is surveyed only for original City A plot1.
+     * Keep the two regions separate: their bounding union would admit the gap. */
+    static List<AABB> serviceAreas(MapAnchor anchor){
+        AABB lane=serviceArea(anchor);
+        if(anchor.x()==-795&&anchor.y()==81&&anchor.z()==-774&&anchor.rotation()==0)
+            return List.of(lane,new AABB(anchor.x()+2,anchor.y(),anchor.z()-10,anchor.x()+8,anchor.y()+5,anchor.z()+10));
+        return List.of(lane);
+    }
+    static boolean insideOneServiceArea(List<AABB> areas,List<AABB> bounds){
+        if(areas==null||areas.isEmpty()||bounds==null||bounds.isEmpty())return false;
+        for(AABB box:bounds)if(box==null||!finite(box)||box.getXsize()<=0||box.getYsize()<=0||box.getZsize()<=0)return false;
+        return areas.stream().anyMatch(area->bounds.stream().allMatch(box->contains(area,box)));
     }
     static NativeVehicleBay46.Spec spec(String offer)throws IOException {
         return switch(offer){case "pickup"->NativeVehicleBay46.PICKUP;case "lav150"->NativeVehicleBay46.LAV;default->throw new IOException("Unknown vehicle offer.");};
@@ -191,8 +203,8 @@ final class VehicleFactory50 {
                 new VehicleBay45.Cell(a.x(),a.y(),a.z()),a.rotation(),new VehicleBay45.Cell(-11,1,-6),binding.level());
         // Explicit broad masks include boarding/departure space; current source and
         // native geometry validation are still mandatory, not implied by masks.
-        return new VehicleBay45.Bay("plot1_native50",f,"superbwarfare:"+spec.id(),spec.sha(),
-                new VehicleBay45.Position(-11.5,.1,.5),270,support,clearance,clearance,clearance);
+        return new VehicleBay45.Bay("plot1_road_south50",f,"superbwarfare:"+spec.id(),spec.sha(),
+                new VehicleBay45.Position(4.5,.1,.5),0,support,clearance,clearance,clearance);
     }
     private static void validateBayCurrent(ServerPlayer player,Binding binding,VehicleBay45.Bay bay,Entity ignored)throws IOException {
         ServerLevel level=player.serverLevel();MapAnchor a=binding.anchor();
@@ -203,7 +215,8 @@ final class VehicleFactory50 {
         Entity candidate=null;
         try{
             var s=bay.vehicle().endsWith(":sodayo_pick_up")?NativeVehicleBay46.PICKUP:NativeVehicleBay46.LAV;
-            candidate=NativeVehicleBay46.create(level,s);NativeVehicleBay46.pose(candidate,a,0);
+            candidate=NativeVehicleBay46.create(level,s);var spawn=bay.worldSpawn();
+            NativeVehicleBay46.pose(candidate,new Vec3(spawn.x(),spawn.y(),spawn.z()),bay.worldHeading());
             for(AABB box:NativeVehicleBay46.boxes(candidate,s))clearBox(level,a,box,ignored);
         }catch(IOException e){throw e;}catch(Exception e){throw new IOException("Cannot verify initial native vehicle geometry.",e);}
         finally{if(candidate!=null)candidate.discard();}

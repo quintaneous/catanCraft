@@ -228,11 +228,14 @@ public final class PhysicalVehicleShop50 {
                 rows.add("A|nation procure vehicle recover " + session.id + "." + operation.operation() + "|Continue original operation");
             }
         } else {
-            rows.add("P|Buy a vehicle — arrives with 25% fuel");
-            for (String offer : List.of("pickup", "lav150"))
-                rows.add("A|nation procure vehicle review " + session.id + "." + offer + "|Review " + title(offer) + " purchase");
+            boolean deliveryHere = "plot_1".equals(session.factory.identity().getString("plot"));
+            if (deliveryHere) {
+                rows.add("P|Buy a vehicle — arrives with 25% fuel");
+                for (String offer : List.of("pickup", "lav150"))
+                    rows.add("A|nation procure vehicle review " + session.id + "." + offer + "|Review " + title(offer) + " purchase");
+            } else rows.add("D|Refueling is available here. New deliveries require the original Vehicle Factory location.");
             rows.add("P|Refuel a parked vehicle");
-            rows.add("D|Park your vehicle in the factory service area, stop and exit it, then use this counter.");
+            rows.add("D|" + (deliveryHere ? "Park in the service lane or on the road immediately outside this factory." : "Park in this factory’s service lane.") + " Stop and exit, then use this counter.");
             List<Entity> vehicles = VehicleFactory50.serviceVehicles(session.player, session.factory);
             int pages = Math.max(1, (vehicles.size() + PAGE_SIZE - 1) / PAGE_SIZE);
             if (session.page >= pages) session.page = pages - 1;
@@ -265,7 +268,7 @@ public final class PhysicalVehicleShop50 {
         rows.add("P|" + title(quote.offer()) + (purchase ? "" : " · " + quote.vehicle().toString().substring(0, 8)));
         if (purchase) {
             rows.add("G|National cost: " + DefenseMenuRows.safe(quote.price().describe()));
-            rows.add("D|Includes 25% fuel. Delivery uses the factory's marked bay.");
+            rows.add("D|Includes 25% fuel. Your vehicle arrives facing along the road outside this factory.");
         } else {
             rows.add("P|Fuel: " + percent(quote.beforeEnergy(), quote.capacity()) + " → " + percent(quote.afterEnergy(), quote.capacity()));
             rows.add("G|National Fuel charge: " + quote.fuelCost());
