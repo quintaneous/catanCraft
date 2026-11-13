@@ -1,3 +1,9 @@
+## ECO-02 / ECO-03 — 049 refueling accounting checkpoint (not a release)
+
+Owner approved national Fuel at factory service counters, 25%/fill actions and quarter-tank new delivery. Implemented versioned pure quote policy and adapter-independent transaction protocol. Provisional full tanks cost 32 Fuel pickup / 80 LAV; fractional prepaid credit prevents repeated top-off rounding. Old purchase catalogs remain unchanged. [Contract and integration requirements](VEHICLE_REFUELING_049_CONTRACT.md).
+
+Java 17 standalone validation passed 20,031 policy assertions and 29 transaction fault-model assertions. Tests cover exact rational conservation, split fills, overflow/invalid inputs, stale energy/meter, conflicting identities, interrupted debit/addition and replay after consumption. These are not native GameTests or a full Forge build; 048's 122-phase result is historical, not rerun here. No JAR/version change. Production ledger/entity adapter, service-area reservation/authority, factory menu and new delivery catalog remain unimplemented. Driving departures remain held. SEC-01 remains UNRESOLVED / HIGH PRIORITY. No owner installation, live world/mod changes or repeated acceptance tests.
+
 ## ECO-03 — 0.1.48 native driving observations and energy gap
 
 Exact source `e7c41e40071027ee85d3f1bc2ba1c0ce8bdba528` passed **122/122 phase executions, 120 distinct scenarios, zero failures** in [run 43515762036](https://github.com/quintaneous/catanCraft/actions/runs/43515762036): four new actual-driving cases and all 118 retained 047 phases. Downloaded source/JAR, all 538 source files and raw trajectories/native proofs independently verified. All 682 pre-existing 047 classes, 244 data entries and mixin bytes remain unchanged. [Checkpoint/hashes](VEHICLE_DRIVING_048_CHECKPOINT.md), [machine evidence](evidence/vehicle48_validation.json), [raw evidence](evidence/vehicle48_run1_evidence.zip).
