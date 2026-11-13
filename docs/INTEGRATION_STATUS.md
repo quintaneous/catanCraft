@@ -1,3 +1,13 @@
+## ECO-03 — 0.1.48 native driving observations and energy gap
+
+Exact source `e7c41e40071027ee85d3f1bc2ba1c0ce8bdba528` passed **122/122 phase executions, 120 distinct scenarios, zero failures** in [run 43515762036](https://github.com/quintaneous/catanCraft/actions/runs/43515762036): four new actual-driving cases and all 118 retained 047 phases. Downloaded source/JAR, all 538 source files and raw trajectories/native proofs independently verified. All 682 pre-existing 047 classes, 244 data entries and mixin bytes remain unchanged. [Checkpoint/hashes](VEHICLE_DRIVING_048_CHECKPOINT.md), [machine evidence](evidence/vehicle48_validation.json), [raw evidence](evidence/vehicle48_run1_evidence.zip).
+
+Real movement packets, first-passenger drivers and natural server physics produced pickup displacement 18.68 blocks/6.20° heading change and LAV displacement 19.91 blocks/10.83° in both authored orientations, with native energy consumption and all 18,400 source cells unchanged. All four observations reached the authored boundary before a complete departure turn. **Driving-route and full bay qualification remain held**; these are passing bounded observations, not route completion. Next test deliberate low-speed/braked steering and both departures without changing artwork.
+
+Read-only 047 native saves independently show purchased vehicles begin with zero native energy; the national Fuel charge has no conversion to native vehicle energy. The 048 one-million-energy fixture seed is synthetic. Delivery charge/refueling needs an explicit qualified contract before public counter/common-command wiring; no prices, historical purchases or production fuel grants changed. [Source/charging audit](VEHICLE_DRIVING_048_SOURCE_AUDIT.md), [energy readback](evidence/vehicle48_energy_readback.json).
+
+No live world or installed mods touched; no intermediate installation. Preserve accepted City A, 033/034 recovery, TaCZ-only handhelds and one combined owner build/checklist. SEC-01 remains **UNRESOLVED / HIGH PRIORITY** pending installed-pack acceptance.
+
 ## ECO-03 / SEC-01 — 0.1.47 native vehicle saves and safe pickup exits
 
 Exact source `125cc823dfba778397b6d73e24fc7d919d319ed8` passed **118/118 native phase executions, 116 distinct scenarios, zero failures** in [run 43278587028](https://github.com/quintaneous/catanCraft/actions/runs/43278587028). Downloaded source/JAR and all 525 source files independently verified; all 661 pre-existing 046 classes and 235 data entries remain byte-identical. [Checkpoint, hashes and complete attempt history](VEHICLE_NATIVE_047_CHECKPOINT.md), [machine evidence](evidence/vehicle47_validation.json), [raw logs/native files](evidence/vehicle47_run4_evidence.zip).

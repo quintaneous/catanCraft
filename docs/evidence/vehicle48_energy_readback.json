@@ -1,0 +1,199 @@
+{
+  "source": "125cc823dfba778397b6d73e24fc7d919d319ed8",
+  "original_run": 43278587028,
+  "original_artifact_sha256": "5e98f23808802f9d2144b78daabfa531f6ff7f33272c97dbfdb904d9f96d943e",
+  "snapshot_rows": [
+    {
+      "proof": "catancraft_vehicle47_prices_verified.dat",
+      "proof_sha256": "45c69ed08a3c354ff8f455d71d191cf0bebd8efb90709df67cfbea1224a49076",
+      "entity": "55f36d53-a84d-4a9b-99f7-0b525484671b",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_prices_verified.dat",
+      "proof_sha256": "45c69ed08a3c354ff8f455d71d191cf0bebd8efb90709df67cfbea1224a49076",
+      "entity": "73bab99a-4c24-4f81-8ca7-6c29a604f91a",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_debit_verified.dat",
+      "proof_sha256": "68712d92e88a568a894d6f2caba6ceb8f76c75c6fe052c7040491ccee6211a3f",
+      "entity": "aebac8cc-f4d3-4216-b63f-3713ddbdd97b",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_debit_verified.dat",
+      "proof_sha256": "68712d92e88a568a894d6f2caba6ceb8f76c75c6fe052c7040491ccee6211a3f",
+      "entity": "62d47218-dcaf-4dad-8459-ca841eaff286",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_save_verified.dat",
+      "proof_sha256": "b09a77abfb3396ec64ec7879dd78e58826c19d303049cec0adb9ee4c8a96220c",
+      "entity": "29fb3520-06f4-468d-ae3a-7891b2b6a813",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_save_verified.dat",
+      "proof_sha256": "b09a77abfb3396ec64ec7879dd78e58826c19d303049cec0adb9ee4c8a96220c",
+      "entity": "edfe615f-69c4-4e28-8180-3b3b21c6fd9b",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_save_verified.dat",
+      "proof_sha256": "b09a77abfb3396ec64ec7879dd78e58826c19d303049cec0adb9ee4c8a96220c",
+      "entity": "237595c5-f5e7-42d2-b2de-1a392aad69a7",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_holds_verified.dat",
+      "proof_sha256": "a318f49fa5bdf380c6a6b62ca3a90ccae97c2859a0fcd18d97aaeba4c6be8fbf",
+      "entity": "d112f518-ccbc-4a69-b167-01427bbcbad4",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_holds_verified.dat",
+      "proof_sha256": "a318f49fa5bdf380c6a6b62ca3a90ccae97c2859a0fcd18d97aaeba4c6be8fbf",
+      "entity": "6eab284b-940c-44f3-9a14-b804e70bbf21",
+      "energy": 0,
+      "power": 0.0
+    },
+    {
+      "proof": "catancraft_vehicle47_holds_verified.dat",
+      "proof_sha256": "a318f49fa5bdf380c6a6b62ca3a90ccae97c2859a0fcd18d97aaeba4c6be8fbf",
+      "entity": "a6115ea4-e003-4fbf-be39-a19a3449025a",
+      "energy": 0,
+      "power": 0.0
+    }
+  ],
+  "region_collections": [
+    {
+      "namespace": "catancraft_vehicle47",
+      "files": [
+        {
+          "name": "r.-1.-1.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.-1.0.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.-5.-5.mca",
+          "sha256": "d0211cbac51e6c8512650f4d87e676483739014cd407072fc239abee3d9ff3e5",
+          "bytes": 20480
+        },
+        {
+          "name": "r.-5.-6.mca",
+          "sha256": "8625ae849881107293967c8c85baa1e1dd67566ef5067f3c36395f394aa82e02",
+          "bytes": 32768
+        },
+        {
+          "name": "r.-5.-7.mca",
+          "sha256": "349b43dc4c74232438dd82d609545233f7b7c98c00ec8276c79704cfc00ceb64",
+          "bytes": 24576
+        },
+        {
+          "name": "r.0.-1.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.0.0.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      ],
+      "entities": [
+        {
+          "entity": "29fb3520-06f4-468d-ae3a-7891b2b6a813",
+          "type": "superbwarfare:sodayo_pick_up",
+          "energy": 0
+        },
+        {
+          "entity": "edfe615f-69c4-4e28-8180-3b3b21c6fd9b",
+          "type": "superbwarfare:lav_150",
+          "energy": 0
+        },
+        {
+          "entity": "237595c5-f5e7-42d2-b2de-1a392aad69a7",
+          "type": "superbwarfare:sodayo_pick_up",
+          "energy": 0
+        },
+        {
+          "entity": "aebac8cc-f4d3-4216-b63f-3713ddbdd97b",
+          "type": "superbwarfare:sodayo_pick_up",
+          "energy": 0
+        },
+        {
+          "entity": "62d47218-dcaf-4dad-8459-ca841eaff286",
+          "type": "superbwarfare:sodayo_pick_up",
+          "energy": 0
+        },
+        {
+          "entity": "d112f518-ccbc-4a69-b167-01427bbcbad4",
+          "type": "superbwarfare:sodayo_pick_up",
+          "energy": 0
+        },
+        {
+          "entity": "6eab284b-940c-44f3-9a14-b804e70bbf21",
+          "type": "superbwarfare:lav_150",
+          "energy": 0
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_vehicle47_restart",
+      "files": [
+        {
+          "name": "r.-1.-1.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.-1.0.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.-5.-7.mca",
+          "sha256": "c758b24f23c0f2b3e8a2149ccd959aa63073cfe86b6b0c7c48ab146c0d712478",
+          "bytes": 24576
+        },
+        {
+          "name": "r.0.-1.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.0.0.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        }
+      ],
+      "entities": [
+        {
+          "entity": "729ad3b4-5ed1-49e0-9a9f-6732222f9ee4",
+          "type": "superbwarfare:lav_150",
+          "energy": 0
+        },
+        {
+          "entity": "76f54bb4-1e47-4b2b-b189-dec991bfd79c",
+          "type": "superbwarfare:sodayo_pick_up",
+          "energy": 0
+        }
+      ]
+    }
+  ],
+  "interpretation": "Purchased vehicles in retained controlled047 evidence contain zero native energy. Collections overlap; not19distinct vehicles. National FUEL is not converted by existing delivery.048energyseed is synthetic, notproductionfuel policy."
+}
