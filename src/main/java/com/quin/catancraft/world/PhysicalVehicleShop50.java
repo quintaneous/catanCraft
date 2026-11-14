@@ -220,6 +220,8 @@ public final class PhysicalVehicleShop50 {
         if (!notice.isEmpty()) rows.add("Y|" + DefenseMenuRows.safe(notice));
         rows.add("D|" + DefenseMenuRows.safe(session.factory.title()));
         rows.add("G|National Fuel available: " + ShopFacility40.leader(session.player).resource(ResourceType.FUEL));
+        for (var operation : VehicleService50.otherFactoryOperations(session.player,session.factory))
+            rows.add("D|" + DefenseMenuRows.safe(operation.description()));
         List<VehicleService50.Pending> pending = VehicleService50.pending(session.player, session.factory);
         if (!pending.isEmpty()) {
             rows.add("Y|Continue unfinished operations before placing another order.");
@@ -228,12 +230,12 @@ public final class PhysicalVehicleShop50 {
                 rows.add("A|nation procure vehicle recover " + session.id + "." + operation.operation() + "|Continue original operation");
             }
         } else {
-            boolean deliveryHere = "plot_1".equals(session.factory.identity().getString("plot"));
+            boolean deliveryHere = VehicleFactory50.deliveryAvailable(session.factory);
             if (deliveryHere) {
                 rows.add("P|Buy a vehicle — arrives with 25% fuel");
                 for (String offer : List.of("pickup", "lav150"))
                     rows.add("A|nation procure vehicle review " + session.id + "." + offer + "|Review " + title(offer) + " purchase");
-            } else rows.add("D|Refueling is available here. New deliveries require the original Vehicle Factory location.");
+            } else rows.add("D|Refueling is available here. This factory delivery area needs qualification.");
             rows.add("P|Refuel a parked vehicle");
             rows.add("D|" + (deliveryHere ? "Park in the service lane or on the road immediately outside this factory." : "Park in this factory’s service lane.") + " Stop and exit, then use this counter.");
             List<Entity> vehicles = VehicleFactory50.serviceVehicles(session.player, session.factory);

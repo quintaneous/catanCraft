@@ -52,14 +52,18 @@ public final class VehicleFactory50Tests {
         h.assertTrue(!VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(new AABB(-795,81.03,-775,-791,84,-772))),"Vehicle bridging lane-road gap was accepted");
         h.assertTrue(!VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(roadBody,new AABB(-810,81.03,-775,-805,84,-772))),"Separate parts in separate service rectangles were accepted");
         h.assertTrue(!VehicleFactory50.insideOneServiceArea(serviceAreas,List.of(new AABB(-792,81.03,-785,-789,84,-770))),"Roadside footprint beyond source service limit was accepted");
-        for(String plot:List.of("plot_3","plot_4"))h.assertTrue(VehicleFactory50.serviceAreas(IndustrialPlotService.anchorFor(BuildingType.VEHICLE_FACTORY,plot,definition)).size()==1,"Unsure external road was enabled for another plot");
+        for(String plot:List.of("plot_3","plot_4"))h.assertTrue(VehicleFactory50.serviceAreas(IndustrialPlotService.anchorFor(BuildingType.VEHICLE_FACTORY,plot,definition)).size()==2,"Reviewed factory slot lost its separate lane and roadside service areas");
         int count=0;
         for(int x=10;x<=29;x++)for(int z=12;z<=18;z++){
             h.assertTrue(volume.at(x,1,z).isFaceSturdy(h.getLevel(),h.absolutePos(BlockPos.ZERO),Direction.UP),"Authored lane floor changed");
             for(int y=2;y<=6;y++){h.assertTrue(volume.at(x,y,z).isAir(),"Authored lane clearance changed");count++;}
         }
         h.assertTrue(count==700,"Lane clearance inventory changed");
-        refuse(()->VehicleFactory50.canonical(MapDefinitionManager.territory("i")));
+        VehicleFactory50.canonical(MapDefinitionManager.territory("i"));
+        var gson=new com.google.gson.Gson();
+        var changed=gson.toJsonTree(MapDefinitionManager.territory("i")).getAsJsonObject();
+        changed.getAsJsonObject("managementAnchor").addProperty("x",0);
+        refuse(()->VehicleFactory50.canonical(gson.fromJson(changed,TerritoryDefinition.class)));
         h.succeed();
     }
     @GameTest(template="townhall_state_empty",batch="factory50_access",timeoutTicks=300)

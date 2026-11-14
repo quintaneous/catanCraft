@@ -120,6 +120,20 @@ public final class VehicleService50 {
             if(q.nation().equals(binding.nation())&&q.facility().equals(binding.identity())&&needsRecovery(dir,q,CatanSavedData.get(player.server)))result.add(new Pending(q.id(),(q.kind()==Kind.PURCHASE?"Vehicle purchase: ":"Refuel: ")+q.offer()));}}
         result.sort(Comparator.comparing(p->p.operation().toString()));return List.copyOf(result);
     }
+    /** Location hints only. Do not migrate old intents, change the local pending policy,
+     * or reset the nation/vehicle-scoped fractional Fuel meter. */
+    public static List<Pending> otherFactoryOperations(ServerPlayer player,VehicleFactory50.Binding binding)throws IOException {
+        binding=VehicleFactory50.revalidate(player,binding);Path dir=directory(binding.root());
+        List<Pending> result=new ArrayList<>();int count=0;
+        try(var files=Files.newDirectoryStream(dir,"*.quote")){for(Path file:files){
+            if(++count>LIMIT)throw new IOException("Vehicle history limit reached");Quote q=readQuote(file);
+            if(q.actor().equals(player.getUUID())&&q.nation().equals(binding.nation())&&!q.facility().equals(binding.identity())
+                    &&needsRecovery(dir,q,CatanSavedData.get(player.server)))
+                result.add(new Pending(q.id(),(q.kind()==Kind.PURCHASE?"Unfinished vehicle purchase at ":"Unfinished refuel at ")
+                        +VehicleSites52.origin(q.facility())+" · recorded level "+q.facility().getInt("level")+". Original factory checks still apply."));
+        }}
+        result.sort(Comparator.comparing(p->p.operation().toString()));return List.copyOf(result);
+    }
     private static void ensureNoPending(ServerPlayer player,VehicleFactory50.Binding binding)throws IOException{if(!pending(player,binding).isEmpty())throw new IOException("Recover the unfinished factory operation before starting another");}
     private static VehicleFactory50.Binding guard(ServerPlayer player,Quote q,boolean recovery)throws IOException{
         var binding=VehicleFactory50.recheck(player,q.facility());

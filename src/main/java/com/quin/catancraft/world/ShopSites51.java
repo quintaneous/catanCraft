@@ -26,6 +26,10 @@ final class ShopSites51 {
 
     private ShopSites51() {}
 
+    static Collection<TerritoryDefinition> reviewedDefinitions() throws IOException {
+        return reviewed().values();
+    }
+
     private static Map<String, TerritoryDefinition> reviewed() throws IOException {
         if (reviewed != null) return reviewed;
         try (var stream = ShopSites51.class.getResourceAsStream("/data/catancraft/maps/season1_river_bridges_v3.json")) {
