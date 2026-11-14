@@ -64,7 +64,7 @@ public final class PhysicalWeaponShop40 {
     public static boolean openCounter(ServerPlayer player, BlockPos pos) {
         if (!ShopFacility40.recognizes(player, pos)) return false;
         // Ordinary members retain the existing management lectern/dashboard interaction.
-        if (pos.equals(ShopFacility40.STARTER)) {
+        if (ShopFacility40.starterCounter(player, pos)) {
             var nation = CatanSavedData.get(player.server).nationForPlayer(player.getUUID());
             if (nation == null || !nation.isLeader(player.getUUID())) return false;
         }
@@ -77,7 +77,7 @@ public final class PhysicalWeaponShop40 {
             menu(session, "");
         } catch (IOException | RuntimeException failure) {
             String message = message(failure);
-            if (pos.equals(ShopFacility40.STARTER)) NationDashboard.open(player, message);
+            if (ShopFacility40.starterCounter(player, pos)) NationDashboard.open(player, message);
             else player.sendSystemMessage(Component.literal(message));
         }
         return true;
@@ -194,6 +194,7 @@ public final class PhysicalWeaponShop40 {
         return ShopPurchase40.runtime(session.player, original -> {
             check(session);
             // Historic facility and price stay frozen; the current physical counter must still be valid.
+            ShopFacility40.requireSameSite(session.facility.identity(), original);
             ShopFacility40.guard(session.player, original);
             if (supply != null) { ActiveWeaponStock44.requireCurrent(offer); NativeWeapon42.recheck(session.player.server, offer, supply); }
         });
@@ -211,7 +212,11 @@ public final class PhysicalWeaponShop40 {
                 : "Factory stock is unlocked by this local factory's completed level."));
         if (!pending.isEmpty()) {
             rows.add("Y|An earlier order is unfinished. Continue it before buying again.");
-            for (UUID id : pending) rows.add("A|nation procure shop recover " + id + "|Continue unfinished order");
+            for (UUID id : pending) {
+                var original = ShopPurchase40.inspect(environment(session), id);
+                rows.add("D|Order location: " + ShopSites51.origin(original.facility()));
+                rows.add("A|nation procure shop recover " + id + "|Continue unfinished order");
+            }
         } else {
             int pages = (ActiveWeaponStock44.offers().size() + PAGE_SIZE - 1) / PAGE_SIZE;
             rows.add("G|Stock page " + (session.page + 1) + " of " + pages);
@@ -238,7 +243,9 @@ public final class PhysicalWeaponShop40 {
     }
     private static RewardClaim43.Environment rewardEnvironment(Session session) {
         return RewardClaim43.runtime(session.player, original -> {
-            check(session); ShopFacility40.guard(session.player, original);
+            check(session);
+            ShopFacility40.requireSameSite(session.facility.identity(), original);
+            ShopFacility40.guard(session.player, original);
         });
     }
     private static List<RewardClaim43.View> rewardViews(Session session) throws IOException {
@@ -287,8 +294,11 @@ public final class PhysicalWeaponShop40 {
                 case "COMMITTED" -> rows.add("G|Already claimed. It will not be granted again.");
                 case "HELD" -> rows.add("Y|This claim needs recovery review. Its original record is preserved.");
                 case "RESERVED" -> {
-                    if (session.player.getUUID().equals(view.reservedActor()))
+                    if (session.player.getUUID().equals(view.reservedActor())) {
+                        var original = RewardClaim43.inspect(rewardEnvironment(session), view.selection());
+                        rows.add("D|Claim location: " + ShopSites51.origin(original.facility()));
                         rows.add("A|nation procure shop claimrecover " + rewardToken(session, view.selection()) + "|Continue original claim");
+                    }
                     else rows.add("Y|Reserved by the original claimant; it cannot be reassigned here.");
                 }
                 default -> throw new IOException("Unknown saved reward claim state.");

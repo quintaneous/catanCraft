@@ -16,6 +16,12 @@ java.toolchain.languageVersion = JavaLanguageVersion.of(17)
 
 def gameTestNamespace = providers.gradleProperty('gameTestNamespace').orElse('catancraft').get()
 def controlledGameTests = providers.gradleProperty('controlledGameTests').orElse('false').get().toBoolean()
+def controlledRunLabelProperty = providers.gradleProperty('controlledRunLabel')
+def controlledRunLabel = controlledRunLabelProperty.orElse('').get()
+if (controlledRunLabelProperty.isPresent()
+        && (!controlledGameTests || !(controlledRunLabel ==~ /[a-z0-9][a-z0-9_-]{0,63}/))) {
+    throw new GradleException('controlledRunLabel requires controlledGameTests=true and a safe 1-64 character lowercase label')
+}
 def service50Phase = providers.gradleProperty('service50Phase').orElse('').get()
 def service50Source = providers.gradleProperty('service50Source').orElse('').get()
 if (gameTestNamespace == 'catancraft_service50_restart' && (!controlledGameTests || !(service50Source ==~ /[0-9a-f]{40}/) || !(service50Phase in ['seed','verify']))) {
@@ -73,7 +79,12 @@ if (gameTestNamespace == 'catancraft_sbw_procurement35' && (!controlledGameTests
     throw new GradleException('SEC-01 restart test requires controlledGameTests=true and sbwRestartPhase=seed|verify')
 }
 if (!(gameTestNamespace ==~ /[a-z0-9_]+/)) throw new GradleException('Invalid GameTest namespace')
-def contractTestDirectory = project.file("build/controlled-${gameTestNamespace}-run")
+// A label selects a new isolated run family without relocating/resetting prior
+// worlds. Keep the immediate build/controlled-<namespace>-run suffix because
+// retained native fixtures verify that exact path shape. Seed/verify phases use
+// the same explicit label; another attempt must choose another label.
+def contractTestRoot = controlledRunLabel.isEmpty() ? 'build' : "build/validation-${controlledRunLabel}/build"
+def contractTestDirectory = project.file("${contractTestRoot}/controlled-${gameTestNamespace}-run")
 // Isolated generated flat fixture only; production world names are unchanged.
 def contractWorldName = gameTestNamespace == 'catancraft_startup34' ? 'CatanCraft_Season1_R7_Development' : 'world'
 
@@ -179,7 +190,7 @@ tasks.named('processResources', ProcessResources).configure {
 
 // Integration native tests run in a third disposable namespace/world, retaining both suites.
 tasks.named('processResources', ProcessResources).configure {
-    ['catancraft_vehicle50_road','catancraft_service50_restart','catancraft_vehicle50_ui','catancraft_vehicle50','catancraft_service50','catancraft_factory50','catancraft_vehicle48','catancraft_vehicle47','catancraft_vehicle47_restart','catancraft_vehicle47_exit','catancraft_vehicle46','catancraft_vehicle46_native','catancraft_economy45','catancraft_vehicle45','catancraft_active44','catancraft_handheld44','catancraft_supply43','catancraft_claims43','catancraft_claims43_tacz','catancraft_claims43_sbw','catancraft_native43_tacz_restart','catancraft_native43_sbw_restart','catancraft_terrain43','catancraft_stock42','catancraft_native42_combined','catancraft_native42_tacz','catancraft_native42_sbw','catancraft_native42_tacz_restart','catancraft_native42_sbw_restart','catancraft_rewards41','catancraft_rewards41_restart','catancraft_shop40','catancraft_shop40_restart','catancraft_snapshot39','catancraft_snapshot39_restart','catancraft_session38','catancraft_session38_restart','catancraft_objectives37','catancraft_siege36','catancraft_gate35','catancraft_sbw_procurement35','catancraft_producer_source34','catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
+    ['catancraft_shop51','catancraft_vehicle50_road','catancraft_service50_restart','catancraft_vehicle50_ui','catancraft_vehicle50','catancraft_service50','catancraft_factory50','catancraft_vehicle48','catancraft_vehicle47','catancraft_vehicle47_restart','catancraft_vehicle47_exit','catancraft_vehicle46','catancraft_vehicle46_native','catancraft_economy45','catancraft_vehicle45','catancraft_active44','catancraft_handheld44','catancraft_supply43','catancraft_claims43','catancraft_claims43_tacz','catancraft_claims43_sbw','catancraft_native43_tacz_restart','catancraft_native43_sbw_restart','catancraft_terrain43','catancraft_stock42','catancraft_native42_combined','catancraft_native42_tacz','catancraft_native42_sbw','catancraft_native42_tacz_restart','catancraft_native42_sbw_restart','catancraft_rewards41','catancraft_rewards41_restart','catancraft_shop40','catancraft_shop40_restart','catancraft_snapshot39','catancraft_snapshot39_restart','catancraft_session38','catancraft_session38_restart','catancraft_objectives37','catancraft_siege36','catancraft_gate35','catancraft_sbw_procurement35','catancraft_producer_source34','catancraft_startup34','catancraft_basic_natural34','catancraft_construction34','catancraft_producer_stability','catancraft_paid_recovery','catancraft_base_lifecycle','catancraft_economy_clock','catancraft_chunk_lifecycle','catancraft_wall_gui','catancraft_integration','catancraft_defense','catancraft_producer_r2','catancraft_houses','catancraft_sectors','catancraft_sectors_service','catancraft_sectors_p1','catancraft_sbw','catancraft_north_p2','catancraft_reservation_verifier','catancraft_sector_prices','catancraft_city_a_p3','catancraft_sector_connections','catancraft_sectors_natural','catancraft_sectors_group_proof','catancraft_city_a_group','catancraft_r7_production'].each { ns ->
         from('src/main/resources/data/catancraft/structures') {
             include 'townhall_state_empty.nbt'
             into "data/${ns}/structures"
@@ -200,9 +211,25 @@ def prepareContractGameTestWorld = tasks.register('prepareContractGameTestWorld'
     onlyIf { controlledGameTests }
     outputs.upToDateWhen { false }
     doLast {
+        def noLinks = { File file ->
+            for (def path = file.toPath().toAbsolutePath(); path != null; path = path.parent) {
+                if (java.nio.file.Files.isSymbolicLink(path)) throw new GradleException('Controlled GameTest refuses symlink paths: ' + file)
+            }
+        }
+        noLinks(contractTestDirectory)
+        if (!controlledRunLabel.isEmpty()
+                && project.file(minecraft.runs.gameTestServer.workingDirectory).toPath().toAbsolutePath().normalize()
+                != contractTestDirectory.toPath().toAbsolutePath().normalize()) {
+            throw new GradleException('A runtime init script overrides the labeled GameTest directory; adapt that script before running. No fixture files prepared.')
+        }
         def marker = new File(contractTestDirectory, '.catancraft-controlled-fixture-v1')
         def signature = 'CatanCraft synthetic flat fixture v1\n'
         def level = new File(contractTestDirectory, "${contractWorldName}/level.dat")
+        noLinks(marker)
+        noLinks(level)
+        if (marker.exists() && (!marker.isFile() || marker.text != signature)) {
+            throw new GradleException('Changed controlled GameTest marker; no files removed or replaced.')
+        }
         if (level.exists() && (!marker.isFile() || marker.text != signature)) {
             throw new GradleException('Unrecognized existing GameTest save; use a new build directory. No files removed.')
         }
@@ -215,6 +242,7 @@ def prepareContractGameTestWorld = tasks.register('prepareContractGameTestWorld'
         ]
         contractTestDirectory.mkdirs()
         def propertiesFile = new File(contractTestDirectory, 'server.properties')
+        noLinks(propertiesFile)
         if (propertiesFile.exists()) {
             def previous = new Properties()
             propertiesFile.withInputStream { previous.load(it) }
@@ -227,10 +255,13 @@ def prepareContractGameTestWorld = tasks.register('prepareContractGameTestWorld'
         }
         if (!marker.exists()) marker.text = signature
         def schematics = new File(contractTestDirectory, 'config/catancraft/schematics')
+        noLinks(schematics)
         schematics.mkdirs()
         ['thall4.schem', 'thall5.schem'].each { name ->
             def source = project.file('tests/fixtures/' + name)
             def destination = new File(schematics, name)
+            noLinks(source)
+            noLinks(destination)
             if (destination.exists() && !Arrays.equals(source.bytes, destination.bytes)) throw new GradleException('Changed GameTest schematic: ' + name)
             if (!destination.exists()) destination.bytes = source.bytes
         }
