@@ -1,4 +1,33 @@
-## ECO-02 / ECO-03 — 0.1.50 combined owner test build, 2026-11-14
+## INT-01 / INT-02 / INT-03 / ECO-03 — server-wide scope correction, 2026-11-14 UTC
+
+Owner testing in City D exposed a real coverage gap. Every future update now
+requires all eligible cities/facilities across the configured server, currently
+A–P. [Standing release contract, source audit and 16-city baseline](SERVER_WIDE_RELEASE_REQUIREMENTS.md)
+are recorded in AGENTS.md and priorities; issue #10 remains the canonical roadmap.
+Earlier city-limited release scope is superseded, with all safety and historical
+transaction-preservation requirements retained.
+
+Read-only audit at `6119e8c38135acba014bbee69bd5f0264363f2a7` confirms A-only shop/claim
+bindings, vehicle purchase/service authority and wall production providers.
+Several core progression paths are general, but shared world authorization and
+external asset prerequisites also need qualification. Rotating A test fixtures
+does not prove another city's source footprint. Preserve the accepted mixed A
+walls and old journals; expand using versioned site/provider contracts.
+
+**050 is blocked for the owner's City D checklist and is not server-wide ready.**
+Retrofitting these gaps takes priority over unrelated features. No move-to-A,
+reset/import, repeated accepted purchases, live-world/mod changes or new install
+is requested. This update changes instructions/status only: no gameplay code,
+build or native tests were run; no new JAR or owner acceptance is claimed.
+SEC-01 crowbar remains **UNRESOLVED / HIGH PRIORITY**. The evidence below remains
+valid only for its recorded source, fixtures and scope.
+
+Documentation validation: `git diff --check` passed; all 16 roster coordinates,
+rotations and unreserved industry slots matched the configured map; checked local
+document links resolved. No tracked runtime source or asset changed. These are
+documentation checks, not gameplay qualification.
+
+## ECO-02 / ECO-03 — 0.1.50 combined owner test build, 2026-11-14 (scope corrected above)
 
 Physical City A vehicle purchase/refueling is enabled: new original-factory deliveries face along the road with 25% fuel; all three recognized factory slots support national-Fuel service. Add 25% / Fill retains prepaid fractional credit and durable ledger/entity recovery with reservations. TaCZ-only shops/rewards, SEC-01 protections and 033/034 purchase/placement recovery are carried forward. [Release, exact hashes and limits](VEHICLE_SERVICE_050_RELEASE.md); [one solo checklist](VEHICLE_SERVICE_050_SOLO_CHECKLIST.md).
 

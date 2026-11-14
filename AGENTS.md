@@ -1,6 +1,34 @@
 # CatanCraft development instructions
 
-Continue the existing checkout and completed 0.1.28 integration. Inspect git status,
+## Standing owner requirement: server-wide updates
+
+Every gameplay update must work across the entire configured server, in every
+eligible territory and facility. The current map has 16 cities, A through P;
+the owner is currently testing in D. City A is not the default gameplay target.
+Normal ownership, resource availability and earned building tiers still apply.
+Resolve sites from map/facility data and qualify their actual geometry rather
+than adding city-specific patches or directing the owner to another city.
+
+Before calling an update complete or ready for owner testing, record coverage
+for every applicable city, orientation, facility slot and progression tier.
+Separate implemented code, static qualification, native test evidence and owner
+acceptance. A one-city prototype, rotated synthetic fixture or generic-looking
+method is not proof of server-wide readiness. Missing coverage blocks completion.
+Include cross-city ownership/receipt isolation, startup and restart/interruption
+recovery; preserve existing journals and accepted purchases. Keep owner testing
+to one focused solo checklist rather than asking them to repeat all 16 cities.
+
+See docs/SERVER_WIDE_RELEASE_REQUIREMENTS.md for the contract and audited 050
+coverage gaps. Retrofitting shops/reward claims, vehicle purchase/refueling and
+walls, plus resolving shared world/asset prerequisites, takes priority over
+unrelated new features. This instruction supersedes historical City-A-only
+rollout restrictions below; it does not authorize unvalidated placement, removal
+of safety checks, live-world changes, reset/import or repeated accepted tests.
+Issue #10 remains the canonical roadmap.
+
+## Continuing implementation and preservation rules
+
+Continue the existing checkout and delivered development history. Inspect git status,
 local history and remote development heads before editing; preserve newer commits,
 uncommitted work, release archives, immutable assets and transaction histories.
 Do not reset to v0.1-foundation, clone another project, merge into main, force-push,
@@ -84,10 +112,13 @@ existing journaled R5 public bootstrap resolves the 28 P3 source differences
 (the public operation itself has 1,661 writes). Never paste preview scenes.
 Showroom grants remain separate from no-grant progression.
 
-The bounded main-thread runner and actual copied-R7 production test now pass,
-including all eight sector purchases/upgrades and real SavedData readback.
-Keep the production resolver restricted to bound fresh-demo authorization,
-canonical City A and the exact approved P2/P3 scope. No other-city activation.
+Historical R7 checkpoint: the bounded main-thread runner and actual copied-R7
+production test passed, including all eight sector purchases/upgrades and real
+SavedData readback. That evidence covers canonical City A and its exact approved
+P2/P3 scope only. The standing server-wide requirement now supersedes the former
+"No other-city activation" rollout instruction. Qualify new sites and version
+their providers before enabling them; preserve the existing City A provider,
+immutable assets and schema-1 recovery semantics for retained transactions.
 Placement uses at most four writes per slice and a cooperative time budget;
 atomic preparation and saves are not hard latency-bounded. Actual R7 quote /
 preparation reached 7.188 seconds and a full slice 1.286 seconds. Do not erase

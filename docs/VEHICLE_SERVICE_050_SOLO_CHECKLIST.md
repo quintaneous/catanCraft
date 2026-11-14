@@ -1,5 +1,12 @@
 # CatanCraft 0.1.50 — one solo check
 
+> **Paused for City D:** this checklist incorrectly implied local shop/vehicle
+> access throughout the map. 050 binds those interfaces and wall purchases to
+> City A. Do not reinstall, relocate, rebuild or reset to complete these steps.
+> They are retained as historical test instructions; wait for the combined
+> server-wide fix and its focused replacement checklist. See
+> [the all-city requirement and baseline](SERVER_WIDE_RELEASE_REQUIREMENTS.md).
+
 This checks the combined TaCZ shop, purchased-vehicle crowbar protection and national-Fuel refueling update. Automated checks do not replace this first installed-pack check.
 
 ## Install once

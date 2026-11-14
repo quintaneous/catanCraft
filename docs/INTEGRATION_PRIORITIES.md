@@ -1,4 +1,22 @@
-# Current integration priorities — owner decision 2026-10-18
+# Current integration priorities
+
+## Standing owner correction — server-wide updates, 2026-11-14 UTC
+
+Every update must work throughout the configured server: currently all 16 cities
+A–P, subject to normal ownership, resources and earned tiers. City A is not a
+release target by itself; the owner is currently in D. Complete automated
+coverage and retain one focused solo checklist. Follow
+[the release requirement and audited baseline](SERVER_WIDE_RELEASE_REQUIREMENTS.md)
+and the canonical [roadmap #10](https://github.com/quintaneous/catanCraft/issues/10).
+
+Prioritize the existing shop/reward-claim, vehicle purchase/refueling and wall
+restrictions, alongside shared world-startup and asset prerequisites, before
+unrelated new features. This supersedes earlier city-limited rollout scope, not
+source/geometry validation, paid-history preservation or no-live-world boundaries.
+050's combined gameplay test is blocked in D; no new JAR or runtime fix is claimed
+by this documentation update. SEC-01 stays **UNRESOLVED / HIGH PRIORITY**.
+
+## Historical owner decision — 2026-10-18
 
 This records the owner's scope and sequencing update. It does not dispatch a new implementation task or claim a new build, test run, release, deployment or owner acceptance. Codex remains the sole gameplay implementation owner.
 

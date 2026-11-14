@@ -1,5 +1,12 @@
 # CatanCraft 0.1.50 — combined solo-test update
 
+> **Post-delivery scope correction:** the owner is in City D. The shop/claim,
+> vehicle and wall interfaces/providers in this build are restricted to City A;
+> the combined City D checklist is blocked. This is not a server-wide-ready
+> update. [The standing all-city requirement and audit](SERVER_WIDE_RELEASE_REQUIREMENTS.md)
+> supersede the readiness language below. Retain the evidence and hashes; no new
+> JAR, relocation, reset/import, rebuild or repeated accepted test is requested.
+
 Source: `715a22786c4bc050814b6e5b6130084a950f525c` on `chatgpt/combined-shop-acceptance`. JAR: `catancraft-0.1.50-vehicle-service.jar`, **3943851 bytes**, SHA-256 `f83d46140cfb5d8055072db25a4ac43ff075351832a709d1b37e6ec08ecf7440`. This is the combined owner test build, not a claim of installed-pack acceptance.
 
 ## Player-facing changes
