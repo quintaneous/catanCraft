@@ -47,6 +47,12 @@ earlier runs. [All-city shop checkpoint](SHOP_SITES_051_CHECKPOINT.md) records i
 first use and validation scope. This does not make the stage-level evidence checker
 an automatic native campaign runner or complete the owner-server package.
 
+The [vehicle-site checkpoint](VEHICLE_SITES_052_CHECKPOINT.md) uses another fresh
+label and a pinned combined-mod runtime, with 96 actual-coordinate native vehicle
+cases across all 48 factory placements. These staged source/geometry cases remain
+separate from an authored-world no-grant progression campaign and from owner
+client acceptance; they must not be submitted as completed tier-level campaigns.
+
 `tools/create_progression_run.py` reuses the existing `package_authored_demo`
 assembler and its pinned ZIP/JAR/asset, NBT, path and inherited-progress checks.
 It verifies the original input-manifest hash, derives a unique UUID in a separate

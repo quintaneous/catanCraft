@@ -50,7 +50,11 @@ acceptance. Keep 033/034 purchase and startup recovery intact.
 
 Subsequent development has implemented all-city weapon/management bindings and
 original-site purchase/reward recovery guards. See the [shop implementation checkpoint](SHOP_SITES_051_CHECKPOINT.md)
-for exact test scope. The table below remains the delivered **050** baseline;
+for exact test scope. The [vehicle implementation checkpoint](VEHICLE_SITES_052_CHECKPOINT.md)
+expands factory bindings, actual-site source validation, delivery and refueling
+areas across all 48 placements, retaining historical identities and Fuel meters.
+Wall, shared-startup and full owner-server qualification remain open.
+The table below remains the delivered **050** baseline;
 no owner installation or full server-wide readiness is inferred from newer code.
 
 Read-only source audit at `6119e8c38135acba014bbee69bd5f0264363f2a7`;

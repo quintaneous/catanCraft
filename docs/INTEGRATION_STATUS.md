@@ -1,3 +1,30 @@
+## ECO-03 / INT-01 / INT-03 — all-city vehicle sites, 2026-11-14 UTC
+
+Exact source `27f62bd279a43b7604c24d857dcc16fe70ac5c00` expands physical Vehicle
+Factory authority, delivery bays and service lanes to all 48 eligible A–P slots.
+Actual city base/factory composition replaces the translated-A source assumption.
+Normal R5 public changes require their exact sealed completed history; incomplete
+or foreign history remains blocked. Legacy A factory identities and its original
+plot-1 Bay are preserved, along with prices, locks and nation/vehicle Fuel credit.
+Other-factory pending-operation hints are read-only; strict recovery is unchanged.
+
+**166/166 native phase executions passed**, including 96 actual-coordinate native
+pickup/LAV cases, 720 seat exits, all 240 factory-tier inspections, public-journal
+refusals and retained accounting/recovery suites. Separate seed/verify processes
+passed for saved refueling and vehicle purchase recovery. Both original A plot-1
+Bay comparisons passed exactly. All 96 source/block-entity fingerprints remained
+unchanged after powered departure. Full offline build succeeded. [Checkpoint and limits](VEHICLE_SITES_052_CHECKPOINT.md);
+[machine evidence and raw archives](evidence/vehicle52_validation.json).
+
+Static source audit reverified all 17 pristine R7 world files and inspected 450
+chunks across 16 regions. Pre-founding differences in nonstarting cities still
+require normal founding; native cases stage explicitly composed factory sources
+and do not prove a complete authored campaign or positive connected-client shop
+interaction. Existing shop51 nine tests were rerun; its earlier 112-phase batch
+below remains separate evidence. Full owner release stays held for walls, shared
+startup/assets, clean-server packaging and the focused client checklist.
+No live world or installed mods changed. SEC-01 remains **UNRESOLVED / HIGH PRIORITY**.
+
 ## ECO-03 / INT-01 / INT-03 — all-city shop implementation, 2026-11-14 UTC
 
 Exact source `55d1b5afb259e9f60858af4a414695675e92bc50` replaces City-A-only

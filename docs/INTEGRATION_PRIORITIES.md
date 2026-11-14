@@ -20,8 +20,10 @@ restrictions, alongside shared world-startup and asset prerequisites, before
 unrelated new features. This supersedes earlier city-limited rollout scope, not
 source/geometry validation, paid-history preservation or no-live-world boundaries.
 050's combined gameplay test remains blocked in D. Subsequent [all-city shop code](SHOP_SITES_051_CHECKPOINT.md)
-passed 112 native phases, but connected-client qualification, vehicle/wall coverage
-and complete clean-server delivery remain open. Do not resume the owner checklist
+passed 112 native phases. [Vehicle-site development](VEHICLE_SITES_052_CHECKPOINT.md)
+now expands local service and delivery with actual-source/native geometry checks;
+connected-client qualification, wall coverage and complete clean-server delivery
+remain open. Do not resume the owner checklist
 or offer the development artifact as a release. SEC-01 stays **UNRESOLVED / HIGH PRIORITY**.
 
 ## Historical owner decision — 2026-10-18
