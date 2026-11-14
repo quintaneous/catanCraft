@@ -1,0 +1,99 @@
+// Opt-in vehicle50 coexistence proof. Production builds retain no native mod dependency.
+import groovy.json.JsonSlurper
+import java.nio.file.Files
+
+beforeProject { project ->
+    def namespace = project.findProperty('gameTestNamespace')
+    if (!(namespace in ['catancraft_service50', 'catancraft_service50_restart', 'catancraft_vehicle50_road'])
+            || project.findProperty('controlledGameTests') != 'true') {
+        throw new GradleException('Vehicle50 combined runtime requires an approved exact namespace and controlledGameTests=true')
+    }
+    def specifications = [
+        [property: 'taczAuditRoot', fallback: 'build/shop42-tacz-runtime',
+         verifier: 'tools/shop42/prepare_tacz_runtime.py', schema: 'catancraft-tacz42-published-runtime-v1',
+         count: 7, group: 'audit.catancraft.shop42_tacz', label: 'tacz'],
+        [property: 'sbwAuditRoot', fallback: 'build/sec01-035-runtime',
+         verifier: 'tools/sec01_035/prepare_runtime.py', schema: 'catancraft-sec01-published-runtime-v1',
+         count: 9, group: 'audit.catancraft.sec01_035', label: 'sbw']
+    ]
+    def runtimes = specifications.collect { specification ->
+        File root = project.file(project.findProperty(specification.property) ?: specification.fallback)
+        File verifier = project.file(specification.verifier)
+        if (!verifier.isFile()) throw new GradleException('Missing published-runtime verifier: ' + specification.label)
+        def output = new ByteArrayOutputStream()
+        def errors = new ByteArrayOutputStream()
+        def result = project.exec {
+            commandLine 'python3', verifier.absolutePath, '--root', root.absolutePath, '--verify-only', '--emit-manifest'
+            standardOutput = output
+            errorOutput = errors
+            ignoreExitValue = true
+        }
+        if (result.exitValue != 0) throw new GradleException('Combined runtime refused ' + specification.label + ': ' + errors.toString('UTF-8'))
+        def checked = new JsonSlurper().parseText(output.toString('UTF-8'))
+        if (checked.result != 'PASS' || checked.runtime_artifact_count != specification.count
+                || checked.manifest.schema != specification.schema || checked.root != root.canonicalPath
+                || !(checked.manifest_sha256 ==~ /[0-9a-f]{64}/)) {
+            throw new GradleException('Unexpected verified runtime manifest: ' + specification.label)
+        }
+        [root: root, checked: checked, specification: specification]
+    }
+    def omitted = runtimes[1].checked.manifest.artifacts.findAll {
+        it.coordinate == 'audit.catancraft.sec01_035:simplebedrockmodel:2.5.1-forge-mc1.20.1'
+    }
+    def preferred = runtimes[0].checked.manifest.artifacts.findAll {
+        it.coordinate == 'audit.catancraft.shop42_tacz:simplebedrockmodel:2.6.2-forge-mc1.20.1'
+    }
+    if (omitted.size() != 1 || omitted[0].sha256 != '323612d16de1d68a1dadc02b3329bfc0614d015ef70995bce7098adf38a437dc'
+            || preferred.size() != 1 || preferred[0].sha256 != '8b2008ceadae0174994ef929c3275e16b5d547c478364783dc4c68e644f115ad') {
+        throw new GradleException('Combined runtime has an unreviewed SimpleBedrockModel selection')
+    }
+    // The pinned SBW JarJar record allows [2.5,3.0); TaCZ requires [2.6.2,).
+    // Omit only the older top-level dependency. Both original published JARs and
+    // their embedded records remain byte-identical to their verified inputs.
+    def artifacts = runtimes.collectMany { runtime -> runtime.checked.manifest.artifacts }
+            .findAll { it.coordinate != omitted[0].coordinate }
+    if (artifacts.size() != 15 || artifacts.collect { it.coordinate }.toSet().size() != 15) {
+        throw new GradleException('Unexpected combined published-runtime artifact inventory')
+    }
+    File controlled = project.file("build/controlled-${namespace}-run")
+    project.plugins.withId('net.minecraftforge.gradle') {
+        runtimes.each { runtime ->
+            project.repositories.maven {
+                name = 'native42Combined_' + runtime.specification.label
+                url = project.uri(new File(runtime.root, 'maven'))
+                content { includeGroup runtime.specification.group }
+                metadataSources { mavenPom(); artifact() }
+            }
+        }
+        artifacts.each { artifact ->
+            project.dependencies.add('runtimeOnly', artifact.deobfuscate
+                    ? project.extensions.getByName('fg').deobf(artifact.coordinate) : artifact.coordinate)
+        }
+        project.afterEvaluate {
+            project.tasks.configureEach { task ->
+                if (task.name == 'runGameTestServer') {
+                    task.dependsOn('createSrgToMcp', 'prepareContractGameTestWorld')
+                    task.doFirst {
+                        for (def path = controlled.toPath().toAbsolutePath(); path != null; path = path.parent) {
+                            if (Files.isSymbolicLink(path)) throw new GradleException('Combined GameTest refuses a symbolic-link world path')
+                        }
+                        File marker = new File(controlled, '.catancraft-controlled-fixture-v1')
+                        if (!marker.isFile() || Files.isSymbolicLink(marker.toPath())
+                                || marker.getText('UTF-8') != 'CatanCraft synthetic flat fixture v1\n') {
+                            throw new GradleException('Combined GameTest requires its exact disposable fixture marker')
+                        }
+                    }
+                }
+            }
+            project.minecraft.runs.gameTestServer {
+                workingDirectory controlled
+                args '--mixin', 'catancraft.mixins.json'
+                property 'mixin.env.remapRefMap', 'true'
+                property 'mixin.env.refMapRemappingFile', project.file('build/createSrgToMcp/output.srg').absolutePath
+                property 'catancraft.taczRuntimeManifestSHA256', runtimes[0].checked.manifest_sha256.toString()
+                property 'catancraft.sbwRuntimeManifestSHA256', runtimes[1].checked.manifest_sha256.toString()
+                property 'catancraft.native42CombinedRuntimeArtifacts', '15'
+            }
+        }
+    }
+}

@@ -85,6 +85,41 @@ public final class VehicleService50Tests {
         data.setPlacedMapAsset(VehicleService50.paidKey(q.id()),original);VehicleService50.ledgerReady(f.level);check(VehicleService50.finishCompleted(f.player,null,q,f.dir,true),"Completion marker did not reconcile");check(!VehicleService50.locked(f.vehicle)&&!VehicleService50.needsRecovery(f.dir,q,data),"Completion did not durably release reservation");
         f.vehicle.getClass().getMethod("setEnergy",int.class).invoke(f.vehicle,1200000);VehicleService50.saveVehicle(f.level,f.vehicle);check(VehicleService50.finishCompleted(f.player,null,q,f.dir,true),"Completed retry failed");check(VehicleService50.energy(f.vehicle)==1200000&&f.nation.resource(ResourceType.FUEL)==92,"Completed retry granted fuel or charged");f.proof("native_complete_before_unlock",q);
     });}
+    @GameTest(template="townhall_state_empty",batch="service50_h",timeoutTicks=1000)
+    public static void fractional_credit_survives_native_ledger_readback_and_pays_next_fill(GameTestHelper h)throws Exception{run(h,7,f->{
+        if("15".equals(System.getProperty("catancraft.native42CombinedRuntimeArtifacts"))){
+            var mods=net.minecraftforge.fml.ModList.get();
+            check(mods.isLoaded("tacz")&&mods.isLoaded("superbwarfare"),"Combined service run needs both native providers");
+            String model=mods.getModContainerById("simplebedrockmodel").orElseThrow().getModInfo().getVersion().toString();
+            check(model.equals("2.6.2-forge-mc1.20.1"),"Combined service run selected another model runtime");
+            CatanCraft.LOGGER.info("SERVICE50_COMBINED_RUNTIME_PASS tacz=true superbwarfare=true simplebedrockmodel={} runtimeArtifacts=15",model);
+        }
+        f.vehicle.getClass().getMethod("setEnergy",int.class).invoke(f.vehicle,4999999);VehicleService50.saveVehicle(f.level,f.vehicle);
+        var first=f.quote(VehicleFuel49.Mode.FILL);check(first.fuelCost()==1&&first.creditAfterNumerator()==4999968,"Wrong first fractional quote");var firstEnv=f.prepare(first);
+        check(VehicleRefueling49.execute(firstEnv,first.refill())==VehicleRefueling49.Result.COMPLETE,"First fractional native fill failed");
+        check(f.nation.resource(ResourceType.FUEL)==99&&VehicleService50.energy(f.vehicle)==5000000,"First fractional fill charged or delivered wrong amount");
+        CompoundTag firstDisk=VehiclePayment47.disk(f.level);CatanSavedData firstReload=CatanSavedData.load(firstDisk);
+        var reloadedMeter=VehicleService50.meter(firstReload,f.nation.id(),f.vehicle.getUUID(),VehicleFuel49.PICKUP,5000000);
+        check(reloadedMeter.creditNumerator()==4999968&&reloadedMeter.equals(first.refill().quote().nextMeter()),"Actual native ledger lost nonzero prepaid credit on reload");
+        check(firstReload.nation(f.nation.id()).resource(ResourceType.FUEL)==99,"Reloaded nation Fuel differs from native debit");
+        VehicleService50.unlock(f.level,first);f.vehicle.getClass().getMethod("setEnergy",int.class).invoke(f.vehicle,4999999);VehicleService50.saveVehicle(f.level,f.vehicle);
+        // Build the next immutable quote from the independently reloaded native meter.
+        UUID id=UUID.randomUUID();var refill=new VehicleRefueling49.Intent(id,f.player.getUUID(),f.nation.id(),f.vehicle.getUUID(),VehicleService50.world(f.level),VehicleService50.digest(first.facility()),VehicleFuel49.PICKUP,VehicleFuel49.Mode.FILL,reloadedMeter,
+                VehicleFuel49.quote(VehicleFuel49.PICKUP,5000000,VehicleService50.energy(f.vehicle),VehicleFuel49.Mode.FILL,reloadedMeter));
+        var second=new VehicleService50.Quote(id,f.player.getUUID(),f.nation.id(),f.vehicle.getUUID(),VehicleService50.Kind.REFUEL,"pickup",first.facility(),f.level.getGameTime(),null,refill);
+        check(second.fuelCost()==0&&second.creditAfterNumerator()==4999936,"Prepaid fraction did not cover second fill");var secondEnv=f.prepare(second);
+        check(VehicleRefueling49.execute(secondEnv,refill)==VehicleRefueling49.Result.COMPLETE,"Second fractional native fill failed");
+        check(f.nation.resource(ResourceType.FUEL)==99&&VehicleService50.energy(f.vehicle)==5000000,"Second fill did not use existing credit exactly once");
+        CatanSavedData secondReload=CatanSavedData.load(VehiclePayment47.disk(f.level));var finalMeter=VehicleService50.meter(secondReload,f.nation.id(),f.vehicle.getUUID(),VehicleFuel49.PICKUP,5000000);
+        check(finalMeter.creditNumerator()==4999936&&secondReload.nation(f.nation.id()).resource(ResourceType.FUEL)==99,"Second native meter/debit did not survive readback and reload");
+        check(secondEnv.debitProof(refill)==VehicleRefueling49.Proof.EXACT&&secondEnv.energyProof(refill)==VehicleRefueling49.Proof.EXACT,"Second operation lacks exact native receipts");
+        VehicleService50.unlock(f.level,second);f.vehicle.getClass().getMethod("setEnergy",int.class).invoke(f.vehicle,4999999);VehicleService50.saveVehicle(f.level,f.vehicle);VehicleService50.lock(f.level,second);
+        var replay=VehicleService50.fixtureEnvironment(f.player,second,f.dir);check(VehicleRefueling49.execute(replay,refill)==VehicleRefueling49.Result.COMPLETE,"Fractional fill receipt did not survive adapter recreation");
+        check(f.nation.resource(ResourceType.FUEL)==99&&VehicleService50.energy(f.vehicle)==4999999,"Fractional replay charged Fuel or restored consumed energy");
+        var replayMeter=VehicleService50.meter(CatanSavedData.load(VehiclePayment47.disk(f.level)),f.nation.id(),f.vehicle.getUUID(),VehicleFuel49.PICKUP,5000000);check(replayMeter.equals(finalMeter),"Replay consumed prepaid credit twice");
+        CompoundTag proof=new CompoundTag();proof.putString("result","PASS");proof.put("firstQuote",VehicleService50.encode(first));proof.put("firstNativeLedger",firstDisk);proof.put("secondQuote",VehicleService50.encode(second));proof.put("finalNativeLedger",VehiclePayment47.disk(f.level));proof.putLong("firstCreditNumerator",reloadedMeter.creditNumerator());proof.putLong("finalCreditNumerator",finalMeter.creditNumerator());proof.putLong("fuelAfterBothFills",f.nation.resource(ResourceType.FUEL));proof.putLong("energyAfterConsumedReplay",VehicleService50.energy(f.vehicle));ProducerJournal.write(f.dir.resolve("fractional_credit_roundtrip.dat"),proof,false);
+        f.proof("native_fractional_credit_roundtrip",second);VehicleService50.unlock(f.level,second);
+    });}
     static void run(GameTestHelper h,int index,Work work)throws Exception{Fixture f=new Fixture(h,index);await(f,0,work);}
     static void await(Fixture f,int ticks,Work work){try{f.lease.keepAlive();if(!f.lease.ready()){check(ticks<600,"Fixture not resident");f.h.runAfterDelay(5,()->await(f,ticks+5,work));return;}f.init();work.run(f);f.vehicle.discard();f.lease.close();f.h.succeed();}catch(Exception ex){f.lease.close();throw new RuntimeException(ex);}}
     static void check(boolean yes,String message){if(!yes)throw new IllegalStateException(message);}
