@@ -2,6 +2,12 @@
 
 ## Standing owner correction — server-wide updates, 2026-11-14 UTC
 
+Alongside the server-wide retrofit, build and maintain a reusable pristine
+authored-server baseline with cumulative progression regression. Start each fresh
+scenario in a new isolated run, preserving earlier runs and accepted saves. Keep
+normal-economy and funded fixtures distinct; automate repetition rather than
+asking the owner to re-grind previous tiers. [Current tooling and delivery gates](FRESH_PROGRESSION_BASELINE.md).
+
 Every update must work throughout the configured server: currently all 16 cities
 A–P, subject to normal ownership, resources and earned tiers. City A is not a
 release target by itself; the owner is currently in D. Complete automated

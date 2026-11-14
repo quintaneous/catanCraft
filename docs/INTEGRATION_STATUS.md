@@ -1,3 +1,29 @@
+## INT-01 / INT-03 — reusable fresh progression foundation, 2026-11-14 UTC
+
+Owner requires a clean authored-server baseline and cumulative regression from
+founding through higher tiers. Implemented `tools/create_progression_run.py` over
+the existing strict assembler: new destination/UUID per run, preserved original
+inputs/played runs, recorded baseline/derived manifests, candidate Adventure/Normal
+properties and no grants. `tools/progression_ladder.py` generates 112 A–P stage
+obligations across seven tier checkpoints and verifies cumulative evidence indexes.
+All entries start NOT_RUN. This checker does not execute native tests or establish
+freshness/semantics of logs; complete indexes still require review.
+
+Recovered the two original clean R7 input archives with exact historical hashes.
+Deep read-only verification passed 40/40 source hashes, 17 world files, 16 regions
+and 16,384 chunk records; source unchanged and current map byte-identical. No
+inherited player/nation/purchase history exists. Original inspection gamerules
+remain unchanged and require qualification for normal progression.
+
+**64/64 Python tests passed:** 13 new synthetic run/evidence tests and 51 retained
+assembler/component tests; Java calls mocked. [Contract, input pins and remaining gates](FRESH_PROGRESSION_BASELINE.md);
+[machine evidence](evidence/fresh_progression_validation.json). No gameplay JAR
+change/build, native gameplay, owner installation or acceptance is claimed.
+Current all-city gaps, complete matching mod/runtime packaging, normal startup
+and actual cumulative native scenarios still block a playable owner baseline.
+Fresh tests supplement existing-save compatibility; preserve accepted City A and
+keep owner testing focused. SEC-01 remains **UNRESOLVED / HIGH PRIORITY**.
+
 ## INT-01 / INT-02 / INT-03 / ECO-03 — server-wide scope correction, 2026-11-14 UTC
 
 Owner testing in City D exposed a real coverage gap. Every future update now

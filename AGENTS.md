@@ -26,6 +26,19 @@ rollout restrictions below; it does not authorize unvalidated placement, removal
 of safety checks, live-world changes, reset/import or repeated accepted tests.
 Issue #10 remains the canonical roadmap.
 
+Owner also requires a reusable pristine authored-server baseline and cumulative
+progression regression. Create a NEW isolated run from immutable verified inputs
+for each fresh test; never reset, copy or overwrite a played/accepted world.
+Preserve map/cities/roads while starting without player, nation or purchase history.
+At later tier checkpoints rerun earlier applicable functionality across A-P;
+normal resource progression interleaves Town Halls, producers, trade and factories.
+Keep no-grant economy runs distinct from funded developer fixtures. Fresh-start
+tests supplement existing-progress upgrade/recovery checks, not replace them.
+Automate repetition in development; do not make the owner re-grind every tier.
+See docs/FRESH_PROGRESSION_BASELINE.md. A results template or evidence-index check
+is not proof of native execution or repeated gameplay. The runnable full-modpack
+baseline remains held until its explicit packaging and runtime gates pass.
+
 ## Continuing implementation and preservation rules
 
 Continue the existing checkout and delivered development history. Inspect git status,

@@ -1,0 +1,108 @@
+{
+  "inputRoot": "/workspace/scratch/a1b6a42f71e7/fresh-baseline-verified/CatanCraft_Clean_R7_Input",
+  "inputManifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
+  "worldRoot": "/workspace/scratch/a1b6a42f71e7/fresh-baseline-verified/CatanCraft_Clean_R7_Input/source_world/CatanCraft_Season1_R7_Development",
+  "levelDatSHA256": "f9d708db1457e2f0cc63100db6a1997c9d59e41bdf83e956d556f1cdc46b9c14",
+  "mapSourceSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "mapCurrentSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "mapBytesEqual": true,
+  "territoryIDs": [
+    "a",
+    "b",
+    "c",
+    "d",
+    "e",
+    "f",
+    "g",
+    "h",
+    "i",
+    "j",
+    "k",
+    "l",
+    "m",
+    "n",
+    "o",
+    "p"
+  ],
+  "level": {
+    "LevelName": "CatanCraft Environment V4 - Visual Polish R2",
+    "DataVersion": 3465,
+    "Time": 6000,
+    "DayTime": 6000,
+    "GameType": 1,
+    "Difficulty": 0,
+    "DifficultyLocked": 0,
+    "hardcore": 0,
+    "GameRules": {
+      "doMobSpawning": "false",
+      "doDaylightCycle": "false",
+      "doWeatherCycle": "false",
+      "doFireTick": "false",
+      "keepInventory": "true",
+      "spawnRadius": "0",
+      "randomTickSpeed": "0",
+      "spectatorsGenerateChunks": "false"
+    },
+    "SpawnX": -750,
+    "SpawnY": 81,
+    "SpawnZ": -833
+  },
+  "seed": 1042026,
+  "embeddedPlayer": false,
+  "sourceWorldFiles": [
+    "level.dat",
+    "region/r.-1.-1.mca",
+    "region/r.-1.-2.mca",
+    "region/r.-1.0.mca",
+    "region/r.-1.1.mca",
+    "region/r.-2.-1.mca",
+    "region/r.-2.-2.mca",
+    "region/r.-2.0.mca",
+    "region/r.-2.1.mca",
+    "region/r.0.-1.mca",
+    "region/r.0.-2.mca",
+    "region/r.0.0.mca",
+    "region/r.0.1.mca",
+    "region/r.1.-1.mca",
+    "region/r.1.-2.mca",
+    "region/r.1.0.mca",
+    "region/r.1.1.mca"
+  ],
+  "assets": [
+    {
+      "path": "bootstrap_reference/config/catancraft/CatanCraft_R4A_Placement_Ready_Assets.zip",
+      "bytes": 9875139,
+      "sha256": "19b7f649164bd9b256784394f0104fdea66a99d57b8329d7790e75d578c34032"
+    },
+    {
+      "path": "bootstrap_reference/config/catancraft/CatanCraft_R5_City_Rework_And_Civic_Assets.zip",
+      "bytes": 18850035,
+      "sha256": "679b9d94d2f96175705e2e85f2e36aa0146cd8dd28a71826e25998c6c9755521"
+    },
+    {
+      "path": "bootstrap_reference/config/catancraft/R5_READ_ONLY_PROBE_INDEX.zip",
+      "bytes": 423025,
+      "sha256": "4f5a445347adbb62e73d1c38bfab5ff850c7307733a619847d9eeac9245834ba"
+    },
+    {
+      "path": "bootstrap_reference/config/catancraft/map.json",
+      "bytes": 41284,
+      "sha256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986"
+    },
+    {
+      "path": "bootstrap_reference/config/catancraft/schematics/thall4.schem",
+      "bytes": 3478,
+      "sha256": "39f2fda6a74d0d891d45b37d111079905a6f67e4261b591c13902b4215342c4b"
+    },
+    {
+      "path": "bootstrap_reference/config/catancraft/schematics/thall5.schem",
+      "bytes": 5291,
+      "sha256": "1ea2fd544c32ed5506a553bf6c56628ecd4b7ac8d29257009e7bd84a427bbc06"
+    },
+    {
+      "path": "bootstrap_reference/config/catancraft/schematics_bundle.zip",
+      "bytes": 155072,
+      "sha256": "2a7a362047a6672b802c0077cd58db236183c10a69cc69dc928c64859d985edc"
+    }
+  ]
+}

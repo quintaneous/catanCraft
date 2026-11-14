@@ -1,0 +1,19 @@
+test_bad_baseline_pin_refuses_without_output (test_progression_run.ProgressionRunTests.test_bad_baseline_pin_refuses_without_output) ... ok
+test_duplicate_rows_and_unreviewed_na_refuse (test_progression_run.ProgressionRunTests.test_duplicate_rows_and_unreviewed_na_refuse) ... ok
+test_earlier_stage_or_city_omission_cannot_qualify_later_checkpoint (test_progression_run.ProgressionRunTests.test_earlier_stage_or_city_omission_cannot_qualify_later_checkpoint) ... ok
+test_existing_launcher_can_verify_new_package_without_launch_or_binding (test_progression_run.ProgressionRunTests.test_existing_launcher_can_verify_new_package_without_launch_or_binding) ... ok
+test_existing_output_and_symlink_parent_refuse (test_progression_run.ProgressionRunTests.test_existing_output_and_symlink_parent_refuse) ... ok
+test_inherited_ledger_and_datapack_refuse (test_progression_run.ProgressionRunTests.test_inherited_ledger_and_datapack_refuse) ... ok
+test_installed_saves_destination_refuses (test_progression_run.ProgressionRunTests.test_installed_saves_destination_refuses) ... ok
+test_missing_city_and_changed_orientation_maps_refuse (test_progression_run.ProgressionRunTests.test_missing_city_and_changed_orientation_maps_refuse) ... ok
+test_new_runs_independent_and_previous_progress_and_inputs_unchanged (test_progression_run.ProgressionRunTests.test_new_runs_independent_and_previous_progress_and_inputs_unchanged) ... ok
+test_pass_needs_nonempty_matching_safe_evidence_and_review_still_required (test_progression_run.ProgressionRunTests.test_pass_needs_nonempty_matching_safe_evidence_and_review_still_required) ... ok
+test_profile_provenance_and_all_city_templates_are_honest (test_progression_run.ProgressionRunTests.test_profile_provenance_and_all_city_templates_are_honest) ... ok
+test_publish_race_preserves_concurrently_created_destination (test_progression_run.ProgressionRunTests.test_publish_race_preserves_concurrently_created_destination) ... ok
+test_stale_run_checkpoint_and_funded_results_refuse (test_progression_run.ProgressionRunTests.test_stale_run_checkpoint_and_funded_results_refuse) ... ok
+
+----------------------------------------------------------------------
+Ran 13 tests in 0.200s
+
+OK
+Package and local Java/Forge prerequisites verified; server not started

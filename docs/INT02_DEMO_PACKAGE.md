@@ -1,5 +1,11 @@
 # INT-02: matching authored-world package assembler
 
+> Historical assembler checkpoint below. Exact clean R7 inputs are now recovered
+> and reverified; [fresh progression tooling and remaining gates](FRESH_PROGRESSION_BASELINE.md)
+> describe the current work. The original assembler remains unchanged and reused.
+> Historical missing-input statements are not a claim that the world was never
+> supplied. Runtime/modpack and all-city gameplay qualification remain outstanding.
+
 `tools/package_authored_demo.py` extends the existing `tools/prepare_fresh_demo.py` component-staging workflow. It imports that tool's bounded regular-file, ZIP and JAR validators. It is not a new game launcher project or a live-world copying utility. It accepts only an explicitly transferred world ZIP and a separately pinned input manifest; it never reads a source world directory, installed mod folder, server settings or active save.
 
 **Current deliverable: assembler and automated synthetic-fixture validation. A playable demo package remains blocked.** No approved clean authored-world archive, original working demo launcher payload, current reviewed bootstrap payload, or matching official Forge runtime checksum list was located in the transferred inputs and reviewable release folders. The historical `CatanCraft_Fresh_R7_Demo_Instructions.txt` describes a previous actual kit, including `START_DEMO.bat`, but the instructions are not that kit. P1 source/asset ZIPs and component-only staging folders do not supply a playable world. No fixture world is delivered as authored terrain.

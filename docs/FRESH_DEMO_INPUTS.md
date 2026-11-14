@@ -1,5 +1,12 @@
 # Fresh demonstration inputs and component staging
 
+> Historical component-staging checkpoint below. The clean authored world was
+> subsequently supplied and verified on October 19, and its exact archives were
+> recovered and reverified for the current reusable-baseline work. See
+> [fresh progression status](FRESH_PROGRESSION_BASELINE.md). Older missing-world
+> statements below no longer describe current source availability; a complete
+> qualified current modpack/progression server is still not delivered.
+
 **Current update:** P1 has since transferred and passed prototype tests; it remains unapproved. Official SBW artifacts were audited and seven native candidate-protection tests passed. Strict fresh-demo producer/prestige/civic authorization and the authored-input assembler now exist. See [ROADMAP_VALIDATION_20261018.md](ROADMAP_VALIDATION_20261018.md) and [INT02_DEMO_PACKAGE.md](INT02_DEMO_PACKAGE.md) for current evidence and remaining inputs. The older audit below is historical; no actual clean authored-world payload has since arrived.
 
 The current workspace can prepare verified components. It cannot yet deliver the requested runnable fresh authored CatanCraft demonstration. Preserve developed City A and all historical release evidence.

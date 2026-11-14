@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 1,
+  "kind": "fresh-progression-tooling-validation",
+  "baseCommit": "d3165a8749b42b3ecca116542816486be78f7c4c",
+  "sourceFiles": [
+    {
+      "path": "tools/create_progression_run.py",
+      "sha256": "5a961074bbe481a920032df2c55c22118a3f989969bf152365c730203971daad"
+    },
+    {
+      "path": "tools/progression_ladder.py",
+      "sha256": "c75fdc9f7ab347440caccad5ece5a26dccc06bdca5e7b4ef4a84ad620e9b79af"
+    },
+    {
+      "path": "tests/test_progression_run.py",
+      "sha256": "9d65abbab73001a7bda33c5916262fff2f783b3aa9e7bec1671d062579bb10ac"
+    }
+  ],
+  "newTests": {
+    "executed": 13,
+    "passed": 13,
+    "failed": 0,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p test_progression_run.py -v"
+  },
+  "retainedTests": {
+    "executed": 51,
+    "passed": 51,
+    "failed": 0,
+    "command": "PYTHONDONTWRITEBYTECODE=1 python3 -m unittest discover -s tests -p 'test_*demo.py' -v"
+  },
+  "scope": "Synthetic Python tests; Java/server subprocesses mocked. Deep input verification is static, not native gameplay.",
+  "nativeTestsExecuted": 0,
+  "gameplayBuildExecuted": false,
+  "ownerAcceptance": false,
+  "liveWorldAccessed": false,
+  "runtimePackageReady": false,
+  "artifacts": [
+    {
+      "path": "docs/evidence/fresh_progression_source_verification.json",
+      "sha256": "a64e390de17cf42170f801d03d9f483a5b2c29fcf2405c2d3883fa16ba5bf341",
+      "bytes": 2691
+    },
+    {
+      "path": "docs/evidence/fresh_progression_source_audit.json",
+      "sha256": "4a275c55aec182f56f29e89ab18c2d77f7d68a4fae9e410922a3191ec4f008ed",
+      "bytes": 3298
+    },
+    {
+      "path": "docs/evidence/fresh_progression_tests.log",
+      "sha256": "f2d4faa393db8248d30704342962d7f209379b099361aab4fe1ec50705d1a1f2",
+      "bytes": 2277
+    },
+    {
+      "path": "docs/evidence/fresh_progression_retained_tests.log",
+      "sha256": "f2cb24c823c1c7e0e3383471f56a8121fa5122f0e1f66a74ebdcfa67d18a0dcb",
+      "bytes": 8198
+    }
+  ],
+  "nextGates": [
+    "Full pinned current mod/runtime/config package",
+    "Normal world-startup/settings qualification",
+    "All-city shop/vehicle/wall retrofit",
+    "Native cumulative progression and existing-save recovery",
+    "Supported launcher/client validation"
+  ]
+}

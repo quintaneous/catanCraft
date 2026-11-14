@@ -8,6 +8,12 @@ not a second roadmap. The requirement also applies to future configured maps.
 
 ## Definition of completion
 
+The owner also requires a reusable clean authored-server baseline and cumulative
+regression up the progression ladder. See [implementation and remaining gates](FRESH_PROGRESSION_BASELINE.md).
+Use a new isolated run each time; preserve accepted progress and existing-history
+compatibility tests. Automated repetition belongs in development, with one focused
+owner check. Funded fixtures cannot stand in for normal-economy progression.
+
 1. Every eligible territory and facility supports the feature through normal
    gameplay. Ownership, available resources, earned tiers and legitimate building
    requirements still apply; those rules must be consistent across the server.

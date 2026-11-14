@@ -1,0 +1,133 @@
+{
+  "result": "PASS",
+  "scope": "Read-only file, allocation and optional NBT checks; no Minecraft launch",
+  "world_files": 17,
+  "region_files": 16,
+  "chunks_allocation_validated": 16384,
+  "chunks_decompressed_and_NBT_validated": 16384,
+  "chunk_versions": [
+    3465
+  ],
+  "chunk_statuses": [
+    "full"
+  ],
+  "level_name": "CatanCraft Environment V4 - Visual Polish R2",
+  "data_version": 3465,
+  "source_time": 6000,
+  "spawn": {
+    "SpawnX": -750,
+    "SpawnY": 81,
+    "SpawnZ": -833
+  },
+  "source_gamerules": {
+    "doMobSpawning": "false",
+    "doDaylightCycle": "false",
+    "doWeatherCycle": "false",
+    "doFireTick": "false",
+    "keepInventory": "true",
+    "spawnRadius": "0",
+    "randomTickSpeed": "0",
+    "spectatorsGenerateChunks": "false"
+  },
+  "player_nation_or_transaction_save_files_present": false,
+  "regions": [
+    {
+      "file": "r.-1.-1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-1.-2.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-1.0.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-1.1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-2.-1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-2.-2.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-2.0.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.-2.1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.0.-1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.0.-2.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.0.0.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.0.1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.1.-1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.1.-2.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.1.0.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    },
+    {
+      "file": "r.1.1.mca",
+      "chunks": 1024,
+      "allocation": "PASS",
+      "NBT": "PASS"
+    }
+  ],
+  "manifest_files_verified": 40,
+  "gameplay_tests": "NOT RUN"
+}
