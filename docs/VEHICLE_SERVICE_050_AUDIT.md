@@ -46,3 +46,8 @@ The initial UI source binds physical sessions to the exact connected player, use
 ## Existing retrieval protection
 
 The existing `VehicleCrowbarGuardMixin`, `CrowbarHelperGuardMixin` and `NationVehicleProtection` are retained during this review. New purchased vehicles must carry the same purchased/nation tags so those guards continue to recognize them. This review does not close SEC-01: the crowbar exploit remains **UNRESOLVED / HIGH PRIORITY** until the installed-pack acceptance test passes.
+
+
+## Final native evidence
+
+The source findings above are now backed by native service, capability-lock and separate-JVM restart runs, including combined TaCZ/SBW with the selected SimpleBedrockModel 2.6.2 runtime. Independent inspection verifies nonzero saved fractional credit across two fills and replay after consumption. Raw captured ledger/entity readbacks are distinguished from entities still present in the final region files. See [release evidence and exact source provenance](VEHICLE_SERVICE_050_RELEASE.md). This does not establish authenticated-client or installed-pack acceptance.

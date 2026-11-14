@@ -1,0 +1,3551 @@
+{
+  "schema": "catancraft-vehicle50-validation-v1",
+  "source": "715a22786c4bc050814b6e5b6130084a950f525c",
+  "artifact": {
+    "source": "715a22786c4bc050814b6e5b6130084a950f525c",
+    "jar": "catancraft-0.1.50-vehicle-service.jar",
+    "jar_bytes": 3943851,
+    "jar_sha256": "f83d46140cfb5d8055072db25a4ac43ff075351832a709d1b37e6ec08ecf7440",
+    "zip_crc": "PASS",
+    "source_stamp": "PASS",
+    "version": "0.1.50-vehicle-service",
+    "java17_classes": 729,
+    "original_resources_verified": 46,
+    "mixins": [
+      "VehicleCrowbarGuardMixin",
+      "CrowbarHelperGuardMixin",
+      "SbwHandheldFireMixin",
+      "SbwHandheldReleaseMixin",
+      "SbwHandheldPacketMixin",
+      "SbwHandheldRecipesMixin",
+      "SbwHandheldLootMixin",
+      "SbwVehicleDismount47Mixin",
+      "SbwVoluntaryExit47Mixin",
+      "SbwVehicleService50Mixin",
+      "SbwVehicleServiceEnergy50Mixin"
+    ],
+    "reobfuscation_task": "PASS",
+    "regression_source": "54091940597e054e8eb5953e280ef46807f67014",
+    "compiled_files_unchanged": 845,
+    "compiled_files_changed": [
+      "build/classes/java/main/com/quin/catancraft/world/NativeVehicleRoad50Tests$Run.class",
+      "build/classes/java/main/com/quin/catancraft/world/NativeVehicleRoad50Tests.class",
+      "build/classes/java/main/com/quin/catancraft/world/VehicleService50Tests$Fixture.class",
+      "build/classes/java/main/com/quin/catancraft/world/VehicleService50Tests.class"
+    ],
+    "production_bytes_unchanged": true
+  },
+  "regression": {
+    "source": "54091940597e054e8eb5953e280ef46807f67014",
+    "successful_phase_executions": 301,
+    "results": [
+      {
+        "label": "catancraft_service50",
+        "namespace": "catancraft_service50",
+        "expected": 7,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "service_seed",
+        "namespace": "catancraft_service50_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "service_verify",
+        "namespace": "catancraft_service50_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_factory50",
+        "namespace": "catancraft_factory50",
+        "expected": 3,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_vehicle50_ui",
+        "namespace": "catancraft_vehicle50_ui",
+        "expected": 3,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_sbw",
+        "namespace": "catancraft_sbw",
+        "expected": 7,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "procurement_seed",
+        "namespace": "catancraft_sbw_procurement35",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "procurement_verify",
+        "namespace": "catancraft_sbw_procurement35",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_handheld44",
+        "namespace": "catancraft_handheld44",
+        "expected": 7,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_native42_tacz",
+        "namespace": "catancraft_native42_tacz",
+        "expected": 8,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "tacz_seed",
+        "namespace": "catancraft_native42_tacz_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "tacz_verify",
+        "namespace": "catancraft_native42_tacz_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_active44",
+        "namespace": "catancraft_active44",
+        "expected": 6,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_stock42",
+        "namespace": "catancraft_stock42",
+        "expected": 8,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_shop40",
+        "namespace": "catancraft_shop40",
+        "expected": 35,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "shop_seed",
+        "namespace": "catancraft_shop40_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "shop_verify",
+        "namespace": "catancraft_shop40_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_rewards41",
+        "namespace": "catancraft_rewards41",
+        "expected": 32,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_claims43",
+        "namespace": "catancraft_claims43",
+        "expected": 10,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_supply43",
+        "namespace": "catancraft_supply43",
+        "expected": 8,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_vehicle47",
+        "namespace": "catancraft_vehicle47",
+        "expected": 4,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "vehicle47_seed",
+        "namespace": "catancraft_vehicle47_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "vehicle47_verify",
+        "namespace": "catancraft_vehicle47_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_vehicle47_exit",
+        "namespace": "catancraft_vehicle47_exit",
+        "expected": 6,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_vehicle46",
+        "namespace": "catancraft_vehicle46",
+        "expected": 18,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_vehicle46_native",
+        "namespace": "catancraft_vehicle46_native",
+        "expected": 6,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_vehicle45",
+        "namespace": "catancraft_vehicle45",
+        "expected": 8,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_economy45",
+        "namespace": "catancraft_economy45",
+        "expected": 6,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_economy_clock",
+        "namespace": "catancraft_economy_clock",
+        "expected": 9,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_paid_recovery",
+        "namespace": "catancraft_paid_recovery",
+        "expected": 19,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft_construction34",
+        "namespace": "catancraft_construction34",
+        "expected": 28,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "startup_retry",
+        "namespace": "catancraft_startup34",
+        "expected": 3,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      },
+      {
+        "label": "catancraft",
+        "namespace": "catancraft",
+        "expected": 50,
+        "exit": 0,
+        "passed": true,
+        "source": "54091940597e054e8eb5953e280ef46807f67014"
+      }
+    ],
+    "setup_refusal": {
+      "source": "54091940597e054e8eb5953e280ef46807f67014",
+      "original_log": "catancraft_startup34.log",
+      "native_startup_tests_executed": 0,
+      "reason": "Unchanged 034 preparer rejects empty 041 advisory lock as transaction history",
+      "empty_lock_bytes": 0,
+      "empty_lock_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "preserved_as": "startup-bootstrap-empty-reward41.lock",
+      "native_ledger_sha256": "a9d34bf74cc7b0d7f67243fb3763fde832712a2b279a8a88d06dc339113affd2",
+      "gameplay_or_assertion_changes": false
+    },
+    "bootstrap": {
+      "expected": 7,
+      "exit": 0,
+      "passed": true,
+      "source": "54091940597e054e8eb5953e280ef46807f67014"
+    }
+  },
+  "combined_runtime": {
+    "successful_phase_executions": 18,
+    "results": [
+      {
+        "label": "combined_service",
+        "namespace": "catancraft_service50",
+        "expected": 8,
+        "exit": 0,
+        "passed": true,
+        "source": "2e02c34ed903bedf29868cd86b310c0d8d86cad0"
+      },
+      {
+        "label": "combined_service_seed",
+        "namespace": "catancraft_service50_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "2e02c34ed903bedf29868cd86b310c0d8d86cad0"
+      },
+      {
+        "label": "combined_service_verify",
+        "namespace": "catancraft_service50_restart",
+        "expected": 1,
+        "exit": 0,
+        "passed": true,
+        "source": "2e02c34ed903bedf29868cd86b310c0d8d86cad0"
+      },
+      {
+        "label": "combined-road-final",
+        "namespace": "catancraft_vehicle50_road",
+        "expected": 8,
+        "exit": 0,
+        "passed": true,
+        "source": "715a22786c4bc050814b6e5b6130084a950f525c"
+      }
+    ],
+    "selection": {
+      "source": "2e02c34ed903bedf29868cd86b310c0d8d86cad0",
+      "selected_artifacts": [
+        {
+          "bytes": 69001578,
+          "coordinate": "audit.catancraft.shop42_tacz:tacz:1.2.0",
+          "deobfuscate": true,
+          "embedded_path": null,
+          "original": "inputs/tacz-forge-1.20.1-1.2.0.jar",
+          "sha256": "1c2f2915f76908d396a0da577665c977564c279ccb89d459a00a29225aa45a92",
+          "staged": "maven/audit/catancraft/shop42_tacz/tacz/1.2.0/tacz-1.2.0.jar"
+        },
+        {
+          "bytes": 1289143,
+          "coordinate": "audit.catancraft.shop42_tacz:simplebedrockmodel:2.6.2-forge-mc1.20.1",
+          "deobfuscate": true,
+          "embedded_path": "META-INF/jarjar/simplebedrockmodel-2.6.2-forge-mc1.20.1.jar",
+          "original": "embedded/simplebedrockmodel-2.6.2-forge-mc1.20.1.jar",
+          "sha256": "8b2008ceadae0174994ef929c3275e16b5d547c478364783dc4c68e644f115ad",
+          "staged": "maven/audit/catancraft/shop42_tacz/simplebedrockmodel/2.6.2-forge-mc1.20.1/simplebedrockmodel-2.6.2-forge-mc1.20.1.jar"
+        },
+        {
+          "bytes": 2213560,
+          "coordinate": "audit.catancraft.shop42_tacz:commons-math3:3.6.1",
+          "deobfuscate": false,
+          "embedded_path": "META-INF/jarjar/commons-math3-3.6.1.jar",
+          "original": "embedded/commons-math3-3.6.1.jar",
+          "sha256": "1e56d7b058d28b65abd256b8458e3885b674c1d588fa43cd7d1cbb9c7ef2b308",
+          "staged": "maven/audit/catancraft/shop42_tacz/commons-math3/3.6.1/commons-math3-3.6.1.jar"
+        },
+        {
+          "bytes": 294956,
+          "coordinate": "audit.catancraft.shop42_tacz:luaj-core:3.0.8-figura",
+          "deobfuscate": false,
+          "embedded_path": "META-INF/jarjar/luaj-core-3.0.8-figura.jar",
+          "original": "embedded/luaj-core-3.0.8-figura.jar",
+          "sha256": "6050678ca1dad5e2a4c401cc9ce968d282d30105b2ea46f79c30abccdfa30fbe",
+          "staged": "maven/audit/catancraft/shop42_tacz/luaj-core/3.0.8-figura/luaj-core-3.0.8-figura.jar"
+        },
+        {
+          "bytes": 279768,
+          "coordinate": "audit.catancraft.shop42_tacz:luaj-jse:3.0.8-figura",
+          "deobfuscate": false,
+          "embedded_path": "META-INF/jarjar/luaj-jse-3.0.8-figura.jar",
+          "original": "embedded/luaj-jse-3.0.8-figura.jar",
+          "sha256": "1783d249b5152c6f110c1bcca5fb0d4ef0075fc291c912f6b74e2bb61472e95e",
+          "staged": "maven/audit/catancraft/shop42_tacz/luaj-jse/3.0.8-figura/luaj-jse-3.0.8-figura.jar"
+        },
+        {
+          "bytes": 695309,
+          "coordinate": "audit.catancraft.shop42_tacz:bcel:6.6.1",
+          "deobfuscate": false,
+          "embedded_path": "META-INF/jarjar/bcel-6.6.1.jar",
+          "original": "embedded/bcel-6.6.1.jar",
+          "sha256": "50e909f555c772285d0f282d22ec7ca246010fa6996d40226357a28555445904",
+          "staged": "maven/audit/catancraft/shop42_tacz/bcel/6.6.1/bcel-6.6.1.jar"
+        },
+        {
+          "bytes": 159556,
+          "coordinate": "audit.catancraft.shop42_tacz:mixinextras-forge:0.3.6",
+          "deobfuscate": false,
+          "embedded_path": "META-INF/jarjar/mixinextras-forge-0.3.6.jar",
+          "original": "embedded/mixinextras-forge-0.3.6.jar",
+          "sha256": "66eeeea6d1751c9f8f3abd32938fe5ee8113ae1a2730a9a29489300ffe02dd0f",
+          "staged": "maven/audit/catancraft/shop42_tacz/mixinextras-forge/0.3.6/mixinextras-forge-0.3.6.jar"
+        },
+        {
+          "bytes": 42118965,
+          "coordinate": "audit.catancraft.sec01_035:superbwarfare:0.8.9.2",
+          "deobfuscate": true,
+          "embedded_path": null,
+          "original": "inputs/superbwarfare-0.8.9.2-mc1.20.1-65d985a64-all.jar",
+          "sha256": "559930003f638080de648a8621821d785158768c3f69a762094ef4c8d3c4cc12",
+          "staged": "maven/audit/catancraft/sec01_035/superbwarfare/0.8.9.2/superbwarfare-0.8.9.2.jar"
+        },
+        {
+          "bytes": 7193768,
+          "coordinate": "audit.catancraft.sec01_035:kotlinforforge:4.11.0",
+          "deobfuscate": false,
+          "embedded_path": null,
+          "original": "inputs/kotlinforforge-4.11.0-all.jar",
+          "sha256": "ef988f86d170af499d147ea8a5c34c99dbd6d8f4a5ad236a4b43818dc4470a10",
+          "staged": "maven/audit/catancraft/sec01_035/kotlinforforge/4.11.0/kotlinforforge-4.11.0.jar"
+        },
+        {
+          "bytes": 398066,
+          "coordinate": "audit.catancraft.sec01_035:curios:5.14.1+1.20.1",
+          "deobfuscate": true,
+          "embedded_path": "META-INF/jarjar/curios-forge-5.14.1+1.20.1.jar",
+          "original": "embedded/curios-forge-5.14.1+1.20.1.jar",
+          "sha256": "6d77ae8ad532fdf303390f404b0081b3b4ac4f61e7f1f4b4d4a9077e132dae4f",
+          "staged": "maven/audit/catancraft/sec01_035/curios/5.14.1+1.20.1/curios-5.14.1+1.20.1.jar"
+        },
+        {
+          "bytes": 991143,
+          "coordinate": "audit.catancraft.sec01_035:geckolib:4.4.6",
+          "deobfuscate": true,
+          "embedded_path": "META-INF/jarjar/geckolib-forge-1.20.1-4.4.6.jar",
+          "original": "embedded/geckolib-forge-1.20.1-4.4.6.jar",
+          "sha256": "0de40c205130fe07e79440f1250a22459e32618e1afdfcd44eb9626044c12f87",
+          "staged": "maven/audit/catancraft/sec01_035/geckolib/4.4.6/geckolib-4.4.6.jar"
+        },
+        {
+          "bytes": 1632242,
+          "coordinate": "audit.catancraft.sec01_035:rhino:1.8.1-SNAPSHOT",
+          "deobfuscate": false,
+          "embedded_path": "META-INF/jarjar/rhino-1.8.1-SNAPSHOT.jar",
+          "original": "embedded/rhino-1.8.1-SNAPSHOT.jar",
+          "sha256": "4aab6124356e91e16263fa065556444b96bf5d9438e1399914cd971ef8b73616",
+          "staged": "maven/audit/catancraft/sec01_035/rhino/1.8.1-SNAPSHOT/rhino-1.8.1-SNAPSHOT.jar"
+        },
+        {
+          "bytes": 783841,
+          "coordinate": "audit.catancraft.sec01_035:ponder:1.0.91",
+          "deobfuscate": true,
+          "embedded_path": "META-INF/jarjar/Ponder-Forge-1.20.1-1.0.91.jar",
+          "original": "embedded/Ponder-Forge-1.20.1-1.0.91.jar",
+          "sha256": "86e6b64372aba6d9c56f2c35725ea26d8febf2c75eed9950566e7f2849443b34",
+          "staged": "maven/audit/catancraft/sec01_035/ponder/1.0.91/ponder-1.0.91.jar"
+        },
+        {
+          "bytes": 868892,
+          "coordinate": "audit.catancraft.sec01_035:flywheel:1.0.5",
+          "deobfuscate": true,
+          "embedded_path": "META-INF/jarjar/flywheel-forge-1.20.1-1.0.5.jar",
+          "original": "embedded/flywheel-forge-1.20.1-1.0.5.jar",
+          "sha256": "316ca250f19244956b5f0cd75329309ea65a77b4b8da854389b6a9222e7f427c",
+          "staged": "maven/audit/catancraft/sec01_035/flywheel/1.0.5/flywheel-1.0.5.jar"
+        },
+        {
+          "bytes": 1168375,
+          "coordinate": "audit.catancraft.sec01_035:cloth-config:11.1.106",
+          "deobfuscate": true,
+          "embedded_path": "META-INF/jarjar/cloth-config-forge-11.1.106.jar",
+          "original": "embedded/cloth-config-forge-11.1.106.jar",
+          "sha256": "29cc609a80f3cf27a8e53a43473b71ff24ecb3a6eb480c610017f8a98429e867",
+          "staged": "maven/audit/catancraft/sec01_035/cloth-config/11.1.106/cloth-config-11.1.106.jar"
+        }
+      ],
+      "actual_model_version_log_marker": "SERVICE50_COMBINED_RUNTIME_PASS tacz=true superbwarfare=true simplebedrockmodel=2.6.2-forge-mc1.20.1 runtimeArtifacts=15",
+      "sbw_manifest_sha256": "6e4424ef5a564609dc893c5d9d1ff3efcc7b897d8b9ae9a9acf96d7c331c9452",
+      "tacz_manifest_sha256": "1f3a4c5b31e1c0893f30f333a602b4334a82ba3c25ea23784ab16257b4080891"
+    }
+  },
+  "standalone": {
+    "policy_assertions": 20031,
+    "transaction_fault_model_assertions": 29,
+    "native": false
+  },
+  "road_verification": {
+    "source": "715a22786c4bc050814b6e5b6130084a950f525c",
+    "cases": [
+      {
+        "case": 0,
+        "vehicle": "sodayo_pick_up",
+        "rotation": 0,
+        "direction": -1,
+        "samples": 86,
+        "pathLength": 14.085764007988018,
+        "heading": 0.0,
+        "energyUsed": 326
+      },
+      {
+        "case": 1,
+        "vehicle": "sodayo_pick_up",
+        "rotation": 0,
+        "direction": 1,
+        "samples": 86,
+        "pathLength": 14.085764007989383,
+        "heading": 0.0,
+        "energyUsed": 326
+      },
+      {
+        "case": 2,
+        "vehicle": "sodayo_pick_up",
+        "rotation": 180,
+        "direction": -1,
+        "samples": 86,
+        "pathLength": 14.085764007989383,
+        "heading": -0.0,
+        "energyUsed": 326
+      },
+      {
+        "case": 3,
+        "vehicle": "sodayo_pick_up",
+        "rotation": 180,
+        "direction": 1,
+        "samples": 86,
+        "pathLength": 14.085764007988018,
+        "heading": 0.0,
+        "energyUsed": 326
+      },
+      {
+        "case": 4,
+        "vehicle": "lav_150",
+        "rotation": 0,
+        "direction": -1,
+        "samples": 89,
+        "pathLength": 13.615226772575625,
+        "heading": 0.0,
+        "energyUsed": 966
+      },
+      {
+        "case": 5,
+        "vehicle": "lav_150",
+        "rotation": 0,
+        "direction": 1,
+        "samples": 89,
+        "pathLength": 13.615226772576534,
+        "heading": 0.0,
+        "energyUsed": 966
+      },
+      {
+        "case": 6,
+        "vehicle": "lav_150",
+        "rotation": 180,
+        "direction": -1,
+        "samples": 89,
+        "pathLength": 13.615226772576534,
+        "heading": -0.0,
+        "energyUsed": 966
+      },
+      {
+        "case": 7,
+        "vehicle": "lav_150",
+        "rotation": 180,
+        "direction": 1,
+        "samples": 89,
+        "pathLength": 13.615226772575625,
+        "heading": 0.0,
+        "energyUsed": 966
+      }
+    ],
+    "clearance": [
+      [
+        2,
+        2,
+        -2
+      ],
+      [
+        2,
+        2,
+        -1
+      ],
+      [
+        2,
+        2,
+        0
+      ],
+      [
+        2,
+        2,
+        1
+      ],
+      [
+        2,
+        2,
+        2
+      ],
+      [
+        2,
+        3,
+        -2
+      ],
+      [
+        2,
+        3,
+        -1
+      ],
+      [
+        2,
+        3,
+        0
+      ],
+      [
+        2,
+        3,
+        1
+      ],
+      [
+        2,
+        3,
+        2
+      ],
+      [
+        3,
+        0,
+        -18
+      ],
+      [
+        3,
+        0,
+        -17
+      ],
+      [
+        3,
+        0,
+        -16
+      ],
+      [
+        3,
+        0,
+        -15
+      ],
+      [
+        3,
+        0,
+        -14
+      ],
+      [
+        3,
+        0,
+        -13
+      ],
+      [
+        3,
+        0,
+        -12
+      ],
+      [
+        3,
+        0,
+        -11
+      ],
+      [
+        3,
+        0,
+        -10
+      ],
+      [
+        3,
+        0,
+        -9
+      ],
+      [
+        3,
+        0,
+        -8
+      ],
+      [
+        3,
+        0,
+        -7
+      ],
+      [
+        3,
+        0,
+        -6
+      ],
+      [
+        3,
+        0,
+        -5
+      ],
+      [
+        3,
+        0,
+        -4
+      ],
+      [
+        3,
+        0,
+        -3
+      ],
+      [
+        3,
+        0,
+        -2
+      ],
+      [
+        3,
+        0,
+        -1
+      ],
+      [
+        3,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        1
+      ],
+      [
+        3,
+        0,
+        2
+      ],
+      [
+        3,
+        0,
+        3
+      ],
+      [
+        3,
+        0,
+        4
+      ],
+      [
+        3,
+        0,
+        5
+      ],
+      [
+        3,
+        0,
+        6
+      ],
+      [
+        3,
+        0,
+        7
+      ],
+      [
+        3,
+        0,
+        8
+      ],
+      [
+        3,
+        0,
+        9
+      ],
+      [
+        3,
+        0,
+        10
+      ],
+      [
+        3,
+        0,
+        11
+      ],
+      [
+        3,
+        0,
+        12
+      ],
+      [
+        3,
+        0,
+        13
+      ],
+      [
+        3,
+        0,
+        14
+      ],
+      [
+        3,
+        0,
+        15
+      ],
+      [
+        3,
+        0,
+        16
+      ],
+      [
+        3,
+        0,
+        17
+      ],
+      [
+        3,
+        0,
+        18
+      ],
+      [
+        3,
+        1,
+        -18
+      ],
+      [
+        3,
+        1,
+        -17
+      ],
+      [
+        3,
+        1,
+        -16
+      ],
+      [
+        3,
+        1,
+        -15
+      ],
+      [
+        3,
+        1,
+        -14
+      ],
+      [
+        3,
+        1,
+        -13
+      ],
+      [
+        3,
+        1,
+        -12
+      ],
+      [
+        3,
+        1,
+        -11
+      ],
+      [
+        3,
+        1,
+        -10
+      ],
+      [
+        3,
+        1,
+        -9
+      ],
+      [
+        3,
+        1,
+        -8
+      ],
+      [
+        3,
+        1,
+        -7
+      ],
+      [
+        3,
+        1,
+        -6
+      ],
+      [
+        3,
+        1,
+        -5
+      ],
+      [
+        3,
+        1,
+        -4
+      ],
+      [
+        3,
+        1,
+        -3
+      ],
+      [
+        3,
+        1,
+        -2
+      ],
+      [
+        3,
+        1,
+        -1
+      ],
+      [
+        3,
+        1,
+        0
+      ],
+      [
+        3,
+        1,
+        1
+      ],
+      [
+        3,
+        1,
+        2
+      ],
+      [
+        3,
+        1,
+        3
+      ],
+      [
+        3,
+        1,
+        4
+      ],
+      [
+        3,
+        1,
+        5
+      ],
+      [
+        3,
+        1,
+        6
+      ],
+      [
+        3,
+        1,
+        7
+      ],
+      [
+        3,
+        1,
+        8
+      ],
+      [
+        3,
+        1,
+        9
+      ],
+      [
+        3,
+        1,
+        10
+      ],
+      [
+        3,
+        1,
+        11
+      ],
+      [
+        3,
+        1,
+        12
+      ],
+      [
+        3,
+        1,
+        13
+      ],
+      [
+        3,
+        1,
+        14
+      ],
+      [
+        3,
+        1,
+        15
+      ],
+      [
+        3,
+        1,
+        16
+      ],
+      [
+        3,
+        1,
+        17
+      ],
+      [
+        3,
+        1,
+        18
+      ],
+      [
+        3,
+        2,
+        -17
+      ],
+      [
+        3,
+        2,
+        -16
+      ],
+      [
+        3,
+        2,
+        -15
+      ],
+      [
+        3,
+        2,
+        -14
+      ],
+      [
+        3,
+        2,
+        -13
+      ],
+      [
+        3,
+        2,
+        -12
+      ],
+      [
+        3,
+        2,
+        -11
+      ],
+      [
+        3,
+        2,
+        -10
+      ],
+      [
+        3,
+        2,
+        -9
+      ],
+      [
+        3,
+        2,
+        -8
+      ],
+      [
+        3,
+        2,
+        -7
+      ],
+      [
+        3,
+        2,
+        -6
+      ],
+      [
+        3,
+        2,
+        -5
+      ],
+      [
+        3,
+        2,
+        -4
+      ],
+      [
+        3,
+        2,
+        -3
+      ],
+      [
+        3,
+        2,
+        -2
+      ],
+      [
+        3,
+        2,
+        -1
+      ],
+      [
+        3,
+        2,
+        0
+      ],
+      [
+        3,
+        2,
+        1
+      ],
+      [
+        3,
+        2,
+        2
+      ],
+      [
+        3,
+        2,
+        3
+      ],
+      [
+        3,
+        2,
+        4
+      ],
+      [
+        3,
+        2,
+        5
+      ],
+      [
+        3,
+        2,
+        6
+      ],
+      [
+        3,
+        2,
+        7
+      ],
+      [
+        3,
+        2,
+        8
+      ],
+      [
+        3,
+        2,
+        9
+      ],
+      [
+        3,
+        2,
+        10
+      ],
+      [
+        3,
+        2,
+        11
+      ],
+      [
+        3,
+        2,
+        12
+      ],
+      [
+        3,
+        2,
+        13
+      ],
+      [
+        3,
+        2,
+        14
+      ],
+      [
+        3,
+        2,
+        15
+      ],
+      [
+        3,
+        2,
+        16
+      ],
+      [
+        3,
+        2,
+        17
+      ],
+      [
+        3,
+        3,
+        -15
+      ],
+      [
+        3,
+        3,
+        -14
+      ],
+      [
+        3,
+        3,
+        -13
+      ],
+      [
+        3,
+        3,
+        -12
+      ],
+      [
+        3,
+        3,
+        -11
+      ],
+      [
+        3,
+        3,
+        -10
+      ],
+      [
+        3,
+        3,
+        -9
+      ],
+      [
+        3,
+        3,
+        -8
+      ],
+      [
+        3,
+        3,
+        -7
+      ],
+      [
+        3,
+        3,
+        -6
+      ],
+      [
+        3,
+        3,
+        -5
+      ],
+      [
+        3,
+        3,
+        -4
+      ],
+      [
+        3,
+        3,
+        -3
+      ],
+      [
+        3,
+        3,
+        -2
+      ],
+      [
+        3,
+        3,
+        -1
+      ],
+      [
+        3,
+        3,
+        0
+      ],
+      [
+        3,
+        3,
+        1
+      ],
+      [
+        3,
+        3,
+        2
+      ],
+      [
+        3,
+        3,
+        3
+      ],
+      [
+        3,
+        3,
+        4
+      ],
+      [
+        3,
+        3,
+        5
+      ],
+      [
+        3,
+        3,
+        6
+      ],
+      [
+        3,
+        3,
+        7
+      ],
+      [
+        3,
+        3,
+        8
+      ],
+      [
+        3,
+        3,
+        9
+      ],
+      [
+        3,
+        3,
+        10
+      ],
+      [
+        3,
+        3,
+        11
+      ],
+      [
+        3,
+        3,
+        12
+      ],
+      [
+        3,
+        3,
+        13
+      ],
+      [
+        3,
+        3,
+        14
+      ],
+      [
+        3,
+        3,
+        15
+      ],
+      [
+        4,
+        0,
+        -18
+      ],
+      [
+        4,
+        0,
+        -17
+      ],
+      [
+        4,
+        0,
+        -16
+      ],
+      [
+        4,
+        0,
+        -15
+      ],
+      [
+        4,
+        0,
+        -14
+      ],
+      [
+        4,
+        0,
+        -13
+      ],
+      [
+        4,
+        0,
+        -12
+      ],
+      [
+        4,
+        0,
+        -11
+      ],
+      [
+        4,
+        0,
+        -10
+      ],
+      [
+        4,
+        0,
+        -9
+      ],
+      [
+        4,
+        0,
+        -8
+      ],
+      [
+        4,
+        0,
+        -7
+      ],
+      [
+        4,
+        0,
+        -6
+      ],
+      [
+        4,
+        0,
+        -5
+      ],
+      [
+        4,
+        0,
+        -4
+      ],
+      [
+        4,
+        0,
+        -3
+      ],
+      [
+        4,
+        0,
+        -2
+      ],
+      [
+        4,
+        0,
+        -1
+      ],
+      [
+        4,
+        0,
+        0
+      ],
+      [
+        4,
+        0,
+        1
+      ],
+      [
+        4,
+        0,
+        2
+      ],
+      [
+        4,
+        0,
+        3
+      ],
+      [
+        4,
+        0,
+        4
+      ],
+      [
+        4,
+        0,
+        5
+      ],
+      [
+        4,
+        0,
+        6
+      ],
+      [
+        4,
+        0,
+        7
+      ],
+      [
+        4,
+        0,
+        8
+      ],
+      [
+        4,
+        0,
+        9
+      ],
+      [
+        4,
+        0,
+        10
+      ],
+      [
+        4,
+        0,
+        11
+      ],
+      [
+        4,
+        0,
+        12
+      ],
+      [
+        4,
+        0,
+        13
+      ],
+      [
+        4,
+        0,
+        14
+      ],
+      [
+        4,
+        0,
+        15
+      ],
+      [
+        4,
+        0,
+        16
+      ],
+      [
+        4,
+        0,
+        17
+      ],
+      [
+        4,
+        0,
+        18
+      ],
+      [
+        4,
+        1,
+        -18
+      ],
+      [
+        4,
+        1,
+        -17
+      ],
+      [
+        4,
+        1,
+        -16
+      ],
+      [
+        4,
+        1,
+        -15
+      ],
+      [
+        4,
+        1,
+        -14
+      ],
+      [
+        4,
+        1,
+        -13
+      ],
+      [
+        4,
+        1,
+        -12
+      ],
+      [
+        4,
+        1,
+        -11
+      ],
+      [
+        4,
+        1,
+        -10
+      ],
+      [
+        4,
+        1,
+        -9
+      ],
+      [
+        4,
+        1,
+        -8
+      ],
+      [
+        4,
+        1,
+        -7
+      ],
+      [
+        4,
+        1,
+        -6
+      ],
+      [
+        4,
+        1,
+        -5
+      ],
+      [
+        4,
+        1,
+        -4
+      ],
+      [
+        4,
+        1,
+        -3
+      ],
+      [
+        4,
+        1,
+        -2
+      ],
+      [
+        4,
+        1,
+        -1
+      ],
+      [
+        4,
+        1,
+        0
+      ],
+      [
+        4,
+        1,
+        1
+      ],
+      [
+        4,
+        1,
+        2
+      ],
+      [
+        4,
+        1,
+        3
+      ],
+      [
+        4,
+        1,
+        4
+      ],
+      [
+        4,
+        1,
+        5
+      ],
+      [
+        4,
+        1,
+        6
+      ],
+      [
+        4,
+        1,
+        7
+      ],
+      [
+        4,
+        1,
+        8
+      ],
+      [
+        4,
+        1,
+        9
+      ],
+      [
+        4,
+        1,
+        10
+      ],
+      [
+        4,
+        1,
+        11
+      ],
+      [
+        4,
+        1,
+        12
+      ],
+      [
+        4,
+        1,
+        13
+      ],
+      [
+        4,
+        1,
+        14
+      ],
+      [
+        4,
+        1,
+        15
+      ],
+      [
+        4,
+        1,
+        16
+      ],
+      [
+        4,
+        1,
+        17
+      ],
+      [
+        4,
+        1,
+        18
+      ],
+      [
+        4,
+        2,
+        -17
+      ],
+      [
+        4,
+        2,
+        -16
+      ],
+      [
+        4,
+        2,
+        -15
+      ],
+      [
+        4,
+        2,
+        -14
+      ],
+      [
+        4,
+        2,
+        -13
+      ],
+      [
+        4,
+        2,
+        -12
+      ],
+      [
+        4,
+        2,
+        -11
+      ],
+      [
+        4,
+        2,
+        -10
+      ],
+      [
+        4,
+        2,
+        -9
+      ],
+      [
+        4,
+        2,
+        -8
+      ],
+      [
+        4,
+        2,
+        -7
+      ],
+      [
+        4,
+        2,
+        -6
+      ],
+      [
+        4,
+        2,
+        -5
+      ],
+      [
+        4,
+        2,
+        -4
+      ],
+      [
+        4,
+        2,
+        -3
+      ],
+      [
+        4,
+        2,
+        -2
+      ],
+      [
+        4,
+        2,
+        -1
+      ],
+      [
+        4,
+        2,
+        0
+      ],
+      [
+        4,
+        2,
+        1
+      ],
+      [
+        4,
+        2,
+        2
+      ],
+      [
+        4,
+        2,
+        3
+      ],
+      [
+        4,
+        2,
+        4
+      ],
+      [
+        4,
+        2,
+        5
+      ],
+      [
+        4,
+        2,
+        6
+      ],
+      [
+        4,
+        2,
+        7
+      ],
+      [
+        4,
+        2,
+        8
+      ],
+      [
+        4,
+        2,
+        9
+      ],
+      [
+        4,
+        2,
+        10
+      ],
+      [
+        4,
+        2,
+        11
+      ],
+      [
+        4,
+        2,
+        12
+      ],
+      [
+        4,
+        2,
+        13
+      ],
+      [
+        4,
+        2,
+        14
+      ],
+      [
+        4,
+        2,
+        15
+      ],
+      [
+        4,
+        2,
+        16
+      ],
+      [
+        4,
+        2,
+        17
+      ],
+      [
+        4,
+        3,
+        -15
+      ],
+      [
+        4,
+        3,
+        -14
+      ],
+      [
+        4,
+        3,
+        -13
+      ],
+      [
+        4,
+        3,
+        -12
+      ],
+      [
+        4,
+        3,
+        -11
+      ],
+      [
+        4,
+        3,
+        -10
+      ],
+      [
+        4,
+        3,
+        -9
+      ],
+      [
+        4,
+        3,
+        -8
+      ],
+      [
+        4,
+        3,
+        -7
+      ],
+      [
+        4,
+        3,
+        -6
+      ],
+      [
+        4,
+        3,
+        -5
+      ],
+      [
+        4,
+        3,
+        -4
+      ],
+      [
+        4,
+        3,
+        -3
+      ],
+      [
+        4,
+        3,
+        -2
+      ],
+      [
+        4,
+        3,
+        -1
+      ],
+      [
+        4,
+        3,
+        0
+      ],
+      [
+        4,
+        3,
+        1
+      ],
+      [
+        4,
+        3,
+        2
+      ],
+      [
+        4,
+        3,
+        3
+      ],
+      [
+        4,
+        3,
+        4
+      ],
+      [
+        4,
+        3,
+        5
+      ],
+      [
+        4,
+        3,
+        6
+      ],
+      [
+        4,
+        3,
+        7
+      ],
+      [
+        4,
+        3,
+        8
+      ],
+      [
+        4,
+        3,
+        9
+      ],
+      [
+        4,
+        3,
+        10
+      ],
+      [
+        4,
+        3,
+        11
+      ],
+      [
+        4,
+        3,
+        12
+      ],
+      [
+        4,
+        3,
+        13
+      ],
+      [
+        4,
+        3,
+        14
+      ],
+      [
+        4,
+        3,
+        15
+      ],
+      [
+        5,
+        0,
+        -18
+      ],
+      [
+        5,
+        0,
+        -17
+      ],
+      [
+        5,
+        0,
+        -16
+      ],
+      [
+        5,
+        0,
+        -15
+      ],
+      [
+        5,
+        0,
+        -14
+      ],
+      [
+        5,
+        0,
+        -13
+      ],
+      [
+        5,
+        0,
+        -12
+      ],
+      [
+        5,
+        0,
+        -11
+      ],
+      [
+        5,
+        0,
+        -10
+      ],
+      [
+        5,
+        0,
+        -9
+      ],
+      [
+        5,
+        0,
+        -8
+      ],
+      [
+        5,
+        0,
+        -7
+      ],
+      [
+        5,
+        0,
+        -6
+      ],
+      [
+        5,
+        0,
+        -5
+      ],
+      [
+        5,
+        0,
+        -4
+      ],
+      [
+        5,
+        0,
+        -3
+      ],
+      [
+        5,
+        0,
+        -2
+      ],
+      [
+        5,
+        0,
+        -1
+      ],
+      [
+        5,
+        0,
+        0
+      ],
+      [
+        5,
+        0,
+        1
+      ],
+      [
+        5,
+        0,
+        2
+      ],
+      [
+        5,
+        0,
+        3
+      ],
+      [
+        5,
+        0,
+        4
+      ],
+      [
+        5,
+        0,
+        5
+      ],
+      [
+        5,
+        0,
+        6
+      ],
+      [
+        5,
+        0,
+        7
+      ],
+      [
+        5,
+        0,
+        8
+      ],
+      [
+        5,
+        0,
+        9
+      ],
+      [
+        5,
+        0,
+        10
+      ],
+      [
+        5,
+        0,
+        11
+      ],
+      [
+        5,
+        0,
+        12
+      ],
+      [
+        5,
+        0,
+        13
+      ],
+      [
+        5,
+        0,
+        14
+      ],
+      [
+        5,
+        0,
+        15
+      ],
+      [
+        5,
+        0,
+        16
+      ],
+      [
+        5,
+        0,
+        17
+      ],
+      [
+        5,
+        0,
+        18
+      ],
+      [
+        5,
+        1,
+        -18
+      ],
+      [
+        5,
+        1,
+        -17
+      ],
+      [
+        5,
+        1,
+        -16
+      ],
+      [
+        5,
+        1,
+        -15
+      ],
+      [
+        5,
+        1,
+        -14
+      ],
+      [
+        5,
+        1,
+        -13
+      ],
+      [
+        5,
+        1,
+        -12
+      ],
+      [
+        5,
+        1,
+        -11
+      ],
+      [
+        5,
+        1,
+        -10
+      ],
+      [
+        5,
+        1,
+        -9
+      ],
+      [
+        5,
+        1,
+        -8
+      ],
+      [
+        5,
+        1,
+        -7
+      ],
+      [
+        5,
+        1,
+        -6
+      ],
+      [
+        5,
+        1,
+        -5
+      ],
+      [
+        5,
+        1,
+        -4
+      ],
+      [
+        5,
+        1,
+        -3
+      ],
+      [
+        5,
+        1,
+        -2
+      ],
+      [
+        5,
+        1,
+        -1
+      ],
+      [
+        5,
+        1,
+        0
+      ],
+      [
+        5,
+        1,
+        1
+      ],
+      [
+        5,
+        1,
+        2
+      ],
+      [
+        5,
+        1,
+        3
+      ],
+      [
+        5,
+        1,
+        4
+      ],
+      [
+        5,
+        1,
+        5
+      ],
+      [
+        5,
+        1,
+        6
+      ],
+      [
+        5,
+        1,
+        7
+      ],
+      [
+        5,
+        1,
+        8
+      ],
+      [
+        5,
+        1,
+        9
+      ],
+      [
+        5,
+        1,
+        10
+      ],
+      [
+        5,
+        1,
+        11
+      ],
+      [
+        5,
+        1,
+        12
+      ],
+      [
+        5,
+        1,
+        13
+      ],
+      [
+        5,
+        1,
+        14
+      ],
+      [
+        5,
+        1,
+        15
+      ],
+      [
+        5,
+        1,
+        16
+      ],
+      [
+        5,
+        1,
+        17
+      ],
+      [
+        5,
+        1,
+        18
+      ],
+      [
+        5,
+        2,
+        -17
+      ],
+      [
+        5,
+        2,
+        -16
+      ],
+      [
+        5,
+        2,
+        -15
+      ],
+      [
+        5,
+        2,
+        -14
+      ],
+      [
+        5,
+        2,
+        -13
+      ],
+      [
+        5,
+        2,
+        -12
+      ],
+      [
+        5,
+        2,
+        -11
+      ],
+      [
+        5,
+        2,
+        -10
+      ],
+      [
+        5,
+        2,
+        -9
+      ],
+      [
+        5,
+        2,
+        -8
+      ],
+      [
+        5,
+        2,
+        -7
+      ],
+      [
+        5,
+        2,
+        -6
+      ],
+      [
+        5,
+        2,
+        -5
+      ],
+      [
+        5,
+        2,
+        -4
+      ],
+      [
+        5,
+        2,
+        -3
+      ],
+      [
+        5,
+        2,
+        -2
+      ],
+      [
+        5,
+        2,
+        -1
+      ],
+      [
+        5,
+        2,
+        0
+      ],
+      [
+        5,
+        2,
+        1
+      ],
+      [
+        5,
+        2,
+        2
+      ],
+      [
+        5,
+        2,
+        3
+      ],
+      [
+        5,
+        2,
+        4
+      ],
+      [
+        5,
+        2,
+        5
+      ],
+      [
+        5,
+        2,
+        6
+      ],
+      [
+        5,
+        2,
+        7
+      ],
+      [
+        5,
+        2,
+        8
+      ],
+      [
+        5,
+        2,
+        9
+      ],
+      [
+        5,
+        2,
+        10
+      ],
+      [
+        5,
+        2,
+        11
+      ],
+      [
+        5,
+        2,
+        12
+      ],
+      [
+        5,
+        2,
+        13
+      ],
+      [
+        5,
+        2,
+        14
+      ],
+      [
+        5,
+        2,
+        15
+      ],
+      [
+        5,
+        2,
+        16
+      ],
+      [
+        5,
+        2,
+        17
+      ],
+      [
+        5,
+        3,
+        -15
+      ],
+      [
+        5,
+        3,
+        -14
+      ],
+      [
+        5,
+        3,
+        -13
+      ],
+      [
+        5,
+        3,
+        -12
+      ],
+      [
+        5,
+        3,
+        -11
+      ],
+      [
+        5,
+        3,
+        -10
+      ],
+      [
+        5,
+        3,
+        -9
+      ],
+      [
+        5,
+        3,
+        -8
+      ],
+      [
+        5,
+        3,
+        -7
+      ],
+      [
+        5,
+        3,
+        -6
+      ],
+      [
+        5,
+        3,
+        -5
+      ],
+      [
+        5,
+        3,
+        -4
+      ],
+      [
+        5,
+        3,
+        -3
+      ],
+      [
+        5,
+        3,
+        -2
+      ],
+      [
+        5,
+        3,
+        -1
+      ],
+      [
+        5,
+        3,
+        0
+      ],
+      [
+        5,
+        3,
+        1
+      ],
+      [
+        5,
+        3,
+        2
+      ],
+      [
+        5,
+        3,
+        3
+      ],
+      [
+        5,
+        3,
+        4
+      ],
+      [
+        5,
+        3,
+        5
+      ],
+      [
+        5,
+        3,
+        6
+      ],
+      [
+        5,
+        3,
+        7
+      ],
+      [
+        5,
+        3,
+        8
+      ],
+      [
+        5,
+        3,
+        9
+      ],
+      [
+        5,
+        3,
+        10
+      ],
+      [
+        5,
+        3,
+        11
+      ],
+      [
+        5,
+        3,
+        12
+      ],
+      [
+        5,
+        3,
+        13
+      ],
+      [
+        5,
+        3,
+        14
+      ],
+      [
+        5,
+        3,
+        15
+      ],
+      [
+        6,
+        2,
+        -2
+      ],
+      [
+        6,
+        2,
+        -1
+      ],
+      [
+        6,
+        2,
+        0
+      ],
+      [
+        6,
+        2,
+        1
+      ],
+      [
+        6,
+        2,
+        2
+      ],
+      [
+        6,
+        3,
+        -2
+      ],
+      [
+        6,
+        3,
+        -1
+      ],
+      [
+        6,
+        3,
+        0
+      ],
+      [
+        6,
+        3,
+        1
+      ],
+      [
+        6,
+        3,
+        2
+      ]
+    ],
+    "support": [
+      [
+        2,
+        -1,
+        -2
+      ],
+      [
+        2,
+        -1,
+        -1
+      ],
+      [
+        2,
+        -1,
+        0
+      ],
+      [
+        2,
+        -1,
+        1
+      ],
+      [
+        2,
+        -1,
+        2
+      ],
+      [
+        3,
+        -1,
+        -18
+      ],
+      [
+        3,
+        -1,
+        -17
+      ],
+      [
+        3,
+        -1,
+        -16
+      ],
+      [
+        3,
+        -1,
+        -15
+      ],
+      [
+        3,
+        -1,
+        -14
+      ],
+      [
+        3,
+        -1,
+        -13
+      ],
+      [
+        3,
+        -1,
+        -12
+      ],
+      [
+        3,
+        -1,
+        -11
+      ],
+      [
+        3,
+        -1,
+        -10
+      ],
+      [
+        3,
+        -1,
+        -9
+      ],
+      [
+        3,
+        -1,
+        -8
+      ],
+      [
+        3,
+        -1,
+        -7
+      ],
+      [
+        3,
+        -1,
+        -6
+      ],
+      [
+        3,
+        -1,
+        -5
+      ],
+      [
+        3,
+        -1,
+        -4
+      ],
+      [
+        3,
+        -1,
+        -3
+      ],
+      [
+        3,
+        -1,
+        -2
+      ],
+      [
+        3,
+        -1,
+        -1
+      ],
+      [
+        3,
+        -1,
+        0
+      ],
+      [
+        3,
+        -1,
+        1
+      ],
+      [
+        3,
+        -1,
+        2
+      ],
+      [
+        3,
+        -1,
+        3
+      ],
+      [
+        3,
+        -1,
+        4
+      ],
+      [
+        3,
+        -1,
+        5
+      ],
+      [
+        3,
+        -1,
+        6
+      ],
+      [
+        3,
+        -1,
+        7
+      ],
+      [
+        3,
+        -1,
+        8
+      ],
+      [
+        3,
+        -1,
+        9
+      ],
+      [
+        3,
+        -1,
+        10
+      ],
+      [
+        3,
+        -1,
+        11
+      ],
+      [
+        3,
+        -1,
+        12
+      ],
+      [
+        3,
+        -1,
+        13
+      ],
+      [
+        3,
+        -1,
+        14
+      ],
+      [
+        3,
+        -1,
+        15
+      ],
+      [
+        3,
+        -1,
+        16
+      ],
+      [
+        3,
+        -1,
+        17
+      ],
+      [
+        3,
+        -1,
+        18
+      ],
+      [
+        4,
+        -1,
+        -18
+      ],
+      [
+        4,
+        -1,
+        -17
+      ],
+      [
+        4,
+        -1,
+        -16
+      ],
+      [
+        4,
+        -1,
+        -15
+      ],
+      [
+        4,
+        -1,
+        -14
+      ],
+      [
+        4,
+        -1,
+        -13
+      ],
+      [
+        4,
+        -1,
+        -12
+      ],
+      [
+        4,
+        -1,
+        -11
+      ],
+      [
+        4,
+        -1,
+        -10
+      ],
+      [
+        4,
+        -1,
+        -9
+      ],
+      [
+        4,
+        -1,
+        -8
+      ],
+      [
+        4,
+        -1,
+        -7
+      ],
+      [
+        4,
+        -1,
+        -6
+      ],
+      [
+        4,
+        -1,
+        -5
+      ],
+      [
+        4,
+        -1,
+        -4
+      ],
+      [
+        4,
+        -1,
+        -3
+      ],
+      [
+        4,
+        -1,
+        -2
+      ],
+      [
+        4,
+        -1,
+        -1
+      ],
+      [
+        4,
+        -1,
+        0
+      ],
+      [
+        4,
+        -1,
+        1
+      ],
+      [
+        4,
+        -1,
+        2
+      ],
+      [
+        4,
+        -1,
+        3
+      ],
+      [
+        4,
+        -1,
+        4
+      ],
+      [
+        4,
+        -1,
+        5
+      ],
+      [
+        4,
+        -1,
+        6
+      ],
+      [
+        4,
+        -1,
+        7
+      ],
+      [
+        4,
+        -1,
+        8
+      ],
+      [
+        4,
+        -1,
+        9
+      ],
+      [
+        4,
+        -1,
+        10
+      ],
+      [
+        4,
+        -1,
+        11
+      ],
+      [
+        4,
+        -1,
+        12
+      ],
+      [
+        4,
+        -1,
+        13
+      ],
+      [
+        4,
+        -1,
+        14
+      ],
+      [
+        4,
+        -1,
+        15
+      ],
+      [
+        4,
+        -1,
+        16
+      ],
+      [
+        4,
+        -1,
+        17
+      ],
+      [
+        4,
+        -1,
+        18
+      ],
+      [
+        5,
+        -1,
+        -18
+      ],
+      [
+        5,
+        -1,
+        -17
+      ],
+      [
+        5,
+        -1,
+        -16
+      ],
+      [
+        5,
+        -1,
+        -15
+      ],
+      [
+        5,
+        -1,
+        -14
+      ],
+      [
+        5,
+        -1,
+        -13
+      ],
+      [
+        5,
+        -1,
+        -12
+      ],
+      [
+        5,
+        -1,
+        -11
+      ],
+      [
+        5,
+        -1,
+        -10
+      ],
+      [
+        5,
+        -1,
+        -9
+      ],
+      [
+        5,
+        -1,
+        -8
+      ],
+      [
+        5,
+        -1,
+        -7
+      ],
+      [
+        5,
+        -1,
+        -6
+      ],
+      [
+        5,
+        -1,
+        -5
+      ],
+      [
+        5,
+        -1,
+        -4
+      ],
+      [
+        5,
+        -1,
+        -3
+      ],
+      [
+        5,
+        -1,
+        -2
+      ],
+      [
+        5,
+        -1,
+        -1
+      ],
+      [
+        5,
+        -1,
+        0
+      ],
+      [
+        5,
+        -1,
+        1
+      ],
+      [
+        5,
+        -1,
+        2
+      ],
+      [
+        5,
+        -1,
+        3
+      ],
+      [
+        5,
+        -1,
+        4
+      ],
+      [
+        5,
+        -1,
+        5
+      ],
+      [
+        5,
+        -1,
+        6
+      ],
+      [
+        5,
+        -1,
+        7
+      ],
+      [
+        5,
+        -1,
+        8
+      ],
+      [
+        5,
+        -1,
+        9
+      ],
+      [
+        5,
+        -1,
+        10
+      ],
+      [
+        5,
+        -1,
+        11
+      ],
+      [
+        5,
+        -1,
+        12
+      ],
+      [
+        5,
+        -1,
+        13
+      ],
+      [
+        5,
+        -1,
+        14
+      ],
+      [
+        5,
+        -1,
+        15
+      ],
+      [
+        5,
+        -1,
+        16
+      ],
+      [
+        5,
+        -1,
+        17
+      ],
+      [
+        5,
+        -1,
+        18
+      ],
+      [
+        6,
+        -1,
+        -2
+      ],
+      [
+        6,
+        -1,
+        -1
+      ],
+      [
+        6,
+        -1,
+        0
+      ],
+      [
+        6,
+        -1,
+        1
+      ],
+      [
+        6,
+        -1,
+        2
+      ]
+    ],
+    "scope": "Native trajectory verification and conservative cell masks; production authority remains separate."
+  },
+  "fractional_credit_independent": {
+    "result": "PASS",
+    "source": "2e02c34ed903bedf29868cd86b310c0d8d86cad0",
+    "scope": "Independent sealed fractional proofs, actual native national ledger and final entity-region inventory; no world writes/native execution",
+    "runtime_marker": "SERVICE50_COMBINED_RUNTIME_PASS tacz=true superbwarfare=true simplebedrockmodel=2.6.2-forge-mc1.20.1 runtimeArtifacts=15",
+    "combined_service_tests": 8,
+    "combined_log_sha256": "e28641284aecefccc3e0af62bcfcd78dc4fabe5dfa593b3e5f9fba1e90f5a65d",
+    "baseline_source": "54091940597e054e8eb5953e280ef46807f67014",
+    "compiled_files_independently_compared": 849,
+    "compiled_files_unchanged": 847,
+    "changed_test_only_files": [
+      "build/classes/java/main/com/quin/catancraft/world/VehicleService50Tests$Fixture.class",
+      "build/classes/java/main/com/quin/catancraft/world/VehicleService50Tests.class"
+    ],
+    "nation": "55110a2d-5982-4750-8d52-54adb1fbac47",
+    "entity": "bdc8dcc1-fdfd-4299-bf7f-4a073466dfad",
+    "first_operation": "f65cf3dd-1ac9-43bb-bfb8-cac1df01c56a",
+    "first_quote_sha256": "d2a60690f28ef81bf60a2ae1dcb982251f26f0284d7e331cdd6a965f8285dd65",
+    "second_operation": "8c6112b8-5eb1-4b3b-903c-54f663455fce",
+    "second_quote_sha256": "82f2a3c9b8019930fb9c1c11bc4facbf7e31a064243a712c4352069199ac4077",
+    "first_energy_added": 1,
+    "first_fuel_debit": 1,
+    "first_credit_numerator": 4999968,
+    "second_energy_added": 1,
+    "second_fuel_debit": 0,
+    "final_credit_numerator": 4999936,
+    "credit_denominator": 5000000,
+    "actual_final_nation_fuel": 99,
+    "captured_native_energy_after_consumed_replay": 4999999,
+    "native_final_lock": "none",
+    "fractional_proof_sha256": "0af16b1fae0b741be7f220f5e18aab840109650238e00d9b76813863100ca724",
+    "entity_proof_sha256": "16cc8ac679f2982d6e7818bc9f0f22b68dfe73e57c7a32a23462a7e9a2e0efbe",
+    "actual_native_ledger_sha256": "4365c8bb74ce791b0f1788b28f9815e5a1cc078264f96e3372e3f573686eba5a",
+    "actual_native_entity_regions": [
+      {
+        "name": "r.-1.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.-1.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.0.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.0.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.1.-1.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.1.0.mca",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "bytes": 0
+      },
+      {
+        "name": "r.13.13.mca",
+        "sha256": "4f5cc943c3221b276f1340a9dfd112b12652c162b0445fe05159c34617dd9161",
+        "bytes": 16384
+      },
+      {
+        "name": "r.14.13.mca",
+        "sha256": "420b4d017ba4ba81525c71989d0aa76763c98bb86db87feb3bb325f8b3fff8c5",
+        "bytes": 16384
+      }
+    ],
+    "actual_remaining_entities": 0,
+    "restart_combined": {
+      "result": "PASS",
+      "operation": "5fe43d5a-6a4d-480c-b8e5-9dcb70e68422",
+      "nation": "73f7b01b-12e9-4bcd-8920-b3a0cacf439b",
+      "entity": "bf044bd8-1d92-46d9-a0d9-a2ec7704b1ad",
+      "quote_sha256": "b107104961e87bcfe8d92a21cc1672e9f1c982c9d9d7c937fe89ad348f138b8a",
+      "seed_process": "469:1794615163757",
+      "verify_process": "748:1794615205723",
+      "seed_sha256": "1c3e47db335f246989855b7417a6278608743fbe846cd8d1204ac91041ff9608",
+      "verified_sha256": "e0eb5d5437b36db4132afbe2f18c13a2d491254b4db6b39ec0188471976d0fd5",
+      "log_sha256": {
+        "combined_service_seed": "cfdd2627b47929695f50ba81348fd50d9154321f6799a1ed5389bc89c473341c",
+        "combined_service_verify": "79dec98fa36f22c82ec0a86835ba4bc3153a00b87e0e58fe3d6548e378f5cc12"
+      },
+      "actual_native_ledger_sha256": "ba7044191c65c18e85685dbce542b553cad97b5bf3225be98aacc8b40494b091",
+      "actual_native_entity_regions": [
+        {
+          "name": "r.-1.-1.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.-1.0.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.0.-1.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.0.0.mca",
+          "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "bytes": 0
+        },
+        {
+          "name": "r.17.13.mca",
+          "sha256": "5736de3e1d464a097683f914b8e394dd00b41039e842d430c9247595468b225f",
+          "bytes": 16384
+        }
+      ],
+      "actual_remaining_entities": 1,
+      "seed_locked": true,
+      "actual_final_locked": false,
+      "seed_energy": 1250000,
+      "actual_final_energy": 1250000,
+      "seed_fuel": 92,
+      "actual_final_fuel": 92,
+      "duplicate_charge": 0,
+      "duplicate_energy": 0,
+      "scope": "Actual separate-JVM native restart of quarter-fill, not the nonzero-fractional test operation."
+    },
+    "limitations": [
+      "Base fixture discards vehicles after readback; final native entity regions are empty. Energy4999999 is the sealed snapshot read from native region before cleanup, not a surviving entity.",
+      "Nonzero credit roundtrip uses real SavedData write/read/reload and independently reconstructed rational arithmetic; this specific fractional operation is not a separate-JVM replay.",
+      "Authenticated-client authority/UI/boarding and installed-pack acceptance are not established by this audit.",
+      "No release JAR independently verified here."
+    ],
+    "combined_verified_phase_executions": 10
+  },
+  "evidence_zip": {
+    "name": "vehicle50_validation_evidence.zip",
+    "bytes": 7066718,
+    "sha256": "bcfee557348f97cff40226f68cd122aec6fce9e773584277864ed63c241e61ad"
+  },
+  "owner_installed_or_accepted": false,
+  "SEC-01": "UNRESOLVED / HIGH PRIORITY",
+  "live_world_or_mods_modified": false,
+  "test_fixture_warning": "All native worlds are disposable generated fixtures; source snapshots and saved readbacks do not establish installed-pack/client acceptance."
+}
