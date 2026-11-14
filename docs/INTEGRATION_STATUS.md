@@ -1,3 +1,29 @@
+## ECO-03 / INT-01 / INT-03 — all-city shop implementation, 2026-11-14 UTC
+
+Exact source `55d1b5afb259e9f60858af4a414695675e92bc50` replaces City-A-only
+weapon/management bindings with reviewed-map resolution for A–P, including all
+three ordinary industry slots and five factory levels. Local ownership,
+construction, reach/sightline and historical source checks remain. City A keeps
+its exact schema-1 identity; other cities carry the new map-pinned revision.
+Pending purchases/reward claims show their originating site and cannot recover
+through a different counter. TaCZ stock, prices and rolled rewards are unchanged.
+
+**112/112 native phase executions passed**, including nine new all-city tests and
+retained shop/reward/accounting suites with four seed/verify restart phases.
+Four separate fresh-run preparation refusals preserved existing target bytes.
+Full offline build succeeded. [Scope, exact counts and artifact identity](SHOP_SITES_051_CHECKPOINT.md);
+[machine evidence and raw-log archive](evidence/shop51_validation.json).
+Sparse native fixtures are not connected-client, full-pack or authored-campaign
+acceptance. The prior 64 Python results below remain historical, not rerun.
+
+Optional Gradle run labels isolate fresh native batches without deleting old
+worlds. Vehicle/wall coverage, shared startup/asset qualification, actual cumulative
+campaign adapters and the complete playable clean-server package remain open.
+**No combined owner release or installation is ready from this checkpoint.**
+Original 050 owner archive/resources and accepted A walls remain unchanged;
+033/034 recovery is retained. No live world or installed mods were accessed.
+SEC-01 crowbar remains **UNRESOLVED / HIGH PRIORITY**.
+
 ## INT-01 / INT-03 — reusable fresh progression foundation, 2026-11-14 UTC
 
 Owner requires a clean authored-server baseline and cumulative regression from

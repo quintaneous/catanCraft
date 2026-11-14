@@ -48,6 +48,11 @@ acceptance. Keep 033/034 purchase and startup recovery intact.
 
 ## Audited baseline: delivered 0.1.50
 
+Subsequent development has implemented all-city weapon/management bindings and
+original-site purchase/reward recovery guards. See the [shop implementation checkpoint](SHOP_SITES_051_CHECKPOINT.md)
+for exact test scope. The table below remains the delivered **050** baseline;
+no owner installation or full server-wide readiness is inferred from newer code.
+
 Read-only source audit at `6119e8c38135acba014bbee69bd5f0264363f2a7`;
 delivered JAR source `715a22786c4bc050814b6e5b6130084a950f525c`.
 [Original release evidence and hashes](VEHICLE_SERVICE_050_RELEASE.md) remain

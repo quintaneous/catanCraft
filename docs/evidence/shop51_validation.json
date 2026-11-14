@@ -1,0 +1,323 @@
+{
+  "schema": 1,
+  "dateUTC": "2026-11-14",
+  "status": "DEVELOPMENT_CHECKPOINT_NOT_OWNER_RELEASE",
+  "sourceCommit": "55d1b5afb259e9f60858af4a414695675e92bc50",
+  "sourceTree": "1b877ebd06417b47276d2c6d566e8407e5a8dde6",
+  "branch": "chatgpt/combined-shop-acceptance",
+  "runtime": {
+    "java": "17.0.21+9",
+    "gradle": "8.8",
+    "minecraft": "1.20.1",
+    "forge": "47.4.10",
+    "offline": true
+  },
+  "native": {
+    "label": "shop51-round1",
+    "executedPhases": 112,
+    "passedPhases": 112,
+    "failedPhases": 0,
+    "restartPhases": 4,
+    "results": [
+      {
+        "name": "01-catancraft_shop51",
+        "namespace": "catancraft_shop51",
+        "expected": 9,
+        "executed": 9,
+        "exit": 0,
+        "passed": true,
+        "seconds": 57.1,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_shop51"
+        ],
+        "logSHA256": "e108504c2178253a75857a076596b53aaf7eeb7a7f630b3886d6108468d4e347"
+      },
+      {
+        "name": "02-catancraft_shop40",
+        "namespace": "catancraft_shop40",
+        "expected": 35,
+        "executed": 35,
+        "exit": 0,
+        "passed": true,
+        "seconds": 61.69,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_shop40"
+        ],
+        "logSHA256": "f34a0b9b78b8930d46fe33f722764a18f962b2964aa5a54440995b6fc1d71754"
+      },
+      {
+        "name": "03-catancraft_rewards41",
+        "namespace": "catancraft_rewards41",
+        "expected": 32,
+        "executed": 32,
+        "exit": 0,
+        "passed": true,
+        "seconds": 57.02,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_rewards41"
+        ],
+        "logSHA256": "f087ed3c4f21508158f13cc5a2af4335f08017855a7a7a1fd74d3e58c8c864c3"
+      },
+      {
+        "name": "04-catancraft_claims43",
+        "namespace": "catancraft_claims43",
+        "expected": 10,
+        "executed": 10,
+        "exit": 0,
+        "passed": true,
+        "seconds": 41.24,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_claims43"
+        ],
+        "logSHA256": "41299f0933fe34ec0dfcd361a5f665a5f2ab98c2aed866ba27271e5cb363a576"
+      },
+      {
+        "name": "05-catancraft_supply43",
+        "namespace": "catancraft_supply43",
+        "expected": 8,
+        "executed": 8,
+        "exit": 0,
+        "passed": true,
+        "seconds": 38.44,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_supply43"
+        ],
+        "logSHA256": "0cf0468386ed500e674265c5c2f31b072d90ddcdcfdbd43819c743c0bf539a9d"
+      },
+      {
+        "name": "06-catancraft_active44",
+        "namespace": "catancraft_active44",
+        "expected": 6,
+        "executed": 6,
+        "exit": 0,
+        "passed": true,
+        "seconds": 37.15,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_active44"
+        ],
+        "logSHA256": "5130ae809062eb25b179849a232f160d87f1557508c8a4657aa32350745f52cc"
+      },
+      {
+        "name": "07-catancraft_stock42",
+        "namespace": "catancraft_stock42",
+        "expected": 8,
+        "executed": 8,
+        "exit": 0,
+        "passed": true,
+        "seconds": 38.93,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_stock42"
+        ],
+        "logSHA256": "07e76bd0fce75694c3dd598bbad7eafcb834c2cfa41f3ddb7866fa326ba90b01"
+      },
+      {
+        "name": "08-catancraft_shop40_restart",
+        "namespace": "catancraft_shop40_restart",
+        "expected": 1,
+        "executed": 1,
+        "exit": 0,
+        "passed": true,
+        "seconds": 33.36,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_shop40_restart",
+          "-PshopRestartPhase=seed",
+          "-PshopRestartSource=55d1b5afb259e9f60858af4a414695675e92bc50"
+        ],
+        "logSHA256": "1f2520ff05dac5b96cada731bb41c41fb079d14fce7fa8d7555104f0cf5b3d36"
+      },
+      {
+        "name": "09-catancraft_shop40_restart",
+        "namespace": "catancraft_shop40_restart",
+        "expected": 1,
+        "executed": 1,
+        "exit": 0,
+        "passed": true,
+        "seconds": 34.96,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_shop40_restart",
+          "-PshopRestartPhase=verify",
+          "-PshopRestartSource=55d1b5afb259e9f60858af4a414695675e92bc50"
+        ],
+        "logSHA256": "81951ea5aa682752283d5a349362dafa31036feff1cb8fa09c9661a00d48faff"
+      },
+      {
+        "name": "10-catancraft_rewards41_restart",
+        "namespace": "catancraft_rewards41_restart",
+        "expected": 1,
+        "executed": 1,
+        "exit": 0,
+        "passed": true,
+        "seconds": 34.21,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_rewards41_restart",
+          "-PrewardsRestartPhase=seed",
+          "-PrewardsRestartSource=55d1b5afb259e9f60858af4a414695675e92bc50"
+        ],
+        "logSHA256": "148418d570e6029c2ac6a090334165d7e910334e290b566088882bb822d7ce76"
+      },
+      {
+        "name": "11-catancraft_rewards41_restart",
+        "namespace": "catancraft_rewards41_restart",
+        "expected": 1,
+        "executed": 1,
+        "exit": 0,
+        "passed": true,
+        "seconds": 31.88,
+        "command": [
+          "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+          "/workspace/scratch/a1b6a42f71e7/run-gradle50-original.py",
+          "runGameTestServer",
+          "--offline",
+          "-PcontrolledGameTests=true",
+          "-PcontrolledRunLabel=shop51-round1",
+          "-PgameTestNamespace=catancraft_rewards41_restart",
+          "-PrewardsRestartPhase=verify",
+          "-PrewardsRestartSource=55d1b5afb259e9f60858af4a414695675e92bc50"
+        ],
+        "logSHA256": "042787ae1e4e9ad861ada80001316ed50de016217975d1959c230bb498e3c33c"
+      }
+    ]
+  },
+  "freshRunGuards": {
+    "passed": 4,
+    "results": [
+      {
+        "case": "unsafe-label",
+        "expectedRefusal": true,
+        "exit": 1,
+        "passed": true,
+        "reason": "controlledRunLabel requires",
+        "log": "guard-unsafe-label.log",
+        "logSHA256": "4043d72e089f3952dd4dbcc35689a4ed573c8f7c880585661415ecee6182334e"
+      },
+      {
+        "case": "uncontrolled-label",
+        "expectedRefusal": true,
+        "exit": 1,
+        "passed": true,
+        "reason": "controlledRunLabel requires",
+        "log": "guard-uncontrolled-label.log",
+        "logSHA256": "eff5227b389726983bbab4e9ed092c59847a793ea50e322770cb5b1985dfc4a5"
+      },
+      {
+        "case": "linked-path",
+        "expectedRefusal": true,
+        "exit": 1,
+        "passed": true,
+        "reason": "refuses symlink paths",
+        "log": "guard-linked-path.log",
+        "logSHA256": "558efca4013fca6a761bae16d8d5ee79755b6db0b621fab2f198cbb80f5569be"
+      },
+      {
+        "case": "unknown-save",
+        "expectedRefusal": true,
+        "exit": 1,
+        "passed": true,
+        "reason": "Unrecognized existing GameTest save",
+        "log": "guard-unknown-save.log",
+        "logSHA256": "c77552b5af53fd60e5855fe44839a0f5c262fd974e21f94598a0d3e88ef79fdc"
+      }
+    ],
+    "sentinelBytesUnchanged": true,
+    "unknownSaveUnmarked": true,
+    "serverLaunched": false
+  },
+  "build": {
+    "command": [
+      "build",
+      "--offline"
+    ],
+    "exit": 0,
+    "reportedSeconds": 19,
+    "logSHA256": "c297c3f1182e422ed4aabbe1f95eb9770d89d7556e1ebadb9333836e22545e1a",
+    "testTask": "NO-SOURCE; not counted as tests",
+    "artifact": {
+      "path": "build/libs/catancraft-0.1.50-vehicle-service.jar",
+      "sha256": "00228dd09af4b8b103cf2cfc3d6e57ef1dfdfd533bdf0ce4c3a8b45a5b670a67",
+      "bytes": 3970480,
+      "release": false,
+      "note": "Development artifact retains old version filename. Not the delivered050 artifact and not offered for installation."
+    }
+  },
+  "preservation": {
+    "resourcesByteIdenticalToDelivered050": true,
+    "purchase033SourceAndDocsRetainedAsAncestors": true,
+    "original050OwnerArchiveSHA256": "e2ca84ee26b2a069792a643164ec42f747ce61b6a52714a7c17c4eac3b82a52b",
+    "original050OwnerArchiveUnchanged": true,
+    "liveWorldOrInstalledModsAccessed": false
+  },
+  "scopeLimits": [
+    "Native sparse fixtures and detached ledgers; no complete authored-terrain qualification.",
+    "Restart suites exercise retained transaction ledgers; not positive connected-client all-city menus.",
+    "No installed TaCZ/SBW pack acceptance in this run.",
+    "Vehicle, wall, shared world startup and full owner-server packaging remain incomplete.",
+    "Cumulative native no-grant campaign not executed; earlier 64 Python results are retained history, not a new run.",
+    "SEC-01 crowbar remains UNRESOLVED / HIGH PRIORITY."
+  ],
+  "rawEvidence": {
+    "path": "docs/evidence/shop51_validation_evidence.zip",
+    "sha256": "5c1ae87ff7140c7eb9e21dc182acd85d68d80ac620ef9a68b5d870c80320378e",
+    "bytes": 56587,
+    "fileCount": 24
+  }
+}

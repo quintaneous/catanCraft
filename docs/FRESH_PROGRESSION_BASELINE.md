@@ -41,6 +41,12 @@ one focused solo checklist, initially in D, without repeating accepted A walls.
 
 ## Implemented developer tools
 
+Native suite isolation now also supports an explicit `controlledRunLabel` in
+Gradle, so a new regression batch can use fresh worlds without deleting or moving
+earlier runs. [All-city shop checkpoint](SHOP_SITES_051_CHECKPOINT.md) records its
+first use and validation scope. This does not make the stage-level evidence checker
+an automatic native campaign runner or complete the owner-server package.
+
 `tools/create_progression_run.py` reuses the existing `package_authored_demo`
 assembler and its pinned ZIP/JAR/asset, NBT, path and inherited-progress checks.
 It verifies the original input-manifest hash, derives a unique UUID in a separate
