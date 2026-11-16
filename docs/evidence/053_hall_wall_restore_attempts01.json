@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "source": "7eec39da81e1ce60e60e9090159efc9870d82796",
+  "status": "FOCUSED_NATIVE_INCOMPLETE",
+  "ownerReleaseReady": false,
+  "attempts": [
+    {
+      "schema": 1,
+      "source": "7eec39da81e1ce60e60e9090159efc9870d82796",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/92c934691925/run-gradle53.py",
+        "runGameTestServer",
+        "--offline",
+        "--console=plain",
+        "-PgameTestNamespace=catancraft_sector_hall_context53",
+        "-PcontrolledGameTests=true",
+        "-PcontrolledRunLabel=restore53-focused-01"
+      ],
+      "expectedTests": 8,
+      "startedUnix": 1794862738.2668114,
+      "status": "FAILED_OR_INCOMPLETE",
+      "requiresHumanLogReview": true,
+      "endedUnix": 1794862760.3503082,
+      "elapsedSeconds": 22.083,
+      "exitCode": 1,
+      "reportedCompleted": [],
+      "requiredTestsPassedMessage": false,
+      "sourceUnchanged": true,
+      "nativeLogSHA256": "cd2baa4f68bdc5a5026cb123ba7427b5cdf86f8811e9cec2547ed25622c433d4",
+      "evidenceDirectory": "build/evidence53/restore53-focused-01/catancraft_sector_hall_context53",
+      "nativeExecuted": 0,
+      "nativePassed": 0,
+      "interpretation": "Build dependency cache failure before native execution"
+    },
+    {
+      "schema": 1,
+      "source": "7eec39da81e1ce60e60e9090159efc9870d82796",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/92c934691925/run-gradle53.py",
+        "runGameTestServer",
+        "--console=plain",
+        "-PcontrolledGameTests=true",
+        "-PcontrolledRunLabel=restore53-context-02",
+        "-PgameTestNamespace=catancraft_sector_hall_context53"
+      ],
+      "expectedTests": 8,
+      "startedUnix": 1794862790.646522,
+      "status": "NATIVE_PROCESS_PASS_REQUIRES_REVIEW",
+      "requiresHumanLogReview": true,
+      "endedUnix": 1794862855.4432573,
+      "elapsedSeconds": 64.797,
+      "exitCode": 0,
+      "reportedCompleted": [
+        8
+      ],
+      "requiredTestsPassedMessage": true,
+      "sourceUnchanged": true,
+      "nativeLogSHA256": "937a05fa32e997054524a7bff315917d70bdc39e0a4b86f78ec1adf3edb97f1d",
+      "evidenceDirectory": "build/evidence53/restore53-context-02",
+      "nativeExecuted": 8,
+      "nativePassed": 8,
+      "interpretation": "Reviewed native suite pass; isolated synthetic fixture, no client acceptance"
+    },
+    {
+      "schema": 1,
+      "source": "7eec39da81e1ce60e60e9090159efc9870d82796",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/92c934691925/run-gradle53.py",
+        "runGameTestServer",
+        "--offline",
+        "--console=plain",
+        "-PgameTestNamespace=catancraft_sector_hall_composition53",
+        "-PcontrolledGameTests=true",
+        "-PcontrolledRunLabel=restore53-composition-01"
+      ],
+      "expectedTests": 7,
+      "startedUnix": 1794862866.1731138,
+      "status": "NATIVE_PROCESS_PASS_REQUIRES_REVIEW",
+      "requiresHumanLogReview": true,
+      "endedUnix": 1794862910.5430055,
+      "elapsedSeconds": 44.37,
+      "exitCode": 0,
+      "reportedCompleted": [
+        7
+      ],
+      "requiredTestsPassedMessage": true,
+      "sourceUnchanged": true,
+      "nativeLogSHA256": "678f43d99b8c846315268abadf6b07f1d5467ef7afa43f338267c4f0f3ff2e52",
+      "evidenceDirectory": "build/evidence53/restore53-composition-01/catancraft_sector_hall_composition53",
+      "nativeExecuted": 7,
+      "nativePassed": 7,
+      "interpretation": "Reviewed native suite pass; isolated synthetic fixture, no client acceptance"
+    },
+    {
+      "schema": 1,
+      "source": "7eec39da81e1ce60e60e9090159efc9870d82796",
+      "command": [
+        "/opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3",
+        "/workspace/scratch/92c934691925/run-gradle53.py",
+        "runGameTestServer",
+        "--offline",
+        "--console=plain",
+        "-PgameTestNamespace=catancraft_sector_hall_concurrency53",
+        "-PcontrolledGameTests=true",
+        "-PcontrolledRunLabel=restore53-composition-01"
+      ],
+      "expectedTests": 4,
+      "startedUnix": 1794862910.592831,
+      "status": "FAILED_OR_INCOMPLETE",
+      "requiresHumanLogReview": true,
+      "endedUnix": 1794862941.2932324,
+      "elapsedSeconds": 30.7,
+      "exitCode": 1,
+      "reportedCompleted": [
+        4
+      ],
+      "requiredTestsPassedMessage": false,
+      "sourceUnchanged": true,
+      "nativeLogSHA256": "edcc0d049ecf41a3c95e238609ca994ca902caf4a1691979fba8d2977d45f970",
+      "evidenceDirectory": "build/evidence53/restore53-composition-01/catancraft_sector_hall_concurrency53",
+      "nativeExecuted": 4,
+      "nativePassed": 3,
+      "interpretation": "Three checks passed; final completed-wall fixture guard rejected foreign world identity; investigating, not a suite pass"
+    }
+  ],
+  "archive": {
+    "path": "docs/evidence/053_hall_wall_restore_attempts01.zip",
+    "sha256": "60a54abc9332239d79c5d782cd2fb9d9996bfba85f5bc09c8033213015ff2a00"
+  },
+  "limits": [
+    "Synthetic focused fixtures only, not authored campaign or connected client acceptance",
+    "Mojang public-key fetch unavailable in this environment; native tests run without a connected client",
+    "All failed attempts retained; no world reset"
+  ]
+}

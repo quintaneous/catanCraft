@@ -1,3 +1,27 @@
+## INT-01 / INT-03 / DEF-04 — restored candidate validation, 2026-11-16
+
+Gameplay checkpoint `167237cda66cd83f757e227d6b73f4e2b8f27177` and kit/validation
+checkpoint `7eec39da81e1ce60e60e9090159efc9870d82796` are saved on the development
+branch. Source compilation passed; **78 packaging-control tests passed**, including
+actual PowerShell 7.4.6 on Linux. These are not Windows/client or gameplay
+acceptance. The runtime recovery recipe archive preserves the exact toolchain,
+published mod/runtime provenance and failed/successful dependency setup logs.
+
+On exact source `7eec39d`, native Hall context **8/8** and wall composition **7/7**
+passed. The concurrency suite completed four tests with **3 passes, 1 failure**:
+the final completed-wall guard rejected a relative fixture path after the wall
+service recorded its canonical path. The retained sealed journal confirmed the
+fixture mismatch. The fixture now uses `toRealPath()`; production guards are
+unchanged. That suite is not a pass until a new-world rerun completes. The earlier native
+launch attempt failed on an uncached dependency before executing any tests.
+[Raw logs, process exits and interpretations](evidence/053_hall_wall_restore_attempts01.json)
+retain these outcomes. No failure is reset or converted into passing evidence.
+
+The owner package remains **HELD**. All-city authored progression, authored wall
+purchases/restarts, retained regressions and the final actual-JAR assembly still
+require qualification. The solo D checklist remains a draft. SEC-01 is
+**UNRESOLVED / HIGH PRIORITY** and SEC-02 remains open.
+
 ## INT-01 / INT-03 / DEF-04 — Hall/wall composition recovery, 2026-11-16
 
 The 053 owner package remains **HELD / NOT READY FOR TESTING**. The last

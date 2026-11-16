@@ -41,6 +41,47 @@ one focused solo checklist, initially in D, without repeating accepted A walls.
 
 ## Implemented developer tools
 
+### 0.1.53 compatibility note — packaging validated, native clearance pending
+
+The earlier partial-runtime workflow and 64-test record below remain historical
+compatibility evidence. The new `tools/server53/stage_inputs.py` and
+`package_server.py` compose that assembler into a reusable kit. Staging requires
+the exact original transfer manifest, the final JAR's embedded source commit,
+matching evidence, the complete pinned 104-file Forge runtime, and the original
+TaCZ/SBW/KotlinForForge JARs. The Windows kit additionally carries the pinned
+316-file portable Java 17 runtime. No runtime downloads occur during kit creation
+or launch; this packaging support does not itself establish a native gameplay pass.
+
+In the new `verified-clean-r7-protected-map-progression53` mode, the original map
+and every region file remain unchanged. Only the **new copy's** `level.dat` derives
+Adventure mode, Normal difficulty and `randomTickSpeed=3`, with provenance; all
+other authored settings, including `keepInventory`, remain preserved. Older
+assembler modes retain their original metadata behavior. Thus the historical
+“source `level.dat` unchanged” statement does not mean that a new 0.1.53 run retains
+Creative/Peaceful inspection settings. No funding datapack or automatic grant is
+added in either workflow.
+
+The kit's `baseline/` is immutable and cannot launch. NEW verifies the kit and
+creates a different run directory and UUID; START verifies and resumes that same
+run, preserving paid progress. EULA starts false; localhost authentication,
+whitelist and the one-player limit remain enabled. Python and PowerShell reject
+changed/extra pinned runtime or tool files, redirects and partial bindings.
+[Packaging validation](SERVER53_PACKAGING_VALIDATION.json) records **78 passed,
+0 failed, 0 skipped**, including actual PowerShell 7.4.6 execution on Linux; this is
+not Windows-host, Java/server, gameplay, pacing or owner acceptance evidence.
+
+The source was recovered again under
+`/workspace/scratch/92c934691925/fresh-baseline-verified/CatanCraft_Clean_R7_Input`
+after the earlier workspace was pruned; the original manifest still hashes to
+`e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d`.
+Native progression/retained-regression adapters now exist, but their required
+matching-source execution and evidence review remain separate gates. The kit
+must not be marked ready from fixture results or unreviewed aggregate claims.
+The [single City D checklist](SERVER_WIDE_053_SOLO_CHECKLIST.md) remains DRAFT until
+those gates and final exact-JAR assembly are complete; SEC-01 stays unresolved.
+
+### Retained earlier workflow and evidence
+
 Native suite isolation now also supports an explicit `controlledRunLabel` in
 Gradle, so a new regression batch can use fresh worlds without deleting or moving
 earlier runs. [All-city shop checkpoint](SHOP_SITES_051_CHECKPOINT.md) records its

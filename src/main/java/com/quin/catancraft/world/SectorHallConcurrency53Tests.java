@@ -15,7 +15,8 @@ public final class SectorHallConcurrency53Tests {
     private SectorHallConcurrency53Tests() {}
     private static Path root(GameTestHelper h)throws IOException {
         h.assertTrue(h.getLevel().getServer() instanceof GameTestServer,"Native fixture only");
-        Path root=Files.createTempDirectory(h.getLevel().getServer().getWorldPath(LevelResource.ROOT).resolve("data"),"hall-wall53-");
+        // Match the canonical world identity recorded by SectorService.fixtureContext.
+        Path root=Files.createTempDirectory(h.getLevel().getServer().getWorldPath(LevelResource.ROOT).resolve("data"),"hall-wall53-").toRealPath();
         Files.createDirectory(root.resolve("data"));return root;
     }
     private static Path prestige(Path root,String city,String phase)throws IOException {
