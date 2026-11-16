@@ -464,8 +464,9 @@ public final class Progression53Tests {
             var zero=SectorCityAP3.levels(0,0,0,0);
             var expected=city.equals("a")?SectorCityAP3.assembly(zero,Set.of()).states():
                     SectorSites53.assembly(SectorSites53.site(city),zero,Set.of());
+            var hallContext=SectorHallContext53.capture(server,root,data,city,data.territory(city).ownerNationId());
             for(var row:expected.entrySet()) {
-                var pos=row.getKey();var state=row.getValue();var actual=level.getBlockState(pos);
+                var pos=row.getKey();var state=hallContext.reads().getOrDefault(pos,row.getValue());var actual=level.getBlockState(pos);
                 boolean match=TownHallInteractionPolicy.matches(actual,state,false);
                 if(!match&&state.is(Blocks.GRASS_BLOCK)&&actual.is(Blocks.DIRT)) {
                     var cover=expected.get(pos.above());
@@ -474,6 +475,8 @@ public final class Progression53Tests {
                 }
                 require(match,"Earlier wall source changed after progression in "+city+" at "+pos+" expected="+state+" actual="+actual);
             }
+            hallContext.verifyUnchanged();
+            require(expected.keySet().containsAll(hallContext.reads().keySet()),"Hall context escaped the wall protected-read envelope");
             CompoundTag before=data.save(new CompoundTag());
             for(var side:SectorContracts.Direction.values()) {
                 require(SectorService.savedState(data,city,side).level()==0,"Campaign must not adopt paid wall fixtures");

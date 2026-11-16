@@ -37,7 +37,7 @@ public final class SectorAuthored53Tests {
     public static void all_city_authored_walls_and_two_city_process_recovery(GameTestHelper h) throws Exception {
         new Campaign(h).start();
     }
-    private record Purchase(String city,String side,boolean interrupt) {}
+    private record Purchase(String city,String side,boolean interrupt,int orderIndex) {}
     @FunctionalInterface private interface Work { void run() throws Exception; }
     private static void require(boolean condition,String message) throws IOException {if(!condition)throw new IOException(message);}
     private static void ok(MapAssetService.Result result)throws IOException {require(result.success(),result.message());}
@@ -53,6 +53,9 @@ public final class SectorAuthored53Tests {
         SectorChunkLease lease;String leased="";int cityIndex,purchaseIndex,waited;boolean submitted;
         Purchase current;Path operation;long moneyBefore;Map<ResourceType,Long> stockBefore;int priorLevel;
         JsonObject seed;CatanSavedData expected;int verifyIndex;String action="initialize";
+        int hallFrom;long hallCash,hallCycle;Map<ResourceType,Long> hallStock;
+        Map<String,String> priorWallHashes=Map.of();CompoundTag priorWallStates;
+        final Map<String,String> hallHistories=new TreeMap<>();
 
         Campaign(GameTestHelper helper)throws Exception {
             h=helper;level=h.getLevel();server=level.getServer();data=CatanSavedData.get(server);
@@ -136,7 +139,7 @@ public final class SectorAuthored53Tests {
                 var order=ORDERS.get((city.charAt(0)-'a')%4);
                 for(int i=0;i<order.size();i++) {
                     boolean pause=(city.equals("d")||city.equals("m"))&&i==7;
-                    Purchase p=new Purchase(city,order.get(i),pause);if(pause)delayed.add(p);else purchases.add(p);
+                    Purchase p=new Purchase(city,order.get(i),pause,i);if(pause)delayed.add(p);else purchases.add(p);
                 }
             }
             purchases.addAll(delayed);
@@ -145,6 +148,9 @@ public final class SectorAuthored53Tests {
             if(purchaseIndex==purchases.size()){finishSeed();return;}
             current=purchases.get(purchaseIndex);action="wall "+current.city()+" "+current.side();acquire(current.city());
             if(!readyLease()){schedule(this::purchaseNext);return;}
+            int requiredHall=current.orderIndex()<2?1:current.orderIndex()<4?4:5;
+            if(data.territory(current.city()).cityLevel()<requiredHall){beginHallUpgrade();return;}
+            require(data.territory(current.city()).cityLevel()==requiredHall,"Unexpected Hall level before wall purchase");
             var side=SectorContracts.Direction.parse(current.side());
             priorLevel=SectorService.savedState(data,current.city(),side).level();require(priorLevel<2,"Unexpected wall level before purchase");
             CompoundTag before=data.save(new CompoundTag());
@@ -166,6 +172,65 @@ public final class SectorAuthored53Tests {
             require(!SectorService.operation(server,actor(current.city()).getUUID(),current.city(),current.side(),SectorTransaction.Action.APPLY).success(),"Concurrent duplicate accepted");
             require(after.equals(data.save(new CompoundTag())),"Concurrent duplicate repeated payment");
             waited=0;schedule(this::waitPurchase);
+        }
+        Map<String,String> completedWallHashes(String city)throws IOException {
+            Map<String,String> hashes=new TreeMap<>();
+            try(var paths=Files.newDirectoryStream(root.resolve("data"),"catancraft_sector_"+city+"_*_v1.dat")) {
+                for(Path path:paths) {
+                    require(ProducerJournal.read(path).getString("phase").equals("COMMITTED"),"Hall milestone found unfinished wall history");
+                    hashes.put(path.getFileName().toString(),TownHallRevisions.sha(Files.readAllBytes(path)));
+                }
+            }
+            return hashes;
+        }
+        CompoundTag wallStates(String city)throws IOException {
+            CompoundTag result=new CompoundTag();
+            for(var side:SectorContracts.Direction.values()) {
+                var state=SectorService.savedState(data,city,side);CompoundTag row=new CompoundTag();
+                row.putInt("level",state.level());row.putString("receipt",state.receipt());row.putString("revision",state.revision());result.put(side.name(),row);
+            }
+            return result;
+        }
+        void beginHallUpgrade()throws Exception {
+            String city=current.city();action="paid Hall milestone "+city;
+            require(!SectorService.hasActiveOperation(server),"Hall milestone raced an active wall");
+            String status=PaidRecoveryService.status(server,city);require(!status.contains("blocked:"),status);
+            if(PaidRecoveryService.isRunning(server)||CityBasePreparation.isRunning(server)){schedule(this::purchaseNext);return;}
+            hallFrom=data.territory(city).cityLevel();var cost=EconomyCatalog.cityUpgradeCost(hallFrom);
+            require(cost!=null&&cost.canAfford(nation(city)),"Recorded developer fixture cannot afford Hall milestone");
+            priorWallHashes=completedWallHashes(city);require(priorWallHashes.size()>=2,"Hall milestone lacks prior paid walls");
+            priorWallStates=wallStates(city);hallCash=nation(city).treasury();hallStock=Map.copyOf(nation(city).stockpileView());hallCycle=data.lastScheduledEconomyCycle();
+            command(actor(city),"nation upgrade city "+city);waited=0;schedule(this::waitHallUpgrade);
+        }
+        void waitHallUpgrade()throws Exception {
+            String city=current.city();lease.keepAlive();require(++waited<12000,"Hall milestone failed to finish in "+city+": "+PaidRecoveryService.status(server,city));
+            require(!PaidRecoveryService.status(server,city).contains("blocked:"),PaidRecoveryService.status(server,city));
+            if(data.territory(city).cityLevel()==hallFrom||PaidRecoveryService.isRunning(server)){schedule(this::waitHallUpgrade);return;}
+            require(data.territory(city).cityLevel()==hallFrom+1,"Hall milestone advanced unexpected tiers");
+            var cost=EconomyCatalog.cityUpgradeCost(hallFrom);var payer=nation(city);
+            require(hallCycle==data.lastScheduledEconomyCycle(),"Economy advanced during Hall milestone; debit proof is ambiguous");
+            require(payer.treasury()==hallCash-cost.money(),"Hall milestone cash debit differs");
+            for(ResourceType type:ResourceType.values())require(payer.resource(type)==hallStock.getOrDefault(type,0L)-cost.resources().getOrDefault(type,0L),"Hall milestone material debit differs: "+type);
+            require(priorWallStates.equals(wallStates(city))&&priorWallHashes.equals(completedWallHashes(city)),"Hall upgrade changed earlier wall receipts/history");
+            CompoundTag before=data.save(new CompoundTag());
+            for(var side:SectorContracts.Direction.values())if(SectorService.savedState(data,city,side).level()>0)
+                ok(SectorService.operation(server,actor(city).getUUID(),city,side.name().toLowerCase(Locale.ROOT),SectorTransaction.Action.STATUS));
+            require(before.equals(data.save(new CompoundTag())),"Wall assembly status after Hall upgrade changed ledger");
+            require(priorWallHashes.equals(completedWallHashes(city)),"Wall status rewrote completed history");
+            try(var paths=Files.newDirectoryStream(root.resolve("data"))) {
+                for(Path path:paths) {
+                    String name=path.getFileName().toString();
+                    if(name.startsWith("catancraft_basic_purchase_"+city+"_th")||name.startsWith("catancraft_th_prestige_"+city+"_")) {
+                        String hash=TownHallRevisions.sha(Files.readAllBytes(path));String old=hallHistories.putIfAbsent(name,hash);
+                        require(old==null||old.equals(hash),"Earlier Hall history changed");
+                    }
+                }
+            }
+            for(var entry:hallHistories.entrySet())require(TownHallRevisions.sha(Files.readAllBytes(root.resolve("data").resolve(entry.getKey()))).equals(entry.getValue()),"Earlier Hall history removed or changed");
+            JsonObject row=new JsonObject();row.addProperty("kind","paid_hall_milestone");row.addProperty("city",city);
+            row.addProperty("from",hallFrom);row.addProperty("to",hallFrom+1);row.addProperty("exactDebit",true);
+            row.addProperty("earlierWallAssemblyVerified",true);row.addProperty("unchangedWallJournals",priorWallHashes.size());events.add(row);
+            writeProgress();schedule(this::purchaseNext);
         }
         void waitPurchase()throws Exception {
             lease.keepAlive();require(++waited<12000,"Wall runner did not complete: "+action);
@@ -199,7 +264,7 @@ public final class SectorAuthored53Tests {
                     &&identity.getString("city").equals(current.city())&&identity.getString("sector").equals(current.side())
                     &&identity.getCompound("cityGroup").getInt("schema")== (current.city().equals("a")?1:2),
                     "Cross-city journal/owner/schema isolation failed");
-            JsonObject row=new JsonObject();row.addProperty("kind","wall_purchase");row.addProperty("city",current.city());row.addProperty("side",current.side());
+            JsonObject row=new JsonObject();row.addProperty("kind","wall_purchase");row.addProperty("city",current.city());row.addProperty("side",current.side());row.addProperty("townHallLevel",data.territory(current.city()).cityLevel());
             row.addProperty("from",priorLevel);row.addProperty("to",priorLevel+1);row.addProperty("operation",operation.getFileName().toString());
             row.addProperty("id",journal.getUUID("id").toString());row.addProperty("money",price.money());row.addProperty("partialAtSeed",partial);
             row.addProperty("observedWritten",written);row.addProperty("exactChanges",journal.getList("actualBefore",Tag.TAG_COMPOUND).size());
@@ -215,11 +280,13 @@ public final class SectorAuthored53Tests {
                 var state=SectorService.savedState(data,city,side);boolean interrupted=(city.equals("d")||city.equals("m"))&&side==SectorContracts.Direction.WEST;
                 require(state.level()==(interrupted?1:2),"Wrong seed wall level: "+city+" "+side);if(interrupted)pending++;
             }
+            verifyMilestoneCoverage(events);
+            for(String city:ORDER)require(data.territory(city).cityLevel()==5,"Missing final Hall tier in "+city);
             require(pending==2&&server.saveEverything(true,true,true),"Seed histories not saved");
             Path ledger=evidence.resolve("seed-ledger.nbt");NbtIo.writeCompressed(data.save(new CompoundTag()),ledger.toFile());
             JsonObject report=base();report.addProperty("result","SEED_PASS_TWO_PARTIAL_OPERATIONS_REQUIRE_PROCESS_RESTART");
             report.addProperty("cities",16);report.addProperty("sectorPlacements",64);report.addProperty("purchases",128);
-            report.addProperty("committedAtSeed",126);report.addProperty("partialAtSeed",2);report.addProperty("seedLedgerSHA256",TownHallRevisions.sha(Files.readAllBytes(ledger)));report.add("events",events);
+            report.addProperty("committedAtSeed",126);report.addProperty("partialAtSeed",2);report.addProperty("seedLedgerSHA256",TownHallRevisions.sha(Files.readAllBytes(ledger)));report.add("events",events);report.add("hallHistorySHA256",JSON.toJsonTree(hallHistories));report.addProperty("paidHallUpgrades",64);
             Files.writeString(evidence.resolve("seed.json"),JSON.toJson(report)+"\n",StandardOpenOption.CREATE_NEW);
             closeLease();h.succeed();
         }
@@ -229,7 +296,14 @@ public final class SectorAuthored53Tests {
             require(seed.get("source").getAsString().equals(source)&&seed.get("worldId").getAsString().equals(FreshDemoAuthorization.worldId(server,root))
                     &&seed.get("result").getAsString().equals("SEED_PASS_TWO_PARTIAL_OPERATIONS_REQUIRE_PROCESS_RESTART"),"Foreign seed proof");
             Path ledger=evidence.resolve("seed-ledger.nbt");require(TownHallRevisions.sha(Files.readAllBytes(ledger)).equals(seed.get("seedLedgerSHA256").getAsString()),"Seed ledger proof changed");
+            verifyMilestoneCoverage(seed.getAsJsonArray("events"));verifyHallHistories();
             expected=CatanSavedData.load(NbtIo.readCompressed(ledger.toFile()));waited=0;schedule(this::waitRecovery);
+        }
+        void verifyHallHistories()throws IOException {
+            for(var entry:seed.getAsJsonObject("hallHistorySHA256").entrySet()) {
+                require(entry.getKey().matches("catancraft_(basic_purchase|th_prestige)_[a-p]_[a-z0-9_.-]+"),"Unsafe Hall evidence path");
+                require(TownHallRevisions.sha(Files.readAllBytes(root.resolve("data").resolve(entry.getKey()))).equals(entry.getValue().getAsString()),"Hall history changed across restart");
+            }
         }
         void expectedEconomy()throws IOException {
             require(expected.hasEconomySchedule()&&data.hasEconomySchedule(),"Missing actual economy checkpoint");
@@ -257,6 +331,7 @@ public final class SectorAuthored53Tests {
             // Startup base verification can still be finishing; it must preserve paid walls.
             String base=CityBasePreparation.status(server,city);require(!base.contains("blocked:"),base);
             if(!READY.equals(base)){require(++waited<12000,"Restart base verification stuck "+city);schedule(this::verifyCity);return;}
+            require(data.territory(city).cityLevel()==5,"Restart lost paid Hall tier in "+city);
             for(var side:SectorContracts.Direction.values())require(SectorService.savedState(data,city,side).level()==2,"Restart lost completed wall: "+city+" "+side);
             CompoundTag before=data.save(new CompoundTag());
             ok(SectorService.operation(server,actor(city).getUUID(),city,"north",SectorTransaction.Action.STATUS));
@@ -282,11 +357,28 @@ public final class SectorAuthored53Tests {
             require(server.saveEverything(true,true,true),"Restart final save failed");
             CatanSavedData disk=CatanSavedData.load(NbtIo.readCompressed(root.resolve("data/catancraft.dat").toFile()).getCompound("data"));
             require(disk.save(new CompoundTag()).equals(data.save(new CompoundTag())),"Final SavedData disk/memory differs");
+            verifyHallHistories();
             JsonObject report=base();report.addProperty("result","PASS");report.addProperty("cities",16);report.addProperty("sectorPlacements",64);
             report.addProperty("committedPurchases",128);report.addProperty("partialOperationsRecovered",2);report.addProperty("unchangedCommittedJournals",126);
+            report.addProperty("paidHallUpgrades",64);report.addProperty("allCityHall4And5WallPurchasesVerified",true);
+            report.addProperty("earlierWallsPreservedAcrossHallUpgrades",true);
             report.addProperty("normalEconomyPacingEvidence",false);report.addProperty("connectedClientAcceptance",false);
             report.addProperty("seedEvidenceSHA256",TownHallRevisions.sha(Files.readAllBytes(evidence.resolve("seed.json"))));
             Files.writeString(evidence.resolve("verify.json"),JSON.toJson(report)+"\n",StandardOpenOption.CREATE_NEW);closeLease();h.succeed();
+        }
+        void verifyMilestoneCoverage(JsonArray rows)throws IOException {
+            Map<String,Set<Integer>> halls=new HashMap<>();Map<String,Map<Integer,Integer>> wallTiers=new HashMap<>();int upgrades=0;
+            for(JsonElement item:rows) {
+                JsonObject row=item.getAsJsonObject();String kind=row.get("kind").getAsString();
+                if(kind.equals("paid_hall_milestone")) {
+                    String city=row.get("city").getAsString();int to=row.get("to").getAsInt();
+                    require(ORDER.contains(city)&&to>=2&&to<=5&&row.get("from").getAsInt()==to-1
+                            &&row.get("exactDebit").getAsBoolean()&&row.get("earlierWallAssemblyVerified").getAsBoolean()
+                            &&halls.computeIfAbsent(city,k->new HashSet<>()).add(to),"Missing/duplicate Hall milestone");upgrades++;
+                }else if(kind.equals("wall_purchase"))wallTiers.computeIfAbsent(row.get("city").getAsString(),k->new HashMap<>()).merge(row.get("townHallLevel").getAsInt(),1,Integer::sum);
+            }
+            require(upgrades==64,"Missing 64 registered paid Hall upgrades");
+            for(String city:ORDER)require(Set.of(2,3,4,5).equals(halls.get(city))&&Map.of(1,2,4,2,5,4).equals(wallTiers.get(city)),"Missing wall-before/after-Hall coverage in "+city);
         }
         JsonObject base()throws IOException {JsonObject report=new JsonObject();report.addProperty("schema",1);report.addProperty("source",source);
             report.addProperty("worldId",FreshDemoAuthorization.worldId(server,root));report.addProperty("phase",phase);report.addProperty("fundedDeveloperFixture",true);

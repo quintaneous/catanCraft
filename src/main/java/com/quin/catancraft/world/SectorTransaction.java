@@ -33,6 +33,10 @@ public final class SectorTransaction {
         void save()throws IOException;void requirements(boolean rollback)throws IOException;void allow(BlockPos pos)throws IOException;
         /** Complete prior committed paid journal, already read through ProducerJournal; never guessed from a level alone. */
         default CompoundTag inheritedNaturalSupportProof()throws IOException{return new CompoundTag();}
+        /** Earned external development may replace only protected read expectations.
+         * It never changes the wall plan, paid cells, price or durable journal. */
+        default Map<BlockPos,BlockState> protectedReadContext()throws IOException{return Map.of();}
+        default void verifyProtectedReadContext()throws IOException{}
     }
     public interface Fault {void at(String stage,int writes)throws IOException;}
     public record Result(String message,int writes){}
@@ -101,6 +105,10 @@ public final class SectorTransaction {
             inheritedSupport=SectorNaturalSupportPolicy.inherited(plan,supportProof,previous,nationId,identity);
         }
         SectorNaturalSupportPolicy.Guard support=new SectorNaturalSupportPolicy.Guard(e.level(),plan,inheritedSupport,exists&&!phase.equals("PREPARED"),journal);
+        Map<BlockPos,BlockState> contextReads=Map.copyOf(e.protectedReadContext());
+        Set<BlockPos> declaredReads=new HashSet<>();for(Read r:plan.reads())declaredReads.add(r.pos());
+        for(var row:contextReads.entrySet())if(!declaredReads.contains(row.getKey())||row.getValue().hasBlockEntity()||!row.getValue().getFluidState().isEmpty())
+            throw new IOException("External development context leaves protected wall reads");
         check(e,rollback,identity,nationId,expectedProgress,expectedReceipt);
         boolean pending=exists&&!phase.equals("COMMITTED")&&!phase.equals("ROLLED_BACK");
         Map<BlockPos,BlockState> states=new LinkedHashMap<>(),reads=new LinkedHashMap<>(),targets=new LinkedHashMap<>();Map<BlockPos,CompoundTag> preservedNbt=new LinkedHashMap<>();
@@ -117,7 +125,7 @@ public final class SectorTransaction {
             }
         }
         if(exists&&snapshotIndex!=snapshots.size())throw new IOException("Unexpected whole-sector snapshot cells");
-        for(Read r:plan.reads()){requireLoaded(e.level(),r.pos());BlockState live=e.level().getBlockState(r.pos());if(!support.matches(r.pos(),r.state(),live))throw new IOException("Sector protected road/corner/support read mismatch at "+r.pos()+" expected="+r.state()+" actual="+live);reads.put(r.pos(),live);captureNbt(e.level(),r.pos(),live,preservedNbt);}
+        for(Read r:plan.reads()){requireLoaded(e.level(),r.pos());BlockState live=e.level().getBlockState(r.pos());BlockState context=contextReads.get(r.pos());if(!(context==null?support.matches(r.pos(),r.state(),live):context.equals(live)))throw new IOException("Sector protected road/corner/support read mismatch at "+r.pos()+" expected="+(context==null?r.state():context)+" actual="+live);reads.put(r.pos(),live);captureNbt(e.level(),r.pos(),live,preservedNbt);}
         // Preserve the real one-block shell, not an authored approximation of neighboring development.
         for(Cell c:changed)for(Direction direction:Direction.values()){
             BlockPos p=c.pos().relative(direction);if(states.containsKey(p)||reads.containsKey(p))continue;requireLoaded(e.level(),p);BlockState live=e.level().getBlockState(p);reads.put(p,live);captureNbt(e.level(),p,live,preservedNbt);
@@ -131,7 +139,7 @@ public final class SectorTransaction {
         List<ConstructionHazards.Write> writes=new ArrayList<>();List<Cell> ordered=new ArrayList<>(changed);if(rollback)Collections.reverse(ordered);
         for(Cell c:ordered){BlockState target=targets.get(c.pos());if(!states.get(c.pos()).equals(target))writes.add(new ConstructionHazards.Write(c.pos(),target));}
         PlannedWorld.verify(e.level(),targets,FLAGS);ConstructionHazards.Guard entities=ConstructionHazards.inspect(e.level(),writes);
-        VerificationLayout verification=new VerificationLayout(states,reads,preservedNbt);
+        VerificationLayout verification=new VerificationLayout(states,reads,preservedNbt,contextReads.keySet());
         if(!exists){
             if(!cost.canAfford(e.nation()))throw new IOException("Cannot afford complete sector: "+cost.describe());
             e.save();verification.verify(e,support);entities.verify();check(e,rollback,identity,nationId,expectedProgress,expectedReceipt);
@@ -276,7 +284,7 @@ public final class SectorTransaction {
         nation.addTreasury(cost.money());cost.resources().forEach(nation::addResource);
     }
     private static void check(Environment e,boolean rollback,CompoundTag identity,UUID nation,int progress,String receipt)throws IOException {
-        e.requirements(rollback);if(!identity.equals(e.identity())||e.nation()==null||!e.nation().id().equals(nation)||e.progress()!=progress||!safe(e.receipt()).equals(receipt))throw new IOException("Whole-sector owner/progress/receipt identity changed");
+        e.verifyProtectedReadContext();e.requirements(rollback);if(!identity.equals(e.identity())||e.nation()==null||!e.nation().id().equals(nation)||e.progress()!=progress||!safe(e.receipt()).equals(receipt))throw new IOException("Whole-sector owner/progress/receipt identity changed");
     }
     /** Compiles only immutable addresses/check kinds, never world observations or loaded chunks.
      * Every invocation still rereads every state and BE, serializes all current inventory NBT,
@@ -297,7 +305,7 @@ public final class SectorTransaction {
         private final Map<BlockPos,BlockState> states;
         private final Map<BlockPos,CellCheck> written=new HashMap<>();
         private final ChunkChecks[] chunks;
-        VerificationLayout(Map<BlockPos,BlockState> states,Map<BlockPos,BlockState> reads,Map<BlockPos,CompoundTag> nbt)throws IOException {
+        VerificationLayout(Map<BlockPos,BlockState> states,Map<BlockPos,BlockState> reads,Map<BlockPos,CompoundTag> nbt,Set<BlockPos> strictReads)throws IOException {
             this.states=states;
             var grouped=new LinkedHashMap<Long,Builder>();
             for(var row:states.entrySet()){
@@ -305,7 +313,7 @@ public final class SectorTransaction {
             }
             for(var row:reads.entrySet()){
                 if(written.containsKey(row.getKey()))throw new IOException("Verification read overlaps changed/preserved sector union");
-                builder(grouped,row.getKey()).cells.add(new CellCheck(row.getKey(),row.getValue(),true));
+                builder(grouped,row.getKey()).cells.add(new CellCheck(row.getKey(),row.getValue(),!strictReads.contains(row.getKey())));
             }
             for(var row:nbt.entrySet())builder(grouped,row.getKey()).inventories.add(new NbtCheck(row.getKey(),row.getValue()));
             chunks=grouped.values().stream().map(Builder::finish).toArray(ChunkChecks[]::new);

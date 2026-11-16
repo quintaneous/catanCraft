@@ -1,3 +1,33 @@
+## INT-01 / INT-03 / DEF-04 — Hall/wall composition recovery, 2026-11-16
+
+The 053 owner package remains **HELD / NOT READY FOR TESTING**. The last
+committed gameplay source before this continuation is
+`1f2ee4e322796a85e9bb2ba19cb63aeb0042f87f`. The interrupted workspace was pruned:
+uncommitted Hall/wall changes, native worlds, build caches and unarchived raw logs
+were lost. This continuation restored that exact remote branch and verified all
+40 original clean-R7 input files. It does not claim the interrupted processes
+completed or convert earlier observed runs into fresh evidence. Existing tracked
+evidence archives and prior attempt metadata remain intact; scratch log paths in
+older records may no longer resolve.
+
+The observed round-7 layout-0 blocker was the TH4 approach: eleven original grass
+cells become polished andesite inside the wall's protected read area, with no
+owned wall/write overlap. The retained failure was A at (-746,80,-790). All-city
+geometry must qualify this exact context, preserve original paid wall histories,
+and reject unrelated damage. Current work reconstructs paid Hall context,
+serializes overlapping new purchases, defers captured startup wall work until
+Hall recovery, and expands the authored wall campaign through TH1/TH4/TH5.
+Supported historical Hall visual-repair lineage is also being checked.
+
+No new compilation, native pass, release JAR or runnable owner kit is asserted by
+this checkpoint. New native evidence must name an exact committed source and
+retain process exits, raw logs and physical/restart reports. Required gates remain
+nine complete authored progression layouts, the 128-purchase all-city wall
+campaign, affected recovery regressions, combined published runtime checks and
+pristine-server packaging. Owner acceptance remains separate. SEC-01 crowbar is
+**UNRESOLVED / HIGH PRIORITY**; SEC-02 is not closed. Live worlds and installed
+mods remain outside this work.
+
 ## ECO-03 / INT-01 / INT-03 — all-city vehicle sites, 2026-11-14 UTC
 
 Exact source `27f62bd279a43b7604c24d857dcc16fe70ac5c00` expands physical Vehicle

@@ -68,6 +68,13 @@ public final class TownHallPrestigeUpgradeService {
     private record Delta(BlockPos pos, BlockState before, BlockState after, CompoundTag beforeNbt) {}
     private TownHallPrestigeUpgradeService() {}
 
+    /** New purchases wait for overlapping city work; retained prestige recovery stays independent. */
+    static void requireDefenseClear(MinecraftServer server,Path root,String city)throws IOException {
+        if(SectorService.hasActiveOperation(server,city))
+            throw new PreparationDeferred("A wall operation is active or loading in this city; finish it before upgrading the Town Hall");
+        DefenseCityReservations.requireAvailable(root,city,null);
+    }
+
     public static synchronized Result upgrade(MinecraftServer server, CatanSavedData data,
             NationData nation, TerritoryData territory, EconomyCost cost, int nextLevel) {
         return upgrade(server,data,nation,territory,cost,nextLevel,(stage,writes)->{});
@@ -83,6 +90,7 @@ public final class TownHallPrestigeUpgradeService {
                 throw new IllegalStateException("Invalid Town Hall prestige tier transition");
             PaidRecoveryService.requireClear(server,territory.id());
             Path world = ConstructionWorldAuthorization.authorize(server);
+            requireDefenseClear(server,world,territory.id());
             if (!nation.id().equals(territory.ownerNationId()) || data.nation(nation.id()) == null ||
                     !cost.canAfford(nation))
                 throw new IllegalStateException("Nation owner or resources changed");

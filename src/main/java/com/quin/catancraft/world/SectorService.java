@@ -24,6 +24,8 @@ public final class SectorService {
     static final String PRODUCTION="reviewed-production-v1",FIXTURE="gametest-fixture-v1";
     private static final long QUOTE_TICKS=1200;
     private static boolean busy;
+    private static String busyCity;
+    private static MinecraftServer busyServer;
     private static final class Active {
         private final Context context;
         private SectorTransaction.Runner runner;
@@ -43,6 +45,9 @@ public final class SectorService {
     }
     private static Active active;
     static boolean hasActiveOperation(MinecraftServer server){return busy||active!=null&&active.context().server()==server;}
+    static boolean hasActiveOperation(MinecraftServer server,String city){
+        return busy&&busyServer==server&&Objects.equals(busyCity,city)||active!=null&&active.context().server()==server&&active.context().city().equals(city);
+    }
     /** One main-thread slice per tick. Tickets live from preparation through durable settlement. */
     static void tick(MinecraftServer server){
         Active current=active;if(current==null||current.context().server()!=server)return;
@@ -264,7 +269,7 @@ public final class SectorService {
         return operate(c,side,action,provider,fault,c.approval().equals(PRODUCTION));
     }
     private static synchronized MapAssetService.Result operate(Context c,SectorContracts.Direction side,SectorTransaction.Action action,Provider provider,SectorTransaction.Fault fault,boolean bounded)throws IOException {
-        if(busy||active!=null)throw new IOException("Another defense operation is active; no reentrant sector purchase");busy=true;
+        if(busy||active!=null)throw new IOException("Another defense operation is active; no reentrant sector purchase");busy=true;busyCity=c.city();busyServer=c.server();
         SectorChunkLease lease=null;
         try{
             authority(c);State state=savedState(c.data(),c.city(),side);Selection selection=select(c,side);History selected=selection.pending()!=null?selection.pending():selection.selected();Path file;CompoundTag identity;SectorContracts.Contract contract;boolean terminalReadOnly=false;
@@ -272,6 +277,7 @@ public final class SectorService {
                 if(selection.pending()!=null)throw new IOException("Whole-sector operation pending; use resume or rollback");SavedQuote quote=QUOTES.remove(key(c,side));
                 if(quote==null){if(selected==null||!selected.journal().getString("phase").equals("COMMITTED"))throw new IOException("Display a current whole-sector quote before confirmation");file=selected.path();identity=selected.journal().getCompound("identity").copy();contract=recorded(c,selected);terminalReadOnly=true;}
                 else{
+                    if(c.approval().equals(PRODUCTION))PaidRecoveryService.requireClear(c.server(),c.city());
                     DefenseCityReservations.requireAvailable(c.root(),c.city(),null);long now=c.ticks().getAsLong();if(now<quote.tick()||now-quote.tick()>QUOTE_TICKS)throw new IOException("Sector quote expired; display the full price again");
                     if(!quote.source().equals(state)||!quote.neighborRevisions().equals(neighborRevisions(c,side)))throw new IOException("Sector quote source or neighboring revision changed");
                     if(!quote.priceVersion().equals(priceVersion(c,provider)))throw new IOException("Sector price catalog version changed; display a new full quote");
@@ -302,7 +308,7 @@ public final class SectorService {
             }
             var result=SectorTransaction.run(env,action,fault);
             return new MapAssetService.Result(true,(selection.pending()!=null&&action==SectorTransaction.Action.STATUS?"PENDING; not a completed new sector. ":"")+result.message(),result.writes());
-        }finally{if(lease!=null)lease.close();busy=false;}
+        }finally{if(lease!=null)lease.close();busy=false;busyCity=null;busyServer=null;}
     }
     /** Same bounds for production readiness and fixture preparation; no alternate test policy. */
     static AABB entityBounds(SectorTransaction.Plan plan)throws IOException {
@@ -315,8 +321,27 @@ public final class SectorService {
         if(!contract.cityGroup().isEmpty())id.put("cityGroup",contract.cityGroup());
         ListTag roads=new ListTag();contract.roads().stream().sorted(Comparator.comparingLong(BlockPos::asLong)).forEach(p->roads.add(LongTag.valueOf(p.asLong())));id.put("roads",roads);return id;
     }
+    /** A retained side-only journal may observe none of today's Hall approach.
+     * Project the fully qualified context onto its original read mask; never add
+     * observations to a historical plan or grant an override to a write cell. */
+    static Map<BlockPos,BlockState> hallReadsForPlan(SectorTransaction.Plan plan,Map<BlockPos,BlockState> qualified)throws IOException {
+        Map<BlockPos,BlockState> result=new HashMap<>();
+        for(var read:plan.reads()){
+            BlockState target=qualified.get(read.pos());if(target==null)continue;
+            if(!read.state().equals(net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState()))throw new IOException("Historical Hall context read differs from qualified source");
+            result.put(read.pos(),target);
+        }
+        return Map.copyOf(result);
+    }
     private static SectorTransaction.Environment environment(Context c,SectorContracts.Direction side,SectorContracts.Contract contract,CompoundTag frozen,Path file,boolean terminalReadOnly){return new SectorTransaction.Environment(){
         private final DefenseReservationVerifier reservations=new DefenseReservationVerifier();
+        private SectorHallContext53.Context hallContext;
+        public Map<BlockPos,net.minecraft.world.level.block.state.BlockState> protectedReadContext()throws IOException {
+            if(!c.approval().equals(PRODUCTION))return Map.of();
+            if(hallContext==null)hallContext=SectorHallContext53.capture(c.server(),c.root(),c.data(),c.city(),c.owner());
+            hallContext.verifyUnchanged();return hallReadsForPlan(contract.plan(),hallContext.reads());
+        }
+        public void verifyProtectedReadContext()throws IOException {if(hallContext!=null)hallContext.verifyUnchanged();}
         public net.minecraft.server.level.ServerLevel level(){return c.server().overworld();}public Path file(){return file;}public SectorTransaction.Plan plan(){return contract.plan();}public CompoundTag identity(){return frozen.copy();}public EconomyCost cost(){return contract.cost();}public NationData nation(){return c.data().nation(c.owner());}
         public CompoundTag inheritedNaturalSupportProof()throws IOException {return contract.cityGroup().isEmpty()?inheritedSupportProof(c,side,contract.plan(),file):SectorGroups53.inheritedSupportProof(c,contract.cityGroup());}
         public int progress(){try{return savedState(c.data(),c.city(),side).level();}catch(IOException e){throw new IllegalStateException(e);}}
@@ -334,8 +359,9 @@ public final class SectorService {
             if(groupFile!=null){c.data().setPlacedMapAsset("city_group_v1:"+c.city()+":operation",groupFile.isEmpty()?"none":groupFile);c.data().setPlacedMapAsset("city_group_v1:"+c.city()+":receipt",groupReceipt.isEmpty()?"none":groupReceipt);}
         }
         public void save()throws IOException {
-            c.data().setDirty();if(c.approval().equals(FIXTURE)){CompoundTag n=new CompoundTag();n.put("ledger",c.data().save(new CompoundTag()));Path p=c.root().resolve("data/sector_fixture_ledger_v1.dat");ProducerJournal.write(p,n,Files.exists(p,LinkOption.NOFOLLOW_LINKS));}
+            verifyProtectedReadContext();c.data().setDirty();if(c.approval().equals(FIXTURE)){CompoundTag n=new CompoundTag();n.put("ledger",c.data().save(new CompoundTag()));Path p=c.root().resolve("data/sector_fixture_ledger_v1.dat");ProducerJournal.write(p,n,Files.exists(p,LinkOption.NOFOLLOW_LINKS));}
             else if(!c.server().saveEverything(true,true,true))throw new IOException("Whole-sector world/ledger save failed");
+            verifyProtectedReadContext();
         }
         public void requirements(boolean rollback)throws IOException {
             authority(c);header(c,file,frozen);if(!contract.cityGroup().isEmpty())SectorGroups53.requireCurrent(c,contract,frozen,file,terminalReadOnly);else SectorNorthP2.requireNoLegacyOwnership(c,contract.plan());reservations.requireAvailable(c.root(),c.city(),file);State current=savedState(c.data(),c.city(),side);
