@@ -379,11 +379,12 @@ public final class Progression53Tests {
                     BasicConstructionAssets.plan("th"+tier,SchematicAssetRegistry.territoryAnchor("th"+tier,def)):
                     TownHallRevisions.plan(tier,TownHallRevisions.revision(tier,hall.token()),SchematicAssetRegistry.territoryAnchor("th"+tier,def));
             long checked=verifyPlan(hallPlan,manager.counter(),false);
+            Set<net.minecraft.core.BlockPos> producerDirt=ProducerService.completedNaturalDirt(server,city);
             for(String family:ProducerRevisions.applicable(def)) {
                 String token=data.placedMapAsset("territory:"+city+":"+SchematicAssetRegistry.asset(family).plot());
                 require(ProducerRevisions.revision(family,token)==tier,"Producer paid visual tier mismatch: "+city+"/"+family);
                 var anchor=SchematicAssetRegistry.territoryAnchor(family,def);
-                checked+=verifyPlan(ProducerRevisions.exterior(family,token)?ProducerExteriorR2.plan(family,tier,anchor):ProducerRevisions.plan(family,tier,anchor),null,true);
+                checked+=verifyPlan(ProducerRevisions.exterior(family,token)?ProducerExteriorR2.plan(family,tier,anchor):ProducerRevisions.plan(family,tier,anchor),null,true,producerDirt);
             }
             JsonArray facilities=new JsonArray();
             for(int slot=0;slot<3;slot++) {
@@ -409,6 +410,7 @@ public final class Progression53Tests {
             for(BuildingType civic:List.of(BuildingType.COMMERCIAL_DISTRICT,BuildingType.LOGISTICS_CENTER)) {
                 if(tier==1||civic==BuildingType.LOGISTICS_CENTER&&tier<3)continue;
                 require(building(city,civic).level()==tier,"Civic tier differs");
+                checked+=R5CivicAutomaticInstaller.verifyInstalled(level,def,civic);
             }
             long wallCells=verifyUnpurchasedWalls(city);
             verifyHistories(city);
@@ -424,13 +426,19 @@ public final class Progression53Tests {
             writeReport("RUNNING");
         }
         long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer)throws IOException {
+            return verifyPlan(cells,manager,producer,Set.of());
+        }
+        long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer,Set<net.minecraft.core.BlockPos> producerDirt)throws IOException {
             Map<net.minecraft.core.BlockPos,BlockState> expected=new HashMap<>();for(var c:cells)expected.put(c.position(),c.state());
-            Map<net.minecraft.core.BlockPos,BlockState> producerCover=producer?ProducerService.sourceCoveredGrass(cells):Map.of();
+            Map<net.minecraft.core.BlockPos,BlockState> producerCover=producer?ProducerService.producerCoveredGrass(cells):Map.of();
             Map<net.minecraft.core.BlockPos,BlockState> gardenCover=!producer&&manager!=null?BasicConstructionPurchase.th1GardenCover(cells):Map.of();
+            Set<net.minecraft.core.BlockPos> copperTargets=!producer&&manager==null?BasicConstructionPurchase.factoryCopperTargets(cells):Set.of();
             for(var c:cells) {
                 BlockState actual=level.getBlockState(c.position());boolean matches=producer?ProducerRevisions.matches(actual,c.state()):TownHallInteractionPolicy.matches(actual,c.state(),c.position().equals(manager));
-                if(!matches&&producer)matches=ProducerService.matchesCoveredSourceGrass(level,c,producerCover);
+                if(!matches&&producer)matches=ProducerService.matchesProducerCoveredSourceGrass(level,c,producerCover)
+                    ||producerDirt.contains(c.position())&&c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState());
                 if(!matches&&!gardenCover.isEmpty())matches=BasicConstructionPurchase.gardenGrass(c.position(),actual,gardenCover,level::getBlockState);
+                if(!matches&&!copperTargets.isEmpty())matches=BasicConstructionPurchase.agedCopperTarget(c.position(),actual,copperTargets);
                 if(!matches&&!producer&&c.state().is(Blocks.GRASS_BLOCK)&&actual.is(Blocks.DIRT)) {
                     BlockState cover=expected.get(c.position().above());
                     matches=cover!=null&&SectorNaturalSupportPolicy.blocksGrass(cover,c.position().above())
@@ -480,7 +488,20 @@ public final class Progression53Tests {
                     if(name.endsWith(".recovery-v1.dat"))require(ProducerJournal.read(p).getString("phase").equals("COMMITTED"),"Unfinished recovery companion");
                     else if(name.endsWith(".dat")&&name.startsWith("catancraft_basic_purchase_"))require(!BasicConstructionPurchase.unfinished(p),"Unfinished basic purchase");
                     else if(name.endsWith(".dat")&&name.startsWith("catancraft_producer_"))require(ProducerTransaction.phase(ProducerJournal.read(p))==ProducerTransaction.Phase.COMMITTED,"Unfinished producer history");
-                    else if(name.endsWith(".json"))require(JsonParser.parseString(Files.readString(p)).getAsJsonObject().get("phase").getAsString().equals("COMMITTED"),"Unfinished civic history");
+                    else if(name.endsWith(".dat")&&name.startsWith("catancraft_th_prestige_")) {
+                        byte[] bytes=PaidConstructionRecovery.readBounded(p,8*1024*1024);CompoundTag journal=PrestigePurchaseRecovery.read(bytes);
+                        boolean recovered=PaidConstructionRecovery.complete(p,bytes);
+                        require(journal.getString("phase").equals("COMMITTED")||recovered,"Unfinished prestige original/recovery companion");
+                        require(!Files.exists(PaidConstructionRecovery.companion(p))||recovered,"Unfinished prestige companion");
+                        UUID transaction=journal.getUUID("transaction");
+                        require(city.equals(journal.getString("city"))&&root.toString().equals(journal.getString("worldRoot"))
+                            &&nation.id().toString().equals(journal.getString("ownerNation"))
+                            &&(transaction+":paid").equals(data.placedMapAsset(PaidConstructionRecovery.receiptKey(transaction))),"Prestige history identity/payment differs");
+                    }
+                    else if(name.endsWith(".json")) {
+                        byte[] bytes=PaidConstructionRecovery.readBounded(p,8*1024*1024);
+                        require(CivicPurchaseRecovery.read(bytes).get("phase").getAsString().equals("COMMITTED")||PaidConstructionRecovery.complete(p,bytes),"Unfinished civic history/companion");
+                    }
                     histories.putIfAbsent(name,TownHallRevisions.sha(Files.readAllBytes(p)));
                 }
             }

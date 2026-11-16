@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.util.*;
 
-/** Strict adapter for the original R5 civic journal format and hash-pinned R7 plans. */
+/** Strict versioned adapter for immutable civic journals and hash-pinned R7 plans. */
 final class CivicPurchaseRecovery {
     private CivicPurchaseRecovery(){}
     interface Authorization { void check()throws IOException; }
@@ -24,7 +24,10 @@ final class CivicPurchaseRecovery {
         try{
             JsonObject j=JsonParser.parseString(new String(bytes,StandardCharsets.UTF_8)).getAsJsonObject();
             String hash=j.get("sha256").getAsString();JsonObject checked=j.deepCopy();R5CivicAutomaticInstaller.seal(checked);
-            if(!hash.equals(checked.get("sha256").getAsString())||j.get("schema").getAsInt()!=1)throw new IOException("Civic journal checksum/schema mismatch");
+            int schema=j.get("schema").getAsInt();
+            if(!hash.equals(checked.get("sha256").getAsString())||!Set.of(1,2).contains(schema))throw new IOException("Civic journal checksum/schema mismatch");
+            for(String field:List.of("natural_source_preimages","natural_leaf_preimages"))
+                if(schema==1&&j.has(field)||schema==2&&!j.has(field))throw new IOException("Civic natural source schema mismatch");
             String phase=j.get("phase").getAsString();if(!Set.of("PENDING","PHYSICAL_COMPLETE_ECONOMY_PENDING","COMMITTED").contains(phase))throw new IOException("Unknown civic phase");
             return j;
         }catch(IOException e){throw e;}catch(Exception e){throw new IOException("Invalid civic purchase journal",e);}
@@ -55,26 +58,45 @@ final class CivicPurchaseRecovery {
         EconomyCost cost=EconomyCatalog.buildingCost(type);
         validateCost(j,cost);
         JsonArray ordered=new JsonArray(),originals=new JsonArray();Map<BlockPos,List<BlockState>> allowed=new LinkedHashMap<>();
-        for(var w:plan.writes()){
+        int schema=j.get("schema").getAsInt();
+        for(var w:R5CivicAutomaticInstaller.executionWrites(plan,schema)){
             JsonObject row=new JsonObject();row.add("xyz",R5CivicAutomaticInstaller.xyz(w.pos()));row.addProperty("stage",w.stage());
             row.addProperty("before",R5CivicAutomaticInstaller.canonical(w.before()));row.addProperty("after",R5CivicAutomaticInstaller.canonical(w.after()));ordered.add(row);
             allowed.computeIfAbsent(w.pos(),k->new ArrayList<>()).addAll(List.of(w.before(),w.after()));
         }
-        List<PaidConstructionRecovery.Cell> cells=new ArrayList<>();
+        Map<BlockPos,BlockState> naturalBefore=naturalPreimages(j,plan);
         for(var c:plan.finalCells().values()){
             JsonObject row=new JsonObject();row.add("xyz",R5CivicAutomaticInstaller.xyz(c.pos()));row.addProperty("before",R5CivicAutomaticInstaller.canonical(c.before()));
             row.addProperty("after",R5CivicAutomaticInstaller.canonical(c.after()));row.addProperty("before_nbt","NONE");originals.add(row);
-            var states=new ArrayList<>(allowed.get(c.pos()));BlockState target=c.after(),live=level.getBlockState(c.pos());
-            // An already installed barrel may be open. Never close/recreate it or replace its actual inventory.
-            if(target.is(Blocks.BARREL)&&live.is(Blocks.BARREL)&&live.setValue(BarrelBlock.OPEN,false).equals(target.setValue(BarrelBlock.OPEN,false))){states.add(live);target=live;}
-            cells.add(new PaidConstructionRecovery.Cell(c.pos(),states,target));
         }
         if(!ordered.equals(j.getAsJsonArray("ordered_writes"))||!originals.equals(j.getAsJsonArray("originals")))throw new IOException("Civic journal does not match the exact approved source/write contract");
         boolean required=j.has("receipt_required")&&j.get("receipt_required").getAsBoolean();
         CompoundTag identity=new CompoundTag();identity.putString("kind","civic");identity.putString("world",root.toString());identity.putString("city",city);identity.putUUID("owner",owner);identity.putUUID("transaction",id);identity.putString("module",type.name());
+        Map<BlockPos,R5CivicAutomaticInstaller.NaturalSource> natural=naturalBefore.isEmpty()?Map.of():R5CivicAutomaticInstaller.naturalSources(plan);
+        Map<BlockPos,R5CivicAutomaticInstaller.Cell> leaves=schema==2?R5CivicAutomaticInstaller.naturalLeafSources(plan):Map.of();
         return new PaidConstructionRecovery.Environment(){
             public ServerLevel level(){return level;}public Path original(){return original;}public byte[] originalBytes(){return bytes.clone();}
-            public CompoundTag identity(){return identity.copy();}public List<PaidConstructionRecovery.Cell> cells(){return List.copyOf(cells);}
+            public CompoundTag identity(){return identity.copy();}
+            public List<PaidConstructionRecovery.Cell> cells()throws IOException{
+                List<PaidConstructionRecovery.Cell> cells=new ArrayList<>();
+                List<R5CivicAutomaticInstaller.Cell> orderedCells=new ArrayList<>();
+                // A new transaction always replaces the qualified soil before
+                // removing its source log. An interrupted path can therefore
+                // never leave unrecorded natural dirt exposed by our cleanup.
+                if(schema==2)for(var proof:natural.values())orderedCells.add(proof.soil());
+                for(var c:plan.finalCells().values())if(schema==1||!natural.containsKey(c.pos()))orderedCells.add(c);
+                for(var c:orderedCells){
+                    if(!level.hasChunkAt(c.pos()))throw new PreparationDeferred("Civic recovery chunks are still loading");
+                    var states=new ArrayList<>(allowed.get(c.pos()));BlockState target=c.after(),live=level.getBlockState(c.pos());
+                    var proof=natural.get(c.pos());
+                    if(proof!=null&&(naturalBefore.get(c.pos()).equals(Blocks.DIRT.defaultBlockState())||sourceCover(level,proof)))states.add(Blocks.DIRT.defaultBlockState());
+                    if(leaves.containsKey(c.pos())&&StreetscapeR5.matches(live,c.before()))states.add(live);
+                    // Preserve an already installed barrel's open state and inventory.
+                    if(target.is(Blocks.BARREL)&&live.is(Blocks.BARREL)&&live.setValue(BarrelBlock.OPEN,false).equals(target.setValue(BarrelBlock.OPEN,false))){states.add(live);target=live;}
+                    cells.add(new PaidConstructionRecovery.Cell(c.pos(),states,target));
+                }
+                return List.copyOf(cells);
+            }
             public void authorize()throws IOException{
                 authorizer.check();
                 if(t==null||nation==null||data.territory(city)!=t||data.nation(owner)!=nation||!owner.equals(t.ownerNationId()))throw new IOException("Civic recovery owner changed");
@@ -97,6 +119,23 @@ final class CivicPurchaseRecovery {
             public CompoundTag ledger(){return data.save(new CompoundTag());}
             public void save()throws IOException{if(!server.saveEverything(true,true,true))throw new IOException("Civic recovery save incomplete; original purchase and receipt retained");}
         };
+    }
+    private static boolean sourceCover(ServerLevel level,R5CivicAutomaticInstaller.NaturalSource proof){
+        return level.hasChunkAt(proof.cover().pos())&&level.getBlockState(proof.cover().pos()).equals(proof.cover().before())&&level.getBlockEntity(proof.cover().pos())==null;
+    }
+    private static Map<BlockPos,BlockState> naturalPreimages(JsonObject j,R5CivicAutomaticInstaller.Plan plan)throws IOException{
+        if(j.get("schema").getAsInt()==1)return Map.of();
+        try{
+            Map<BlockPos,BlockState> actual=new LinkedHashMap<>();JsonArray rows=j.getAsJsonArray("natural_source_preimages"),leafRows=j.getAsJsonArray("natural_leaf_preimages");
+            for(JsonArray group:List.of(rows,leafRows))for(var value:group){JsonObject row=value.getAsJsonObject();JsonArray xyz=row.getAsJsonArray("xyz");
+                if(xyz.size()!=3)throw new IOException("Malformed civic natural position");
+                BlockPos pos=new BlockPos(xyz.get(0).getAsInt(),xyz.get(1).getAsInt(),xyz.get(2).getAsInt());
+                if(actual.put(pos,R5CivicAutomaticInstaller.state(row.get("actual_before").getAsString()))!=null)throw new IOException("Duplicate civic natural preimage");
+            }
+            if(!rows.equals(R5CivicAutomaticInstaller.naturalSourcePreimages(plan,actual))
+                    ||!leafRows.equals(R5CivicAutomaticInstaller.naturalLeafPreimages(plan,actual)))throw new IOException("Civic natural source proof differs from pinned source");
+            return Collections.unmodifiableMap(actual);
+        }catch(IOException e){throw e;}catch(Exception e){throw new IOException("Malformed civic natural source proof",e);}
     }
     private static void validateCost(JsonObject j,EconomyCost cost)throws IOException {
         try{

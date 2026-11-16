@@ -180,6 +180,10 @@ public final class ProducerService {
             public void token(String f,String value){data.setPlacedMapAsset(key(def.id(),f),value);}
             public String receipt(){return data.placedMapAsset(receiptKey(def.id()));}
             public void receipt(String value){data.setPlacedMapAsset(receiptKey(def.id()),value);}
+            public CompoundTag previousNaturalProof()throws IOException {
+                CompoundTag previous=currentNaturalJournal(root,def.id(),receipt());
+                return previous==null?new CompoundTag():ProducerTransaction.naturalProof(previous);
+            }
             public CompoundTag ledger(){return data.save(new CompoundTag());}public void dirty(){data.setDirty();}
             public void save() throws IOException {if(!server.saveEverything(true,true,true))throw new IOException("Server save did not complete");}
             public void allowWrite(BlockPos pos) throws IOException {
@@ -188,17 +192,52 @@ public final class ProducerService {
             }
         };
     }
+    private static CompoundTag currentNaturalJournal(Path root,String city,String receipt)throws IOException {
+        if(receipt==null||receipt.isBlank()||!receipt.endsWith(":paid"))return null;
+        CompoundTag found=null;
+        for(Path history:histories(root,city)) {
+            CompoundTag journal=ProducerJournal.read(history);
+            if(journal.hasUUID("id")&&receipt.equals(journal.getUUID("id")+":paid")) {
+                if(found!=null)throw new IOException("Duplicate current producer soil history");found=journal;
+            }
+        }
+        if(found==null||ProducerTransaction.phase(found)!=ProducerTransaction.Phase.COMMITTED)throw new IOException("Current paid producer soil history is missing or unfinished");
+        return found;
+    }
+    /** Current completed paid lineage only; never starts or resumes construction. */
+    static Set<net.minecraft.core.BlockPos> completedNaturalDirt(MinecraftServer server,String city)throws IOException {
+        Path root=ConstructionWorldAuthorization.authorize(server);var data=CatanSavedData.get(server);var def=MapDefinitionManager.territory(city);validateMap(def);
+        var territory=data.territory(city);
+        if(territory==null||territory.ownerNationId()==null||data.nation(territory.ownerNationId())==null)throw new IOException("Owned producer source required");
+        String receipt=data.placedMapAsset(receiptKey(city));CompoundTag journal=currentNaturalJournal(root,city,receipt);
+        if(journal==null)return Set.of();var spec=readSpec(journal.getCompound("spec"),def);
+        if(spec.paidAfter()!=territory.producerLevel())throw new IOException("Completed producer soil paid level differs");
+        for(var plot:spec.plots())if(!ProducerTransaction.token(plot,true).equals(data.placedMapAsset(key(city,plot.family()))))throw new IOException("Completed producer soil visual token differs");
+        var env=context(server,root,data,territory,def,spec,root.resolve("data/producer-soil-readonly-unused.dat"),false);
+        return ProducerTransaction.completedNaturalDirt(spec,journal,env.identity(),receipt);
+    }
     /** Exact authored-source cover only; never a target/future placement or a
      * block-ID-wide dirt allowance. This read-only comparison also serves native
      * cumulative source checks. Transaction recovery retains its sealed proof. */
     static Map<BlockPos,net.minecraft.world.level.block.state.BlockState> sourceCoveredGrass(
             List<SchematicPlacementService.PlanCell> plan) {
+        return sourceCoveredGrass(plan,false);
+    }
+    /** Producer inventory covers are deliberately separate from other building
+     * policies: only the exact pinned barrel receives this authority. */
+    static Map<BlockPos,net.minecraft.world.level.block.state.BlockState> producerCoveredGrass(
+            List<SchematicPlacementService.PlanCell> plan) {
+        return sourceCoveredGrass(plan,true);
+    }
+    private static Map<BlockPos,net.minecraft.world.level.block.state.BlockState> sourceCoveredGrass(
+            List<SchematicPlacementService.PlanCell> plan,boolean producerBarrels) {
         var source=new HashMap<BlockPos,net.minecraft.world.level.block.state.BlockState>();
         for(var cell:plan)source.put(cell.position(),cell.state());
         var covers=new HashMap<BlockPos,net.minecraft.world.level.block.state.BlockState>();
         for(var cell:plan)if(cell.state().equals(net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState())) {
             var cover=source.get(cell.position().above());
-            if(cover!=null&&net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(cover.getBlock()).getNamespace().equals("minecraft")
+            if(producerBarrels?naturalCover(cover,cell.position().above()):cover!=null
+                    &&net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(cover.getBlock()).getNamespace().equals("minecraft")
                     &&SectorNaturalSupportPolicy.blocksGrass(cover,cell.position().above()))covers.put(cell.position(),cover);
         }
         return Map.copyOf(covers);
@@ -211,6 +250,28 @@ public final class ProducerService {
                 &&cover!=null&&level.hasChunkAt(pos.above())&&cover.equals(level.getBlockState(pos.above()))
                 &&level.getBlockEntity(pos.above())==null;
     }
+    static boolean matchesProducerCoveredSourceGrass(ServerLevel level,SchematicPlacementService.PlanCell cell,
+            Map<BlockPos,net.minecraft.world.level.block.state.BlockState> covers) {
+        return cell.state().equals(net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState())
+                &&level.hasChunkAt(cell.position())&&level.getBlockState(cell.position()).equals(net.minecraft.world.level.block.Blocks.DIRT.defaultBlockState())
+                &&matchesNaturalCover(level,cell.position(),covers.get(cell.position()));
+    }
+    static boolean naturalCover(net.minecraft.world.level.block.state.BlockState cover,BlockPos above) {
+        if(cover==null||!net.minecraft.core.registries.BuiltInRegistries.BLOCK.getKey(cover.getBlock()).getNamespace().equals("minecraft"))return false;
+        if(!cover.is(net.minecraft.world.level.block.Blocks.BARREL))return SectorNaturalSupportPolicy.blocksGrass(cover,above);
+        // The observed native barrel is the sole inventory exception. Evaluate
+        // its real vanilla occlusion; never use an arbitrary block entity as cover.
+        return cover.getFluidState().isEmpty()&&net.minecraft.world.level.lighting.LightEngine.getLightBlockInto(
+                net.minecraft.world.level.EmptyBlockGetter.INSTANCE,net.minecraft.world.level.block.Blocks.GRASS_BLOCK.defaultBlockState(),above.below(),
+                cover,above,net.minecraft.core.Direction.UP,cover.getLightBlock(net.minecraft.world.level.EmptyBlockGetter.INSTANCE,above))>=15;
+    }
+    static boolean matchesNaturalCover(ServerLevel level,BlockPos grass,net.minecraft.world.level.block.state.BlockState cover) {
+        BlockPos above=grass.above();if(!naturalCover(cover,above)||!level.hasChunkAt(above))return false;
+        var actual=level.getBlockState(above);var be=level.getBlockEntity(above);
+        if(cover.is(net.minecraft.world.level.block.Blocks.BARREL))return ProducerRevisions.matches(actual,cover)
+                &&be instanceof net.minecraft.world.level.block.entity.BarrelBlockEntity;
+        return actual.equals(cover)&&be==null;
+    }
     /** Adopt prebuilt L1 without replacing a barrel, crop, or any world block. All plots preflight first. */
     public static MapAssetService.Result adoptPrebuilt(MinecraftServer server,CatanSavedData data,TerritoryDefinition def) {
         try {
@@ -219,14 +280,14 @@ public final class ProducerService {
                 String token=data.placedMapAsset(key(def.id(),f));
                 if(token!=null){ProducerRevisions.revision(f,token);continue;}
                 var plan=ProducerRevisions.plan(f,1,SchematicAssetRegistry.territoryAnchor(f,def));
-                var sourceCovers=sourceCoveredGrass(plan);
+                var sourceCovers=producerCoveredGrass(plan);
                 var bounds=SchematicAssetRegistry.asset(f).boundsAt(SchematicAssetRegistry.territoryAnchor(f,def));
                 for(int x=bounds.min().getX()>>4;x<=bounds.max().getX()>>4;x++)
                     for(int z=bounds.min().getZ()>>4;z<=bounds.max().getZ()>>4;z++)level.getChunk(x,z);
                 for(var cell:plan) {
                     if(!level.hasChunkAt(cell.position()))throw new IOException("Prebuilt producer chunk unloaded");
                     if(!ProducerRevisions.matches(level.getBlockState(cell.position()),cell.state())
-                            &&!matchesCoveredSourceGrass(level,cell,sourceCovers))throw new IOException("Unrecognized prebuilt producer at "+cell.position()
+                            &&!matchesProducerCoveredSourceGrass(level,cell,sourceCovers))throw new IOException("Unrecognized prebuilt producer at "+cell.position()
                             +" expected="+cell.state()+" actual="+level.getBlockState(cell.position()));
                     var be=level.getBlockEntity(cell.position());
                     if(cell.state().is(net.minecraft.world.level.block.Blocks.BARREL)) {

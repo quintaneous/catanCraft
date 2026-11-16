@@ -104,6 +104,24 @@ final class PrestigeNaturalSupport {
                 result.put(entry.getKey(),point.sourceCover());
         }return Map.copyOf(result);
     }
+    /** An interrupted bottom-up paste must not leave newly introduced grass
+     * beneath obsolete source masonry. Clear only exact journaled cover->AIR
+     * deltas first; this grants no recognition of exposed dirt. */
+    static Set<BlockPos> obsoleteGrassCovers(List<SchematicPlacementService.PlanCell> before,
+            List<SchematicPlacementService.PlanCell> after)throws IOException {
+        if(before.size()!=after.size())throw new IOException("Prestige ordering envelope mismatch");
+        Set<BlockPos> aboveGrass=new HashSet<>();
+        for(var cell:after)if(cell.state().equals(Blocks.GRASS_BLOCK.defaultBlockState()))aboveGrass.add(cell.position().above());
+        Set<BlockPos> removals=new HashSet<>();
+        for(int i=0;i<before.size();i++){
+            var old=before.get(i);var next=after.get(i);BlockPos p=old.position();
+            if(!p.equals(next.position()))throw new IOException("Prestige ordering coordinates changed");
+            if(!aboveGrass.contains(p)||!SectorNaturalSupportPolicy.blocksGrass(old.state(),p)||old.state().equals(next.state()))continue;
+            if(!next.state().equals(Blocks.AIR.defaultBlockState()))throw new IOException("Unsupported changing cover over target grass at "+p);
+            removals.add(p);
+        }
+        return Set.copyOf(removals);
+    }
     static boolean decayed(ServerLevel level,BlockPos p,BlockState expected,BlockState live,BlockState cover){
         return expected.equals(Blocks.GRASS_BLOCK.defaultBlockState())&&live.equals(Blocks.DIRT.defaultBlockState())
                 &&cover!=null&&level.hasChunkAt(p.above())&&cover.equals(level.getBlockState(p.above()))

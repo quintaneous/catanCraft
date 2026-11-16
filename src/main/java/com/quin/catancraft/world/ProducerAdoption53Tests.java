@@ -87,6 +87,49 @@ public final class ProducerAdoption53Tests {
             var foreign=new Gson().fromJson(json,TerritoryDefinition.class);f.refuses(foreign,"Map differs from reviewed");h.succeed();
         }
     }
+    /** Real native decay beneath the one pinned quarry barrel, including its
+     * ordinary open state, without rewriting the barrel or its contents. */
+    @GameTest(template="townhall_state_empty",batch="adoption53_barrel_probe",timeoutTicks=1000)
+    public static void quarry_barrel_native_decay_adopts_without_inventory_or_open_changes(GameTestHelper h)throws Exception {
+        for(String city:List.of("a","m"))try(Fixture f=new Fixture(h,city)) {
+            var candidate=f.barrelGrass();BlockPos p=candidate.position();
+            f.level().setBlock(p.above(),f.level().getBlockState(p.above()).setValue(net.minecraft.world.level.block.BarrelBlock.OPEN,city.equals("m")),FLAGS);
+            CompoundTag inventory=f.level().getBlockEntity(p.above()).saveWithFullMetadata().copy();
+            h.assertTrue(f.level().getBlockEntity(p.above()) instanceof Container,"Native source barrel missing its inventory");
+            Blocks.GRASS_BLOCK.randomTick(f.level().getBlockState(p),f.level(),p,RandomSource.create(53));
+            h.assertTrue(f.level().getBlockState(p).equals(Blocks.DIRT.defaultBlockState()),"Expected native barrel-cover decay was not observed");
+            h.assertTrue(inventory.equals(f.level().getBlockEntity(p.above()).saveWithFullMetadata()),"Native grass tick changed barrel inventory");
+            h.assertTrue(!ProducerService.sourceCoveredGrass(f.plans.get("quarry")).containsKey(p),"Producer barrel authority leaked into generic cover policy");
+            var blocks=f.blocks();var inventories=f.inventories();CompoundTag before=f.data.save(new CompoundTag());
+            var result=ProducerService.adoptPrebuilt(f.server(),f.data,f.definition);h.assertTrue(result.success()&&result.changedBlocks()==0,"Pinned barrel soil adoption failed: "+result.message());
+            var expected=CatanSavedData.load(before);for(String family:ProducerRevisions.applicable(f.definition))expected.setPlacedMapAsset(f.key(family),ProducerRevisions.token(family,1));
+            h.assertTrue(expected.save(new CompoundTag()).equals(f.data.save(new CompoundTag()))&&blocks.equals(f.blocks())&&inventories.equals(f.inventories()),"Barrel adoption changed charge, unrelated state, inventory or OPEN");
+            CompoundTag adopted=f.data.save(new CompoundTag());h.assertTrue(ProducerService.adoptPrebuilt(f.server(),f.data,f.definition).success()
+                    &&adopted.equals(f.data.save(new CompoundTag()))&&blocks.equals(f.blocks())&&inventories.equals(f.inventories()),"Repeated barrel adoption changed accepted records or world");
+            com.quin.catancraft.CatanCraft.LOGGER.info("PRODUCER_ADOPTION53_BARREL_PASS city={} nativeDecay=DIRT inventoryPreserved=true openPreserved=true writes=0 charge=0 idempotent=true",city);
+        }h.succeed();
+    }
+    @GameTest(template="townhall_state_empty",batch="adoption53_barrel_facing",timeoutTicks=1000)
+    public static void changed_barrel_facing_cannot_authorize_soil(GameTestHelper h)throws Exception {
+        try(Fixture f=new Fixture(h,"m")){
+            var cell=f.barrelGrass();BlockPos p=cell.position();var cover=f.level().getBlockState(p.above());
+            Blocks.GRASS_BLOCK.randomTick(f.level().getBlockState(p),f.level(),p,RandomSource.create(53));
+            f.level().setBlock(p.above(),cover.setValue(net.minecraft.world.level.block.BarrelBlock.FACING,cover.getValue(net.minecraft.world.level.block.BarrelBlock.FACING).getOpposite()),FLAGS);
+            h.assertTrue(!ProducerService.matchesNaturalCover(f.level(),p,cover),"Wrong barrel facing received cover authority");
+            f.refuses("Unrecognized prebuilt producer");h.succeed();
+        }
+    }
+    @GameTest(template="townhall_state_empty",batch="adoption53_foreign_cover",timeoutTicks=1000)
+    public static void foreign_inventory_is_not_an_approved_soil_cover(GameTestHelper h)throws Exception {
+        try(Fixture f=new Fixture(h,"a")){
+            var cell=f.barrelGrass();BlockPos p=cell.position();var cover=f.level().getBlockState(p.above());
+            Blocks.GRASS_BLOCK.randomTick(f.level().getBlockState(p),f.level(),p,RandomSource.create(53));
+            ((Container)f.level().getBlockEntity(p.above())).clearContent();f.level().setBlock(p.above(),Blocks.FURNACE.defaultBlockState(),FLAGS);
+            ((Container)f.level().getBlockEntity(p.above())).setItem(0,new ItemStack(Items.DIAMOND,13));
+            h.assertTrue(!ProducerService.naturalCover(Blocks.FURNACE.defaultBlockState(),p.above())&&!ProducerService.matchesNaturalCover(f.level(),p,cover),"Generic inventory received barrel cover authority");
+            f.refuses("Unrecognized prebuilt producer");h.succeed();
+        }
+    }
     private static final class Fixture implements AutoCloseable {
         final GameTestHelper h;final TerritoryDefinition definition;final CatanSavedData data=new CatanSavedData();
         final Map<String,List<SchematicPlacementService.PlanCell>> plans=new LinkedHashMap<>();final Path marker;
@@ -120,6 +163,11 @@ public final class ProducerAdoption53Tests {
             var cover=ProducerService.sourceCoveredGrass(plans.get(family));
             return plans.get(family).stream().filter(c->cover.containsKey(c.position())&&cover.get(c.position()).is(Blocks.SPRUCE_LOG))
                     .findFirst().orElseThrow(()->new IOException("No immutable covered grass source"));
+        }
+        SchematicPlacementService.PlanCell barrelGrass(){
+            var candidates=plans.get("quarry").stream().filter(c->c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())
+                    &&level().getBlockState(c.position().above()).is(Blocks.BARREL)).toList();
+            h.assertTrue(candidates.size()==1,"Pinned quarry barrel grass source changed");return candidates.get(0);
         }
         Map<BlockPos,BlockState> blocks(){var out=new HashMap<BlockPos,BlockState>();for(var plan:plans.values())for(var c:plan)out.put(c.position(),level().getBlockState(c.position()));return out;}
         Map<BlockPos,CompoundTag> inventories(){var out=new HashMap<BlockPos,CompoundTag>();for(var plan:plans.values())for(var c:plan){var be=level().getBlockEntity(c.position());if(be!=null)out.put(c.position(),be.saveWithFullMetadata());}return out;}

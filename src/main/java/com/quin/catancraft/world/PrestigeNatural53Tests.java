@@ -123,6 +123,58 @@ public final class PrestigeNatural53Tests {
             byte[] rolled=Files.readAllBytes(e.file());h.assertTrue(TownHallRepairTransaction.run(e,TownHallRepairTransaction.Action.ROLLBACK).writes()==0&&Arrays.equals(rolled,Files.readAllBytes(e.file())),"Duplicate rollback rewrote history");
         }h.succeed();
     }
+    @GameTest(template="townhall_state_empty",batch="prestige53_09",timeoutTicks=12000)
+    public static void north_obsolete_covers_clear_before_target_grass(GameTestHelper h)throws Exception{orderedGrass(h,"a");}
+    @GameTest(template="townhall_state_empty",batch="prestige53_10",timeoutTicks=12000)
+    public static void south_obsolete_covers_clear_before_target_grass(GameTestHelper h)throws Exception{orderedGrass(h,"i");}
+    private static void orderedGrass(GameTestHelper h,String city)throws Exception{
+        try(Fixture f=new Fixture(h,city,3,1)){
+            var covers=PrestigeNaturalSupport.obsoleteGrassCovers(f.before,f.after);h.assertTrue(covers.size()==51,"Pinned obsolete TH3 cover count changed");
+            CompoundTag before=f.data.save(new CompoundTag());
+            h.assertTrue(!f.upgrade((stage,writes)->{if(stage.equals("prepared"))throw new IOException("Interrupt before first ordered write");}).success(),"Expected captured pending purchase");
+            byte[] original=Files.readAllBytes(f.journal);CompoundTag journal=PrestigePurchaseRecovery.read(original);var deltas=journal.getList("blocks",Tag.TAG_COMPOUND);
+            for(int i=0;i<deltas.size();i++)h.assertTrue(covers.contains(BlockPos.of(deltas.getCompound(i).getLong("pos")))==(i<51),"Journal failed to record deterministic cover-first order");
+            PaidRecoveryTests.interrupt(h,f.recovery(),"write",51);f.reload();
+            for(BlockPos cover:covers)h.assertTrue(f.level.getBlockState(cover).equals(Blocks.AIR.defaultBlockState())
+                    &&!f.level.getBlockState(cover.below()).equals(Blocks.GRASS_BLOCK.defaultBlockState()),"Recovery introduced grass before clearing every obsolete blocker");
+            BlockPos p=covers.stream().min(Comparator.comparingLong(BlockPos::asLong)).orElseThrow().below();boolean[] reached={false};
+            refuse(h,()->PaidConstructionRecovery.resume(f.recovery(),(stage,writes)->{
+                if(stage.equals("write")&&f.level.getBlockState(p).equals(Blocks.GRASS_BLOCK.defaultBlockState())){
+                    for(BlockPos cover:covers)h.assertTrue(f.level.getBlockState(cover).equals(Blocks.AIR.defaultBlockState()),"Old cover returned during target placement");
+                    Blocks.GRASS_BLOCK.randomTick(f.level.getBlockState(p),f.level,p,RandomSource.create(53));
+                    h.assertTrue(f.level.getBlockState(p).equals(Blocks.GRASS_BLOCK.defaultBlockState()),"Exposed target grass decayed despite ordered blocker removal");
+                    reached[0]=true;throw new IOException("Interrupt after native exposed-grass tick");
+                }
+            }));h.assertTrue(reached[0]&&before.equals(f.data.save(new CompoundTag())),"Recovery did not reach native ordering probe without charging");
+            f.reload();PaidConstructionRecovery.resume(f.recovery());f.reload();f.assertPaidOnce(before,journal);f.assertTarget();
+            h.assertTrue(Arrays.equals(original,Files.readAllBytes(f.journal)),"Ordered recovery rewrote captured history");h.succeed();
+        }
+    }
+    @GameTest(template="townhall_state_empty",batch="prestige53_11",timeoutTicks=12000)
+    public static void north_th3_planters_have_no_native_grass_route(GameTestHelper h)throws Exception{planters(h,"a");}
+    @GameTest(template="townhall_state_empty",batch="prestige53_12",timeoutTicks=12000)
+    public static void south_th3_planters_have_no_native_grass_route(GameTestHelper h)throws Exception{planters(h,"i");}
+    private static void planters(GameTestHelper h,String city)throws Exception{
+        try(Fixture f=new Fixture(h,city,3,1)){
+            var dirt=f.before.stream().filter(c->c.state().equals(Blocks.DIRT.defaultBlockState())).toList();
+            var grass=f.before.stream().filter(c->c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())).toList();
+            h.assertTrue(dirt.size()==56&&grass.size()==735,"Pinned TH3 planter/grass counts changed");
+            for(var d:dirt){
+                h.assertTrue(f.level.getBlockState(d.position().above()).is(Blocks.AZALEA_LEAVES)
+                        &&f.level.getBlockState(d.position().above()).getValue(LeavesBlock.PERSISTENT),"Planter source cover changed");
+                for(var g:grass){int dx=g.position().getX()-d.position().getX(),dy=g.position().getY()-d.position().getY(),dz=g.position().getZ()-d.position().getZ();
+                    h.assertTrue(Math.abs(dx)>1||Math.abs(dz)>1||dy< -1||dy>3,"Source grass can reach protected TH3 planter dirt");}
+            }
+            RandomSource random=RandomSource.create(53);
+            for(int sweep=0;sweep<128;sweep++)for(var g:grass)Blocks.GRASS_BLOCK.randomTick(f.level.getBlockState(g.position()),f.level,g.position(),random);
+            for(var d:dirt)h.assertTrue(f.level.getBlockState(d.position()).equals(Blocks.DIRT.defaultBlockState()),"Native grass reached an isolated TH3 planter");
+            BlockPos altered=dirt.get(0).position();f.level.setBlock(altered,Blocks.GRASS_BLOCK.defaultBlockState(),FLAGS);f.refusePurchase();
+            // Restore only the intentional fixture mutation, then capture through
+            // the normal guarded path; no production regrowth permission exists.
+            f.level.setBlock(altered,Blocks.DIRT.defaultBlockState(),FLAGS);
+            boolean[] captured={false};h.assertTrue(!f.upgrade((stage,writes)->{if(stage.equals("prepared")){captured[0]=true;throw new IOException("Stop after intact planter capture");}}).success()&&captured[0],"Intact native-ticked source failed normal capture");h.succeed();
+        }
+    }
     private static void decay(GameTestHelper h,ServerLevel level,BlockPos p){
         h.assertTrue(level.getBlockState(p).equals(Blocks.GRASS_BLOCK.defaultBlockState()),"Native decay source must be exact grass");
         Blocks.GRASS_BLOCK.randomTick(level.getBlockState(p),level,p,RandomSource.create(53));

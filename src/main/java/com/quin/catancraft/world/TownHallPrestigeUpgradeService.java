@@ -214,6 +214,12 @@ public final class TownHallPrestigeUpgradeService {
             }
             if(manager==null || managedEntities!=1 || managerNbt==null)
                 throw new IllegalStateException("Exactly one preserved management lectern required");
+            Set<BlockPos> obsoleteGrassCovers=PrestigeNaturalSupport.obsoleteGrassCovers(before,after);
+            // Stable partition: preserve original relative order within both
+            // groups, and journal the same order that will actually be written.
+            changes.sort(java.util.Comparator.comparingInt(delta->obsoleteGrassCovers.contains(delta.pos())?0:1));
+            for(BlockPos cover:obsoleteGrassCovers)if(changes.stream().noneMatch(delta->delta.pos().equals(cover)&&delta.after().equals(Blocks.AIR.defaultBlockState())))
+                throw new IllegalStateException("Missing obsolete grass-cover delta at "+cover);
             // If any players, vehicles, mobs or item entities occupy this
             // large building volume, refuse rather than burying or deleting them.
             AABB occupied=new AABB(lower.getX(),lower.getY(),lower.getZ(),

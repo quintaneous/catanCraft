@@ -124,7 +124,13 @@ public final class BasicNaturalSource34Tests {
             }
             h.assertTrue(newlyCovered!=null,"Pinned target has no newly covered grass");
             f.prepare();byte[] original=Files.readAllBytes(f.original());long cash=f.nation().treasury();
-            PaidRecoveryTests.interrupt(h,f.env(),"physical_saved",-1);decay(f,List.of(newlyCovered));
+            // This is a FUTURE-cover refusal. Once the exact owned TH2 cover is
+            // physically present, native decay is covered by the separate053
+            // target-cover recovery tests; the original after-physical-save
+            // expectation is retained in git history, not silently relabeled.
+            PaidRecoveryTests.interrupt(h,f.env(),"prepared",-1);
+            h.assertTrue(f.level.getBlockState(newlyCovered.above()).isAir(),"Future target cover already exists");
+            f.level.setBlock(newlyCovered,Blocks.DIRT.defaultBlockState(),ConstructionSafetyTests.FLAGS);
             byte[] companion=Files.readAllBytes(PaidConstructionRecovery.companion(f.original()));
             PaidRecoveryTests.refused(h,f::complete,"Construction source conflict");
             h.assertTrue(f.nation().treasury()==cash&&f.territory().cityLevel()==1,"Unproven target decay charged");

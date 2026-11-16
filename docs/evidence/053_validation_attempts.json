@@ -1,0 +1,182 @@
+{
+  "schema": 1,
+  "purpose": "retained-053-validation-attempts-not-release-approval",
+  "finalReadiness": "PENDING",
+  "attempts": [
+    {
+      "attempt": "round2",
+      "phase": "seed",
+      "namespace": "catancraft_progression53",
+      "source": "02c5aedcbe1cff1e40ca28a01cff051fe8ebd407",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 1,
+      "executed": 1,
+      "passed": 0,
+      "log": "build/evidence53/round2/progression-0-seed.log",
+      "logSHA256": "104a0f7e845f4b9ea6500f73ffbbf05f56ad5982782f09a066a35406d6344ba2"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "",
+      "namespace": "catancraft_basic_garden53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 6,
+      "passed": 6,
+      "log": "build/evidence53/natural53-round3/catancraft_basic_garden53.log",
+      "logSHA256": "8f76a6e1cb5eae46e4c2ce914b4741844b84022081a6610db8aa8ffd7e2124cb"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "",
+      "namespace": "catancraft_producer_adoption53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 7,
+      "passed": 7,
+      "log": "build/evidence53/natural53-round3/catancraft_producer_adoption53.log",
+      "logSHA256": "5a8bc238c4a0f63b76e1432e254de6571b4b5381b4b244b13aa578d64c078093"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "",
+      "namespace": "catancraft_house_natural53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 8,
+      "passed": 8,
+      "log": "build/evidence53/natural53-round3/catancraft_house_natural53.log",
+      "logSHA256": "be1df55c481572225bb004133379fe0d4028088e74577b235947ac553816808c"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "",
+      "namespace": "catancraft_streetscape_natural53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 6,
+      "passed": 6,
+      "log": "build/evidence53/natural53-round3/catancraft_streetscape_natural53.log",
+      "logSHA256": "2e36bd02df6ea833d0e545ec1f04135a40d506336ca033a7e4d924defbfa3b14"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "",
+      "namespace": "catancraft_prestige_natural53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 8,
+      "passed": 8,
+      "log": "build/evidence53/natural53-round3/catancraft_prestige_natural53.log",
+      "logSHA256": "121394088f9793c038a85c8420f1221db069ea60ee47847c4b3e426fd968a762"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "seed",
+      "namespace": "catancraft_house_natural53_restart",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round3/catancraft_house_natural53_restart-seed.log",
+      "logSHA256": "1e343fc99f61baaff753165b2d0753e5c3a837c1ba693dfd24c198c8d702a497"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "verify",
+      "namespace": "catancraft_house_natural53_restart",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round3/catancraft_house_natural53_restart-verify.log",
+      "logSHA256": "b18f0fd4d2daa2f2d9bdf51943e51b9f2eee71b6f0ed5fe9c32be34cba622bcb"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "seed",
+      "namespace": "catancraft_streetscape_restart53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round3/catancraft_streetscape_restart53-seed.log",
+      "logSHA256": "7a77d288cc57bd75a7b873af9097c801262346b9c086baf2da356043b53b2cc5"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "verify",
+      "namespace": "catancraft_streetscape_restart53",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round3/catancraft_streetscape_restart53-verify.log",
+      "logSHA256": "c3bdd606c30dfd247cf4ccc0d8781385d4e522d2fd1fec2cafbaf9ff07252a04"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "seed",
+      "namespace": "catancraft_prestige_natural53_restart",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round3/catancraft_prestige_natural53_restart-seed.log",
+      "logSHA256": "06559c0906b20cb4abe217d1e07f5d088e3ae9492fa65d95c0bfe68451401ca0"
+    },
+    {
+      "attempt": "natural53-round3",
+      "phase": "verify",
+      "namespace": "catancraft_prestige_natural53_restart",
+      "source": "b7dcc28d70ca2733df942deaa99c17a4131a443c",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 1,
+      "executed": 1,
+      "passed": 0,
+      "log": "build/evidence53/natural53-round3/catancraft_prestige_natural53_restart-verify.log",
+      "logSHA256": "95acbbb4624616edd12ed9ca1e4ffac826b69aade473b871d11fb808bbd1f13b"
+    },
+    {
+      "attempt": "natural53-diagnostic4",
+      "phase": "",
+      "namespace": "catancraft_prestige_natural53",
+      "source": null,
+      "classification": "UNCOMMITTED_DIAGNOSTIC_NOT_RELEASE_VALIDATION",
+      "exitCode": 0,
+      "executed": 12,
+      "passed": 12,
+      "log": "build/evidence53/natural53-diagnostic4/catancraft_prestige_natural53.log",
+      "logSHA256": "623e31e77337764baf6c8141a7a47b38f411859c61417d50f73489e67620f739",
+      "compiledBytesUnchanged": true
+    },
+    {
+      "attempt": "natural53-diagnostic4",
+      "phase": "",
+      "namespace": "catancraft_producer_adoption53",
+      "source": null,
+      "classification": "UNCOMMITTED_DIAGNOSTIC_NOT_RELEASE_VALIDATION",
+      "exitCode": 0,
+      "executed": 8,
+      "passed": 8,
+      "log": "build/evidence53/natural53-diagnostic4/catancraft_producer_adoption53.log",
+      "logSHA256": "f6c895369d19ffc0139e78c7f723c0168e18ad72ddc3e42002c80cfab5eeb854",
+      "compiledBytesUnchanged": true
+    }
+  ],
+  "interpretation": {
+    "round2": "Layout0 failed normal D founding because native grass decayed under an unchanged spruce log. Retained; not a progression pass.",
+    "natural53-round3": "40 of41 cases passed; prestige restart verify failed because newly placed grass decayed beneath not-yet-removed old masonry. Retained; no restart pass.",
+    "natural53-diagnostic4": "Diagnostic on a complete frozen source snapshot, not a release source. Prestige12 passed; adoption8 includes a positive reproduction that barrel-covered soil decays and current adoption still refuses. Those8 do not establish a fixed barrel path."
+  }
+}

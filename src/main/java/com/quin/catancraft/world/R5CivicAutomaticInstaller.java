@@ -15,6 +15,9 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.BarrelBlock;
+import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.entity.BarrelBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.Property;
@@ -59,6 +62,8 @@ public final class R5CivicAutomaticInstaller {
     record Write(BlockPos pos,BlockState before,BlockState after,String stage) {}
     record Cell(BlockPos pos,BlockState before,BlockState after) {}
     record Plan(List<Write> writes,LinkedHashMap<Long,Cell> finalCells,int barrels) {}
+    record NaturalSource(Cell soil,Cell cover) {}
+    private record Prepared(Plan plan,Map<BlockPos,BlockState> actualNaturalSources) {}
 
     private R5CivicAutomaticInstaller() {}
 
@@ -236,11 +241,39 @@ public final class R5CivicAutomaticInstaller {
             throw new IllegalStateException("R5 source counts changed; refuse unreviewed revision");
         return new Plan(List.copyOf(writes),all,actualBarrels);
     }
-    private static Plan plan(MinecraftServer server,TerritoryDefinition city,ServerLevel level,BuildingType type)throws Exception {
-        Plan plan=contract(city,type);
+    /** The one pinned commercial tree base is the only reviewed natural source.
+     * Its cleanup is an earlier owned write; future civic floors never authorize dirt. */
+    static Map<BlockPos,NaturalSource> naturalSources(Plan plan) throws IOException {
+        Map<BlockPos,NaturalSource> result=new LinkedHashMap<>();
+        for(Cell soil:plan.finalCells().values()) {
+            if(!soil.before().equals(Blocks.GRASS_BLOCK.defaultBlockState())||!soil.after().equals(Blocks.SMOOTH_STONE.defaultBlockState()))continue;
+            Cell cover=plan.finalCells().get(soil.pos().above().asLong());
+            if(cover==null||!cover.before().equals(Blocks.OAK_LOG.defaultBlockState())||!cover.after().isAir()
+                    ||!SectorNaturalSupportPolicy.blocksGrass(cover.before(),cover.pos()))continue;
+            List<Write> soilWrites=plan.writes().stream().filter(w->w.pos().equals(soil.pos())).toList();
+            List<Write> coverWrites=plan.writes().stream().filter(w->w.pos().equals(cover.pos())).toList();
+            if(soilWrites.size()!=1||coverWrites.size()!=1)throw new IOException("Changed natural civic source route");
+            Write s=soilWrites.get(0),c=coverWrites.get(0);
+            if(!s.stage().equals("CIVIC")||!c.stage().equals("cleanup_tree_16_10")
+                    ||!s.before().equals(soil.before())||!s.after().equals(soil.after())
+                    ||!c.before().equals(cover.before())||!c.after().equals(cover.after())
+                    ||plan.writes().indexOf(c)>=plan.writes().indexOf(s))throw new IOException("Unapproved natural civic source sequence");
+            result.put(soil.pos(),new NaturalSource(soil,cover));
+        }
+        if(result.size()>1)throw new IOException("Unexpected natural civic source count");
+        return Collections.unmodifiableMap(result);
+    }
+    static Map<BlockPos,BlockState> captureSource(ServerLevel level,Plan plan)throws Exception {
+        Map<BlockPos,NaturalSource> natural=naturalSources(plan);Map<BlockPos,Cell> leaves=naturalLeafSources(plan);Map<BlockPos,BlockState> actual=new LinkedHashMap<>();
         for(Cell c:plan.finalCells().values()) {
-            if(!level.hasChunkAt(c.pos())||!level.getBlockState(c.pos()).equals(c.before())||level.getBlockEntity(c.pos())!=null||!level.getFluidState(c.pos()).isEmpty())
+            if(!level.hasChunkAt(c.pos()))throw new PreparationDeferred("Civic source chunks are still loading");
+            BlockState live=level.getBlockState(c.pos());NaturalSource proof=natural.get(c.pos());
+            boolean covered=proof!=null&&level.hasChunkAt(proof.cover().pos())
+                    &&level.getBlockState(proof.cover().pos()).equals(proof.cover().before())&&level.getBlockEntity(proof.cover().pos())==null;
+            if(!(live.equals(c.before())||covered&&live.equals(Blocks.DIRT.defaultBlockState())||leaves.containsKey(c.pos())&&StreetscapeR5.matches(live,c.before()))||level.getBlockEntity(c.pos())!=null||!level.getFluidState(c.pos()).isEmpty())
                 throw new IllegalStateException("Unexpected R7 surface/tile/fluid at "+c.pos()+"; nothing charged");
+            if(proof!=null){if(!covered)throw new IOException("Missing exact original civic source cover");actual.put(c.pos(),live);}
+            if(leaves.containsKey(c.pos()))actual.put(c.pos(),live);
         }
         // Reject interference with any entity (including dropped items) that
         // intersects a new non-air block. No clearing or teleporting entities.
@@ -249,7 +282,72 @@ public final class R5CivicAutomaticInstaller {
             if(!level.getEntities((Entity)null,new AABB(c.pos()),Entity::isAlive).isEmpty())
                 throw new IllegalStateException("Entity in construction footprint at "+c.pos());
         }
-        return plan;
+        return Collections.unmodifiableMap(actual);
+    }
+    static Map<BlockPos,Cell> naturalLeafSources(Plan plan)throws IOException {
+        Map<BlockPos,Cell> leaves=new LinkedHashMap<>();
+        BlockState expected=Blocks.OAK_LEAVES.defaultBlockState().setValue(LeavesBlock.DISTANCE,1).setValue(LeavesBlock.PERSISTENT,true);
+        for(Write w:plan.writes())if(w.stage().equals("cleanup_tree_16_10")&&w.before().is(Blocks.OAK_LEAVES)) {
+            Cell c=plan.finalCells().get(w.pos().asLong());
+            if(!w.before().equals(expected)||!w.after().isAir()||c==null||!c.before().equals(expected)||leaves.put(w.pos(),c)!=null)
+                throw new IOException("Changed pinned civic cleanup leaf contract");
+        }
+        if(!leaves.isEmpty()&&leaves.size()!=84)throw new IOException("Changed pinned cleanup leaf count");
+        return Collections.unmodifiableMap(leaves);
+    }
+    static List<Write> executionWrites(Plan plan,int schema)throws IOException {
+        if(schema==1)return plan.writes();
+        if(schema!=2)throw new IOException("Unknown civic execution schema");
+        Set<BlockPos> natural=naturalSources(plan).keySet();List<Write> writes=new ArrayList<>();
+        // Stable partition of the single reviewed soil write. Replacing this
+        // full solid support first keeps its exact source cover present until
+        // the last possible grass/dirt preimage has been consumed.
+        for(Write w:plan.writes())if(natural.contains(w.pos()))writes.add(w);
+        for(Write w:plan.writes())if(!natural.contains(w.pos()))writes.add(w);
+        return List.copyOf(writes);
+    }
+    /** Read-only full paid-civic geometry check; opening or using a barrel is
+     * legitimate and must not clear/recreate its inventory. No target grass
+     * remains in either pinned civic contract. */
+    static int verifyInstalled(ServerLevel level,TerritoryDefinition city,BuildingType type)throws Exception {
+        return verifyInstalled(level,contract(city,type));
+    }
+    static int verifyInstalled(ServerLevel level,Plan plan)throws IOException {
+        for(Cell c:plan.finalCells().values()) {
+            if(!level.hasChunkAt(c.pos()))throw new PreparationDeferred("Civic target chunks are still loading");
+            BlockState live=level.getBlockState(c.pos()),target=c.after();BlockEntity be=level.getBlockEntity(c.pos());
+            if(target.is(Blocks.BARREL)) {
+                if(!live.is(Blocks.BARREL)||!live.setValue(BarrelBlock.OPEN,false).equals(target.setValue(BarrelBlock.OPEN,false))||!(be instanceof BarrelBlockEntity))
+                    throw new IOException("Installed civic barrel conflict at "+c.pos());
+            } else if(!live.equals(target)||be!=null)throw new IOException("Installed civic target conflict at "+c.pos());
+        }
+        return plan.finalCells().size();
+    }
+    private static Prepared plan(TerritoryDefinition city,ServerLevel level,BuildingType type)throws Exception {
+        Plan plan=contract(city,type);return new Prepared(plan,captureSource(level,plan));
+    }
+    static JsonArray naturalSourcePreimages(Plan plan,Map<BlockPos,BlockState> actual)throws IOException {
+        Map<BlockPos,NaturalSource> natural=naturalSources(plan);
+        Set<BlockPos> expected=new HashSet<>(natural.keySet());expected.addAll(naturalLeafSources(plan).keySet());
+        if(!actual.keySet().equals(expected))throw new IOException("Incomplete civic natural source preimage");
+        JsonArray rows=new JsonArray();
+        for(var entry:natural.entrySet()) {
+            NaturalSource proof=entry.getValue();BlockState before=actual.get(entry.getKey());
+            if(!proof.soil().before().equals(before)&&!Blocks.DIRT.defaultBlockState().equals(before))throw new IOException("Foreign civic natural preimage");
+            JsonObject row=new JsonObject();row.add("xyz",xyz(proof.soil().pos()));
+            row.addProperty("source_before",canonical(proof.soil().before()));row.addProperty("actual_before",canonical(before));
+            row.addProperty("after",canonical(proof.soil().after()));row.add("source_cover_xyz",xyz(proof.cover().pos()));
+            row.addProperty("source_cover",canonical(proof.cover().before()));rows.add(row);
+        }
+        return rows;
+    }
+    static JsonArray naturalLeafPreimages(Plan plan,Map<BlockPos,BlockState> actual)throws IOException {
+        JsonArray rows=new JsonArray();for(Cell c:naturalLeafSources(plan).values()) {
+            BlockState before=actual.get(c.pos());
+            if(before==null||!StreetscapeR5.matches(before,c.before()))throw new IOException("Foreign civic cleanup leaf preimage");
+            JsonObject row=new JsonObject();row.add("xyz",xyz(c.pos()));row.addProperty("source_before",canonical(c.before()));
+            row.addProperty("actual_before",canonical(before));row.addProperty("after",canonical(c.after()));rows.add(row);
+        }return rows;
     }
     static JsonArray xyz(BlockPos p) {
         JsonArray a=new JsonArray();a.add(p.getX());a.add(p.getY());a.add(p.getZ());return a;
@@ -274,11 +372,11 @@ public final class R5CivicAutomaticInstaller {
             try(FileChannel channel=FileChannel.open(path,StandardOpenOption.WRITE)){channel.force(true);}
         } finally {Files.deleteIfExists(tmp);}
     }
-    private static JsonObject journal(MinecraftServer server,Path world,ServerLevel level,
+    static JsonObject journal(Path world,ServerLevel level,
                                       TerritoryDefinition city,BuildingType type,
-                                      NationData nation,EconomyCost cost,Plan plan) throws Exception {
+                                      NationData nation,EconomyCost cost,Plan plan,Map<BlockPos,BlockState> actualNaturalSources) throws Exception {
         JsonObject j=new JsonObject();
-        j.addProperty("schema",1);j.addProperty("phase","PENDING");j.addProperty("receipt_required",true);
+        j.addProperty("schema",2);j.addProperty("phase","PENDING");j.addProperty("receipt_required",true);
         j.addProperty("transaction_id",UUID.randomUUID().toString());
         j.addProperty("source_revision","R5-1 VERIFIED AGAINST R7");
         j.addProperty("world_root",world.toString());
@@ -295,7 +393,7 @@ public final class R5CivicAutomaticInstaller {
         }
         j.add("resources",resources);
         JsonArray writes=new JsonArray();
-        for(Write w:plan.writes()) {
+        for(Write w:executionWrites(plan,2)) {
             JsonObject cell=new JsonObject();cell.add("xyz",xyz(w.pos()));
             cell.addProperty("stage",w.stage());cell.addProperty("before",canonical(w.before()));
             cell.addProperty("after",canonical(w.after()));writes.add(cell);
@@ -309,6 +407,10 @@ public final class R5CivicAutomaticInstaller {
             originals.add(cell);
         }
         j.add("originals",originals);
+        // Source arrays remain the immutable artwork contract. This versioned
+        // companion field records the actual preimage instead of repainting grass.
+        j.add("natural_source_preimages",naturalSourcePreimages(plan,actualNaturalSources));
+        j.add("natural_leaf_preimages",naturalLeafPreimages(plan,actualNaturalSources));
         j.add("installed_barrels",new JsonObject());
         j.addProperty("physical_committed",false);j.addProperty("economic_committed",false);
         seal(j);return j;
@@ -354,8 +456,8 @@ public final class R5CivicAutomaticInstaller {
             for(ServerLevel l:server.getAllLevels())
                 if(l.dimension().location().toString().equals(city.dimension())){level=l;break;}
             if(level==null)throw new IllegalStateException("Civic world dimension unavailable");
-            Plan plan=plan(server,city,level,type);
-            JsonObject j=journal(server,world,level,city,type,nation,cost,plan);
+            Prepared prepared=plan(city,level,type);Plan plan=prepared.plan();
+            JsonObject j=journal(world,level,city,type,nation,cost,plan,prepared.actualNaturalSources());
             // Persist a complete pre-image of every touched block and economy
             // balance before any mutation. Never rewrite a prior transaction.
             persist(record,j);
@@ -370,8 +472,12 @@ public final class R5CivicAutomaticInstaller {
             AABB observation=new AABB(x0-2,y0-2,z0-2,x1+3,y1+3,z1+3);
             Set<UUID> previousItems=new HashSet<>();
             for(ItemEntity item:level.getEntitiesOfClass(ItemEntity.class,observation))previousItems.add(item.getUUID());
-            for(Write w:plan.writes()) {
-                if(!level.hasChunkAt(w.pos())||!level.getBlockState(w.pos()).equals(w.before()))
+            for(Write w:executionWrites(plan,2)) {
+                // A cleanup leaf may be followed by a second civic AIR→roof
+                // write. Only the original source write consumes its preimage.
+                BlockState before=w.before().equals(plan.finalCells().get(w.pos().asLong()).before())
+                        ?prepared.actualNaturalSources().getOrDefault(w.pos(),w.before()):w.before();
+                if(!level.hasChunkAt(w.pos())||!level.getBlockState(w.pos()).equals(before))
                     throw new IllegalStateException("Write-time R5 block drift at "+w.pos());
                 if(level.getBlockEntity(w.pos())!=null||!level.getFluidState(w.pos()).isEmpty())
                     throw new IllegalStateException("Unexpected tile/fluid appeared at "+w.pos());

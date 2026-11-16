@@ -102,6 +102,10 @@ final class PrestigePurchaseRecovery {
             cells.add(new PaidConstructionRecovery.Cell(p,List.of(live),wanted,emptyLectern));
         }
         if(consumed.size()!=changes.size())throw new IOException("Prestige journal writes outside exact envelope");
+        // Recovery must preserve the same safe dependency order even when most
+        // source cells still remain. Preflight above still checks every cell.
+        Set<BlockPos> obsoleteGrassCovers=PrestigeNaturalSupport.obsoleteGrassCovers(before,after);
+        cells.sort(Comparator.comparingInt(cell->obsoleteGrassCovers.contains(cell.pos())?0:1));
         boolean required=j.getBoolean("receiptRequired");CompoundTag identity=new CompoundTag();
         identity.putString("kind","prestige");identity.putString("world",root.toString());identity.putString("city",city);identity.putUUID("owner",owner);identity.putUUID("transaction",id);identity.putString("source",sourceToken);identity.putString("target",targetToken);
         return new PaidConstructionRecovery.Environment(){

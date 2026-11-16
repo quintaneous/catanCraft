@@ -162,6 +162,54 @@ public final class BasicConstructionPurchase {
         // distance=7 for these persistent hedges; every other property is strict.
         return actual!=null&&TownHallInteractionPolicy.matches(actual,cover,false);
     }
+    /** Only the 42 unwaxed full cut-copper blocks in either complete pinned
+     * refinery/chemical target may age. This does not authorize a source edit,
+     * another copper shape, waxing, or copper placed outside the paid target. */
+    static Set<BlockPos> factoryCopperTargets(List<SchematicPlacementService.PlanCell> target)throws IOException {
+        if(!BasicConstructionAssets.BUNDLE_SHA.equals("cbaf8b095958f7de19a58bbca2723f18a1273d908eb5f174d36cd4aa1e9608d1")
+                ||target.size()!=31*47*31)return Set.of();
+        for(String asset:List.of("fuel_refinery","chemical_plant")) {
+            var volume=BasicConstructionAssets.load(asset);
+            if(!exactPinnedPlan(target,volume))continue;
+            Set<BlockPos> copper=new HashSet<>();
+            for(var cell:target)if(cell.state().equals(Blocks.CUT_COPPER.defaultBlockState()))copper.add(cell.position());
+            return copper.size()==42?Set.copyOf(copper):Set.of();
+        }
+        return Set.of();
+    }
+    private static boolean exactPinnedPlan(List<SchematicPlacementService.PlanCell> target,
+            BasicConstructionAssets.Volume volume)throws IOException {
+        int width=volume.width(),length=volume.length();
+        if(width<2||target.size()!=width*volume.height()*length)return false;
+        BlockPos origin=target.get(0).position();int sign=target.get(1).position().getX()-origin.getX();
+        if(sign!=1&&sign!=-1)return false;Rotation rotation=sign==1?Rotation.NONE:Rotation.CLOCKWISE_180;
+        for(int i=0;i<target.size();i++) {
+            int x=i%width,z=i/width%length,y=i/(width*length);var cell=target.get(i);
+            if(cell.localX()!=x||cell.localY()!=y||cell.localZ()!=z
+                    ||!cell.position().equals(origin.offset(sign*x,y,sign*z))
+                    ||!cell.state().equals(volume.at(x,y,z).rotate(rotation)))return false;
+        }
+        return true;
+    }
+    static boolean agedCopperTarget(BlockPos pos,BlockState actual,Set<BlockPos> targets) {
+        return targets.contains(pos)&&(actual.equals(Blocks.EXPOSED_CUT_COPPER.defaultBlockState())
+                ||actual.equals(Blocks.WEATHERED_CUT_COPPER.defaultBlockState())
+                ||actual.equals(Blocks.OXIDIZED_CUT_COPPER.defaultBlockState()));
+    }
+    /** A pending, captured TH1->TH2 purchase owns these exact target covers.
+     * Permission applies only after the real cover exists; capture still checks
+     * the original source and never borrows permission from a future cover. */
+    static Map<BlockPos,BlockState> th2TargetGrassCover(List<SchematicPlacementService.PlanCell> target)throws IOException {
+        if(!BasicConstructionAssets.BUNDLE_SHA.equals("cbaf8b095958f7de19a58bbca2723f18a1273d908eb5f174d36cd4aa1e9608d1")
+                ||target.size()!=75*47*65||!exactPinnedPlan(target,BasicConstructionAssets.load("th2")))return Map.of();
+        Map<BlockPos,BlockState> covers=new HashMap<>(),states=new HashMap<>();
+        for(var cell:target)states.put(cell.position(),cell.state());
+        for(var cell:target)if(cell.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())) {
+            BlockState cover=states.get(cell.position().above());
+            if(SectorNaturalSupportPolicy.blocksGrass(cover,cell.position().above()))covers.put(cell.position(),cover);
+        }
+        return covers.size()==62?Map.copyOf(covers):Map.of();
+    }
     static CompoundTag capture(ServerLevel level,Blueprint b)throws IOException {
         if(b.source().size()!=b.target().size()||b.source().isEmpty()||b.source().size()>250000)throw new IOException("Invalid basic-construction volume");
         Map<BlockPos,BlockState> doors=new HashMap<>();for(var c:b.source())if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());
@@ -200,6 +248,8 @@ public final class BasicConstructionPurchase {
         for(int i=0;i<indices.length;i++){if(indices[i]<0||indices[i]>=palette.size())throw new IOException("Invalid captured state index");var c=b.source().get(i);saved.put(c.position(),palette.get(indices[i]));if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());}
         Set<BlockPos> missing=TownHallInteractionPolicy.missingDoorCells(doors,saved::get);List<PaidConstructionRecovery.Cell> cells=new ArrayList<>(indices.length);
         Map<BlockPos,BlockState> grassCover=sourceGrassCover(b),gardenCover=th1GardenCover(b.source());
+        Set<BlockPos> copperTargets=factoryCopperTargets(b.target());
+        Map<BlockPos,BlockState> targetGrassCover=th2TargetGrassCover(b.target());
         for(int i=0;i<indices.length;i++){
             var source=b.source().get(i);var target=b.target().get(i);BlockPos pos=source.position();BlockState before=saved.get(pos);boolean manager=pos.equals(b.manager());
             if(!missing.contains(pos)&&!TownHallInteractionPolicy.matches(before,source.state(),manager)
@@ -222,6 +272,8 @@ public final class BasicConstructionPurchase {
                         &&(live.equals(Blocks.DIRT.defaultBlockState())||live.equals(Blocks.GRASS_BLOCK.defaultBlockState())))allowed.add(live);
                 if(TownHallInteractionPolicy.matches(live,before,false)||TownHallInteractionPolicy.matches(live,after,false))allowed.add(live);
                 if(TownHallInteractionPolicy.matches(live,after,false))after=live;
+                if(sourceDirt(pos,live,targetGrassCover,level::getBlockState)){allowed.add(live);after=live;}
+                if(agedCopperTarget(pos,live,copperTargets)){allowed.add(live);after=live;}
                 cells.add(new PaidConstructionRecovery.Cell(pos,List.copyOf(allowed),after));
             }
         }
