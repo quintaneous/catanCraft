@@ -50,6 +50,11 @@ final class TownHallRepairTransaction {
         var target=TownHallRevisions.plan(e.tier(),2,e.anchor());
         int[] mask=TownHallRevisions.mask(old,target);
         BitSet edited=new BitSet(old.size()); for(int i:mask)edited.set(i);
+        // These exact ground+cover reads are identical in R1/R2 and never enter
+        // the repair mask. Retain today's dirt through apply/resume/rollback.
+        Map<BlockPos,BlockState> naturalReads=PrestigeNaturalSupport.unchangedCovers(old,target);
+        for(int i:mask)if(naturalReads.containsKey(old.get(i).position())||naturalReads.containsKey(old.get(i).position().below()))
+            throw new IOException("Natural repair context overlaps write mask");
         boolean exists=Files.exists(e.file(),LinkOption.NOFOLLOW_LINKS);
         CompoundTag journal=exists?read(e.file()):null;
         Phase phase=exists?phase(journal):null;
@@ -81,7 +86,8 @@ final class TownHallRepairTransaction {
                 boolean valid=mixed?(state.equals(before)||state.equals(after)):state.equals(revision==1?before:after);
                 if(!valid)throw new IOException("Unsafe repair cell at "+p+": "+state);
             } else if(!TownHallInteractionPolicy.matches(state,old.get(i).state(),i==TownHallRevisions.managerIndex())
-                    && !missing.contains(p)) throw new IOException("Foreign/modified hall cell at "+p+": "+state);
+                    && !missing.contains(p)&&!PrestigeNaturalSupport.decayed(e.level(),p,old.get(i).state(),state,naturalReads.get(p)))
+                throw new IOException("Foreign/modified hall cell at "+p+": "+state);
         }
         if(action==Action.STATUS)
             return new Result("TH"+e.tier()+" R"+revision+"; "+(phase==null?"no repair journal":phase.name())+

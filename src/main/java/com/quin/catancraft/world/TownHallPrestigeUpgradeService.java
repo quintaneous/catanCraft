@@ -64,11 +64,16 @@ public final class TownHallPrestigeUpgradeService {
     private static final String R7_WORLD_ROOT = "CatanCraft_Season1_R7_Development";
 
     public record Result(boolean success, String message) {}
+    interface Fault { void at(String stage,int writes)throws IOException; }
     private record Delta(BlockPos pos, BlockState before, BlockState after, CompoundTag beforeNbt) {}
     private TownHallPrestigeUpgradeService() {}
 
     public static synchronized Result upgrade(MinecraftServer server, CatanSavedData data,
             NationData nation, TerritoryData territory, EconomyCost cost, int nextLevel) {
+        return upgrade(server,data,nation,territory,cost,nextLevel,(stage,writes)->{});
+    }
+    static synchronized Result upgrade(MinecraftServer server, CatanSavedData data,
+            NationData nation, TerritoryData territory, EconomyCost cost, int nextLevel,Fault fault) {
         boolean journalWritten = false;
         boolean physicalWritten = false;
         boolean economyChanged = false;
@@ -134,6 +139,7 @@ public final class TownHallPrestigeUpgradeService {
             List<SchematicPlacementService.PlanCell> after = TownHallRevisions.plan(nextLevel,2,dstAnchor);
             if(before.size()!=TOTAL_CELLS||after.size()!=TOTAL_CELLS)
                 throw new IllegalStateException("Town Hall full envelope size changed");
+            PrestigeNaturalSupport natural=PrestigeNaturalSupport.capture(level,before,after);
             // A door is ordinary building interaction, not a requirement that
             // the entire Town Hall remain an untouched, closed schematic.
             Map<BlockPos, BlockState> sourceDoors = new HashMap<>();
@@ -171,7 +177,7 @@ public final class TownHallPrestigeUpgradeService {
                 boolean managementCell=old.localX()==LOCAL_MANAGER_X &&
                         old.localY()==LOCAL_MANAGER_Y && old.localZ()==LOCAL_MANAGER_Z;
                 BlockState current = level.getBlockState(p);
-                boolean compatible = matchesSource(current,old.state(),managementCell);
+                boolean compatible = matchesSource(current,old.state(),managementCell)||natural.sourceMatches(level,p,current);
                 if (!current.equals(old.state()) && compatible) normalInteractions++;
                 if(!compatible && !missingDoors.contains(p))
                     throw new IllegalStateException("Town Hall modified at "+p+": required "+old.state()+
@@ -201,7 +207,7 @@ public final class TownHallPrestigeUpgradeService {
                 }
                 if(replacement.state().hasBlockEntity() && replacement.state().getBlock()!=Blocks.LECTERN)
                     throw new IllegalStateException("Unapproved new Town Hall block entity at "+p);
-                BlockState target = TownHallInteractionPolicy.targetFor(current,replacement.state());
+                BlockState target = natural.targetFor(p,current,replacement.state());
                 finalStates[i]=target;
                 if(!current.equals(target))changes.add(new Delta(p,current,target,
                         be==null?null:be.saveWithFullMetadata().copy()));
@@ -241,6 +247,7 @@ public final class TownHallPrestigeUpgradeService {
             txn.put("resources",resources);
             txn.putInt("managerX",manager.getX());txn.putInt("managerY",manager.getY());txn.putInt("managerZ",manager.getZ());
             txn.put("managerNbt",managerNbt);
+            txn.put(PrestigeNaturalSupport.FIELD,natural.describe());
             txn.putString("interactionPolicy","KNOWN_DOOR_PAIRS_AND_NORMAL_USE_V1");
             txn.putInt("acceptedMissingDoorCells",missingDoors.size());
             txn.putInt("acceptedNormalInteractionCells",normalInteractions);
@@ -262,14 +269,17 @@ public final class TownHallPrestigeUpgradeService {
                 if(!txn.equals(NbtIo.readCompressed(in)))
                     throw new IllegalStateException("Town Hall before-image journal read-back failed");
             }
+            fault.at("prepared",0);
             // Client updates + suppress drops and intermediate survival checks.
             // Preserved manager stays at its exact original world position.
+            int writes=0;
             for(Delta delta:changes) {
                 if(!level.getBlockState(delta.pos()).equals(delta.before()))
                     throw new IllegalStateException("Changed Town Hall block during upgrade at "+delta.pos());
                 if(!level.setBlock(delta.pos(),delta.after(),FLAGS))
                     throw new IllegalStateException("Town Hall placement refused at "+delta.pos());
                 physicalWritten=true;
+                fault.at("write",++writes);
             }
             for(int i=0;i<TOTAL_CELLS;i++) {
                 BlockPos p=after.get(i).position();

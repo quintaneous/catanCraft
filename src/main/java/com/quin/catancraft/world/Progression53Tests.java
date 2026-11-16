@@ -7,6 +7,8 @@ import com.quin.catancraft.data.*;
 import com.quin.catancraft.economy.*;
 import com.quin.catancraft.map.*;
 import net.minecraft.commands.CommandSourceStack;
+import net.minecraft.commands.CommandSource;
+import net.minecraft.network.chat.Component;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.nbt.*;
 import net.minecraft.server.MinecraftServer;
@@ -51,6 +53,20 @@ public final class Progression53Tests {
         new Campaign(h).start();
     }
 
+    /** Capture the actual command refusal without changing its entity/permission checks. */
+    private static final class Feedback implements CommandSource {
+        private final ArrayDeque<String> messages=new ArrayDeque<>();
+        public void sendSystemMessage(Component component) {
+            String text=component.getString();if(text.length()>4096)text=text.substring(0,4096);
+            if(messages.size()==32)messages.remove();messages.add(text);
+        }
+        public boolean acceptsSuccess(){return true;}
+        public boolean acceptsFailure(){return true;}
+        public boolean shouldInformAdmins(){return false;}
+        void clear(){messages.clear();}
+        String description(){return messages.isEmpty()?"No command feedback was emitted":String.join(" | ",messages);}
+    }
+
     private record Step(String city, String command, EconomyCost price,
                         BooleanSupplier complete, String kind) {}
 
@@ -71,6 +87,7 @@ public final class Progression53Tests {
         final Map<String,Set<Integer>> purchasedLevels = new TreeMap<>();
         final FakePlayer actor;
         final CommandSourceStack commands;
+        final Feedback feedback=new Feedback();
         NationData nation;
         SectorChunkLease lease;
         String leasedCity = "";
@@ -113,7 +130,7 @@ public final class Progression53Tests {
             // Actor stays clear of every construction envelope. No player interaction
             // or authenticated network session is claimed by command execution.
             actor.setPos(0,200,0);
-            commands=actor.createCommandSourceStack().withPermission(2).withSuppressedOutput();
+            commands=actor.createCommandSourceStack().withPermission(2).withSource(feedback);
         }
 
         void start() throws Exception {
@@ -298,8 +315,10 @@ public final class Progression53Tests {
             totalCycles++;
         }
         void execute(String command) throws Exception {
+            feedback.clear();
             int result=server.getCommands().getDispatcher().execute(command,commands);
-            require(result==1,"Normal registered command refused: "+command);
+            if(result!=1)CatanCraft.LOGGER.error("PROGRESSION53_COMMAND_REFUSAL layout={} command={} feedback={}",layout,command,feedback.description());
+            require(result==1,"Normal registered command refused: "+command+"; "+feedback.description());
             CatanCraft.LOGGER.info("PROGRESSION53_COMMAND layout={} {}",layout,command);
         }
         void verifyCharge(Step s) {
@@ -404,11 +423,15 @@ public final class Progression53Tests {
             CatanCraft.LOGGER.info("PROGRESSION53_CHECKPOINT layout={} city={} TH{} cells={}",layout,city,tier,checked);
             writeReport("RUNNING");
         }
-        long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer) {
+        long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer)throws IOException {
             Map<net.minecraft.core.BlockPos,BlockState> expected=new HashMap<>();for(var c:cells)expected.put(c.position(),c.state());
+            Map<net.minecraft.core.BlockPos,BlockState> producerCover=producer?ProducerService.sourceCoveredGrass(cells):Map.of();
+            Map<net.minecraft.core.BlockPos,BlockState> gardenCover=!producer&&manager!=null?BasicConstructionPurchase.th1GardenCover(cells):Map.of();
             for(var c:cells) {
                 BlockState actual=level.getBlockState(c.position());boolean matches=producer?ProducerRevisions.matches(actual,c.state()):TownHallInteractionPolicy.matches(actual,c.state(),c.position().equals(manager));
-                if(!matches&&c.state().is(Blocks.GRASS_BLOCK)&&actual.is(Blocks.DIRT)) {
+                if(!matches&&producer)matches=ProducerService.matchesCoveredSourceGrass(level,c,producerCover);
+                if(!matches&&!gardenCover.isEmpty())matches=BasicConstructionPurchase.gardenGrass(c.position(),actual,gardenCover,level::getBlockState);
+                if(!matches&&!producer&&c.state().is(Blocks.GRASS_BLOCK)&&actual.is(Blocks.DIRT)) {
                     BlockState cover=expected.get(c.position().above());
                     matches=cover!=null&&SectorNaturalSupportPolicy.blocksGrass(cover,c.position().above())
                             &&TownHallInteractionPolicy.matches(level.getBlockState(c.position().above()),cover,false);

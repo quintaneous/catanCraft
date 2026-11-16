@@ -4,7 +4,7 @@ import java.nio.file.Files
 
 beforeProject { project ->
     def namespace = project.findProperty('gameTestNamespace')
-    if (!(namespace in ['catancraft_vehicle52_native', 'catancraft_service50', 'catancraft_service50_restart', 'catancraft_vehicle50_road', 'catancraft_vehicle47', 'catancraft_vehicle47_restart', 'catancraft_vehicle47_exit', 'catancraft_factory50', 'catancraft_vehicle50_ui'])
+    if (!(namespace in ['catancraft_vehicle52_native', 'catancraft_service50', 'catancraft_service50_restart', 'catancraft_vehicle50_road', 'catancraft_vehicle47', 'catancraft_vehicle47_restart', 'catancraft_vehicle47_exit', 'catancraft_factory50', 'catancraft_vehicle50_ui', 'catancraft_sbw', 'catancraft_sbw_procurement35'])
             || project.findProperty('controlledGameTests') != 'true') {
         throw new GradleException('Vehicle52 combined runtime requires an approved exact namespace and controlledGameTests=true')
     }

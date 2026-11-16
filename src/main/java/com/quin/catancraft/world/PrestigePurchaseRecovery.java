@@ -49,6 +49,7 @@ final class PrestigePurchaseRecovery {
         }else before=TownHallRevisions.plan(from,TownHallRevisions.revision(from,sourceToken),a);
         var after=TownHallRevisions.plan(to,revision,b);
         if(before.size()!=TownHallRevisions.CELLS||after.size()!=before.size())throw new IOException("Prestige envelope mismatch");
+        PrestigeNaturalSupport natural=PrestigeNaturalSupport.read(j,before,after);
         EconomyCost cost=EconomyCatalog.cityUpgradeCost(from);validateCost(j,cost);
         ListTag saved=j.getList("blocks",Tag.TAG_COMPOUND);if(saved.isEmpty()||saved.size()>TownHallRevisions.CELLS)throw new IOException("Missing prestige actual before-images");
         Map<BlockPos,CompoundTag> changes=new LinkedHashMap<>();Map<BlockPos,BlockState> actualBefore=new HashMap<>(),doors=new HashMap<>();
@@ -73,13 +74,18 @@ final class PrestigePurchaseRecovery {
                 cells.add(new PaidConstructionRecovery.Cell(p,List.of(live),live));continue;
             }
             if(row==null){
-                if(!TownHallInteractionPolicy.matches(old.state(),next.state(),false)||!TownHallInteractionPolicy.matches(live,next.state(),false))throw new IOException("Prestige read-context conflict or omitted delta at "+p);
+                if(!TownHallInteractionPolicy.matches(old.state(),next.state(),false)
+                        ||(!TownHallInteractionPolicy.matches(live,next.state(),false)&&!natural.targetMatches(level,p,live))
+                        ||(natural.has(p)&&!natural.before(p).equals(natural.targetFor(p,natural.before(p),next.state()))))
+                    throw new IOException("Prestige read-context conflict or omitted delta at "+p);
                 if(level.getBlockEntity(p)!=null&&!(live.is(Blocks.LECTERN)&&level.getBlockEntity(p) instanceof LecternBlockEntity))throw new IOException("Unexpected unchanged prestige inventory at "+p);
                 cells.add(new PaidConstructionRecovery.Cell(p,List.of(live),live));continue;
             }
             consumed.add(p);BlockState originalState=actualBefore.get(p),target=decode(row,"afterState");
-            if(!TownHallInteractionPolicy.matches(originalState,old.state(),false)&&!missing.contains(p))throw new IOException("Untrusted prestige before-state at "+p);
-            if(!TownHallInteractionPolicy.targetFor(originalState,next.state()).equals(target)||originalState.equals(target))throw new IOException("Untrusted prestige target at "+p);
+            if(natural.has(p)&&!natural.before(p).equals(originalState))throw new IOException("Prestige natural-cover preimage disagrees with delta at "+p);
+            if(!TownHallInteractionPolicy.matches(originalState,old.state(),false)&&!missing.contains(p)
+                    &&!(natural.has(p)&&natural.before(p).equals(originalState)))throw new IOException("Untrusted prestige before-state at "+p);
+            if(!natural.targetFor(p,originalState,next.state()).equals(target)||originalState.equals(target))throw new IOException("Untrusted prestige target at "+p);
             boolean emptyLectern=originalState.is(Blocks.LECTERN)&&!target.hasBlockEntity();
             if((originalState.hasBlockEntity()&&!emptyLectern)||target.hasBlockEntity())throw new IOException("Unapproved prestige inventory delta at "+p);
             if(emptyLectern){
@@ -88,8 +94,10 @@ final class PrestigePurchaseRecovery {
             }else if(row.contains("beforeBlockEntity"))throw new IOException("Unexpected prestige block entity preimage");
             // Preserve normal interactions/derived states in a completed target, without
             // broadening source materials or accepting a foreign block.
-            BlockState wanted=TownHallInteractionPolicy.matches(live,target,false)?live:target;
-            boolean recognized=TownHallInteractionPolicy.matches(live,originalState,false)||TownHallInteractionPolicy.matches(live,target,false);
+            boolean naturalTarget=natural.targetMatches(level,p,live);
+            BlockState wanted=TownHallInteractionPolicy.matches(live,target,false)||naturalTarget?live:target;
+            boolean recognized=TownHallInteractionPolicy.matches(live,originalState,false)||TownHallInteractionPolicy.matches(live,target,false)
+                    ||naturalTarget||natural.sourceMatches(level,p,live);
             if(!recognized)throw new IOException("Prestige recovery conflict at "+p);
             cells.add(new PaidConstructionRecovery.Cell(p,List.of(live),wanted,emptyLectern));
         }

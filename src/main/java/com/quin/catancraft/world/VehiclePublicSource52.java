@@ -42,8 +42,10 @@ final class VehiclePublicSource52 {
     /** Validates stored revision history only. Current source blocks must still be
      * checked by the caller before spending or delivery. Inputs are never mutated. */
     static boolean validate(CompoundTag journal, StreetscapeR5.Plan plan, CompoundTag expected) throws IOException {
+        Set<String> fields = new HashSet<>(Set.of("schema", "id", "contract", "identity", "blocks", "phase"));
+        if (journal != null && journal.contains("naturalSoilV1")) fields.add("naturalSoilV1");
         if (journal == null || plan == null || expected == null
-                || !journal.getAllKeys().equals(Set.of("schema", "id", "contract", "identity", "blocks", "phase"))
+                || !journal.getAllKeys().equals(fields)
                 || !journal.contains("schema", Tag.TAG_INT) || journal.getInt("schema") != 27
                 || !journal.hasUUID("id") || !journal.contains("contract", Tag.TAG_STRING)
                 || !journal.getString("contract").equals(StreetscapeR5.HASH)
@@ -57,6 +59,7 @@ final class VehiclePublicSource52 {
         ListTag rows = journal.getList("blocks", Tag.TAG_COMPOUND);
         if (rows.size() != StreetscapeR5.WRITES || rows.getElementType() != Tag.TAG_COMPOUND)
             throw new IOException("Vehicle public-space history has an incomplete source image.");
+        var soil = StreetscapeTransaction.validatedSoilProof(plan, journal);
         int rowIndex = 0;
         for (int index = 0; index < plan.cells().size(); index++) {
             var cell = plan.cells().get(index); if (!cell.changes()) continue;
@@ -70,7 +73,7 @@ final class VehiclePublicSource52 {
             CompoundTag savedBefore = row.getCompound("before");
             BlockState before = NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(), savedBefore);
             if (!savedBefore.equals(NbtUtils.writeBlockState(before))
-                    || !StreetscapeR5.matches(before, cell.before())
+                    || !StreetscapeTransaction.matchesRecordedBefore(index, before, soil)
                     || !row.getCompound("after").equals(NbtUtils.writeBlockState(cell.after())))
                 throw new IOException("Vehicle public-space source row differs from the pinned revision.");
         }

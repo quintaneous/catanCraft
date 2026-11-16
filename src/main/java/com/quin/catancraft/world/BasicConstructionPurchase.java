@@ -107,11 +107,66 @@ public final class BasicConstructionPurchase {
         return provenCover&&before.equals(Blocks.DIRT.defaultBlockState())&&target.is(Blocks.GRASS_BLOCK)
                 ?before:TownHallInteractionPolicy.targetFor(before,target);
     }
+    /** The pinned TH1 has 56 dirt garden cells under persistent oak leaves.
+     * Native vanilla grass spreading reaches all of them in both orientations.
+     * Qualify the complete source first: coordinates resembling the garden in a
+     * factory, another Hall or a changed asset never grant this permission. */
+    static Map<BlockPos,BlockState> th1GardenCover(List<SchematicPlacementService.PlanCell> source)throws IOException {
+        if(!BasicConstructionAssets.BUNDLE_SHA.equals("cbaf8b095958f7de19a58bbca2723f18a1273d908eb5f174d36cd4aa1e9608d1")
+                ||source.size()!=75*47*65)return Map.of();
+        var volume=BasicConstructionAssets.load("th1");
+        if(volume.width()!=75||volume.height()!=47||volume.length()!=65)return Map.of();
+        BlockPos origin=source.get(0).position();int sign=source.get(1).position().getX()-origin.getX();
+        if(sign!=1&&sign!=-1)return Map.of();Rotation rotation=sign==1?Rotation.NONE:Rotation.CLOCKWISE_180;
+        for(int i=0;i<source.size();i++) {
+            int x=i%75,z=i/75%65,y=i/(75*65);var cell=source.get(i);
+            if(cell.localX()!=x||cell.localY()!=y||cell.localZ()!=z
+                    ||!cell.position().equals(origin.offset(sign*x,y,sign*z))
+                    ||!cell.state().equals(volume.at(x,y,z).rotate(rotation)))return Map.of();
+        }
+        Map<BlockPos,BlockState> covers=new LinkedHashMap<>();Set<BlockPos> connected=new HashSet<>();
+        for(int z=30;z<=33;z++)for(int x=15;x<=59;x++) {
+            if(x>21&&x<53)continue;
+            var soil=source.get((65+z)*75+x);var leaf=source.get((2*65+z)*75+x);
+            if(!soil.state().equals(Blocks.DIRT.defaultBlockState())||!leaf.state().is(Blocks.OAK_LEAVES)
+                    ||!leaf.state().getValue(LeavesBlock.PERSISTENT)||leaf.state().getValue(LeavesBlock.DISTANCE)!=1
+                    ||!leaf.state().getFluidState().isEmpty())return Map.of();
+            covers.put(soil.position(),leaf.state());
+            for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++)
+                if(volume.at(x+dx,1,z+dz).equals(Blocks.GRASS_BLOCK.defaultBlockState())
+                        &&volume.at(x+dx,2,z+dz).isAir())connected.add(soil.position());
+        }
+        // Every eligible cell must connect to authored source grass through this
+        // garden alone. Nearby player dirt or future target grass cannot extend it.
+        boolean changed;
+        do {
+            changed=false;
+            for(BlockPos pos:covers.keySet())if(!connected.contains(pos)) {
+                boolean adjacent=false;
+                for(int dx=-1;dx<=1;dx++)for(int dz=-1;dz<=1;dz++)
+                    if(connected.contains(pos.offset(dx,0,dz)))adjacent=true;
+                if(adjacent){connected.add(pos);changed=true;}
+            }
+        }while(changed);
+        return covers.size()==56&&connected.size()==56?Map.copyOf(covers):Map.of();
+    }
+    static boolean gardenGrass(BlockPos pos,BlockState actual,Map<BlockPos,BlockState> covers,
+            java.util.function.Function<BlockPos,BlockState> observed) {
+        return actual.equals(Blocks.GRASS_BLOCK.defaultBlockState())&&gardenLeaf(pos,covers,observed);
+    }
+    private static boolean gardenLeaf(BlockPos pos,Map<BlockPos,BlockState> covers,
+            java.util.function.Function<BlockPos,BlockState> observed) {
+        BlockState cover=covers.get(pos);if(cover==null)return false;
+        BlockState actual=observed.apply(pos.above());
+        // The pinned source remains distance=1. Vanilla leaf ticks derive
+        // distance=7 for these persistent hedges; every other property is strict.
+        return actual!=null&&TownHallInteractionPolicy.matches(actual,cover,false);
+    }
     static CompoundTag capture(ServerLevel level,Blueprint b)throws IOException {
         if(b.source().size()!=b.target().size()||b.source().isEmpty()||b.source().size()>250000)throw new IOException("Invalid basic-construction volume");
         Map<BlockPos,BlockState> doors=new HashMap<>();for(var c:b.source())if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());
         Set<BlockPos> missing=TownHallInteractionPolicy.missingDoorCells(doors,level::getBlockState);
-        Map<BlockPos,BlockState> grassCover=sourceGrassCover(b);
+        Map<BlockPos,BlockState> grassCover=sourceGrassCover(b),gardenCover=th1GardenCover(b.source());
         Map<BlockState,Integer> palette=new LinkedHashMap<>();ListTag encoded=new ListTag();int[] states=new int[b.source().size()];List<ConstructionHazards.Write> writes=new ArrayList<>();CompoundTag result=new CompoundTag();
         for(int i=0;i<states.length;i++){
             var c=b.source().get(i);var target=b.target().get(i);BlockPos p=c.position();
@@ -119,7 +174,8 @@ public final class BasicConstructionPurchase {
             if(!level.hasChunkAt(p))throw new PreparationDeferred("Construction chunks are still loading");
             BlockState actual=level.getBlockState(p);boolean manager=p.equals(b.manager());
             if(!missing.contains(p)&&!TownHallInteractionPolicy.matches(actual,c.state(),manager)
-                    &&!sourceDirt(p,actual,grassCover,level::getBlockState))throw new IOException("Construction source conflict at "+p+": "+actual);
+                    &&!sourceDirt(p,actual,grassCover,level::getBlockState)
+                    &&!gardenGrass(p,actual,gardenCover,level::getBlockState))throw new IOException("Construction source conflict at "+p+": "+actual);
             BlockEntity be=level.getBlockEntity(p);
             if(manager){
                 if(!(be instanceof LecternBlockEntity)||!target.state().is(Blocks.LECTERN))throw new IOException("Original management lectern is missing or changed");
@@ -143,11 +199,12 @@ public final class BasicConstructionPurchase {
         Map<BlockPos,BlockState> saved=new HashMap<>(),doors=new HashMap<>();
         for(int i=0;i<indices.length;i++){if(indices[i]<0||indices[i]>=palette.size())throw new IOException("Invalid captured state index");var c=b.source().get(i);saved.put(c.position(),palette.get(indices[i]));if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());}
         Set<BlockPos> missing=TownHallInteractionPolicy.missingDoorCells(doors,saved::get);List<PaidConstructionRecovery.Cell> cells=new ArrayList<>(indices.length);
-        Map<BlockPos,BlockState> grassCover=sourceGrassCover(b);
+        Map<BlockPos,BlockState> grassCover=sourceGrassCover(b),gardenCover=th1GardenCover(b.source());
         for(int i=0;i<indices.length;i++){
             var source=b.source().get(i);var target=b.target().get(i);BlockPos pos=source.position();BlockState before=saved.get(pos);boolean manager=pos.equals(b.manager());
             if(!missing.contains(pos)&&!TownHallInteractionPolicy.matches(before,source.state(),manager)
-                    &&!sourceDirt(pos,before,grassCover,saved::get))throw new IOException("Captured source is not an approved revision at "+pos);
+                    &&!sourceDirt(pos,before,grassCover,saved::get)
+                    &&!gardenGrass(pos,before,gardenCover,saved::get))throw new IOException("Captured source is not an approved revision at "+pos);
             // The sealed before-image proves the authored source cover existed;
             // delayed recovery may now observe that same grass naturally decayed.
             boolean covered=grassCover.containsKey(pos)&&grassCover.get(pos).equals(saved.get(pos.above()));
@@ -161,6 +218,8 @@ public final class BasicConstructionPurchase {
                     allowed.add(live);
                     if(target.state().is(Blocks.GRASS_BLOCK))after=live; // Never repaint naturally derived ground.
                 }
+                if(gardenLeaf(pos,gardenCover,saved::get)&&gardenLeaf(pos,gardenCover,level::getBlockState)
+                        &&(live.equals(Blocks.DIRT.defaultBlockState())||live.equals(Blocks.GRASS_BLOCK.defaultBlockState())))allowed.add(live);
                 if(TownHallInteractionPolicy.matches(live,before,false)||TownHallInteractionPolicy.matches(live,after,false))allowed.add(live);
                 if(TownHallInteractionPolicy.matches(live,after,false))after=live;
                 cells.add(new PaidConstructionRecovery.Cell(pos,List.copyOf(allowed),after));

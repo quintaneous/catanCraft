@@ -2,9 +2,11 @@ package com.quin.catancraft.world;
 
 import com.quin.catancraft.map.MapAnchor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.*;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import java.io.*;
 import java.nio.file.*;
@@ -21,6 +23,7 @@ final class R5HouseTransaction {
     interface Fault {void at(String stage,int writes)throws IOException;}
     record Result(String message,int writes){}
     private record Cell(BlockPos pos,BlockState source,BlockState target){}
+    private record Cover(BlockState source,BlockState target){}
     private static final int FLAGS=Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE|Block.UPDATE_SUPPRESS_DROPS;
     private R5HouseTransaction(){}
     static Phase phase(CompoundTag journal)throws IOException {
@@ -45,11 +48,15 @@ final class R5HouseTransaction {
             if(action==Action.RESUME||action==Action.ROLLBACK)throw new IOException("No owned house journal");
             for(String group:groups) {
                 R5HouseRevisions.Revision found=null;
+                var target=R5HouseRevisions.plan(group,R5HouseRevisions.Revision.R5,e.anchor());
                 for(var r:List.of(R5HouseRevisions.Revision.R1,R5HouseRevisions.Revision.R2)) {
-                    boolean matches=true;
-                    for(var c:R5HouseRevisions.plan(group,r,e.anchor())) {
+                    boolean matches=true;var source=R5HouseRevisions.plan(group,r,e.anchor());
+                    Map<BlockPos,BlockState> sourceStates=new HashMap<>(),targetStates=new HashMap<>();
+                    for(var c:source)sourceStates.put(c.position(),c.state());for(var c:target)targetStates.put(c.position(),c.state());
+                    var natural=naturalSupports(sourceStates,targetStates);
+                    for(var c:source) {
                         if(!e.level().hasChunkAt(c.position()))throw new IOException("House chunk unloaded at "+c.position());
-                        if(!e.level().getBlockState(c.position()).equals(c.state())){matches=false;break;}
+                        if(!matches(e.level(),c.position(),c.state(),e.level().getBlockState(c.position()),natural,null)){matches=false;break;}
                     }
                     if(matches){if(found!=null)throw new IOException("Ambiguous house baseline");found=r;}
                 }
@@ -72,30 +79,39 @@ final class R5HouseTransaction {
             }
             if(!route.isEmpty())throw new IOException("House route exceeds full read context");
         }
+        Map<BlockPos,BlockState> sourceStates=new HashMap<>(),targetStates=new HashMap<>();
+        for(Cell c:cells){sourceStates.put(c.pos(),c.source());targetStates.put(c.pos(),c.target());}
+        Map<BlockPos,Cover> natural=naturalSupports(sourceStates,targetStates);
         Phase phase=exists?phase(j):null;
         if(action==Action.APPLY&&exists&&phase!=Phase.COMMITTED&&phase!=Phase.ROLLED_BACK)throw new IOException("Pending house journal requires explicit resume or rollback");
         boolean rollback=action==Action.ROLLBACK||phase==Phase.ROLLING_BACK;
         if(action!=Action.ROLLBACK&&action!=Action.STATUS&&phase==Phase.ROLLING_BACK)throw new IOException("Reverse recovery requires rollback action");
         ListTag actual=exists?j.getList("actualBefore",Tag.TAG_COMPOUND):new ListTag();
         if(exists&&actual.size()!=cells.size())throw new IOException("Incomplete actual house before image");
+        Map<BlockPos,CompoundTag> recorded=new HashMap<>();
+        if(exists)for(int i=0;i<cells.size();i++)recorded.put(cells.get(i).pos(),actual.getCompound(i));
         List<ConstructionHazards.Write> writes=new ArrayList<>();Map<BlockPos,BlockState> finalStates=new LinkedHashMap<>();Map<BlockPos,CompoundTag> nbt=new HashMap<>();Map<BlockPos,BlockState> initial=new HashMap<>();
         for(int i=0;i<cells.size();i++) {
             Cell c=cells.get(i);if(!e.level().hasChunkAt(c.pos()))throw new IOException("House context chunk unloaded");
             if(exists) {
                 CompoundTag saved=actual.getCompound(i);
-                if(saved.getLong("pos")!=c.pos().asLong()||!saved.getString("state").equals(ProducerExteriorR2.canonical(c.source())))throw new IOException("House before image differs from immutable source contract");
+                if(!beforeImageMatches(saved,c,natural,recorded))throw new IOException("House before image differs from immutable source contract");
             }
             BlockState live=e.level().getBlockState(c.pos());initial.put(c.pos(),live);boolean changed=!c.source().equals(c.target());
-            boolean allowed=live.equals(c.source())||exists&&changed&&live.equals(c.target());
-            if(phase==Phase.COMMITTED)allowed=live.equals(c.target());
-            if(phase==Phase.ROLLED_BACK)allowed=live.equals(c.source());
+            boolean allowed=matches(e.level(),c.pos(),c.source(),live,natural,phase)||exists&&changed&&live.equals(c.target());
+            if(phase==Phase.COMMITTED)allowed=matches(e.level(),c.pos(),c.target(),live,natural,phase);
+            if(phase==Phase.ROLLED_BACK)allowed=matches(e.level(),c.pos(),c.source(),live,natural,phase);
             if(!allowed)throw new IOException("House source/journal drift at "+c.pos());
             var be=e.level().getBlockEntity(c.pos());
             if(be!=null) {
                 if(!live.hasBlockEntity()||changed)throw new IOException("Foreign house block entity at "+c.pos());
                 nbt.put(c.pos(),be.saveWithFullMetadata().copy());
             } else if(live.hasBlockEntity())throw new IOException("Missing house block entity at "+c.pos());
-            BlockState desired=rollback?c.source():c.target();finalStates.put(c.pos(),desired);
+            BlockState desired=rollback?c.source():c.target();
+            // These are unchanged substrate reads, never migration/rollback writes. Keep
+            // the actual naturally evolved state; the sealed before-image is not repainted.
+            if(!changed&&natural.containsKey(c.pos()))desired=live;
+            finalStates.put(c.pos(),desired);
             if(!live.equals(desired))writes.add(new ConstructionHazards.Write(c.pos(),desired));
         }
         // Native neighbor updates must not mutate the preserved shell around any write.
@@ -146,6 +162,44 @@ final class R5HouseTransaction {
         if(!identity.equals(e.identity())||!ledger.equals(e.ledger()))throw new IOException("House save altered owner/ledger");
         advance(e.file(),j,rollback?Phase.ROLLED_BACK:Phase.COMMITTED);fault.at("committed",count);
         return new Result("Six R5 houses "+(rollback?"restored":"committed")+"; zero charge",count);
+    }
+    /** Only exact immutable house soil below a pinned vanilla grass-blocking floor.
+     * Both branch and target must keep this soil unchanged; sparse routes never gain cells. */
+    private static Map<BlockPos,Cover> naturalSupports(Map<BlockPos,BlockState> source,Map<BlockPos,BlockState> target) {
+        Map<BlockPos,Cover> result=new HashMap<>();
+        for(var row:source.entrySet())if(row.getValue().equals(Blocks.GRASS_BLOCK.defaultBlockState())
+                &&row.getValue().equals(target.get(row.getKey()))){
+            BlockPos above=row.getKey().above();BlockState a=source.get(above),b=target.get(above);
+            if(floor(a,above)&&floor(b,above))result.put(row.getKey(),new Cover(a,b));
+        }
+        return Collections.unmodifiableMap(result);
+    }
+    private static boolean floor(BlockState state,BlockPos pos) {
+        return state!=null&&!state.hasBlockEntity()&&state.getFluidState().isEmpty()
+                &&BuiltInRegistries.BLOCK.getKey(state.getBlock()).getNamespace().equals("minecraft")
+                &&SectorNaturalSupportPolicy.blocksGrass(state,pos);
+    }
+    private static boolean matches(ServerLevel level,BlockPos pos,BlockState expected,BlockState actual,Map<BlockPos,Cover> natural,Phase phase) {
+        if(expected.equals(actual))return true;
+        Cover cover=natural.get(pos);
+        if(cover==null||!expected.equals(Blocks.GRASS_BLOCK.defaultBlockState())||!actual.equals(Blocks.DIRT.defaultBlockState())
+                ||!level.hasChunkAt(pos.above())||level.getBlockEntity(pos.above())!=null)return false;
+        BlockState present=level.getBlockState(pos.above());
+        if(phase==null||phase==Phase.ROLLED_BACK)return present.equals(cover.source());
+        if(phase==Phase.COMMITTED)return present.equals(cover.target());
+        // A retained pending route can have either exact owned floor state, never
+        // an arbitrary solid cover or a future target for an unjournaled source.
+        return present.equals(cover.source())||present.equals(cover.target());
+    }
+    private static boolean beforeImageMatches(CompoundTag saved,Cell cell,Map<BlockPos,Cover> natural,Map<BlockPos,CompoundTag> recorded) {
+        if(!saved.contains("pos",Tag.TAG_LONG)||saved.getLong("pos")!=cell.pos().asLong()||!saved.contains("state",Tag.TAG_STRING))return false;
+        if(saved.getString("state").equals(ProducerExteriorR2.canonical(cell.source())))return true;
+        Cover cover=natural.get(cell.pos());CompoundTag floor=recorded.get(cell.pos().above());
+        // The complete original before-image supplies SOURCE cover proof. A later
+        // target floor cannot authorize a dirt before-image under another branch.
+        return cover!=null&&saved.getString("state").equals(ProducerExteriorR2.canonical(Blocks.DIRT.defaultBlockState()))
+                &&floor!=null&&floor.contains("pos",Tag.TAG_LONG)&&floor.getLong("pos")==cell.pos().above().asLong()
+                &&floor.contains("state",Tag.TAG_STRING)&&floor.getString("state").equals(ProducerExteriorR2.canonical(cover.source()));
     }
     private static void verifyNbt(Environment e,Map<BlockPos,CompoundTag> nbt)throws IOException {
         for(var entry:nbt.entrySet())if(e.level().getBlockEntity(entry.getKey())==null||!entry.getValue().equals(e.level().getBlockEntity(entry.getKey()).saveWithFullMetadata()))throw new IOException("House migration changed preserved NBT");
