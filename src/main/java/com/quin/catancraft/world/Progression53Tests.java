@@ -378,7 +378,8 @@ public final class Progression53Tests {
             List<SchematicPlacementService.PlanCell> hallPlan=tier<=3?
                     BasicConstructionAssets.plan("th"+tier,SchematicAssetRegistry.territoryAnchor("th"+tier,def)):
                     TownHallRevisions.plan(tier,TownHallRevisions.revision(tier,hall.token()),SchematicAssetRegistry.territoryAnchor("th"+tier,def));
-            long checked=verifyPlan(hallPlan,manager.counter(),false);
+            Set<net.minecraft.core.BlockPos> hallDirt=BasicHallSoil53.completedDirt(root,data,def);
+            long checked=verifyPlan(hallPlan,manager.counter(),false,Set.of(),Map.of(),hallDirt);
             Set<net.minecraft.core.BlockPos> producerDirt=ProducerService.completedNaturalDirt(server,city);
             for(String family:ProducerRevisions.applicable(def)) {
                 String token=data.placedMapAsset("territory:"+city+":"+SchematicAssetRegistry.asset(family).plot());
@@ -434,6 +435,9 @@ public final class Progression53Tests {
             return verifyPlan(cells,manager,producer,producerDirt,Map.of());
         }
         long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer,Set<net.minecraft.core.BlockPos> producerDirt,Map<net.minecraft.core.BlockPos,BlockState> growth)throws IOException {
+            return verifyPlan(cells,manager,producer,producerDirt,growth,Set.of());
+        }
+        long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer,Set<net.minecraft.core.BlockPos> producerDirt,Map<net.minecraft.core.BlockPos,BlockState> growth,Set<net.minecraft.core.BlockPos> hallDirt)throws IOException {
             Map<net.minecraft.core.BlockPos,BlockState> expected=new HashMap<>();for(var c:cells)expected.put(c.position(),c.state());
             Map<net.minecraft.core.BlockPos,BlockState> producerCover=producer?ProducerService.producerCoveredGrass(cells):Map.of();
             Map<net.minecraft.core.BlockPos,BlockState> gardenCover=!producer&&manager!=null?BasicConstructionPurchase.th1GardenCover(cells):Map.of();
@@ -445,6 +449,8 @@ public final class Progression53Tests {
                     ||c.state().equals(Blocks.DIRT.defaultBlockState())&&ProducerGrowth53.matches(level,c.position(),actual,growth);
                 if(!matches&&!gardenCover.isEmpty())matches=BasicConstructionPurchase.gardenGrass(c.position(),actual,gardenCover,level::getBlockState);
                 if(!matches&&!copperTargets.isEmpty())matches=BasicConstructionPurchase.agedCopperTarget(c.position(),actual,copperTargets);
+                if(!matches&&!producer&&manager!=null&&hallDirt.contains(c.position()))matches=
+                        c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState());
                 if(!matches&&!producer&&c.state().is(Blocks.GRASS_BLOCK)&&actual.is(Blocks.DIRT)) {
                     BlockState cover=expected.get(c.position().above());
                     matches=cover!=null&&SectorNaturalSupportPolicy.blocksGrass(cover,c.position().above())
@@ -491,7 +497,8 @@ public final class Progression53Tests {
                     require(!Files.isSymbolicLink(p)&&Files.isRegularFile(p,LinkOption.NOFOLLOW_LINKS)&&Files.size(p)<=8*1024*1024,"Unbounded or linked purchase history");
                     // Basic immutable intents intentionally retain PENDING while their
                     // separate recovery companion/receipt certifies completion.
-                    if(name.endsWith(".recovery-v1.dat"))require(ProducerJournal.read(p).getString("phase").equals("COMMITTED"),"Unfinished recovery companion");
+                    if(name.endsWith(".soil53-v1.proof"))BasicHallSoil53.validateCompletedObservation(root,data,MapDefinitionManager.territory(city),p);
+                    else if(name.endsWith(".recovery-v1.dat"))require(ProducerJournal.read(p).getString("phase").equals("COMMITTED"),"Unfinished recovery companion");
                     else if(name.endsWith(".dat")&&name.startsWith("catancraft_basic_purchase_"))require(!BasicConstructionPurchase.unfinished(p),"Unfinished basic purchase");
                     else if(name.endsWith(".dat")&&name.startsWith("catancraft_producer_"))require(ProducerTransaction.phase(ProducerJournal.read(p))==ProducerTransaction.Phase.COMMITTED,"Unfinished producer history");
                     else if(name.endsWith(".dat")&&name.startsWith("catancraft_th_prestige_")) {

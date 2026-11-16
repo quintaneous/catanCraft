@@ -211,6 +211,9 @@ public final class BasicConstructionPurchase {
         return covers.size()==62?Map.copyOf(covers):Map.of();
     }
     static CompoundTag capture(ServerLevel level,Blueprint b)throws IOException {
+        return capture(level,b,Set.of());
+    }
+    private static CompoundTag capture(ServerLevel level,Blueprint b,Set<BlockPos> inheritedDirt)throws IOException {
         if(b.source().size()!=b.target().size()||b.source().isEmpty()||b.source().size()>250000)throw new IOException("Invalid basic-construction volume");
         Map<BlockPos,BlockState> doors=new HashMap<>();for(var c:b.source())if(c.state().getBlock() instanceof DoorBlock)doors.put(c.position(),c.state());
         Set<BlockPos> missing=TownHallInteractionPolicy.missingDoorCells(doors,level::getBlockState);
@@ -223,6 +226,7 @@ public final class BasicConstructionPurchase {
             BlockState actual=level.getBlockState(p);boolean manager=p.equals(b.manager());
             if(!missing.contains(p)&&!TownHallInteractionPolicy.matches(actual,c.state(),manager)
                     &&!sourceDirt(p,actual,grassCover,level::getBlockState)
+                    &&!(inheritedDirt.contains(p)&&c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState()))
                     &&!gardenGrass(p,actual,gardenCover,level::getBlockState))throw new IOException("Construction source conflict at "+p+": "+actual);
             BlockEntity be=level.getBlockEntity(p);
             if(manager){
@@ -238,6 +242,9 @@ public final class BasicConstructionPurchase {
         result.put("palette",encoded);result.putIntArray("states",states);return result;
     }
     static List<PaidConstructionRecovery.Cell> cells(ServerLevel level,Blueprint b,CompoundTag snapshot)throws IOException {
+        return cells(level,b,snapshot,Set.of());
+    }
+    private static List<PaidConstructionRecovery.Cell> cells(ServerLevel level,Blueprint b,CompoundTag snapshot,Set<BlockPos> inheritedDirt)throws IOException {
         int[] indices=snapshot.getIntArray("states");ListTag p=snapshot.getList("palette",Tag.TAG_COMPOUND);
         if(indices.length!=b.source().size()||p.isEmpty()||p.size()>4096)throw new IOException("Incomplete construction before-image");
         List<BlockState> palette=new ArrayList<>();for(int i=0;i<p.size();i++){
@@ -254,6 +261,7 @@ public final class BasicConstructionPurchase {
             var source=b.source().get(i);var target=b.target().get(i);BlockPos pos=source.position();BlockState before=saved.get(pos);boolean manager=pos.equals(b.manager());
             if(!missing.contains(pos)&&!TownHallInteractionPolicy.matches(before,source.state(),manager)
                     &&!sourceDirt(pos,before,grassCover,saved::get)
+                    &&!(inheritedDirt.contains(pos)&&source.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&before.equals(Blocks.DIRT.defaultBlockState()))
                     &&!gardenGrass(pos,before,gardenCover,saved::get))throw new IOException("Captured source is not an approved revision at "+pos);
             // The sealed before-image proves the authored source cover existed;
             // delayed recovery may now observe that same grass naturally decayed.
@@ -264,6 +272,11 @@ public final class BasicConstructionPurchase {
                 // A restart may derive stairs/fence shapes or a player may use a door
                 // normally. Accept only this typed policy, never arbitrary air/material.
                 BlockState live=level.getBlockState(pos);LinkedHashSet<BlockState> allowed=new LinkedHashSet<>(List.of(before,after));
+                // Only an actual child DIRT before-image may inherit the paid
+                // parent's soil history. Later native regrowth is still source;
+                // the structural TH3 target remains unchanged.
+                if(inheritedDirt.contains(pos)&&before.equals(Blocks.DIRT.defaultBlockState())
+                        &&live.equals(Blocks.GRASS_BLOCK.defaultBlockState()))allowed.add(live);
                 if(covered&&(live.equals(Blocks.DIRT.defaultBlockState())||live.equals(Blocks.GRASS_BLOCK.defaultBlockState()))){
                     allowed.add(live);
                     if(target.state().is(Blocks.GRASS_BLOCK))after=live; // Never repaint naturally derived ground.
@@ -295,16 +308,20 @@ public final class BasicConstructionPurchase {
         request(describe(r));auth.run();if(!path.equals(file(root,r))||Files.exists(path,LinkOption.NOFOLLOW_LINKS))throw new IOException("Purchase path changed or original history already exists");
         var def=MapDefinitionManager.territory(r.city());ProducerService.validateMap(def);checkNew(data,r,def);Blueprint b=blueprint(r,def);
         for(var c:b.target())if(!def.siegeRegion().contains(c.position())||!def.restorationRegion().contains(c.position()))throw new IOException("Construction leaves approved city bounds");
-        CompoundTag snapshot=capture(level,b),ledger=data.save(new CompoundTag());
+        CompoundTag soil=BasicHallSoil53.select(root,data,def,r);
+        Set<BlockPos> inheritedDirt=BasicHallSoil53.positions(soil);
+        CompoundTag snapshot=capture(level,b,inheritedDirt),ledger=data.save(new CompoundTag());
         // Both observed world and ledger must survive a successful pre-purchase save.
         // No original intent, debit or construction write exists on a failure here.
         save.run();auth.run();checkNew(data,r,def);
-        if(!snapshot.equals(capture(level,b))||!ledger.equals(data.save(new CompoundTag())))throw new IOException("Construction changed during pre-purchase save");
+        if(!soil.equals(BasicHallSoil53.select(root,data,def,r))||!snapshot.equals(capture(level,b,inheritedDirt))||!ledger.equals(data.save(new CompoundTag())))throw new IOException("Construction changed during pre-purchase save");
         CompoundTag intent=new CompoundTag();intent.putInt("schema",1);intent.putString("phase","PENDING");intent.putUUID("id",UUID.randomUUID());intent.putString("world",root.toString());intent.put("request",describe(r));intent.put("cost",DefenseTransaction.cost(price(r)));intent.put("snapshot",snapshot);intent.put("ledgerBefore",ledger);
+        if(r.kind().equals("hall")&&r.from()==1)intent.putString(BasicHallSoil53.POLICY_FIELD,BasicHallSoil53.POLICY);
+        if(!soil.isEmpty()&&BasicHallSoil53.captured(snapshot,BasicHallSoil53.site(def).index()).equals(Blocks.DIRT.defaultBlockState()))intent.put(BasicHallSoil53.FIELD,soil);
         ProducerJournal.write(path,intent,false);
     }
     static boolean unfinished(Path file)throws IOException {byte[] bytes=PaidConstructionRecovery.readBounded(file,8*1024*1024);read(bytes);return !PaidConstructionRecovery.complete(file,bytes);}
-    static CompoundTag read(byte[] bytes)throws IOException {CompoundTag n=ProducerJournal.read(bytes);if(n.getInt("schema")!=1||!n.getString("phase").equals("PENDING")||!n.hasUUID("id"))throw new IOException("Invalid basic-construction intent");request(n.getCompound("request"));return n;}
+    static CompoundTag read(byte[] bytes)throws IOException {CompoundTag n=ProducerJournal.read(bytes);if(n.getInt("schema")!=1||!n.getString("phase").equals("PENDING")||!n.hasUUID("id"))throw new IOException("Invalid basic-construction intent");Request r=request(n.getCompound("request"));BasicHallSoil53.validateIntentFields(n,r);return n;}
     static PaidConstructionRecovery.Environment environment(MinecraftServer server,Path path)throws IOException {
         Path root=ConstructionWorldAuthorization.authorize(server);var data=CatanSavedData.get(server);
         return environment(server,data,root,path,()->{if(!root.equals(ConstructionWorldAuthorization.authorize(server)))throw new IOException("Construction world changed");},()->{data.setDirty();if(!server.saveEverything(true,true,true))throw new IOException("Construction save did not complete");});
@@ -322,7 +339,8 @@ public final class BasicConstructionPurchase {
         CompoundTag identity=describe(r);identity.putString("world",root.toString());identity.putUUID("transaction",id);
         return new PaidConstructionRecovery.Environment(){
             public ServerLevel level(){return server.overworld();}public Path original(){return path;}public byte[] originalBytes(){return bytes;}
-            public CompoundTag identity(){return identity.copy();}public List<PaidConstructionRecovery.Cell> cells()throws IOException{return BasicConstructionPurchase.cells(level(),b,intent.getCompound("snapshot"));}
+            public CompoundTag identity(){return identity.copy();}public List<PaidConstructionRecovery.Cell> cells()throws IOException{return BasicConstructionPurchase.cells(level(),b,intent.getCompound("snapshot"),BasicHallSoil53.read(root,data,def,intent,r));}
+            public void beforeWrites()throws IOException{authorize();PaidConstructionRecovery.unchanged(this);BasicHallSoil53.beforeWrites(level(),path,bytes,intent,r,def);}
             public void authorize()throws IOException{
                 authorizer.run();if(!r.owner().equals(t.ownerNationId())||data.nation(r.owner())!=nation||data.territory(r.city())!=t)throw new IOException("Construction world/owner changed");
                 if(!def.equals(MapDefinitionManager.territory(r.city())))throw new IOException("Construction map changed");

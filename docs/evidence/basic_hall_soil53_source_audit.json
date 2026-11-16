@@ -1,0 +1,1508 @@
+{
+  "schema": 1,
+  "status": "read-only exact-source and retained-failure diagnosis; native lineage correction not yet validated",
+  "candidateSource": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+  "inputMapSha256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "pinnedBasicBundleSha256": "cbaf8b095958f7de19a58bbca2723f18a1273d908eb5f174d36cd4aa1e9608d1",
+  "pinnedMembers": {
+    "starter_settlement.schem": "fe03d2ddcc76555ad56f0767d601100380193053bfdca1f56dd2f45d7be9e443",
+    "th1.schem": "dfe74c98ba01bc2d66496b2d306a61de951ad0a3a24af6d6de895d2dbb16ec88",
+    "th2.schem": "63041e5acbd8f669b8dcc71251382e2df4a901d52c34d94f4398e35047ce23c9",
+    "th3.schem": "e659c7fd88dfa7cad2464d3f4bb1a9da28178efab7463da9106a1a76e56e5129",
+    "vehicle_factory.schem": "793e2a277fcb7287ba76298d2080808e315bcf626f76e9fe8f9ce5143e731649",
+    "weapons_factory.schem": "9590a848409d177f0e4fa0238767ca6ee6f0aaac18563e9f9a14ae18ced5b229",
+    "steel_mill.schem": "de1f30fc291315aec75f953d2b953936c4f1ad965dda1a4eaa4e21674c09a478",
+    "textile_mill.schem": "6c8990e3d265aa6db9a3c381b65f349df6d472b1945d9ed5e343e0d7530f9f2f",
+    "fuel_refinery.schem": "423defe576ece5217905e01d4ed15aa170c771c1a7e35a06e668e4bc87da62f2",
+    "concrete_plant.schem": "030fa495fcdec6004b3dea7d1104f25ef08e5f9ff912aafb4db321a0d162572a",
+    "machine_shop.schem": "31a37f931c53257c3682eb08363caeaacfcce4e2b79d7e4f8240a36bc286443d",
+    "chemical_plant.schem": "fe1b93e06490ae6108885f2a85c6a42c430d7a86ff5cf818eaa5dcd991ac19a1",
+    "electronics_factory.schem": "633dc41ab6f12b45aaadb86ba7080eea81c484be04c74b6a6d40dcb6348740ab"
+  },
+  "retainedWorld": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development",
+  "retainedSavedDataSha256": "6422bd4098174f8de346f661607e5b436166f63aca125a1eca773cd383434b5c",
+  "failureLog": "build/evidence53/round6/progression-0-seed.log",
+  "failureLogSha256": "15dd2001f4ba1ddcc72a86785cb6419a6bd2e89244f01fb15fedacb8daeb92aa",
+  "method": [
+    "Decode all13 immutable BasicConstructionAssets members; enumerate complete early-hall grass/above transitions. NonAIR-above counts are explicit state enumeration, not a substitute for native shape occlusion tests.",
+    "Apply exact IndustrialPlotService slot/master rotation and BasicConstructionAssets baseline mappings for all9factory masters x3slots. Whole-city180-degree rotation preserves these relative topologies.",
+    "Read all16 original TH2 intents and recovery companions without modifying them; validate envelope checksum, COMMITTED phase, original SHA256, exact request/world/transaction identity, saved owner/level/token and paid receipt.",
+    "Decode actual retained-region soil and above blocks for all16 corresponding world positions. Native execution was performed by root in the retained failed run; this audit itself performs no native run or world write."
+  ],
+  "earlyHallTopology": [
+    {
+      "source": "th1",
+      "target": "th2",
+      "sourceGrassWithNonAirAbove": 4,
+      "rows": [
+        {
+          "local": [
+            56,
+            1,
+            24
+          ],
+          "sourceCover": "minecraft:spruce_log[axis=y]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            62,
+            1,
+            24
+          ],
+          "sourceCover": "minecraft:spruce_log[axis=y]",
+          "targetSoil": "minecraft:grass_block",
+          "targetCover": "minecraft:air"
+        },
+        {
+          "local": [
+            22,
+            1,
+            37
+          ],
+          "sourceCover": "minecraft:spruce_fence[east=false,north=false,south=false,waterlogged=false,west=false]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            52,
+            1,
+            37
+          ],
+          "sourceCover": "minecraft:spruce_fence[east=false,north=false,south=false,waterlogged=false,west=false]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        }
+      ]
+    },
+    {
+      "source": "th2",
+      "target": "th3",
+      "sourceGrassWithNonAirAbove": 66,
+      "rows": [
+        {
+          "local": [
+            12,
+            1,
+            10
+          ],
+          "sourceCover": "minecraft:spruce_fence[east=false,north=false,south=false,waterlogged=false,west=false]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:air"
+        },
+        {
+          "local": [
+            62,
+            1,
+            10
+          ],
+          "sourceCover": "minecraft:spruce_fence[east=false,north=false,south=false,waterlogged=false,west=false]",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:air"
+        },
+        {
+          "local": [
+            10,
+            1,
+            16
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            16
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            16
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            16
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            16
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            16
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            17
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            17
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            17
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            17
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            17
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            17
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            18
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            18
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            18
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            18
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            18
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            18
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            19
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            19
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            19
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            19
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            19
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            19
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            20
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            20
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            20
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            20
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            20
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            20
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            62,
+            1,
+            27
+          ],
+          "sourceCover": "minecraft:spruce_log[axis=y]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            68,
+            1,
+            27
+          ],
+          "sourceCover": "minecraft:spruce_log[axis=y]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:air"
+        },
+        {
+          "local": [
+            10,
+            1,
+            38
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            38
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            38
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            38
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            38
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            38
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            39
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            39
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            39
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            39
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            39
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            39
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            40
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            40
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            40
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            40
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            40
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            40
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            41
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            41
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            41
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            41
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            41
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            41
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            10,
+            1,
+            42
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            11,
+            1,
+            42
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            42
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            63,
+            1,
+            42
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            64,
+            1,
+            42
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            65,
+            1,
+            42
+          ],
+          "sourceCover": "minecraft:stone_bricks",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            12,
+            1,
+            46
+          ],
+          "sourceCover": "minecraft:spruce_fence[east=false,north=false,south=false,waterlogged=false,west=false]",
+          "targetSoil": "minecraft:stone_bricks",
+          "targetCover": "minecraft:stone_bricks"
+        },
+        {
+          "local": [
+            62,
+            1,
+            46
+          ],
+          "sourceCover": "minecraft:spruce_fence[east=false,north=false,south=false,waterlogged=false,west=false]",
+          "targetSoil": "minecraft:polished_andesite",
+          "targetCover": "minecraft:stone_bricks"
+        }
+      ]
+    }
+  ],
+  "factorySourceTopology": [
+    {
+      "asset": "vehicle_factory",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "vehicle_factory",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "vehicle_factory",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "weapons_factory",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "weapons_factory",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "weapons_factory",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "steel_mill",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "steel_mill",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "steel_mill",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "textile_mill",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "textile_mill",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "textile_mill",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "fuel_refinery",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "fuel_refinery",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "fuel_refinery",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "concrete_plant",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "concrete_plant",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "concrete_plant",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "machine_shop",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "machine_shop",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "machine_shop",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "chemical_plant",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "chemical_plant",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "chemical_plant",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    },
+    {
+      "asset": "electronics_factory",
+      "plot": "plot_1",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "electronics_factory",
+      "plot": "plot_3",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 0
+    },
+    {
+      "asset": "electronics_factory",
+      "plot": "plot_4",
+      "sourceGrassWithNonAirAbove": 0,
+      "relativeAssetRotation": 180
+    }
+  ],
+  "allCitiesRetained": [
+    {
+      "city": "A",
+      "rotation": 0,
+      "position": [
+        -725,
+        80,
+        -766
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_a_th2_v1.dat",
+      "originalSha256": "79f1cfef27c7dfe03330ff8bd5c16fc1df67b819edc37ba8ee9f88ff2430313d",
+      "companionSha256": "8864f27ba45cfbf3423adb945dd8b9446cc1080afe23e993fe66da65f7680ab8",
+      "transaction": "f927e38e-9d2d-4639-a925-c0a646d56b18"
+    },
+    {
+      "city": "B",
+      "rotation": 0,
+      "position": [
+        -225,
+        80,
+        -766
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:dirt",
+        "Properties": {}
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_b_th2_v1.dat",
+      "originalSha256": "63924763ed499ec5bfa693ac6b25f52f4e878f699e03989ea8ca213cd627cc85",
+      "companionSha256": "e89a197866ee388a5339da9418373d3d48ed8bd29d337cd5c5edc061a9a39035",
+      "transaction": "c0208af4-81da-473c-bde2-7181a98e25ed"
+    },
+    {
+      "city": "C",
+      "rotation": 0,
+      "position": [
+        275,
+        80,
+        -766
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_c_th2_v1.dat",
+      "originalSha256": "df9343f2551561e61bf73f5cb6908b1cdf08ecb97462316c9aa8113104324dd2",
+      "companionSha256": "27a939afd54e46f4e5d3d28e4698b3df1a5ca35687e2ea0ef5e9e8a3371a97aa",
+      "transaction": "9efd7514-caa8-4799-9f4d-fe70cea1527c"
+    },
+    {
+      "city": "D",
+      "rotation": 0,
+      "position": [
+        775,
+        80,
+        -766
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_d_th2_v1.dat",
+      "originalSha256": "4902f8647564ee6d9485f3ac5798ce28aa866c8adb5bfea38569c25b91b31c24",
+      "companionSha256": "14d54296a3274783dde989db0168deed273855576c45784e279d07b5f5244d48",
+      "transaction": "efc62f44-a94b-46d2-863a-b28a2a43b0d8"
+    },
+    {
+      "city": "E",
+      "rotation": 0,
+      "position": [
+        -725,
+        80,
+        -266
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_e_th2_v1.dat",
+      "originalSha256": "2918c28746e5e383f2118c917060b05d7e453cb15f8e27a6b08c715e6fcc8f33",
+      "companionSha256": "7df709fd4639aac5d3b9335001b86caadb7ab84371f9fba64ae41ccb093645d5",
+      "transaction": "99888363-b38e-4547-96ff-0a40700bd3e3"
+    },
+    {
+      "city": "F",
+      "rotation": 0,
+      "position": [
+        -225,
+        80,
+        -266
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_f_th2_v1.dat",
+      "originalSha256": "83c755d371f32dab25ef50b879fea9306e51b7f167f987d735e328c07317bd34",
+      "companionSha256": "8ce6fa3eb4562ed724543271b7ffd1363a840a477f85ab072fc9e9b1f373f690",
+      "transaction": "a6371eab-0446-4888-880f-f0f4a269b9e0"
+    },
+    {
+      "city": "G",
+      "rotation": 0,
+      "position": [
+        275,
+        80,
+        -266
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:dirt",
+        "Properties": {}
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_g_th2_v1.dat",
+      "originalSha256": "f7e19301b39f84e47f26cf423188544d3f3059babc75b3ca96d9bd60252a4080",
+      "companionSha256": "5636d82b06843c727613949ec90dda5baa86ccc9f3cdbfaa439b2d9f50455720",
+      "transaction": "d3af667e-3c24-4018-80fc-3fb658489be8"
+    },
+    {
+      "city": "H",
+      "rotation": 0,
+      "position": [
+        775,
+        80,
+        -266
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_h_th2_v1.dat",
+      "originalSha256": "a880a4a27acef709383b51b7c3fe811d6375e6c670176edb4faca97c286e3bd7",
+      "companionSha256": "032a37bde72ce024662df8dad4d7ffa24c4e002c47557604c3de27251c203d19",
+      "transaction": "294de992-ce93-4fae-a565-d937360a6b35"
+    },
+    {
+      "city": "I",
+      "rotation": 180,
+      "position": [
+        -775,
+        80,
+        266
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_i_th2_v1.dat",
+      "originalSha256": "5fd9fb339276c5c0360ea56b39a20316836ccbb7eaee529d5e262b5614e329d3",
+      "companionSha256": "9c86e972211ba7487e03e1f4df9bf079665db0a4809ac5ecb9b2661836c6b357",
+      "transaction": "8da95b2a-2516-4768-9019-582f67b65dc5"
+    },
+    {
+      "city": "J",
+      "rotation": 180,
+      "position": [
+        -275,
+        80,
+        266
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_j_th2_v1.dat",
+      "originalSha256": "412ab7a8e9e84a8d9cff2a958dda5b2ba9494edfa7e34d9c5c0cc365e021534e",
+      "companionSha256": "cc7b84519bcee3128589a801104bd25765fffd290c279dd50f93412a1844d5a3",
+      "transaction": "7089919b-7b87-442c-b5b0-eb3e002b6f1f"
+    },
+    {
+      "city": "K",
+      "rotation": 180,
+      "position": [
+        225,
+        80,
+        266
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_k_th2_v1.dat",
+      "originalSha256": "d6e3183196543611604bafba0f2419058d2fd2613fa5a44aee290249b3933dc0",
+      "companionSha256": "ca1e98ccdb2885b6c674c1dde781971219bfa7d7811d76066460e577b2b25bc1",
+      "transaction": "13761c0b-044a-4725-a2fb-be8dde6a62ba"
+    },
+    {
+      "city": "L",
+      "rotation": 180,
+      "position": [
+        725,
+        80,
+        266
+      ],
+      "capturedBefore": {
+        "Properties": {
+          "snowy": "false"
+        },
+        "Name": "minecraft:grass_block"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:grass_block",
+        "Properties": {
+          "snowy": "false"
+        }
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_l_th2_v1.dat",
+      "originalSha256": "0197d68879685933b79875be14c3689917da5f1d0793a008ddc3f921a6e9b92b",
+      "companionSha256": "131648f04c474e4f628acbb040609733ca821f636dc8941a794b1bc292c3956e",
+      "transaction": "214f3901-fbfe-4eb1-8e7b-fbf95659ea12"
+    },
+    {
+      "city": "M",
+      "rotation": 180,
+      "position": [
+        -775,
+        80,
+        766
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:dirt",
+        "Properties": {}
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_m_th2_v1.dat",
+      "originalSha256": "069c5d96019f0fb25109a147b10299458c1e361aabb3e2a513f1aa361ed3bc0a",
+      "companionSha256": "fb5ff1957fe690fb2d8d10f2c99caa1a23bbc6b7c586a7a1a9d231cb77a6a966",
+      "transaction": "fbe54c77-e853-4e98-8de5-322cd2955944"
+    },
+    {
+      "city": "N",
+      "rotation": 180,
+      "position": [
+        -275,
+        80,
+        766
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:dirt",
+        "Properties": {}
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_n_th2_v1.dat",
+      "originalSha256": "0714fe8f798096cf008ebe40906018da597ffe204ce04a932ae9128d005100db",
+      "companionSha256": "09b068aa2741e117d36d67c595f5cfc007a40e577db6abbc015d6faf2a24bd86",
+      "transaction": "85b462a7-89a1-4ba2-bf4d-0e23f8c3e5c5"
+    },
+    {
+      "city": "O",
+      "rotation": 180,
+      "position": [
+        225,
+        80,
+        766
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:dirt",
+        "Properties": {}
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_o_th2_v1.dat",
+      "originalSha256": "fa5b58c2942991c70a9b201688011248b1831702257a32514e1955b92ad93823",
+      "companionSha256": "31f31ffd9ef4737f395a277d32aff6114864dc8958e9417b3bf5767499e70cee",
+      "transaction": "81c15267-89b0-4bde-90fd-ced1d0aaec2d"
+    },
+    {
+      "city": "P",
+      "rotation": 180,
+      "position": [
+        725,
+        80,
+        766
+      ],
+      "capturedBefore": {
+        "Name": "minecraft:dirt"
+      },
+      "capturedCover": {
+        "Properties": {
+          "axis": "y"
+        },
+        "Name": "minecraft:spruce_log"
+      },
+      "live": {
+        "Name": "minecraft:dirt",
+        "Properties": {}
+      },
+      "liveAbove": {
+        "Name": "minecraft:air",
+        "Properties": {}
+      },
+      "committedPaidIdentityVerified": true,
+      "original": "build/authored53-round6-progression-0/CatanCraft_Season1_R7_Development/data/catancraft_basic_purchase_p_th2_v1.dat",
+      "originalSha256": "53d4f3ee992bac2db110e59d12c1bfc0acb66048fd0bf106d15f69f4896ffe6d",
+      "companionSha256": "94708b9110570e57afb923296da5bbf7fa704de1aa7079710f935b87b1253f7f",
+      "transaction": "99bf6191-0ebe-42ee-b287-8bfb49d92744"
+    }
+  ],
+  "findings": {
+    "exposedRetainedSourceSoilLocal": [
+      62,
+      1,
+      24
+    ],
+    "th1": [
+      "minecraft:grass_block",
+      "minecraft:spruce_log[axis=y]"
+    ],
+    "th2": [
+      "minecraft:grass_block",
+      "minecraft:air"
+    ],
+    "th3": [
+      "minecraft:stone_bricks",
+      "minecraft:stone_bricks"
+    ],
+    "capturedDirtStillDirt": [
+      "B",
+      "G",
+      "M",
+      "N",
+      "O",
+      "P"
+    ],
+    "capturedDirtNowGrass": [
+      "I",
+      "J"
+    ],
+    "capturedGrassStillGrass": [
+      "A",
+      "C",
+      "D",
+      "E",
+      "F",
+      "H",
+      "K",
+      "L"
+    ],
+    "lateDirtWithoutCapturedDirt": [],
+    "productionBlocker": "TH1->TH2 preserves actually captured source dirt when its log is removed. TH2->TH3 capture computes only present TH2 cover and rejects this exposed dirt; cumulative verifier similarly needs the paid actual-before provenance.",
+    "boundedScope": "Exactly one hall cell per city in both orientations. The other TH1 source-blocking log soil becomes masonry in TH2; all62 blocking-covered TH2 grass soils become masonry in TH3; none of27factory/slot source envelopes contain grass with nonAIR directly above."
+  },
+  "requiredCorrection": [
+    "Preserve immutable original histories; use exact sealed parent plus current paid identity and actual dirt beforeimage, or a new strictly recorded actual observation made before cover removal.",
+    "Do not infer historical dirt from captured grass plus a removed former cover; missing old observation stays unauthorized.",
+    "Accept ordinary exposed grass regrowth without replacing soil. Keep next-tier capture and checkpoint provenance rules aligned.",
+    "Validate and freeze any new optional observation sidecar before including its hash in cumulative histories."
+  ],
+  "limits": [
+    "No native lineage test, next-tier purchase, completed campaign, restart or owner acceptance pass is claimed here.",
+    "The round6 campaign remains failed at BTH2 even though its earlier founding/commercial/TH2 purchase actions completed."
+  ]
+}

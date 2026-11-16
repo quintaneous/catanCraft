@@ -26,6 +26,7 @@ final class PaidConstructionRecovery {
     interface Environment {
         ServerLevel level(); Path original(); byte[] originalBytes();
         CompoundTag identity(); List<Cell> cells() throws IOException;
+        default void beforeWrites() throws IOException {}
         void authorize() throws IOException;
         boolean paid() throws IOException;
         void checkPayment() throws IOException;
@@ -109,6 +110,10 @@ final class PaidConstructionRecovery {
             if(hazard.getMessage()!=null&&hazard.getMessage().startsWith("Construction hazard:"))throw new PreparationDeferred(hazard.getMessage());throw hazard;
         }
         CompoundTag beforeLedger=e.ledger().copy();
+        // Optional durable observations may be recorded only after the complete
+        // envelope, inventories, shell and hazards have passed, before any write.
+        e.authorize();unchanged(e);e.beforeWrites();
+        if(!beforeLedger.equals(e.ledger())||!identity.equals(e.identity()))throw new IOException("Ledger/owner changed before recovery writes");
         if(j==null){
             j=new CompoundTag();j.putInt("schema",1);j.put("identity",identity);j.putString("originalSHA256",digest);j.putString("phase","PREPARED");
             ProducerJournal.write(file,j,false);
