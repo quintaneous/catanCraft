@@ -130,11 +130,12 @@ public final class PrestigeNatural53Tests {
     private static void orderedGrass(GameTestHelper h,String city)throws Exception{
         try(Fixture f=new Fixture(h,city,3,1)){
             var covers=PrestigeNaturalSupport.obsoleteGrassCovers(f.before,f.after);h.assertTrue(covers.size()==51,"Pinned obsolete TH3 cover count changed");
+            var prerequisites=PrestigeNaturalSupport.soilPrerequisites(f.before,f.after);h.assertTrue(prerequisites.size()==103,"Pinned complete soil-prerequisite count changed");
             CompoundTag before=f.data.save(new CompoundTag());
             h.assertTrue(!f.upgrade((stage,writes)->{if(stage.equals("prepared"))throw new IOException("Interrupt before first ordered write");}).success(),"Expected captured pending purchase");
             byte[] original=Files.readAllBytes(f.journal);CompoundTag journal=PrestigePurchaseRecovery.read(original);var deltas=journal.getList("blocks",Tag.TAG_COMPOUND);
-            for(int i=0;i<deltas.size();i++)h.assertTrue(covers.contains(BlockPos.of(deltas.getCompound(i).getLong("pos")))==(i<51),"Journal failed to record deterministic cover-first order");
-            PaidRecoveryTests.interrupt(h,f.recovery(),"write",51);f.reload();
+            for(int i=0;i<deltas.size();i++)h.assertTrue(prerequisites.contains(BlockPos.of(deltas.getCompound(i).getLong("pos")))==(i<103),"Journal failed to record deterministic soil-prerequisite order");
+            PaidRecoveryTests.interrupt(h,f.recovery(),"write",103);f.reload();
             for(BlockPos cover:covers)h.assertTrue(f.level.getBlockState(cover).equals(Blocks.AIR.defaultBlockState())
                     &&!f.level.getBlockState(cover.below()).equals(Blocks.GRASS_BLOCK.defaultBlockState()),"Recovery introduced grass before clearing every obsolete blocker");
             BlockPos p=covers.stream().min(Comparator.comparingLong(BlockPos::asLong)).orElseThrow().below();boolean[] reached={false};
@@ -173,6 +174,38 @@ public final class PrestigeNatural53Tests {
             // the normal guarded path; no production regrowth permission exists.
             f.level.setBlock(altered,Blocks.DIRT.defaultBlockState(),FLAGS);
             boolean[] captured={false};h.assertTrue(!f.upgrade((stage,writes)->{if(stage.equals("prepared")){captured[0]=true;throw new IOException("Stop after intact planter capture");}}).success()&&captured[0],"Intact native-ticked source failed normal capture");h.succeed();
+        }
+    }
+    @GameTest(template="townhall_state_empty",batch="prestige53_13",timeoutTicks=12000)
+    public static void north_partial_new_ground_cannot_regrow_old_planters(GameTestHelper h)throws Exception{partialGround(h,"a");}
+    @GameTest(template="townhall_state_empty",batch="prestige53_14",timeoutTicks=12000)
+    public static void south_partial_new_ground_cannot_regrow_old_planters(GameTestHelper h)throws Exception{partialGround(h,"i");}
+    private static void partialGround(GameTestHelper h,String city)throws Exception{
+        try(Fixture f=new Fixture(h,city,3,1)){
+            Map<BlockPos,BlockState> target=new HashMap<>();for(var cell:f.after)target.put(cell.position(),cell.state());
+            var sourceDirt=f.before.stream().filter(c->c.state().equals(Blocks.DIRT.defaultBlockState())).toList();
+            var targetGrass=f.after.stream().filter(c->c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())).toList();
+            var foundation=f.after.stream().filter(c->c.state().equals(Blocks.DIRT.defaultBlockState())).toList();
+            h.assertTrue(sourceDirt.size()==56&&targetGrass.size()==1626&&foundation.size()==4875,"Pinned complete soil-transition counts changed");
+            int[] groundBoundary={-1};boolean[] reached={false};CompoundTag before=f.data.save(new CompoundTag());
+            var result=f.upgrade((stage,writes)->{
+                if(stage.equals("prepared")){
+                    var rows=PrestigePurchaseRecovery.read(Files.readAllBytes(f.journal)).getList("blocks",Tag.TAG_COMPOUND);
+                    for(int i=0;i<rows.size();i++)if(rows.getCompound(i).getCompound("afterState").equals(NbtUtils.writeBlockState(Blocks.GRASS_BLOCK.defaultBlockState())))groundBoundary[0]=i+1;
+                    h.assertTrue(groundBoundary[0]>103,"Missing target-ground placement boundary");
+                }
+                if(stage.equals("write")&&writes==groundBoundary[0]){
+                    for(var cell:sourceDirt)h.assertTrue(f.level.getBlockState(cell.position()).equals(target.get(cell.position())),"Raised source dirt survived into new-grass placement");
+                    RandomSource random=RandomSource.create(5304);
+                    for(int sweep=0;sweep<128;sweep++)for(var cell:targetGrass)Blocks.GRASS_BLOCK.randomTick(f.level.getBlockState(cell.position()),f.level,cell.position(),random);
+                    for(var cell:sourceDirt)h.assertTrue(f.level.getBlockState(cell.position()).equals(target.get(cell.position())),"Partial-ground ticks regrew obsolete raised soil");
+                    for(var cell:foundation)h.assertTrue(f.level.getBlockState(cell.position()).equals(Blocks.DIRT.defaultBlockState()),"Covered foundation dirt regrew during partial placement");
+                    reached[0]=true;throw new IOException("Interrupted after adversarial whole-ground native ticks");
+                }
+            });
+            h.assertTrue(!result.success()&&reached[0]&&before.equals(f.data.save(new CompoundTag())),"Did not retain unpaid pending journal at whole-ground boundary");
+            byte[] original=Files.readAllBytes(f.journal);var journal=PrestigePurchaseRecovery.read(original);f.reload();PaidConstructionRecovery.resume(f.recovery());f.reload();
+            f.assertPaidOnce(before,journal);f.assertTarget();h.assertTrue(Arrays.equals(original,Files.readAllBytes(f.journal)),"Whole-transition recovery changed original history");h.succeed();
         }
     }
     private static void decay(GameTestHelper h,ServerLevel level,BlockPos p){

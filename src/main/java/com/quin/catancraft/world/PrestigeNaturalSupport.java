@@ -122,6 +122,34 @@ final class PrestigeNaturalSupport {
         }
         return Set.copyOf(removals);
     }
+    /** Complete the exact old-soil replacements before introducing new grass.
+     * TH3's raised planter dirt is unreachable from its original grass, but new
+     * TH4 ground creates upward spread routes during an interrupted transition.
+     * Only already-approved deltas are reordered; no soil state is accepted as
+     * a substitute for its captured source. */
+    static Set<BlockPos> soilPrerequisites(List<SchematicPlacementService.PlanCell> before,
+            List<SchematicPlacementService.PlanCell> after)throws IOException {
+        Set<BlockPos> first=new HashSet<>(obsoleteGrassCovers(before,after));
+        Map<BlockPos,BlockState> sourceCovers=new HashMap<>(),targetCovers=new HashMap<>();Set<BlockPos> needsCover=new HashSet<>();
+        for(int i=0;i<before.size();i++){
+            var old=before.get(i);var next=after.get(i);
+            if(old.state().equals(Blocks.DIRT.defaultBlockState())&&!old.state().equals(next.state())){
+                if(next.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())||next.state().hasBlockEntity()||!next.state().getFluidState().isEmpty())
+                    throw new IOException("Unsupported prestige source-soil replacement at "+old.position());
+                first.add(old.position());
+            }
+            if(next.state().equals(Blocks.DIRT.defaultBlockState()))needsCover.add(next.position().above());
+        }
+        for(int i=0;i<before.size();i++)if(needsCover.contains(before.get(i).position())){
+            sourceCovers.put(before.get(i).position(),before.get(i).state());targetCovers.put(after.get(i).position(),after.get(i).state());
+        }
+        // New/retained foundation dirt must remain blocked throughout both
+        // endpoint states, so neither placement order nor restart exposes it.
+        for(BlockPos above:needsCover)if(!SectorNaturalSupportPolicy.blocksGrass(sourceCovers.get(above),above)
+                ||!SectorNaturalSupportPolicy.blocksGrass(targetCovers.get(above),above))
+            throw new IOException("Unqualified prestige foundation-soil exposure at "+above.below());
+        return Set.copyOf(first);
+    }
     static boolean decayed(ServerLevel level,BlockPos p,BlockState expected,BlockState live,BlockState cover){
         return expected.equals(Blocks.GRASS_BLOCK.defaultBlockState())&&live.equals(Blocks.DIRT.defaultBlockState())
                 &&cover!=null&&level.hasChunkAt(p.above())&&cover.equals(level.getBlockState(p.above()))

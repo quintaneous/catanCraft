@@ -384,7 +384,9 @@ public final class Progression53Tests {
                 String token=data.placedMapAsset("territory:"+city+":"+SchematicAssetRegistry.asset(family).plot());
                 require(ProducerRevisions.revision(family,token)==tier,"Producer paid visual tier mismatch: "+city+"/"+family);
                 var anchor=SchematicAssetRegistry.territoryAnchor(family,def);
-                checked+=verifyPlan(ProducerRevisions.exterior(family,token)?ProducerExteriorR2.plan(family,tier,anchor):ProducerRevisions.plan(family,tier,anchor),null,true,producerDirt);
+                boolean exterior=ProducerRevisions.exterior(family,token);
+                checked+=verifyPlan(exterior?ProducerExteriorR2.plan(family,tier,anchor):ProducerRevisions.plan(family,tier,anchor),null,true,producerDirt,
+                    ProducerGrowth53.covers(family,tier,exterior,anchor));
             }
             JsonArray facilities=new JsonArray();
             for(int slot=0;slot<3;slot++) {
@@ -429,6 +431,9 @@ public final class Progression53Tests {
             return verifyPlan(cells,manager,producer,Set.of());
         }
         long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer,Set<net.minecraft.core.BlockPos> producerDirt)throws IOException {
+            return verifyPlan(cells,manager,producer,producerDirt,Map.of());
+        }
+        long verifyPlan(List<SchematicPlacementService.PlanCell> cells,net.minecraft.core.BlockPos manager,boolean producer,Set<net.minecraft.core.BlockPos> producerDirt,Map<net.minecraft.core.BlockPos,BlockState> growth)throws IOException {
             Map<net.minecraft.core.BlockPos,BlockState> expected=new HashMap<>();for(var c:cells)expected.put(c.position(),c.state());
             Map<net.minecraft.core.BlockPos,BlockState> producerCover=producer?ProducerService.producerCoveredGrass(cells):Map.of();
             Map<net.minecraft.core.BlockPos,BlockState> gardenCover=!producer&&manager!=null?BasicConstructionPurchase.th1GardenCover(cells):Map.of();
@@ -436,7 +441,8 @@ public final class Progression53Tests {
             for(var c:cells) {
                 BlockState actual=level.getBlockState(c.position());boolean matches=producer?ProducerRevisions.matches(actual,c.state()):TownHallInteractionPolicy.matches(actual,c.state(),c.position().equals(manager));
                 if(!matches&&producer)matches=ProducerService.matchesProducerCoveredSourceGrass(level,c,producerCover)
-                    ||producerDirt.contains(c.position())&&c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState());
+                    ||producerDirt.contains(c.position())&&c.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState())
+                    ||c.state().equals(Blocks.DIRT.defaultBlockState())&&ProducerGrowth53.matches(level,c.position(),actual,growth);
                 if(!matches&&!gardenCover.isEmpty())matches=BasicConstructionPurchase.gardenGrass(c.position(),actual,gardenCover,level::getBlockState);
                 if(!matches&&!copperTargets.isEmpty())matches=BasicConstructionPurchase.agedCopperTarget(c.position(),actual,copperTargets);
                 if(!matches&&!producer&&c.state().is(Blocks.GRASS_BLOCK)&&actual.is(Blocks.DIRT)) {

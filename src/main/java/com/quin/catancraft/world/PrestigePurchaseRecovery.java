@@ -77,7 +77,8 @@ final class PrestigePurchaseRecovery {
                 if(!TownHallInteractionPolicy.matches(old.state(),next.state(),false)
                         ||(!TownHallInteractionPolicy.matches(live,next.state(),false)&&!natural.targetMatches(level,p,live))
                         ||(natural.has(p)&&!natural.before(p).equals(natural.targetFor(p,natural.before(p),next.state()))))
-                    throw new IOException("Prestige read-context conflict or omitted delta at "+p);
+                    throw new IOException("Prestige read-context conflict or omitted delta at "+p+" source="+old.state()+" target="+next.state()
+                            +" live="+live+" liveCover="+level.getBlockState(p.above()));
                 if(level.getBlockEntity(p)!=null&&!(live.is(Blocks.LECTERN)&&level.getBlockEntity(p) instanceof LecternBlockEntity))throw new IOException("Unexpected unchanged prestige inventory at "+p);
                 cells.add(new PaidConstructionRecovery.Cell(p,List.of(live),live));continue;
             }
@@ -98,14 +99,16 @@ final class PrestigePurchaseRecovery {
             BlockState wanted=TownHallInteractionPolicy.matches(live,target,false)||naturalTarget?live:target;
             boolean recognized=TownHallInteractionPolicy.matches(live,originalState,false)||TownHallInteractionPolicy.matches(live,target,false)
                     ||naturalTarget||natural.sourceMatches(level,p,live);
-            if(!recognized)throw new IOException("Prestige recovery conflict at "+p);
+            if(!recognized)throw new IOException("Prestige recovery conflict at "+p+" source="+old.state()+" captured="+originalState
+                    +" target="+target+" live="+live+" liveCover="+level.getBlockState(p.above())
+                    +" naturalSource="+natural.sourceMatches(level,p,live)+" naturalTarget="+naturalTarget);
             cells.add(new PaidConstructionRecovery.Cell(p,List.of(live),wanted,emptyLectern));
         }
         if(consumed.size()!=changes.size())throw new IOException("Prestige journal writes outside exact envelope");
         // Recovery must preserve the same safe dependency order even when most
         // source cells still remain. Preflight above still checks every cell.
-        Set<BlockPos> obsoleteGrassCovers=PrestigeNaturalSupport.obsoleteGrassCovers(before,after);
-        cells.sort(Comparator.comparingInt(cell->obsoleteGrassCovers.contains(cell.pos())?0:1));
+        Set<BlockPos> soilPrerequisites=PrestigeNaturalSupport.soilPrerequisites(before,after);
+        cells.sort(Comparator.comparingInt(cell->soilPrerequisites.contains(cell.pos())?0:1));
         boolean required=j.getBoolean("receiptRequired");CompoundTag identity=new CompoundTag();
         identity.putString("kind","prestige");identity.putString("world",root.toString());identity.putString("city",city);identity.putUUID("owner",owner);identity.putUUID("transaction",id);identity.putString("source",sourceToken);identity.putString("target",targetToken);
         return new PaidConstructionRecovery.Environment(){

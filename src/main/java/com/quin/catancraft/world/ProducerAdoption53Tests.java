@@ -130,7 +130,7 @@ public final class ProducerAdoption53Tests {
             f.refuses("Unrecognized prebuilt producer");h.succeed();
         }
     }
-    private static final class Fixture implements AutoCloseable {
+    static final class Fixture implements AutoCloseable {
         final GameTestHelper h;final TerritoryDefinition definition;final CatanSavedData data=new CatanSavedData();
         final Map<String,List<SchematicPlacementService.PlanCell>> plans=new LinkedHashMap<>();final Path marker;
         Fixture(GameTestHelper h,String city)throws Exception {

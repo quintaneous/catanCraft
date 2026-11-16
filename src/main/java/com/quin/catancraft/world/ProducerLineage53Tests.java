@@ -97,7 +97,7 @@ public final class ProducerLineage53Tests {
         NationData prior=NationData.load(before);var cost=e.spec().cost();h.assertTrue(e.nation().treasury()==prior.treasury()-cost.money(),"Producer charge differs");
         for(ResourceType resource:ResourceType.values())h.assertTrue(e.nation().resource(resource)==prior.resource(resource)-cost.resources().getOrDefault(resource,0L),"Producer resource charge differs");
     }
-    private static final class Fixture implements ProducerTransaction.Environment {
+    static final class Fixture implements ProducerTransaction.Environment {
         final GameTestHelper h;final ProducerTests.Env base;CompoundTag parentOverride;
         Fixture(GameTestHelper h,int rotation)throws IOException {this.h=h;base=new ProducerTests.Env(h,rotation,1);}
         void select(int from,int to) {
@@ -119,9 +119,11 @@ public final class ProducerLineage53Tests {
             for(var plot:spec().plots()) {
                 var plan=plot.targetR2()?ProducerExteriorR2.plan(plot.family(),plot.target(),plot.anchor()):ProducerRevisions.plan(plot.family(),plot.target(),plot.anchor());
                 var covers=ProducerService.producerCoveredGrass(plan);
+                var growth=ProducerGrowth53.covers(plot.family(),plot.target(),plot.targetR2(),plot.anchor());
                 for(var cell:plan) {
                     BlockState actual=level().getBlockState(cell.position());h.assertTrue(ProducerRevisions.matches(actual,cell.state())
                         ||ProducerService.matchesProducerCoveredSourceGrass(level(),cell,covers)
+                        ||ProducerGrowth53.matches(level(),cell.position(),actual,growth)
                         ||proved.contains(cell.position())&&cell.state().equals(Blocks.GRASS_BLOCK.defaultBlockState())&&actual.equals(Blocks.DIRT.defaultBlockState()),"Earned producer target differs at "+cell.position());
                 }
             }

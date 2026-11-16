@@ -281,13 +281,15 @@ public final class ProducerService {
                 if(token!=null){ProducerRevisions.revision(f,token);continue;}
                 var plan=ProducerRevisions.plan(f,1,SchematicAssetRegistry.territoryAnchor(f,def));
                 var sourceCovers=producerCoveredGrass(plan);
+                var growth=ProducerGrowth53.covers(f,1,false,SchematicAssetRegistry.territoryAnchor(f,def));
                 var bounds=SchematicAssetRegistry.asset(f).boundsAt(SchematicAssetRegistry.territoryAnchor(f,def));
                 for(int x=bounds.min().getX()>>4;x<=bounds.max().getX()>>4;x++)
                     for(int z=bounds.min().getZ()>>4;z<=bounds.max().getZ()>>4;z++)level.getChunk(x,z);
                 for(var cell:plan) {
                     if(!level.hasChunkAt(cell.position()))throw new IOException("Prebuilt producer chunk unloaded");
                     if(!ProducerRevisions.matches(level.getBlockState(cell.position()),cell.state())
-                            &&!matchesProducerCoveredSourceGrass(level,cell,sourceCovers))throw new IOException("Unrecognized prebuilt producer at "+cell.position()
+                            &&!matchesProducerCoveredSourceGrass(level,cell,sourceCovers)
+                            &&!ProducerGrowth53.matches(level,cell.position(),level.getBlockState(cell.position()),growth))throw new IOException("Unrecognized prebuilt producer at "+cell.position()
                             +" expected="+cell.state()+" actual="+level.getBlockState(cell.position()));
                     var be=level.getBlockEntity(cell.position());
                     if(cell.state().is(net.minecraft.world.level.block.Blocks.BARREL)) {

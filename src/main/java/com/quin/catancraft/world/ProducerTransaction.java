@@ -115,6 +115,8 @@ final class ProducerTransaction {
         // Absence is meaningful: old journals keep their original strict interpretation.
         Set<BlockPos> provedGrass=exists?readSourceCoverProof(j,sourceCovers):sourceCovers.keySet();
         NaturalSoil soil=new NaturalSoil(spec,cells,identity,exists?j:null,exists?null:e.previousNaturalProof(),safe(e.receipt()),0);
+        Map<BlockPos,BlockState> qualifiedGrowth=ProducerGrowth53.transaction(spec);
+        Map<BlockPos,BlockState> growth=exists?ProducerGrowth53.read(j,qualifiedGrowth):qualifiedGrowth;
         boolean pending=phase!=null && phase!=Phase.COMMITTED && phase!=Phase.ROLLED_BACK;
         String previous=exists?j.getString("previousReceipt"):safe(e.receipt());
         String paid=exists?j.getUUID("id")+":paid":"",rolled=exists?j.getUUID("id")+":rolled_back":"";
@@ -151,6 +153,8 @@ final class ProducerTransaction {
                 ||pending&&soil.matches(e.level(),c.pos(),state,c.old(),true);
             if(!valid&&!soil.enabled&&!changed.contains(i)&&provedGrass.contains(c.pos())&&state.equals(Blocks.DIRT.defaultBlockState()))
                 valid=exists||exactSourceCover(e,c.pos(),sourceCovers.get(c.pos()));
+            if(!valid&&!changed.contains(i)&&c.old().equals(Blocks.DIRT.defaultBlockState())&&c.next().equals(c.old()))
+                valid=ProducerGrowth53.matches(e.level(),c.pos(),state,growth);
             if(!valid)throw new IOException("Modified producer cell at "+c.pos()+": "+state);
             BlockEntity be=e.level().getBlockEntity(c.pos());
             if(c.old().is(Blocks.BARREL)) {
@@ -213,6 +217,7 @@ final class ProducerTransaction {
             j=new CompoundTag();j.putInt("schema",1);j.putUUID("id",UUID.randomUUID());j.put("identity",e.identity().copy());
             j.put("spec",description);j.putString("previousReceipt",previous);j.put("ledgerBefore",ledger.copy());
             j.put("sourceCoveredGrassV1",sourceCoverProof(sourceCovers));
+            j.put(ProducerGrowth53.FIELD,ProducerGrowth53.describe(qualifiedGrowth));
             soil.persist(j);
             ListTag nbt=new ListTag();for(var entry:inventories.entrySet()) {
                 CompoundTag n=new CompoundTag();n.putLong("pos",entry.getKey().asLong());n.put("actualNbt",entry.getValue().copy());nbt.add(n);
