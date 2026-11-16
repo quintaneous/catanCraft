@@ -28,6 +28,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public final class SchematicPlacementService {
+    static final int BULK_FLAGS=Block.UPDATE_CLIENTS|Block.UPDATE_KNOWN_SHAPE|Block.UPDATE_SUPPRESS_DROPS;
     public record Result(boolean success, String message, int changedBlocks) {}
     /** Read-only deterministic full-envelope voxel plan, including air. */
     public record PlanCell(int localX, int localY, int localZ,
@@ -351,12 +352,17 @@ public final class SchematicPlacementService {
                     BlockState current = level.getBlockState(worldPos);
                     if (current.equals(target)) continue;
 
-                    // Flag 2 sends the block change to clients without cascading
-                    // normal survival-style neighbor destruction during a bulk paste.
-                    if (!level.setBlock(worldPos, target, 2)
-                            || !level.getBlockState(worldPos).equals(target)) {
+                    // As in guarded construction, suppress neighbor-derived
+                    // shape callbacks during the authored bulk write. Later
+                    // ordinary world updates retain their normal behavior.
+                    // Flag 2 alone can recursively change the just-written
+                    // fence/stair state while the surrounding plot is partial.
+                    boolean placed=level.setBlock(worldPos,target,BULK_FLAGS);
+                    BlockState actual=level.getBlockState(worldPos);
+                    if (!placed || !actual.equals(target)) {
                         return new Result(false, "Schematic block placement failed at " + worldPos
-                                + "; prior changed blocks=" + changed + ". Preserve this world for review.", changed);
+                                + "; current="+current+"; target="+target+"; actual="+actual+"; setBlock="+placed
+                                + "; flags="+BULK_FLAGS+"; prior changed blocks=" + changed + ". Preserve this world for review.", changed);
                     }
                     changed++;
                 }

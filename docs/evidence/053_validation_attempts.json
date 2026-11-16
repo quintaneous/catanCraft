@@ -364,6 +364,91 @@
       "passed": 0,
       "log": "build/evidence53/round4/progression-0-seed.log",
       "logSHA256": "367e5ccdaee57b800ede8b0cffd3e8f19ea6e77fb62c4f9fafcd497ab38765f5"
+    },
+    {
+      "attempt": "natural53-round5",
+      "phase": "",
+      "namespace": "catancraft_producer_growth53",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 8,
+      "passed": 8,
+      "log": "build/evidence53/natural53-round5/catancraft_producer_growth53.log",
+      "logSHA256": "3880b5617b9c90a5cd1a5bc34a03d20ecf09f350f67e06a4458f6ff8dd792a0e"
+    },
+    {
+      "attempt": "natural53-round5",
+      "phase": "",
+      "namespace": "catancraft_producer_lineage53",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 4,
+      "passed": 4,
+      "log": "build/evidence53/natural53-round5/catancraft_producer_lineage53.log",
+      "logSHA256": "c07fa9b53d1f009f9a30868b0f0c85c96d613e6f05f234cf5565a179a133252a"
+    },
+    {
+      "attempt": "natural53-round5",
+      "phase": "",
+      "namespace": "catancraft_producer_adoption53",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 10,
+      "passed": 10,
+      "log": "build/evidence53/natural53-round5/catancraft_producer_adoption53.log",
+      "logSHA256": "424b068c81704f21c71e072216bde2935fd59d517e2fd078e3e17ea093684daa"
+    },
+    {
+      "attempt": "natural53-round5",
+      "phase": "",
+      "namespace": "catancraft_prestige_natural53",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 14,
+      "passed": 14,
+      "log": "build/evidence53/natural53-round5/catancraft_prestige_natural53.log",
+      "logSHA256": "1986729952b47d8e77f0ec7c00e1ac396f910cc3a3a9600b602fbc9aecc740c4"
+    },
+    {
+      "attempt": "natural53-round5",
+      "phase": "seed",
+      "namespace": "catancraft_prestige_natural53_restart",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round5/catancraft_prestige_natural53_restart-seed.log",
+      "logSHA256": "8ed178427598a2e6be4e8b91d43257915cb40a47c1861c8dde04db0408bac38f"
+    },
+    {
+      "attempt": "natural53-round5",
+      "phase": "verify",
+      "namespace": "catancraft_prestige_natural53_restart",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 0,
+      "executed": 1,
+      "passed": 1,
+      "log": "build/evidence53/natural53-round5/catancraft_prestige_natural53_restart-verify.log",
+      "logSHA256": "49c934f5dfe1ec3d0424c50ec59a9fe4de382107b77a6ac5b5132bd199af9473"
+    },
+    {
+      "attempt": "round5",
+      "phase": "seed",
+      "namespace": "catancraft_progression53",
+      "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+      "classification": "COMMITTED_CANDIDATE_NATIVE",
+      "exitCode": 1,
+      "executed": 1,
+      "passed": 0,
+      "log": "build/evidence53/round5/progression-0-seed.log",
+      "logSHA256": "399369d581f5d124f774cf133b37c648527eb4629249f5252ebca2e8663fbd6e",
+      "finding": "D founded successfully; C claim refused on native fence WEST connection change during flags2 bulk placement, no claim charge; retained partial world."
     }
   ],
   "interpretation": {

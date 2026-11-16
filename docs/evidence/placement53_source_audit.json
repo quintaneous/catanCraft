@@ -1,0 +1,2048 @@
+{
+  "schema": 1,
+  "status": "static source and retained-failure audit; proposed flags50 native validation pending",
+  "candidateSource": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+  "configuredBundle": "build/authored53-round5-progression-0/config/catancraft/schematics_bundle.zip",
+  "configuredBundleSha256": "2a7a362047a6672b802c0077cd58db236183c10a69cc69dc928c64859d985edc",
+  "configuredMap": "build/authored53-round5-progression-0/config/catancraft/map.json",
+  "configuredMapSha256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "pristineAuthoredWorldSha256": "ca09b8f370f205201fb8d48890412ec612923c3f9c2194ab4756d70cc1ef62ba",
+  "method": [
+    "Decode exact configured bundle gzip NBT palettes and VarInt BlockData without changing any input or world. No external schematic override exists for these seven templates.",
+    "Enumerate each same-material horizontal fence neighbor whose serialized target direction is explicitly false. Counts are directed; both endpoints identify one undirected pair. This is a bounded fence adjacency audit, not a complete vanilla support/shape evaluator.",
+    "Derive eligible producer assets and anchors from actual configured map resources and SchematicAssetRegistry rawProducerAssets/territoryAnchor rules. Rotations are 0 or 180.",
+    "Decode only retained failed-world region blocks to identify the immediate mismatch. The failed source/world are evidence and were not changed."
+  ],
+  "assets": [
+    {
+      "template": "starter_settlement_v2",
+      "configuredMember": "starter_settlement_v2.schem",
+      "memberSha256": "fe03d2ddcc76555ad56f0767d601100380193053bfdca1f56dd2f45d7be9e443",
+      "dimensions": [
+        161,
+        47,
+        169
+      ],
+      "anchorLocal": [
+        80,
+        2,
+        1
+      ],
+      "cellsDecoded": 1278823,
+      "shapeSensitiveBlocks": {
+        "minecraft:cobblestone_stairs": 18,
+        "minecraft:dark_oak_stairs": 262,
+        "minecraft:deepslate_tile_stairs": 262,
+        "minecraft:oak_leaves": 273,
+        "minecraft:spruce_fence": 78,
+        "minecraft:spruce_stairs": 748
+      },
+      "sameFenceFalseDirectedEdges": 0,
+      "sameFenceFalseUndirectedPairs": 0,
+      "falseConnectionTargets": []
+    },
+    {
+      "template": "thall1",
+      "configuredMember": "thall1.schem",
+      "memberSha256": "dfe74c98ba01bc2d66496b2d306a61de951ad0a3a24af6d6de895d2dbb16ec88",
+      "dimensions": [
+        75,
+        47,
+        65
+      ],
+      "anchorLocal": [
+        37,
+        2,
+        1
+      ],
+      "cellsDecoded": 229125,
+      "shapeSensitiveBlocks": {
+        "minecraft:oak_leaves": 56,
+        "minecraft:spruce_fence": 78,
+        "minecraft:spruce_stairs": 474
+      },
+      "sameFenceFalseDirectedEdges": 0,
+      "sameFenceFalseUndirectedPairs": 0,
+      "falseConnectionTargets": []
+    },
+    {
+      "template": "quarry",
+      "configuredMember": "quarry.schem",
+      "memberSha256": "2129de14577a7a52df9f2b81dd0eb71e1a470c2944d21bafd96e9e830c153713",
+      "dimensions": [
+        31,
+        47,
+        31
+      ],
+      "anchorLocal": [
+        1,
+        8,
+        15
+      ],
+      "cellsDecoded": 45167,
+      "shapeSensitiveBlocks": {
+        "minecraft:cobblestone_stairs": 15,
+        "minecraft:deepslate_tile_stairs": 36,
+        "minecraft:spruce_fence": 182
+      },
+      "sameFenceFalseDirectedEdges": 80,
+      "sameFenceFalseUndirectedPairs": 40,
+      "falseConnectionTargets": [
+        {
+          "local": [
+            29,
+            8,
+            9
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=false,south=true,waterlogged=false,west=true]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            9
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            9
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            9
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=false,south=true,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            10
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            10
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            10
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            10
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            11
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            11
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            11
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            11
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            12
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            12
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            12
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            12
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            13
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            13
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            13
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            13
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            14
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            14
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            14
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            14
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            15
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            15
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            15
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            15
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            16
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            16
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            16
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            16
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            17
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            17
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            17
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            17
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            18
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            18
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            18
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            18
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            19
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            19
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            19
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            19
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            20
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            20
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            20
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            20
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            21
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            21
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            21
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            21
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            22
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            22
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            22
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            22
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            23
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            23
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            23
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            23
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            24
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            24
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            24
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            24
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            25
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            25
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            25
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            25
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            26
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            26
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            26
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            26
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            27
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            27
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            27
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            27
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            28
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            28
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            28
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            28
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            10,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=true,south=false,waterlogged=false,west=false]",
+          "direction": "south",
+          "neighborLocal": [
+            10,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            11,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            11,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            12,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            12,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            13,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            13,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            14,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            14,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            15,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            15,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            16,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            16,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            17,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            17,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            18,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            18,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            20,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            20,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            21,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            21,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            22,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            22,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            23,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            23,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            24,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            24,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            25,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            25,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            26,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            26,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            27,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            27,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            28,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            28,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=false,waterlogged=false,west=true]",
+          "direction": "east",
+          "neighborLocal": [
+            30,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=false,waterlogged=false,west=true]",
+          "direction": "south",
+          "neighborLocal": [
+            29,
+            8,
+            30
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            30,
+            8,
+            29
+          ],
+          "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+          "direction": "west",
+          "neighborLocal": [
+            29,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            10,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            10,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=true,south=false,waterlogged=false,west=false]"
+        },
+        {
+          "local": [
+            11,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            11,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            12,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            12,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            13,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            13,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            14,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            14,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            15,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            15,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            16,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            16,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            17,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            17,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            18,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            18,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            20,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            20,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            21,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            21,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            22,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            22,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            23,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            23,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            24,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            24,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            25,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            25,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            26,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            26,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            27,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            27,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            28,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            28,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]"
+        },
+        {
+          "local": [
+            29,
+            8,
+            30
+          ],
+          "target": "minecraft:spruce_fence[east=true,north=false,south=false,waterlogged=false,west=true]",
+          "direction": "north",
+          "neighborLocal": [
+            29,
+            8,
+            29
+          ],
+          "neighborTarget": "minecraft:spruce_fence[east=false,north=true,south=false,waterlogged=false,west=true]"
+        }
+      ]
+    },
+    {
+      "template": "farm",
+      "configuredMember": "farm.schem",
+      "memberSha256": "45e05e84dcc167e7d5ccad29141f13e3e1a43a8930b3796137245a24c70a3c84",
+      "dimensions": [
+        31,
+        47,
+        31
+      ],
+      "anchorLocal": [
+        15,
+        2,
+        1
+      ],
+      "cellsDecoded": 45167,
+      "shapeSensitiveBlocks": {
+        "minecraft:spruce_fence": 132,
+        "minecraft:spruce_stairs": 237
+      },
+      "sameFenceFalseDirectedEdges": 0,
+      "sameFenceFalseUndirectedPairs": 0,
+      "falseConnectionTargets": []
+    },
+    {
+      "template": "lumberyard",
+      "configuredMember": "lumberyard.schem",
+      "memberSha256": "2703c470f819ce0ee46dc4da3af065f41f03f9c64db30686b6e30b80e769a24c",
+      "dimensions": [
+        31,
+        47,
+        31
+      ],
+      "anchorLocal": [
+        15,
+        2,
+        1
+      ],
+      "cellsDecoded": 45167,
+      "shapeSensitiveBlocks": {
+        "minecraft:spruce_fence": 113,
+        "minecraft:spruce_stairs": 310
+      },
+      "sameFenceFalseDirectedEdges": 0,
+      "sameFenceFalseUndirectedPairs": 0,
+      "falseConnectionTargets": []
+    },
+    {
+      "template": "iron_oil_site",
+      "configuredMember": "iron_oil_site.schem",
+      "memberSha256": "1db450f68a88b6ee64b600104c0fa04c4297a290b935fa1d8e68c2297401c234",
+      "dimensions": [
+        31,
+        23,
+        11
+      ],
+      "anchorLocal": [
+        15,
+        2,
+        0
+      ],
+      "cellsDecoded": 7843,
+      "shapeSensitiveBlocks": {
+        "minecraft:polished_andesite_stairs": 6,
+        "minecraft:polished_blackstone_wall": 2,
+        "minecraft:spruce_fence": 73
+      },
+      "sameFenceFalseDirectedEdges": 0,
+      "sameFenceFalseUndirectedPairs": 0,
+      "falseConnectionTargets": []
+    },
+    {
+      "template": "coal_copper_site",
+      "configuredMember": "coal_copper_site.schem",
+      "memberSha256": "e787d86dfbe62b89e2b0f1232ae8613cec4b2d0b239511cb36f3216e68444cc3",
+      "dimensions": [
+        31,
+        23,
+        11
+      ],
+      "anchorLocal": [
+        15,
+        2,
+        0
+      ],
+      "cellsDecoded": 7843,
+      "shapeSensitiveBlocks": {
+        "minecraft:polished_andesite_stairs": 4,
+        "minecraft:spruce_fence": 73
+      },
+      "sameFenceFalseDirectedEdges": 0,
+      "sameFenceFalseUndirectedPairs": 0,
+      "falseConnectionTargets": []
+    }
+  ],
+  "allCities": [
+    {
+      "city": "A",
+      "cityCenter": [
+        -750,
+        81,
+        -750
+      ],
+      "rotation": 0,
+      "startsWithSettlement": true,
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "rawProducerAssets": [
+        "quarry",
+        "farm",
+        "lumberyard"
+      ],
+      "ordinaryActivation": "prebuilt managed producers adopted and existing tokens skip raw paste",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "quarry": [
+          -705,
+          81,
+          -774,
+          0
+        ],
+        "farm": [
+          -772,
+          81,
+          -706,
+          0
+        ],
+        "lumberyard": [
+          -728,
+          81,
+          -706,
+          0
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        -676,
+        81,
+        -780
+      ]
+    },
+    {
+      "city": "B",
+      "cityCenter": [
+        -250,
+        81,
+        -750
+      ],
+      "rotation": 0,
+      "startsWithSettlement": false,
+      "resources": [
+        "wood"
+      ],
+      "rawProducerAssets": [
+        "lumberyard"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "lumberyard": [
+          -228,
+          81,
+          -706,
+          0
+        ]
+      }
+    },
+    {
+      "city": "C",
+      "cityCenter": [
+        250,
+        81,
+        -750
+      ],
+      "rotation": 0,
+      "startsWithSettlement": false,
+      "resources": [
+        "stone"
+      ],
+      "rawProducerAssets": [
+        "quarry"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": true,
+      "producerAnchors": {
+        "quarry": [
+          295,
+          81,
+          -774,
+          0
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        324,
+        81,
+        -780
+      ]
+    },
+    {
+      "city": "D",
+      "cityCenter": [
+        750,
+        81,
+        -750
+      ],
+      "rotation": 0,
+      "startsWithSettlement": true,
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "rawProducerAssets": [
+        "quarry",
+        "farm",
+        "lumberyard"
+      ],
+      "ordinaryActivation": "prebuilt managed producers adopted and existing tokens skip raw paste",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "quarry": [
+          795,
+          81,
+          -774,
+          0
+        ],
+        "farm": [
+          728,
+          81,
+          -706,
+          0
+        ],
+        "lumberyard": [
+          772,
+          81,
+          -706,
+          0
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        824,
+        81,
+        -780
+      ]
+    },
+    {
+      "city": "E",
+      "cityCenter": [
+        -750,
+        81,
+        -250
+      ],
+      "rotation": 0,
+      "startsWithSettlement": false,
+      "resources": [
+        "stone"
+      ],
+      "rawProducerAssets": [
+        "quarry"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": true,
+      "producerAnchors": {
+        "quarry": [
+          -705,
+          81,
+          -274,
+          0
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        -676,
+        81,
+        -280
+      ]
+    },
+    {
+      "city": "F",
+      "cityCenter": [
+        -250,
+        81,
+        -250
+      ],
+      "rotation": 0,
+      "startsWithSettlement": false,
+      "resources": [
+        "iron",
+        "oil"
+      ],
+      "rawProducerAssets": [
+        "iron_oil_site"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "iron_oil_site": [
+          -250,
+          81,
+          -165,
+          0
+        ]
+      }
+    },
+    {
+      "city": "G",
+      "cityCenter": [
+        250,
+        81,
+        -250
+      ],
+      "rotation": 0,
+      "startsWithSettlement": false,
+      "resources": [
+        "coal",
+        "copper"
+      ],
+      "rawProducerAssets": [
+        "coal_copper_site"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "coal_copper_site": [
+          250,
+          81,
+          -165,
+          0
+        ]
+      }
+    },
+    {
+      "city": "H",
+      "cityCenter": [
+        750,
+        81,
+        -250
+      ],
+      "rotation": 0,
+      "startsWithSettlement": false,
+      "resources": [
+        "wood"
+      ],
+      "rawProducerAssets": [
+        "lumberyard"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "lumberyard": [
+          772,
+          81,
+          -206,
+          0
+        ]
+      }
+    },
+    {
+      "city": "I",
+      "cityCenter": [
+        -750,
+        81,
+        250
+      ],
+      "rotation": 180,
+      "startsWithSettlement": false,
+      "resources": [
+        "wood"
+      ],
+      "rawProducerAssets": [
+        "lumberyard"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "lumberyard": [
+          -772,
+          81,
+          206,
+          180
+        ]
+      }
+    },
+    {
+      "city": "J",
+      "cityCenter": [
+        -250,
+        81,
+        250
+      ],
+      "rotation": 180,
+      "startsWithSettlement": false,
+      "resources": [
+        "coal",
+        "copper"
+      ],
+      "rawProducerAssets": [
+        "coal_copper_site"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "coal_copper_site": [
+          -250,
+          81,
+          165,
+          180
+        ]
+      }
+    },
+    {
+      "city": "K",
+      "cityCenter": [
+        250,
+        81,
+        250
+      ],
+      "rotation": 180,
+      "startsWithSettlement": false,
+      "resources": [
+        "iron",
+        "oil"
+      ],
+      "rawProducerAssets": [
+        "iron_oil_site"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "iron_oil_site": [
+          250,
+          81,
+          165,
+          180
+        ]
+      }
+    },
+    {
+      "city": "L",
+      "cityCenter": [
+        750,
+        81,
+        250
+      ],
+      "rotation": 180,
+      "startsWithSettlement": false,
+      "resources": [
+        "stone"
+      ],
+      "rawProducerAssets": [
+        "quarry"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": true,
+      "producerAnchors": {
+        "quarry": [
+          705,
+          81,
+          274,
+          180
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        676,
+        81,
+        280
+      ]
+    },
+    {
+      "city": "M",
+      "cityCenter": [
+        -750,
+        81,
+        750
+      ],
+      "rotation": 180,
+      "startsWithSettlement": true,
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "rawProducerAssets": [
+        "quarry",
+        "farm",
+        "lumberyard"
+      ],
+      "ordinaryActivation": "prebuilt managed producers adopted and existing tokens skip raw paste",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "quarry": [
+          -795,
+          81,
+          774,
+          180
+        ],
+        "farm": [
+          -728,
+          81,
+          706,
+          180
+        ],
+        "lumberyard": [
+          -772,
+          81,
+          706,
+          180
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        -824,
+        81,
+        780
+      ]
+    },
+    {
+      "city": "N",
+      "cityCenter": [
+        -250,
+        81,
+        750
+      ],
+      "rotation": 180,
+      "startsWithSettlement": false,
+      "resources": [
+        "stone"
+      ],
+      "rawProducerAssets": [
+        "quarry"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": true,
+      "producerAnchors": {
+        "quarry": [
+          -295,
+          81,
+          774,
+          180
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        -324,
+        81,
+        780
+      ]
+    },
+    {
+      "city": "O",
+      "cityCenter": [
+        250,
+        81,
+        750
+      ],
+      "rotation": 180,
+      "startsWithSettlement": false,
+      "resources": [
+        "wood"
+      ],
+      "rawProducerAssets": [
+        "lumberyard"
+      ],
+      "ordinaryActivation": "paste starter_settlement_v2, thall1, then raw producer assets",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "lumberyard": [
+          228,
+          81,
+          706,
+          180
+        ]
+      }
+    },
+    {
+      "city": "P",
+      "cityCenter": [
+        750,
+        81,
+        750
+      ],
+      "rotation": 180,
+      "startsWithSettlement": true,
+      "resources": [
+        "wood",
+        "stone",
+        "agriculture"
+      ],
+      "rawProducerAssets": [
+        "quarry",
+        "farm",
+        "lumberyard"
+      ],
+      "ordinaryActivation": "prebuilt managed producers adopted and existing tokens skip raw paste",
+      "directQuarryPasteExposure": false,
+      "producerAnchors": {
+        "quarry": [
+          705,
+          81,
+          774,
+          180
+        ],
+        "farm": [
+          772,
+          81,
+          706,
+          180
+        ],
+        "lumberyard": [
+          728,
+          81,
+          706,
+          180
+        ]
+      },
+      "quarryTargetLocalFailureCell": [
+        30,
+        8,
+        9
+      ],
+      "quarryCorrespondingWorldCell": [
+        676,
+        81,
+        780
+      ]
+    }
+  ],
+  "retainedNativeFailure": {
+    "log": "build/evidence53/round5/progression-0-seed.log",
+    "logSha256": "399369d581f5d124f774cf133b37c648527eb4629249f5252ebca2e8663fbd6e",
+    "test": "authored_world_no_grant_cumulative_campaign",
+    "command": "nation claim c",
+    "reportedPriorChangedBlocks": 2838,
+    "failedPosition": [
+      324,
+      81,
+      -780
+    ],
+    "targetLocal": [
+      30,
+      8,
+      9
+    ],
+    "target": "minecraft:spruce_fence[east=false,north=true,south=true,waterlogged=false,west=false]",
+    "readOnlyActualWorldCells": [
+      {
+        "label": "failed write",
+        "position": [
+          324,
+          81,
+          -780
+        ],
+        "actualBlock": "minecraft:spruce_fence",
+        "actualProperties": {
+          "east": "false",
+          "waterlogged": "false",
+          "south": "true",
+          "north": "true",
+          "west": "true"
+        }
+      },
+      {
+        "label": "prior west fence",
+        "position": [
+          323,
+          81,
+          -780
+        ],
+        "actualBlock": "minecraft:spruce_fence",
+        "actualProperties": {
+          "east": "true",
+          "waterlogged": "false",
+          "south": "true",
+          "north": "false",
+          "west": "true"
+        }
+      },
+      {
+        "label": "next south cell",
+        "position": [
+          324,
+          81,
+          -779
+        ],
+        "actualBlock": "minecraft:air",
+        "actualProperties": {}
+      },
+      {
+        "label": "ground below",
+        "position": [
+          324,
+          80,
+          -780
+        ],
+        "actualBlock": "minecraft:grass_block",
+        "actualProperties": {
+          "snowy": "false"
+        }
+      }
+    ],
+    "observedDifference": "target west=false; retained actual west=true. Material, north/south/east connections and waterlogged state otherwise match.",
+    "payment": "normal command feedback reports no resources were charged",
+    "stage": "starter_settlement_v2 completed 16467 changes; thall1 completed zero changes; quarry stopped after 2838 prior changes"
+  },
+  "boundedCorrection": {
+    "change": "Use existing bulk transaction flags UPDATE_CLIENTS | UPDATE_KNOWN_SHAPE | UPDATE_SUPPRESS_DROPS (50) in SchematicPlacementService.place.",
+    "retainedChecks": [
+      "setBlock return must succeed",
+      "immediate actual block state must exactly equal serialized rotated target",
+      "all palette and asset/anchor validation",
+      "existing typed post-placement source comparisons; no new fuzzy matcher",
+      "immutable authored assets and source world"
+    ],
+    "reason": "Flag2 still lets the partially assembled neighboring fence network change the just-written target before its strict readback. Prevent intermediate shape propagation rather than widening target acceptance.",
+    "nativeStatus": "not run by this audit; startup53 isolated placement fixtures and root all-city authored campaign must qualify the change"
+  },
+  "limits": [
+    "The historical authored run is a failure, not a campaign pass.",
+    "Zero same-fence contradictions in another template is not proof that all support/shape/scheduled-tick cases pass.",
+    "This audit does not prove actual native placement/repeat/upgrade/restart behavior under flags50, connected-client access, visual approval or full modpack acceptance.",
+    "Prebuilt A/D/M/P normal adoption skips the bulk paste after validating source; their shared quarry topology alone does not reproduce this command failure."
+  ]
+}
