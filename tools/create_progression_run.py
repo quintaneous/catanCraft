@@ -11,7 +11,8 @@ import sys
 import tempfile
 import uuid
 
-from package_authored_demo import assemble, digest, pinned
+from package_authored_demo import assemble, digest, pinned, PROGRESSION_MODE
+from server53.world_profile import derive, PROFILE_ID
 from prepare_fresh_demo import InputError, checked_path, read_regular, sha256
 from progression_ladder import encoded, plan_for, results_template
 
@@ -52,6 +53,13 @@ def create_run(input_root: Path, manifest: Path, expected_sha: str, output: Path
         derived_file.write_bytes(derived_raw)
         package = assemble(root, derived_file, sha256(derived_raw), stage / "server")
         server = stage / "server"
+        profile = None
+        if original["bootstrap"]["mode"] == PROGRESSION_MODE:
+            level_name = package["worldRoot"] + "/level.dat"
+            level_bytes, profile = derive((server / level_name).read_bytes())
+            (server / level_name).write_bytes(level_bytes)
+            package["initialWorldFiles"][level_name] = sha256(level_bytes)
+            package["protectedMapProfile"] = profile
         properties = dict(package["serverProperties"])
         properties.update(PROFILE)
         properties_raw = "".join(f"{key}={value}\n" for key, value in sorted(properties.items())).encode()
@@ -63,7 +71,7 @@ def create_run(input_root: Path, manifest: Path, expected_sha: str, output: Path
             "baselineManifestSHA256": expected_sha, "derivedManifestSHA256": sha256(derived_raw),
             "worldArchiveSHA256": original["world"]["sha256"],
             "sourceCommit": original["sourceCommit"], "jarSHA256": original["jar"]["sha256"],
-            "profile": "normal-economy-intent-no-grants", "sourceWorldMetadataUnchanged": True,
+            "profile": "normal-economy-intent-no-grants", "sourceWorldMetadataUnchanged": True, "derivedWorldProfile": profile,
             "fixtureOnly": package["fixtureOnly"], "gameplayQualified": False,
             "blockers": ["Complete matching Forge/mod/content runtime and review authored world gamerules",
                          "Validate normal startup and all-city progression with no funding or free items",
@@ -80,7 +88,7 @@ def create_run(input_root: Path, manifest: Path, expected_sha: str, output: Path
                 "This folder is one run. To start over, create a DIFFERENT run from the original inputs.\n"
                 "Never delete progress, copy a played run, move a bound run, or extract over a live server.\n"
                 "Normal-economy intent: Adventure, Normal difficulty, no automatic grants or purchases.\n"
-                "Authored level.dat/gamerules remain unchanged and still require gameplay review.\n"
+                "World profile provenance is recorded in PROGRESSION_RUN.json; original source inputs are unchanged.\n"
                 "Do not use debug funding, creative items or optional showroom datapacks for progression evidence.\n"
                 "If you need accelerated developer tests, keep them in a separately labeled run.\n"
                 "Required external runtime/mod/content files are NOT bundled or certified by this tool.\n"

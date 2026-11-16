@@ -22,6 +22,9 @@ import zipfile
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from prepare_fresh_demo import InputError, checked_path, inspect_jar, inspect_zip, read_regular, sha256
 
+from server53.contracts import (PROGRESSION_MODE, ALL_CITY_APPROVAL, PUBLISHED_MODS,
+    WINDOWS_JAVA_ARCHIVE_SHA, evidence_files, readiness)
+
 MAX_WORLD = 256 * 1024 * 1024
 FORGE = "1.20.1-47.4.10"
 R7_MODE = "verified-clean-r7-with-disposable-opt-in"
@@ -137,7 +140,7 @@ def inspect_world(data: bytes, world: dict, bootstrap: dict) -> dict[str, bytes]
     if len({name.casefold() for name in pins}) != len(pins):
         raise InputError("Case-colliding world paths")
     metadata = {relative(name) for name in bootstrap["metadataFiles"]}
-    if (not metadata and bootstrap["mode"] != R7_MODE) or not metadata.issubset(pins):
+    if (not metadata and bootstrap["mode"] not in {R7_MODE, PROGRESSION_MODE}) or not metadata.issubset(pins):
         raise InputError("Reviewed bootstrap/authorization metadata must be transferred and pinned")
     extracted = {}
     with inspect_zip(data, "transferred fresh authored world") as archive:
@@ -173,7 +176,7 @@ def inspect_world(data: bytes, world: dict, bootstrap: dict) -> dict[str, bytes]
     level = level_data(extracted["level.dat"])
     if "Player" in level or level.get("LevelName") != world["levelName"] or level.get("WorldGenSettings", {}).get("seed") != world["seed"]:
         raise InputError("World level identity/seed is wrong or contains an inherited player")
-    if bootstrap["mode"] == R7_MODE:
+    if bootstrap["mode"] in {R7_MODE, PROGRESSION_MODE}:
         expected = {"level.dat"} | {f"region/r.{x}.{z}.mca" for x in range(-2, 2) for z in range(-2, 2)}
         if metadata or set(extracted) != expected or root != R7_ROOT or level.get("LevelName") != R7_NAME or level.get("DataVersion") != 3465:
             raise InputError("Clean R7 requires its exact identity, version and seventeen source files")
@@ -190,7 +193,7 @@ def safe(name):
     if pathlib.PurePosixPath(name).is_absolute() or '..' in pathlib.PurePosixPath(name).parts: fail('Unsafe package path')
     for q in [p,*p.parents]:
         if q==ROOT.parent: break
-        if q.is_symlink(): fail('Package symlinks are forbidden')
+        if q.is_symlink() or (q.exists() and getattr(q.lstat(),'st_file_attributes',0)&0x400): fail('Package redirects are forbidden')
     return p
 def check(name,pin):
     p=safe(name)
@@ -221,18 +224,28 @@ def main():
     raw=safe('PACKAGE.json').read_bytes()
     if hashlib.sha256(raw).hexdigest()!=safe('PACKAGE.sha256').read_text().split()[0]: fail('Package manifest checksum mismatch')
     policy=json.loads(raw)
+    if safe('.catancraft-baseline-only').exists(): fail('Immutable baseline cannot launch; use NEW_TEST_RUN')
+    if policy.get('fullModpack'):
+        actual_scripts={p.name for p in ROOT.iterdir() if p.suffix.lower() in ('.ps1','.py','.bat','.sh','.cmd')}
+        expected_scripts={n for n in policy['immutableFiles'] if '/' not in n and pathlib.Path(n).suffix.lower() in ('.ps1','.py','.bat','.sh','.cmd')}
+        if actual_scripts!=expected_scripts: fail('Unexpected/missing launch scripts')
+        for prefix in ('mods','libraries','runtime','tools'):
+            folder=safe(prefix)
+            actual=set()
+            if folder.exists():
+                for p in folder.rglob('*'):
+                    safe(p.relative_to(ROOT).as_posix())
+                    if p.is_file(): actual.add(p.relative_to(ROOT).as_posix())
+            expected={n for n in policy['immutableFiles'] if n.startswith(prefix+'/')}
+            if actual!=expected: fail('Unexpected/missing '+prefix+' files')
     for name,pin in policy['immutableFiles'].items(): check(name,pin)
     server_properties(policy['serverProperties'])
-    if not re.search(r'(?m)^\s*eula\s*=\s*true\s*$',safe('eula.txt').read_text()): fail('Read Minecraft EULA and personally set eula=true before launch')
+    if sys.argv[1:]!=['--verify-only'] and not re.search(r'(?m)^\s*eula\s*=\s*true\s*$',safe('eula.txt').read_text()): fail('Read Minecraft EULA and personally set eula=true before launch')
     # Runtime files must come from an independently verified official Forge installation.
     for name,pin in policy['forgeRuntimeFiles'].items(): check(name,pin)
-    java=shutil.which('java')
-    if not java: fail('Install 64-bit Java 17 and official Forge 1.20.1-47.4.10 first; see README_DEMO.txt')
-    result=subprocess.run([java,'-XshowSettings:properties','-version'],capture_output=True,text=True)
-    details=result.stdout+result.stderr
-    if result.returncode or not re.search(r'java\.version\s*=\s*17(?:\.|\s)',details) or not re.search(r'sun\.arch\.data\.model\s*=\s*64\b',details): fail('Exactly 64-bit Java 17 required')
     marker=safe('.demo-launch-state.json')
     authorization=safe(policy['worldRoot']+'/catancraft-fresh-demo.json')
+    for p in safe(policy['worldRoot']).rglob('*'): safe(p.relative_to(ROOT).as_posix())
     identity={'root':str(ROOT),'inputManifestSHA256':policy['inputManifestSHA256']}
     if marker.exists():
         if json.loads(marker.read_text())!=identity: fail('Played demo moved or authorization changed; preserve it for review')
@@ -251,8 +264,14 @@ def main():
     args='win_args.txt' if os.name=='nt' else 'unix_args.txt'
     argfile='libraries/net/minecraftforge/forge/1.20.1-47.4.10/'+args
     if argfile not in policy['forgeRuntimeFiles']: fail('Required pinned Forge platform argument file missing')
-    if '--verify-only' in sys.argv: print('Package and local Java/Forge prerequisites verified; server not started'); return 0
+    if sys.argv[1:]==['--verify-only']: print('Package and binding verified; Java not executed, server not started'); return 0
     if len(sys.argv)!=1: fail('Only --verify-only is accepted; no arbitrary launch arguments')
+    if not re.search(r'(?m)^\s*eula\s*=\s*true\s*$',safe('eula.txt').read_text()): fail('Read Minecraft EULA and personally set eula=true before launch')
+    java=shutil.which('java')
+    if not java: fail('Install 64-bit Java 17 and official Forge 1.20.1-47.4.10 first; see README_DEMO.txt')
+    result=subprocess.run([java,'-XshowSettings:properties','-version'],capture_output=True,text=True)
+    details=result.stdout+result.stderr
+    if result.returncode or not re.search(r'java\.version\s*=\s*17(?:\.|\s)',details) or not re.search(r'sun\.arch\.data\.model\s*=\s*64\b',details): fail('Exactly 64-bit Java 17 required')
     if not marker.exists():
         auth=dict(policy['authorization']);auth['installationBoundPath']=str(safe(policy['worldRoot']).resolve())
         authorization.write_text(json.dumps(auth,sort_keys=True,indent=2)+'\n')
@@ -276,13 +295,13 @@ def assemble(input_root: Path, manifest_path: Path, manifest_sha256: str, output
         enabled = m["approval"].get("sectorArtEnabled")
         if type(enabled) is not bool or m["approval"] != {"freshAuthoredWorld": True, "bootstrapReviewed": True, "sectorArtEnabled": enabled}:
             raise InputError("Explicit fresh-world/bootstrap and sector approval required")
-        if enabled and (m["bootstrap"]["mode"] != R7_MODE or m.get("sectorApproval") != CITY_A_APPROVAL):
+        if enabled and ((m["bootstrap"]["mode"] == PROGRESSION_MODE and m.get("sectorApproval") != ALL_CITY_APPROVAL) or (m["bootstrap"]["mode"] != PROGRESSION_MODE and (m["bootstrap"]["mode"] != R7_MODE or m.get("sectorApproval") != CITY_A_APPROVAL))):
             raise InputError("Enabled sectors require the exact approved City A P2/P3 clean-R7 scope")
         if not re.fullmatch(r"[0-9a-f]{40}", m["sourceCommit"]):
             raise InputError("Exact source commit required")
         if m["runtime"]["javaMajor"] != 17 or m["runtime"]["minecraft"] != "1.20.1" or m["runtime"]["forge"] != "47.4.10":
             raise InputError("Runtime prerequisites differ from prepared environment")
-        if m["bootstrap"]["mode"] not in {"reviewed-transferred-bootstrap", R7_MODE}:
+        if m["bootstrap"]["mode"] not in {"reviewed-transferred-bootstrap", R7_MODE, PROGRESSION_MODE}:
             raise InputError("No approved deterministic fresh-bootstrap contract supplied")
         world = pinned(root, m["world"])
         components = inspect_world(world, m["world"], m["bootstrap"])
@@ -312,9 +331,34 @@ def assemble(input_root: Path, manifest_path: Path, manifest_sha256: str, output
         report = json.loads(evidence)
         if report["sourceCommit"] != m["sourceCommit"] or report["jarSHA256"] != sha256(jar) or report["kind"] != "matching-runtime-evidence":
             raise InputError("Source/runtime evidence does not match packaged JAR")
-        if enabled and report.get("sectorValidation") != R7_NATIVE_PASS:
+        if enabled and m["bootstrap"]["mode"] != PROGRESSION_MODE and report.get("sectorValidation") != R7_NATIVE_PASS:
             raise InputError("Enabled sectors require matching-source completed raw-R7 native evidence")
         components["evidence/SOURCE_RUNTIME.json"] = evidence
+        for name, data in evidence_files(root, report).items():
+            if not name.startswith("evidence/") or name in components or name == "evidence/SOURCE_RUNTIME.json":
+                raise InputError("Native evidence requires unique evidence/ destinations")
+            components[name] = data
+        full = m.get("fullRuntime")
+        mod_files = {"mods/catancraft.jar": sha256(jar)}
+        if full is not None:
+            if full.get("schema") != 1:
+                raise InputError("Unknown full runtime schema")
+            actual_mods = {relative(r["target"]): r["sha256"] for r in full["mods"]}
+            if actual_mods != {"mods/" + name: pin for name, pin in PUBLISHED_MODS.items()}:
+                raise InputError("Exact published TaCZ/SBW/KFF runtime required")
+            for group, prefix in (("mods", "mods/"), ("forgeLibraries", "libraries/"), ("windowsJava", "runtime/java17/")):
+                for row in full.get(group, []):
+                    target = relative(row["target"])
+                    if not target.startswith(prefix) or target in components:
+                        raise InputError("Duplicate or redirected runtime destination")
+                    components[target] = pinned(root, row)
+            mod_files.update(actual_mods)
+            if not m.get("fixtureOnly", False) and len(full["forgeLibraries"]) != 104:
+                raise InputError("Complete reviewed 104-file Forge runtime required")
+            if full.get("windowsJava") and not m.get("fixtureOnly", False) and len(full["windowsJava"]) != 316:
+                raise InputError("Complete reviewed 316-file Windows Java runtime required")
+            if full.get("windowsJava") and (full.get("windowsJavaArchiveSHA256") != WINDOWS_JAVA_ARCHIVE_SHA or "runtime/java17/bin/java.exe" not in components):
+                raise InputError("Pinned portable Windows Java 17 required")
         for group in ("config", "assets"):
             if not m[group]:
                 raise InputError(f"Matching reviewed {group} inputs required")
@@ -331,6 +375,13 @@ def assemble(input_root: Path, manifest_path: Path, manifest_sha256: str, output
             raise InputError("Pinned official Forge platform args and runtime JAR required")
         if any(not name.startswith("libraries/") for name in runtime_files):
             raise InputError("Forge runtime prerequisites must stay inside package libraries/")
+        if full is not None and {name: sha256(data) for name, data in components.items() if name.startswith("libraries/")} != runtime_files:
+            raise InputError("Bundled Forge files differ from pinned complete runtime")
+        if m["bootstrap"]["mode"] == PROGRESSION_MODE:
+            with zipfile.ZipFile(BytesIO(jar)) as archive:
+                raw_manifest = archive.read("META-INF/MANIFEST.MF").decode().replace("\r\n ", "").replace("\n ", "")
+            if f"CatanCraft-Source-Commit: {m['sourceCommit']}" not in raw_manifest.splitlines():
+                raise InputError("JAR source commit does not match release evidence")
     except (KeyError, TypeError, ValueError, AttributeError) as ex:
         if isinstance(ex, InputError):
             raise
@@ -374,9 +425,12 @@ def assemble(input_root: Path, manifest_path: Path, manifest_sha256: str, output
                "serverProperties": server_properties,
                "initialServerPropertiesSHA256": sha256(components["server.properties"]),
                "immutableFiles": {name: sha256(data) for name, data in components.items() if name not in mutable and name not in initial},
-               "runtimeBundled": False, "fullModpack": False, "sectorArtEnabled": enabled}
+               "runtimeBundled": full is not None, "fullModpack": full is not None, "sectorArtEnabled": enabled,
+               "modFiles": mod_files, "javaBundled": bool(full and full.get("windowsJava")),
+               "readyForFocusedSoloTest": bool(full and full.get("windowsJava") and enabled and readiness(report, m["sourceCommit"], m.get("fixtureOnly", False))),
+               "ownerAcceptance": "PENDING", "evidenceSemanticsVerifiedByPackager": False}
     if enabled:
-        package["sectorApproval"] = CITY_A_APPROVAL
+        package["sectorApproval"] = ALL_CITY_APPROVAL if m["bootstrap"]["mode"] == PROGRESSION_MODE else CITY_A_APPROVAL
     raw = (json.dumps(package, sort_keys=True, indent=2) + "\n").encode()
     components["PACKAGE.json"] = raw
     components["PACKAGE.sha256"] = f"{sha256(raw)}  PACKAGE.json\n".encode()

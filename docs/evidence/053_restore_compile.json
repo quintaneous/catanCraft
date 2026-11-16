@@ -1,0 +1,30 @@
+{
+  "schema": 1,
+  "classification": "COMPILE_ONLY_NOT_NATIVE_OR_RELEASE_BUILD",
+  "sourceCommit": "167237cda66cd83f757e227d6b73f4e2b8f27177",
+  "java": "Temurin17.0.21+9",
+  "gradle": "8.8",
+  "forgeGradle": "6.0.54",
+  "attempts": [
+    {
+      "log": "compile53-restore-01.log",
+      "sha256": "fbbb430fce3cd680a6de48d11853b2bbcf26c387c3699a07639689f49a2d8cbc",
+      "command": "compileJava --offline --console=plain",
+      "exitCode": 1,
+      "result": "OFFLINE_CACHE_MISSING_MERGETOOL_1.1.5"
+    },
+    {
+      "log": "compile53-restore-02.log",
+      "sha256": "f9bce972b512236e689e1a0c31279da059908fe23239ee7c242695192101b886",
+      "command": "compileJava --console=plain",
+      "exitCode": 0,
+      "result": "BUILD_SUCCESSFUL_37s"
+    }
+  ],
+  "nativeTestsExecuted": false,
+  "releaseJarBuilt": false,
+  "archive": {
+    "path": "docs/evidence/053_restore_compile_logs.zip",
+    "sha256": "d36d448e74d8278e04c132729138e471c2c60e3aa88abb7906a71a5010755a94"
+  }
+}

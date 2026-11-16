@@ -1,0 +1,3460 @@
+{
+  "schema": 1,
+  "purpose": "retained-native-regression-execution-plan-not-evidence",
+  "status": "NOT_RUN",
+  "inventoriedAgainstHead": "1f2ee4e322796a85e9bb2ba19cb63aeb0042f87f",
+  "sourceBinding": "At execution require clean committed gameplay/build/harness, bind exact SOURCE_COMMIT to process record, and verify inventory hashes; this plan itself is not a native result.",
+  "scope": "Parent-selected retained 52 namespaces plus three new Hall/wall namespaces; authored progression/sector seed/verify campaigns remain separate required gates.",
+  "namespaceCount": 55,
+  "phaseCount": 60,
+  "expectedTestExecutions": 555,
+  "generatorInventory": {
+    "pathsScanned": "src/main/java/**/*.java",
+    "registrationPatterns": [
+      "@GameTestGenerator",
+      "new TestFunction(",
+      "RegisterGameTests"
+    ],
+    "matchingFiles": [],
+    "conclusion": "No generated or dynamic test registrations found; count explicit annotated methods per holder, aggregating files sharing a namespace."
+  },
+  "executionRules": [
+    "Java 17 and Gradle 8.8; one writable native process at a time.",
+    "Use a new isolated controlled fixture for every single or seed phase. Never reset, delete or copy played/accepted worlds.",
+    "Seed and verify are separate JVMs with identical source, namespace, runtime manifests and world family; verify depends on successful reviewed seed.",
+    "Replace RUN_LABEL with a new safe lower-case label for the attempt; SOURCE_COMMIT is an exact 40-hex commit.",
+    "Run runGameTestServer with each -I initScripts entry and -P gradleProperties entry, through the native process recorder.",
+    "PASS requires exact expected completion count, exact required-pass count, zero native failures, exit code zero, unchanged committed source, and human log review. Never derive expected count from that same run output.",
+    "Retain logs and failed attempts; no EULA acceptance, deployed mods, live-world changes or owner acceptance implied."
+  ],
+  "runtimeProfiles": {
+    "plain": "Forge 47.4.10 / Minecraft 1.20.1, no external native weapon/vehicle dependency.",
+    "combined": {
+      "preparationVerifiers": [
+        "tools/shop42/prepare_tacz_runtime.py",
+        "tools/sec01_035/prepare_runtime.py"
+      ],
+      "inputArtifactCounts": {
+        "tacz": 7,
+        "sbw": 9
+      },
+      "selectedArtifactCount": 15,
+      "selection": "Keep pinned SimpleBedrockModel 2.6.2 from TaCZ; omit only duplicate top-level SBW 2.5.1, as checked by init scripts.",
+      "runtimePropertiesInjected": [
+        "catancraft.taczRuntimeManifestSHA256",
+        "catancraft.sbwRuntimeManifestSHA256",
+        "catancraft.native42CombinedRuntimeArtifacts",
+        "mixin.env.remapRefMap",
+        "mixin.env.refMapRemappingFile"
+      ]
+    }
+  },
+  "historicalEvidenceSource": "docs/evidence/053_validation_attempts.json",
+  "namespaces": [
+    {
+      "namespace": "catancraft_basic_hall_soil53",
+      "status": "NOT_RUN",
+      "expectedTests": 13,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/BasicHallSoil53Tests.java",
+          "sha256": "cf170ecf485cc3a042ac143bae0d4063d48c31086128d06cfb4c25a174745ae9",
+          "methods": [
+            "legacy_captured_dirt_north_composes_and_recovers_after_payment",
+            "captured_dirt_south_composes_and_recovers_after_payment",
+            "late_native_decay_north_records_once_before_cover_removal",
+            "late_native_decay_south_records_once_before_cover_removal",
+            "legacy_unobserved_late_decay_never_gains_new_authority",
+            "no_parent_and_outside_mask_dirt_remain_strict",
+            "unrelated_conflict_and_wrong_log_cannot_mint_observation",
+            "missing_observation_after_log_removal_refuses_without_invention",
+            "parent_identity_commit_receipt_snapshot_and_child_proof_are_bound",
+            "late_observation_digest_and_schema_are_immutable_child_basis",
+            "native_exposed_regrowth_before_child_capture_stays_strict",
+            "native_exposed_regrowth_after_child_capture_recovers",
+            "unique_pinned_soil_transition_is_qualified_in_all_sixteen_cities"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_hall_soil53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_placement53",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SchematicPlacement53Tests.java",
+          "sha256": "f142dd260c8965fa0c5429a578e06806ca8503687e3d70684422178a691de368",
+          "methods": [
+            "native_flag_two_can_change_a_successfully_written_fence",
+            "north_full_l1_bulk_install_is_recognized_by_paid_upgrade",
+            "south_full_l1_bulk_install_is_recognized_by_paid_upgrade",
+            "invalid_rotation_and_native_write_refusal_remain_strict"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_placement53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "placement53-round6",
+          "executed": 4,
+          "passed": 4,
+          "exitCode": 0,
+          "logSHA256": "4e130b842c439923be50f4ce406bc92ebd18dccf069abbe34b66712afce047f0",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_chunk_lifecycle",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ChunkLifecycleTests.java",
+          "sha256": "609e7e77f715c0c615e0e40002f1e6f6c4e203aef0fb9e75bb1ac84a45617ddf",
+          "methods": [
+            "temporary_lease_survives_idle_then_releases_without_forceload",
+            "unbounded_lease_is_refused",
+            "pending_gui_can_resume_without_affording_another_purchase",
+            "interrupted_sliced_purchase_reloads_and_finishes_once_without_external_tickets",
+            "queued_base_city_paths_apply_without_public_command_and_preserve_ledger",
+            "automatic_base_preparation_refuses_real_source_conflict"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_chunk_lifecycle",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_wall_gui",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/WallGuiTests.java",
+          "sha256": "656c75f4628183f9d751c48ddd5697ed7c2c05314c4e0df1f4ac445d4387a59e",
+          "methods": [
+            "dashboard_lists_four_build_buttons_and_catalog_costs",
+            "upgrade_maximum_pending_member_and_missing_material_states",
+            "confirmation_contains_exact_side_tier_price_token_and_cancel",
+            "gui_command_routes_are_registered_with_token_required",
+            "cancel_and_superseded_quote_have_zero_effect",
+            "purchase_upgrade_and_replayed_gui_confirm_are_exactly_once",
+            "expired_quote_and_changed_funds_refuse_without_writes",
+            "wrong_actor_or_side_token_and_owned_world_conflict_refuse"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_wall_gui",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_integration",
+      "status": "NOT_RUN",
+      "expectedTests": 12,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/CombinedIntegrationTests.java",
+          "sha256": "2dd599bf28a8c737ef95692e82db02d289f156727fcf5526466f9e5653c51c34",
+          "methods": [
+            "canonical_city_a_four_components_shared_progress",
+            "canonical_city_i_four_components_shared_progress"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ConstructionHazardTests.java",
+          "sha256": "56ef776c7b2b92cfd7f18cf72471b241434a96de50bc60874df068bbca99f6df",
+          "methods": [
+            "harmless_entities_and_same_support_north",
+            "harmless_entities_and_same_support_south",
+            "collision_support_and_intermediate_north",
+            "collision_support_and_intermediate_south",
+            "full_vehicle_bounds_cross_write_with_center_outside",
+            "attachment_semantics_remain_conservative",
+            "rail_support_semantics_and_entity_set_change",
+            "leash_knot_support_semantics"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/PlannedWorldTests.java",
+          "sha256": "d2f3fc266c68167f655fc6da5d44a9c4ded2aef3c29e03fb1f590467c725f367",
+          "methods": [
+            "simulation_matches_known_shape_write_policy_and_delayed_state",
+            "known_shape_policy_does_not_bypass_native_survival"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_integration",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_reservation_verifier",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/DefenseReservationVerifierTests.java",
+          "sha256": "599821c5fda17adf8e2fc554ca6be75ce3d49a3774df1e2eec02da858ca3747d",
+          "methods": [
+            "cached_full_seal_rejects_same_size_same_timestamp_corruption",
+            "new_legacy_pending_and_resealed_phase_transitions_are_observed",
+            "eviction_and_symlink_replacement_never_reuse_unread_metadata",
+            "pending_connection_blocks_sector_and_legacy_operations"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_reservation_verifier",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_defense",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/DefenseCommandTests.java",
+          "sha256": "9fcae7f6547a758477efe6c051f620a9ebe617ae842276b541dcf7bd22c609ac",
+          "methods": [
+            "only_owning_leader_can_confirm_purchase"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/DefenseTests.java",
+          "sha256": "ff10a27d908d1a6a7e18ae06d3659a607e5b29a337b95862451d40ac3a4d0ed8",
+          "methods": [
+            "all_864_exact_registered_sockets_and_deferred_refusal",
+            "native_a_i_one_charge_duplicate_rollback_exact_refund",
+            "reserve_partial_resume_and_rollback_drift_refusal",
+            "source_support_dependency_owner_refusal_before_charge",
+            "checkpoint_wings_owned_overlap_dependency_and_reverse_order",
+            "insufficient_money_refuses_without_writes_or_history",
+            "insufficient_material_refuses_without_writes_or_history"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_defense",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sectors_p1",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorP1Tests.java",
+          "sha256": "ed372bd743cd89b588ff238896ebf7404fa4550733f74358851be11a77087638",
+          "methods": [
+            "real_basic_upgrade_and_reverse_one_group_payment",
+            "final_authored_component_conflict_is_grouped_and_free",
+            "exact_rotated_geometry_and_authored_road_masks",
+            "native_corner_coupons_absent_and_both_tiers"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_p1",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_producer_growth53",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerGrowth53Tests.java",
+          "sha256": "902f41562e55cfa30cd25a04118d4d9d083a00d66a0840a024f76146d738b1f0",
+          "methods": [
+            "north_all_eight_pinned_revisions_grow_seventeen",
+            "south_all_eight_pinned_revisions_grow_seventeen",
+            "north_native_growth_adopts_all_plots_without_writes",
+            "south_native_growth_adopts_all_plots_without_writes",
+            "north_growth_before_progression_preserves_reads",
+            "south_growth_after_prepared_intent_resumes",
+            "changed_slabs_and_unqualified_ground_refuse_adoption",
+            "legacy_and_forged_growth_proofs_refuse_without_changes"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_growth53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "natural53-round5",
+          "executed": 8,
+          "passed": 8,
+          "exitCode": 0,
+          "logSHA256": "3880b5617b9c90a5cd1a5bc34a03d20ecf09f350f67e06a4458f6ff8dd792a0e",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_basic_target_natural53",
+      "status": "NOT_RUN",
+      "expectedTests": 5,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/BasicTargetNatural53Tests.java",
+          "sha256": "ad37ea2dd4d1a88536f53cbf32e91bcae2abfc5f52d0ca81f7c53ddce1ad053e",
+          "methods": [
+            "north_partial_th2_target_decay_preserves_soil_and_receipt",
+            "south_partial_th2_target_decay_preserves_soil_and_receipt",
+            "future_missing_foreign_and_altered_target_covers_refuse",
+            "source_capture_and_sealed_source_cannot_borrow_target_cover",
+            "th2_target_cover_is_exact_and_qualified_across_all_cities"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_target_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "basic53-round6",
+          "executed": 5,
+          "passed": 5,
+          "exitCode": 0,
+          "logSHA256": "aa657d1c2ee6a6e39567fb9f7e494981e38f7cec58fa0c1506c3bde827a38d41",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_producer_lineage53",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerLineage53Tests.java",
+          "sha256": "3bc2e6d1d9c5f793ebc81c8e86747610624d9ce55a637a5a4e8226dbcef363d3",
+          "methods": [
+            "native_decay_all_tiers_north",
+            "native_decay_all_tiers_south",
+            "forged_history_and_unproved_dirt_north",
+            "forged_history_and_unproved_dirt_south"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_lineage53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "natural53-round5",
+          "executed": 4,
+          "passed": 4,
+          "exitCode": 0,
+          "logSHA256": "c07fa9b53d1f009f9a30868b0f0c85c96d613e6f05f234cf5565a179a133252a",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_copper_natural53",
+      "status": "NOT_RUN",
+      "expectedTests": 9,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/CopperNatural53Tests.java",
+          "sha256": "2cb9af4125263d248e1fa3a2f7e8c07b5485e1c9aa8997e41cf7c54078d68047",
+          "methods": [
+            "refinery_zero_native_ages_recover_once",
+            "refinery_halfturn_native_ages_recover_once",
+            "chemical_halfturn_native_ages_recover_once",
+            "chemical_zero_native_ages_recover_once",
+            "refinery_copper_is_not_an_empty_plot_source",
+            "chemical_copper_is_not_an_empty_plot_source",
+            "refinery_wax_shape_foreign_and_outside_copper_refused",
+            "chemical_wax_shape_foreign_and_outside_copper_refused",
+            "target_qualification_covers_all_cities_slots_and_exact_pins"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_copper_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 9,
+          "passed": 9,
+          "exitCode": 0,
+          "logSHA256": "de3c8de036c3ee565eba3d1ef3bcb35e0d7baa9e5ee7e1c7308807d1532af454",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_civic_natural53",
+      "status": "NOT_RUN",
+      "expectedTests": 10,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/CivicNatural53Tests.java",
+          "sha256": "3d3685f5a01a72ac8c59c7b578241d837b4ca5ed1196bd82cea393b3d33b4960",
+          "methods": [
+            "recorded_native_dirt_north",
+            "recorded_native_dirt_south",
+            "grass_capture_decay_then_soil_first_interruption_north",
+            "grass_capture_decay_then_soil_first_interruption_south",
+            "exposed_foreign_cover_and_changed_history_north",
+            "exposed_foreign_cover_and_changed_history_south",
+            "legacy_original_contract_is_not_reinterpreted_north",
+            "legacy_original_contract_is_not_reinterpreted_south",
+            "native_cleanup_leaf_distance_preimage_and_recovery_north",
+            "native_cleanup_leaf_distance_preimage_and_recovery_south"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_civic_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 10,
+          "passed": 10,
+          "exitCode": 0,
+          "logSHA256": "900149c2f1153bbe1c5feed68000ec119315686f5653c7eb14dce80003e047e0",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_basic_garden53",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/BasicGarden53Tests.java",
+          "sha256": "7a28657b86b71d68e496f635e51351440eeba3fc14c541a1a136b066b9beff46",
+          "methods": [
+            "native_grass_spreads_into_pinned_th1_garden_north",
+            "native_grass_spreads_into_pinned_th1_garden_south",
+            "garden_grass_requires_exact_leaf_before_and_after_intent",
+            "foreign_garden_material_remains_refused",
+            "sealed_grass_cannot_invent_authored_leaf",
+            "qualification_binds_full_pin_orientation_and_all_cities"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_garden53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 6,
+          "passed": 6,
+          "exitCode": 0,
+          "logSHA256": "7a15b180953ae0a7004c23b3fdd7ee8ec1bd80d6c2ec8692431efc0a967a236a",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_producer_adoption53",
+      "status": "NOT_RUN",
+      "expectedTests": 10,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerAdoption53Tests.java",
+          "sha256": "0bf518e3d06d1ef3f173b4cccb822420e8e03ca8845430758792695bf703072e",
+          "methods": [
+            "north_native_decay_adopts_without_writes_or_charge",
+            "south_native_decay_adopts_without_writes_or_charge",
+            "exposed_dirt_refuses_all_plot_adoption",
+            "changed_cover_cannot_authorize_dirt",
+            "other_ground_material_remains_a_conflict",
+            "foreign_inventory_refuses_and_keeps_its_items",
+            "changed_map_cannot_adopt_original_producer",
+            "quarry_barrel_native_decay_adopts_without_inventory_or_open_changes",
+            "changed_barrel_facing_cannot_authorize_soil",
+            "foreign_inventory_is_not_an_approved_soil_cover"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_adoption53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "natural53-round5",
+          "executed": 10,
+          "passed": 10,
+          "exitCode": 0,
+          "logSHA256": "424b068c81704f21c71e072216bde2935fd59d517e2fd078e3e17ea093684daa",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_house_natural53",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/HouseNatural53Tests.java",
+          "sha256": "8a6c68cfa03bf1684670ac37e6cf5f59e782000e31cb267283bef5301bc260eb",
+          "methods": [
+            "source_r1_decay_north",
+            "source_r1_decay_south",
+            "source_r2_decay_north",
+            "source_r2_decay_south",
+            "original_grass_journal_pending_and_reverse_north",
+            "original_grass_journal_pending_and_reverse_south",
+            "missing_wrong_exposed_cover_and_false_beforeimage_north",
+            "missing_wrong_exposed_cover_and_false_beforeimage_south"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_house_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 8,
+          "passed": 8,
+          "exitCode": 0,
+          "logSHA256": "01bf582da3b5a97205233df3054b42cc1f1d434ea15b704fc79b5e3646e9e484",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_streetscape_natural53",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/StreetscapeNatural53Tests.java",
+          "sha256": "913e8a838907a21cb19043f8eeffd55acec347108ecda6eed3121bddc250addd",
+          "methods": [
+            "source_and_target_native_decay_north",
+            "source_and_target_native_decay_south",
+            "exposed_future_missing_and_foreign_north",
+            "exposed_future_missing_and_foreign_south",
+            "retained_schema27_history_north",
+            "retained_schema27_history_south"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_streetscape_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 6,
+          "passed": 6,
+          "exitCode": 0,
+          "logSHA256": "5d35731866699bc9b9dd0b0b1d3f8a4b9359b3a668b8da0de0659f9273d50894",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_prestige_natural53",
+      "status": "NOT_RUN",
+      "expectedTests": 14,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/PrestigeNatural53Tests.java",
+          "sha256": "437aa1a1b435a2a4bdaaecaf86add0d352f40af54c9faa5748cfe67b042608a8",
+          "methods": [
+            "north_th3_partial_target_decay_recovers_once",
+            "south_th3_partial_stair_cover_decay_recovers_once",
+            "north_th4_r1_aged_reads_upgrade_without_soil_writes",
+            "south_th4_r2_aged_reads_upgrade_without_soil_writes",
+            "target_dirt_without_owned_cover_refuses_recovery",
+            "source_exposed_soil_and_foreign_cover_refuse_before_capture",
+            "proof_is_canonical_and_legacy_histories_stay_strict",
+            "repair_and_rollback_preserve_aged_reads_and_history",
+            "north_obsolete_covers_clear_before_target_grass",
+            "south_obsolete_covers_clear_before_target_grass",
+            "north_th3_planters_have_no_native_grass_route",
+            "south_th3_planters_have_no_native_grass_route",
+            "north_partial_new_ground_cannot_regrow_old_planters",
+            "south_partial_new_ground_cannot_regrow_old_planters"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_prestige_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "natural53-round5",
+          "executed": 14,
+          "passed": 14,
+          "exitCode": 0,
+          "logSHA256": "1986729952b47d8e77f0ec7c00e1ac396f910cc3a3a9600b602fbc9aecc740c4",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_startup53",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/Startup53Tests.java",
+          "sha256": "251cdca355e04dcae3508a3db58a6dcca9b8137f7470e351c8e7948816319962",
+          "methods": [
+            "every_city_automatic_context_uses_fresh_identity_without_legacy_opt_in"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_startup53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "sector53-round5",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "92b6cda19fab6fba3ae7e271988a8a9e55022e488851555609eadab3fba64d7b",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_sector53",
+      "status": "NOT_RUN",
+      "expectedTests": 19,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorSites53Tests.java",
+          "sha256": "d4680b39552f0d4be4b841322c7708fea24cb6e297ffc934404229715136eedc",
+          "methods": [
+            "city_a_all_levels_corners_transitions_and_rollback",
+            "city_b_all_levels_corners_transitions_and_rollback",
+            "city_c_all_levels_corners_transitions_and_rollback",
+            "city_d_all_levels_corners_transitions_and_rollback",
+            "city_e_all_levels_corners_transitions_and_rollback",
+            "city_f_all_levels_corners_transitions_and_rollback",
+            "city_g_all_levels_corners_transitions_and_rollback",
+            "city_h_all_levels_corners_transitions_and_rollback",
+            "city_i_all_levels_corners_transitions_and_rollback",
+            "city_j_all_levels_corners_transitions_and_rollback",
+            "city_k_all_levels_corners_transitions_and_rollback",
+            "city_l_all_levels_corners_transitions_and_rollback",
+            "city_m_all_levels_corners_transitions_and_rollback",
+            "city_n_all_levels_corners_transitions_and_rollback",
+            "city_o_all_levels_corners_transitions_and_rollback",
+            "city_p_all_levels_corners_transitions_and_rollback",
+            "legacy_a_unchanged_and_all_new_city_contracts_bound",
+            "changed_map_and_unsupported_geometry_refuse",
+            "all_new_cities_inherit_only_the_exact_paid_group_parent"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "sector53-round5",
+          "executed": 19,
+          "passed": 19,
+          "exitCode": 0,
+          "logSHA256": "209accbe6a146f23652a3acf124dd21cb7060f3a9564bbd04422e3cda3656c36",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_startup34",
+      "status": "NOT_RUN",
+      "expectedTests": 3,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/StartupRecovery34Tests.java",
+          "sha256": "2f3922ef617bee5c90c7c43ade23aea3c0c3f254e19aad48a068f8c069219a0d",
+          "methods": [
+            "production_producer_discovery_retries_original_price_then_settles_once",
+            "production_legacy_defense_discovery_resumes_original_price_and_receipt",
+            "production_legacy_defense_discovery_finishes_rollback_and_refunds_once"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_startup34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "CatanCraft_Season1_R7_Development",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_paid_recovery",
+      "status": "NOT_RUN",
+      "expectedTests": 19,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/PaidAssetRecoveryTests.java",
+          "sha256": "a83495d40a829b6f418a2f4cdeada07eca69145d666f878694b63b5c23a4df1b",
+          "methods": [
+            "city_a_commercial_partial_original_recovers",
+            "city_a_logistics_legacy_paid_inventory_preserved",
+            "south_commercial_rotated_contract_recovers",
+            "south_logistics_rotated_contract_recovers",
+            "th3_to_th4_original_paid_journal_partial_recovery",
+            "th4_r1_to_th5_paid_journal_partial_recovery",
+            "th4_r2_to_th5_legacy_saved_payment_not_repeated"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/PaidRecoveryTests.java",
+          "sha256": "239e12fb3a306d28b8df5bbce9782a88432b7e680df5ee054fe42537b4008e62",
+          "methods": [
+            "unpaid_resume_and_repeated_completion_are_idempotent",
+            "partial_physical_recovery_preserves_original_and_debits_once",
+            "unsaved_debit_reloads_source_ledger_then_pays_once",
+            "saved_debit_before_final_journal_is_not_repeated",
+            "failed_save_cannot_mark_committed",
+            "unexpected_block_refuses_all_writes_and_charge",
+            "already_installed_barrel_inventory_survives_completion",
+            "original_journal_change_refuses_recovery",
+            "corrupted_companion_is_not_overwritten",
+            "missing_required_receipt_is_not_inferred_from_balance",
+            "changed_owner_refuses_without_mutation",
+            "occupied_cell_waits_without_removing_entity"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_paid_recovery",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_construction34",
+      "status": "NOT_RUN",
+      "expectedTests": 28,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ConstructionSafetyTests.java",
+          "sha256": "e2d28e3d884653718c3b54f2a15a24dc9a107ebe588c62e0f4944f1a2ea09639",
+          "methods": [
+            "th1_to_th2_north_book_partial_restart_receipt",
+            "th2_to_th3_north_book_partial_restart_receipt",
+            "th1_to_th2_south_book_partial_restart_receipt",
+            "th2_to_th3_south_book_partial_restart_receipt",
+            "all_nine_factories_north_slots_partial_recovery",
+            "all_nine_factories_south_slots_partial_recovery",
+            "full_context_conflict_and_foreign_inventory_no_intent_no_charge",
+            "initial_save_failure_leaves_no_intent_or_blocks",
+            "physical_save_failure_retains_source_and_settles_once",
+            "saved_charge_original_receipt_not_repeated",
+            "altered_before_image_and_owner_are_refused",
+            "occupied_mutation_refuses_without_removing_item",
+            "missing_ordinary_doors_supported_book_not_recreated",
+            "unaffordable_source_and_duplicate_slot_no_intent",
+            "all_factory_anchors_and_hall_manager_match_pinned_bounds",
+            "old_direct_paid_paste_entrypoints_refuse",
+            "typed_loading_and_occupancy_retry_then_complete",
+            "hard_conflict_not_retried_as_temporary",
+            "stopped_queue_drops_no_paid_or_physical_state",
+            "producer_partial_resume_uses_common_retry_queue",
+            "legacy_defense_partial_rollback_retries_and_refunds_once",
+            "real_book_used_after_partial_hall_recovery_is_preserved",
+            "normal_target_doors_after_physical_interruption_resume",
+            "legacy_prepared_defense_waits_for_original_price_without_writes",
+            "delivered_palette_defaults_and_invalid_properties",
+            "native_legacy_support_proof_retains_dirt_and_rejects_foreign_material",
+            "missing_legacy_support_proof_stays_strict_without_rewriting_history",
+            "unexposed_and_corrupt_defense_support_proof_refuse_without_charge"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_construction34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "basic53-round6",
+          "executed": 28,
+          "passed": 28,
+          "exitCode": 0,
+          "logSHA256": "0bd2a997a612b26472d9bdd4e7a3148d20e1446b8457feda76e6dacc28e95696",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_producer_source34",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerSourceProof34Tests.java",
+          "sha256": "48c6be5e1fdcd0e3380a7ca35746c8d30943add674b95760ce8d2f5365bafa27",
+          "methods": [
+            "prepared_native_source_decay_resumes_once_preserving_inventory",
+            "fresh_aged_source_seals_exact_cover_and_preserves_dirt",
+            "proofless_history_keeps_strict_source_without_charge_or_rewrite",
+            "corrupt_proof_exposed_dirt_and_foreign_states_refuse"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_source34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_producer_r2",
+      "status": "NOT_RUN",
+      "expectedTests": 9,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerExteriorR2Tests.java",
+          "sha256": "78a1554de4d88e21f20e8bf0952e2acafacab3d07cfa5bf2220e920a74d81add",
+          "methods": [
+            "nine_exact_pairs_both_rotations",
+            "paid_l5_free_north",
+            "paid_l5_free_south",
+            "interrupted_forward_reverse_north",
+            "interrupted_forward_reverse_south",
+            "future_purchase_original_source",
+            "future_purchase_corrected_source",
+            "pending_r1_contract_recovers_unchanged",
+            "last_plot_conflict_refuses_group_without_charge"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_r2",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_base_lifecycle",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/BaseCityLifecycleTests.java",
+          "sha256": "752d028bd57b174eda847ccf3cde1177e244c6b76163fa95c8eec3e44a1fc7bd",
+          "methods": [
+            "temporary_entity_collision_retries_without_restart_or_command",
+            "interrupted_public_journal_is_resumed_not_skipped",
+            "intentional_public_rollback_is_not_reapplied",
+            "corrupt_public_history_is_blocked_not_ready",
+            "committed_public_verification_does_not_rewrite_receipt",
+            "six_houses_initialize_without_maintenance_command",
+            "interrupted_house_operation_resumes_original_history",
+            "intentionally_rolled_back_houses_stay_rolled_back"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_base_lifecycle",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sectors_service",
+      "status": "NOT_RUN",
+      "expectedTests": 15,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/FreshDemoAuthorizationTests.java",
+          "sha256": "bd57fa655394923abcfa03155ae35a71de185cd4f30f1b732f7efb90e45abf5d",
+          "methods": [
+            "bound_fresh_identity_preserves_progress_and_refuses_foreign_world",
+            "ordinary_progression_uses_bound_demo_without_legacy_repair_marker"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorServiceTests.java",
+          "sha256": "b6bdbf7a5f286e7b4d9e1ed9c7efb9dc1567bf3ac40e9a72351f364a805c4365",
+          "methods": [
+            "four_absolute_compass_sides_upgrade_and_duplicate_server_binding",
+            "stale_quotes_bind_price_corner_neighbor_owner_and_tick",
+            "native_resume_and_reverse_use_recorded_plan_cost_saveddata_reload",
+            "mixed_neighbor_interface_and_actual_corner_read_are_guarded",
+            "legacy_city_reservation_and_reentrant_request_do_not_bypass_sector",
+            "service_preflight_last_piece_and_separate_money_material_refusal",
+            "paid_pending_is_not_complete_and_current_pointer_refuses_missing_history",
+            "production_catalog_empty_and_fixture_world_identity_cannot_be_rebound",
+            "harmless_entity_preserved_and_unsafe_entity_refuses_through_adapter",
+            "startup_recovery_isolates_foreign_city_and_finishes_real_paid_journal",
+            "provisional_catalog_sealed_quote_incremental_upgrade_and_historical_recovery",
+            "provisional_price_fresh_refusals_and_same_price_version_change_are_free",
+            "scheduled_failure_stop_reload_and_historical_resume_are_single_charge"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_service",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sector_connections",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorConnectionsTests.java",
+          "sha256": "3c9b79475a9fe1684f25838e4aca8f9442e2393a54e7d3a33c34e79acb63a278",
+          "methods": [
+            "twelve_exclusive_cells_open_once_and_reverse_without_purchase_or_fee",
+            "interrupted_forward_and_inverse_reload_preserve_actual_current_book",
+            "final_cell_or_changed_purchased_neighbor_refuses_before_journal",
+            "split_receipts_and_callback_inventory_mutations_refuse_without_erasing_evidence"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_connections",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sectors_natural",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorNaturalSupportTests.java",
+          "sha256": "5d9dd936bc69e91a4287c963a2e75dd1685f1fd06d5eeca52d9e38da13024120",
+          "methods": [
+            "fresh_is_exact_and_unrelated_reads_foreign_soil_stay_exact",
+            "natural_decay_paid_upgrade_reverse_and_prior_receipt_are_preserved",
+            "partial_install_mixed_soil_and_reverse_reload_keep_exposure_proof",
+            "legacy_strict_specs_and_never_covered_pending_support_refuse_dirt",
+            "upgrade_requires_exact_paid_proof_and_recovery_freezes_it",
+            "fresh_fixed_context_decay_is_exact_and_never_future_cover",
+            "bottom_stair_native_decay_upgrade_and_reverse_preserve_paid_state"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_natural",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sectors_group_proof",
+      "status": "NOT_RUN",
+      "expectedTests": 2,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorCitySupportProofTests.java",
+          "sha256": "6b06dccbafcf2accec87723269302625db532d06bd80363bfa6689f96729b853",
+          "methods": [
+            "new_east_inherits_paid_north_only_from_complete_city_source",
+            "grouped_parent_receipt_assets_site_owner_and_progress_are_exact"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_group_proof",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_city_a_group",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorCityAP3GroupTests.java",
+          "sha256": "db341df0a48a5f5406ff37dfcd9381b0abd7f75193a3d54570c76ac9d7ddc283",
+          "methods": [
+            "complete_city_mixed_upgrade_open_north_oneprice_and_historical_duplicate",
+            "coordinated_last_seam_interruption_reload_resume_and_current_rollback",
+            "late_source_conflict_and_missing_retained_grandparent_refuse_without_charge",
+            "bounded_full_city_all_sides_and_connected_north_upgrade"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_city_a_group",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_shop51",
+      "status": "NOT_RUN",
+      "expectedTests": 9,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ShopSites51Tests.java",
+          "sha256": "1404bf3d8106c409c998564e2f9cfa1e9e4e0ddf21a6a02d8cb2bcd7d412e1b8",
+          "methods": [
+            "all_16_managers_and_48_factories_use_actual_placement_transforms",
+            "ambiguous_absent_wrong_dimension_and_changed_map_sites_refuse",
+            "legacy_city_a_identity_retains_exact_16_key_compounds",
+            "all_city_identities_and_recovery_origins_stay_separate",
+            "exact_quotes_and_frozen_paid_requests_keep_distinct_level_policies",
+            "every_city_th1_to_th5_native_management_context_is_read_only",
+            "every_city_all_three_factory_slots_and_five_tiers_inspect_without_mutation",
+            "every_city_wrong_owner_source_plot_and_changed_native_context_refuse",
+            "all_city_recognition_never_authorizes_a_detached_or_fake_player"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_shop51",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "public-shops53-round6",
+          "executed": 9,
+          "passed": 9,
+          "exitCode": 0,
+          "logSHA256": "7b8e1ad7506dbf6126f7df606af1ea4d1fec397b2c54c8da67775070c635fab9",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_vehicle52",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/VehicleSites52Tests.java",
+          "sha256": "ce3fbc3ed4f20e2baa975ebe1c1837ff011ced2dcefacc6da442241e7c95c398",
+          "methods": [
+            "all_48_vehicle_counters_match_actual_placement_and_independent_coordinates",
+            "absent_ambiguous_wrong_dimension_and_changed_map_refuse",
+            "all_15_legacy_city_a_factory_identity_compounds_remain_exact",
+            "all_48_exact_facilities_refuse_cross_city_plot_world_owner_and_level_changes",
+            "all_240_native_factory_counter_and_tier_inspections_are_read_only",
+            "all_48_native_factories_refuse_wrong_owner_incomplete_source_and_blocked_context",
+            "all_48_recognized_vehicle_counters_still_refuse_fake_players"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle52",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_vehicle52_public",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/VehiclePublicSource52Tests.java",
+          "sha256": "e3f3cd799bff59b4230fb415a6d628f69eedc7c74c4387d3ca4bbfabe8752a46",
+          "methods": [
+            "all_city_completed_and_rolled_back_histories_preserve_inputs",
+            "foreign_identity_contract_schema_and_pending_phases_refuse",
+            "missing_reordered_and_noncanonical_before_after_images_refuse",
+            "absent_sealed_and_symlinked_histories_are_read_only",
+            "all_48_real_plot_envelopes_include_public_deltas_but_preserve_service_roads",
+            "changed_map_cannot_reuse_cached_public_source"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle52_public",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "public-shops53-round6",
+          "executed": 6,
+          "passed": 6,
+          "exitCode": 0,
+          "logSHA256": "ab372bc9e97ca9ad854e3f0205d8dc5e841beca1b800be487a9d802758567c50",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft",
+      "status": "NOT_RUN",
+      "expectedTests": 50,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/gametest/TownHallAccessTests.java",
+          "sha256": "88275df88a79e18aa7ccefcff2cde0f15c782630fb16b1c979d2b37855e138c6",
+          "methods": [
+            "r1_th4_north_access_defects_and_native_control",
+            "r1_th4_south_access_defects_and_native_control",
+            "r1_th5_north_access_defects_and_native_control",
+            "r1_th5_south_access_defects_and_native_control"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/gametest/TownHallDoorTests.java",
+          "sha256": "ea91990d8436b02a5169816a7efdcaf08fe9966765ef54f19f7ad0b79e2c1e08",
+          "methods": [
+            "open_closed_powered_doors",
+            "missing_halves_and_whole_pair",
+            "foreign_blocks_and_door_geometry_refused",
+            "missing_walls_and_malformed_templates_refused",
+            "gates_trapdoors_and_manager_normal_use",
+            "target_halves_are_consistent_without_manual_closing",
+            "drop_suppressed_replacement_keeps_pair",
+            "old_flags_can_remove_unpaired_door"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/gametest/TownHallStateTests.java",
+          "sha256": "d3e97588ad96d0141fc2b89a789d23a332fc6dd0cc248908d397246a173b9b64",
+          "methods": [
+            "all_stair_shapes_both_halves_and_all_facings",
+            "stair_material_facing_half_water_and_missing_still_refused",
+            "fence_pane_wall_and_gate_connections",
+            "environment_properties_remain_narrow",
+            "native_stair_neighbor_update_reproduces_report",
+            "native_fence_neighbor_update_is_accepted",
+            "full_th3_th4_th5_north_settle_without_false_edit_refusals",
+            "full_th3_th4_th5_south_settle_without_false_edit_refusals"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerTests.java",
+          "sha256": "595eab1e45bc04a68a108f04f27909bd4d75ceacddb4c1016051cf4e6f85a272",
+          "methods": [
+            "all_delivered_assets_deltas_and_applicability",
+            "grouped_l1_to_l5_north_one_charge",
+            "grouped_l1_to_l5_south_one_charge",
+            "already_paid_l5_north_free_retrofit",
+            "already_paid_l5_south_free_retrofit",
+            "interrupted_forward_and_rollback_north",
+            "interrupted_forward_and_rollback_south",
+            "saved_payment_receipt_prevents_second_charge",
+            "saved_refund_receipt_prevents_second_refund",
+            "last_plot_conflict_refuses_entire_group",
+            "corrupt_history_and_changed_identity_refuse",
+            "unaffordable_occupied_and_unapproved_refuse",
+            "l5_producers_native_delayed_state_north",
+            "l5_producers_native_delayed_state_south"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/TownHallRepairTests.java",
+          "sha256": "8465fded5466dfc65f4ea545af59685bfde28af7113e76822195dd666d6ae5c9",
+          "methods": [
+            "th4_north_repair_no_charge_and_rollback",
+            "th4_south_repair_no_charge_and_rollback",
+            "th5_north_repair_no_charge_and_rollback",
+            "th5_south_repair_no_charge_and_rollback",
+            "th4_north_partial_repair_recovery",
+            "th4_south_partial_repair_recovery",
+            "th5_north_partial_repair_recovery",
+            "th5_south_partial_repair_recovery",
+            "foreign_block_and_wrong_identity_refuse",
+            "saved_token_interruption_resumes_without_charge",
+            "th4_r2_north_all_delivered_routes",
+            "th4_r2_south_all_delivered_routes",
+            "th5_r2_north_all_delivered_routes",
+            "th5_r2_south_all_delivered_routes",
+            "unapproved_world_cannot_repair",
+            "revision_matrix_has_both_sources_and_corrected_targets"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [],
+      "compatibilityCoverage": "Includes all 16 TownHallRepairTests plus retained producer, access, state and door tests; protects legacy R1/R2 repair apply/resume/rollback semantics."
+    },
+    {
+      "namespace": "catancraft_basic_natural34",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/BasicNaturalSource34Tests.java",
+          "sha256": "709a5931df0743b2045c63738c7d4f3436f0b9f7091b7dbc080dd3d0298e4756",
+          "methods": [
+            "aged_th1_north_native_decay_partial_recovery",
+            "aged_th2_south_native_decay_partial_recovery",
+            "original_source_cover_proves_decay_after_intent",
+            "exposed_source_dirt_is_not_covered_grass",
+            "covered_foreign_material_is_not_natural_dirt",
+            "captured_dirt_cannot_invent_a_source_cover",
+            "future_target_cover_alone_does_not_authorize_dirt"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_natural34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "basic53-round6",
+          "executed": 7,
+          "passed": 7,
+          "exitCode": 0,
+          "logSHA256": "c65e96d4458a396b64c3f965c93c0c67665a28277ee9c18128937406ed6290e0",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_producer_stability",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerStabilityTests.java",
+          "sha256": "bd3ccad46be32889671070e805be235e56b4d56d645b2830f1085a504ab63cad",
+          "methods": [
+            "repeated_native_north",
+            "repeated_native_south",
+            "cave_air_drift_refuses_and_retains_original_transaction",
+            "empty_section_hides_cave_air_until_upgrade_adds_solid",
+            "genuine_falling_block_is_not_deleted_or_ignored",
+            "delivered_gravel_supported_north_all_five_levels",
+            "delivered_gravel_supported_south_all_five_levels"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_stability",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_public27",
+      "status": "NOT_RUN",
+      "expectedTests": 11,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/ProducerOccupancyTests.java",
+          "sha256": "b0cb675e828a9049caf379ee0fe3fecc828e848521407fd227c52304bfcbd150",
+          "methods": [
+            "retry_message_only_for_proven_fresh_refusal"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/StreetscapeTests.java",
+          "sha256": "a1aa424c1d74f894961abc519635fdebed6b4adfe9d15d953ceb11adb1fcadd5",
+          "methods": [
+            "delivered_public_contract_both_rotations",
+            "public_north_apply_repeat_and_reverse",
+            "public_south_apply_repeat_and_reverse",
+            "public_interrupted_forward_and_reverse_reload",
+            "public_saved_world_uncommitted_journal",
+            "public_last_feature_conflict_refuses_whole_group",
+            "public_occupancy_fluid_and_missing_support_refuse",
+            "public_corrupt_foreign_and_drifted_history_refuse",
+            "public_neighbor_inventory_and_native_delayed_state",
+            "public_service_denies_unauthorized_world"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_public27",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_houses",
+      "status": "NOT_RUN",
+      "expectedTests": 11,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/R5HouseTests.java",
+          "sha256": "984be29557e829eff98b560270b37d01f94c91b05f4b22d2d75b574d76913aa8",
+          "methods": [
+            "six_mixed_branches_north",
+            "six_mixed_branches_south",
+            "interrupted_forward_reverse_north",
+            "interrupted_forward_reverse_south",
+            "mixed_unjournaled_and_unowned_target_refuse",
+            "full_context_foreign_state_outside_mask_refuses",
+            "committed_drift_foreign_identity_corrupt_history_refuse",
+            "final_target_native_delayed_survives",
+            "saved_physical_completion_recovers_without_duplicate_writes",
+            "all_six_direct_r1_routes_native",
+            "all_six_staged_r2_routes_native"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_houses",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_north_p2",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorNorthP2Tests.java",
+          "sha256": "b51747203ae9290c79b0b04f20f24f002728d176f451cc9d8476fb78e236439f",
+          "methods": [
+            "full_north_purchase_upgrade_duplicate_and_exact_reverse",
+            "full_north_interrupted_native_reload_historical_resume_and_refund",
+            "full_north_final_cell_and_exact_support_conflicts_charge_nothing",
+            "pinned_north_sparse_masks_caps_roads_and_scope"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_north_p2",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_city_a_p3",
+      "status": "NOT_RUN",
+      "expectedTests": 5,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorCityAP3Tests.java",
+          "sha256": "6af90f74e843f17fdc5008ccea9b3ca9f27baf7d45b72523efbc5b513bc8eb56",
+          "methods": [
+            "all_81_level_combinations_have_exact_exclusive_ownership",
+            "north_upgrade_preserves_each_open_connection_mode",
+            "all_side_upgrades_reverse_exactly_with_mixed_neighbors",
+            "purchase_coordinates_neighbor_caps_and_retains_rear_access",
+            "unsupported_connection_or_tier_refuses"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_city_a_p3",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sectors",
+      "status": "NOT_RUN",
+      "expectedTests": 22,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorContractTests.java",
+          "sha256": "491ba3dccbdba58cc2332458b7c39503a63f1d2df94aaa331963a9eff3f7dd7c",
+          "methods": [
+            "compass_is_absolute_for_both_city_rotations",
+            "shared_cells_roads_and_missing_corner_ownership_refuse",
+            "north_can_preserve_incident_ownership_without_inventing_south",
+            "quote_rejects_same_level_new_receipt_owner_price_and_revision",
+            "aggregate_price_exact_unknown_and_overflow_refuse",
+            "four_sector_partition_rejects_other_side_reads_and_preserved_union"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorInterfaceTests.java",
+          "sha256": "d7a2a6dad741a947c61d1e5413977074740da747ce2dd9dfd2a5cbe449c7c86d",
+          "methods": [
+            "compass_shopping_and_retained_legacy_recovery"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorReservationTests.java",
+          "sha256": "09941e7ebf6cebd06ff525e765145f1d375fd7149732ec762e5b6996e28833ed",
+          "methods": [
+            "pending_city_lock_spans_both_backends_and_rejects_foreign_history"
+          ]
+        },
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorTransactionTests.java",
+          "sha256": "ed2ad1b2d28a108234a6f2eecd67609f95242d9cc70c4520c3c6841ecb957dd5",
+          "methods": [
+            "whole_side_last_cell_conflict_is_atomic",
+            "insufficient_money_has_no_partial_side_or_debit",
+            "insufficient_materials_has_no_partial_side_or_debit",
+            "upgrade_one_group_charge_duplicate_and_exact_previous_receipt",
+            "interrupted_group_resume_historical_cost_and_current_inventory",
+            "rollback_drift_refuses_before_refund_or_other_piece_writes",
+            "stale_protected_read_and_neighbor_quote_refuse",
+            "crash_after_paid_and_refunded_ledger_never_repeats_money",
+            "harmless_entity_survives_and_actual_solid_obstruction_refuses",
+            "malformed_history_cost_and_inventory_replacement_are_refused",
+            "bounded_runner_yields_without_exposing_paid_level",
+            "bounded_runner_detects_between_slice_read_drift_and_recovers",
+            "bounded_runner_refuses_new_collision_on_next_tick",
+            "bounded_runner_reopens_and_rejects_resealed_journal_rewrite"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sector_prices",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorPriceCatalogTests.java",
+          "sha256": "07271aa4754d1b33c0fe0b4a586726f6816cbc6e5d9307b0f9bca3d0146404c9",
+          "methods": [
+            "all_four_compass_sides_have_identical_versioned_incremental_prices",
+            "unknown_side_and_every_unsupported_level_refuse_without_free_fallback",
+            "returned_material_maps_cannot_mutate_shared_catalog",
+            "exact_basic_plus_reinforced_charge_is_5500_and_original_materials_once",
+            "insufficient_money_cannot_consume_any_material",
+            "each_insufficient_material_cannot_consume_money_or_other_materials",
+            "historical_cost_decoder_keeps_recorded_amounts_instead_of_current_schedule"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_prices",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_house_natural53_restart",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/HouseNatural53Tests.java",
+          "sha256": "8a6c68cfa03bf1684670ac37e6cf5f59e782000e31cb267283bef5301bc260eb",
+          "methods": [
+            "committed_original_grass_two_orientations_process_restart"
+          ]
+        }
+      ],
+      "phases": [
+        "seed",
+        "verify"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_house_natural53_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "${PHASE}",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "seed",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "cd19f96ce0d16795ab1f2a469427afd5b0defd70204fb8b882e1774d1f37a89a",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        },
+        {
+          "phase": "verify",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "8ada7a82be8a996f409f054076923848f58715aac83a2d825f89fdaadc93b5d2",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_streetscape_restart53",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/StreetscapeRestart53Tests.java",
+          "sha256": "7cc0a6fc8e7121cdd8a64d95e8edf9dc6fc6eb973bed53a9c11b3c17b067b28e",
+          "methods": [
+            "source_prepare_and_target_rollback_survive_process_restart"
+          ]
+        }
+      ],
+      "phases": [
+        "seed",
+        "verify"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_streetscape_restart53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "${PHASE}",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "seed",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "6f4d1326b8e66ac610e6820772f0d26bb120bb20e344f611c3ccc9244a4bde58",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        },
+        {
+          "phase": "verify",
+          "source": "3e2b118125b62233583ba9ecb24a9de9f4bad541",
+          "attempt": "natural53-round4",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "0eca123ab9107cc6dd83dcc1dd06ae179b321a7ae00b2e6f830b727158c8e6e9",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_prestige_natural53_restart",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/PrestigeNatural53RestartTests.java",
+          "sha256": "d055a22be3fccc274e1f632d37a6018a1e7c55948df9ec043231d809059b6c6a",
+          "methods": [
+            "pending_aged_purchases_resume_automatically_in_new_process"
+          ]
+        }
+      ],
+      "phases": [
+        "seed",
+        "verify"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_prestige_natural53_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "${PHASE}",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "seed",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "natural53-round5",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "8ed178427598a2e6be4e8b91d43257915cb40a47c1861c8dde04db0408bac38f",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        },
+        {
+          "phase": "verify",
+          "source": "f97258316ffc265d3db6256c0387f56cb57c16d3",
+          "attempt": "natural53-round5",
+          "executed": 1,
+          "passed": 1,
+          "exitCode": 0,
+          "logSHA256": "49c934f5dfe1ec3d0424c50ec59a9fe4de382107b77a6ac5b5132bd199af9473",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_handheld44",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/HandheldWeapons44Tests.java",
+          "sha256": "e75307c3a88a909bc1b78493495258abdbdf7b16167b81d8b1db7de1d5dfb61d",
+          "methods": [
+            "every_registered_sbw_gun_is_blocked_and_tacz_stays_available",
+            "actual_native_gun_shooting_and_overrides_stop_before_any_side_effect",
+            "real_handheld_packets_and_bow_release_are_inert_without_reading_context",
+            "loaded_recipes_and_final_forge_loot_filter_exclude_native_guns",
+            "forge_interaction_and_pickup_refuse_both_hands_without_deleting_history",
+            "genuine_vehicle_weapon_fires_but_forged_handheld_vehicle_context_cannot",
+            "serialized_legacy_sbw_gun_remains_preserved_and_inert"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [
+        "tools/shop44/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_handheld44",
+        "controlledGameTests": "true",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [],
+      "executionConstraint": "Current init hardcodes build/controlled-catancraft_handheld44-run. Do not pass controlledRunLabel; require this path to be absent in an isolated checkout, or validate an init update before execution. Never reset/reuse an earlier single-phase world."
+    },
+    {
+      "namespace": "catancraft_sbw",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SbwRetrievalTests.java",
+          "sha256": "263049f45a6f66724093d8094e6114e850f30409c95c4ebf3cb04a2762553f17",
+          "methods": [
+            "purchased_pickup_and_lav_direct_retrieval_refused",
+            "purchased_helper_refuses_both_hands",
+            "actual_override_retrieval_paths_refused",
+            "artillery_actual_offhand_interaction_refused",
+            "forge_event_guard_checks_both_hands",
+            "unpurchased_pickup_retrieval_still_awards_item",
+            "purchased_tag_survives_actual_entity_serialization"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sbw",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_service50",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/VehicleService50Tests.java",
+          "sha256": "a7daa51838d48ea13241d13f9410ec38d56d64d813daf3348d32fa7159726a98",
+          "methods": [
+            "native_refuel_meter_and_replay",
+            "reservation_blocks_native_external_charge_mount_and_restores_nbt",
+            "attempted_missing_debit_holds_without_charge",
+            "durable_debit_and_addition_reconcile_once",
+            "new_purchase_includes_quarter_once",
+            "new_lav_purchase_includes_quarter_once",
+            "completion_marker_before_unlock_is_recoverable_and_checks_receipts",
+            "fractional_credit_survives_native_ledger_readback_and_pays_next_fill"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_service50",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_vehicle52_native",
+      "status": "NOT_RUN",
+      "expectedTests": 96,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/NativeVehicleSites52Tests.java",
+          "sha256": "57b8a6db40db3e9d0f7a334ae94aa2bd1f89dfaf3b95bcd2fabc58724b58c12b",
+          "methods": [
+            "a_plot_1_pickup",
+            "a_plot_1_lav",
+            "a_plot_3_pickup",
+            "a_plot_3_lav",
+            "a_plot_4_pickup",
+            "a_plot_4_lav",
+            "b_plot_1_pickup",
+            "b_plot_1_lav",
+            "b_plot_3_pickup",
+            "b_plot_3_lav",
+            "b_plot_4_pickup",
+            "b_plot_4_lav",
+            "c_plot_1_pickup",
+            "c_plot_1_lav",
+            "c_plot_3_pickup",
+            "c_plot_3_lav",
+            "c_plot_4_pickup",
+            "c_plot_4_lav",
+            "d_plot_1_pickup",
+            "d_plot_1_lav",
+            "d_plot_3_pickup",
+            "d_plot_3_lav",
+            "d_plot_4_pickup",
+            "d_plot_4_lav",
+            "e_plot_1_pickup",
+            "e_plot_1_lav",
+            "e_plot_3_pickup",
+            "e_plot_3_lav",
+            "e_plot_4_pickup",
+            "e_plot_4_lav",
+            "f_plot_1_pickup",
+            "f_plot_1_lav",
+            "f_plot_3_pickup",
+            "f_plot_3_lav",
+            "f_plot_4_pickup",
+            "f_plot_4_lav",
+            "g_plot_1_pickup",
+            "g_plot_1_lav",
+            "g_plot_3_pickup",
+            "g_plot_3_lav",
+            "g_plot_4_pickup",
+            "g_plot_4_lav",
+            "h_plot_1_pickup",
+            "h_plot_1_lav",
+            "h_plot_3_pickup",
+            "h_plot_3_lav",
+            "h_plot_4_pickup",
+            "h_plot_4_lav",
+            "i_plot_1_pickup",
+            "i_plot_1_lav",
+            "i_plot_3_pickup",
+            "i_plot_3_lav",
+            "i_plot_4_pickup",
+            "i_plot_4_lav",
+            "j_plot_1_pickup",
+            "j_plot_1_lav",
+            "j_plot_3_pickup",
+            "j_plot_3_lav",
+            "j_plot_4_pickup",
+            "j_plot_4_lav",
+            "k_plot_1_pickup",
+            "k_plot_1_lav",
+            "k_plot_3_pickup",
+            "k_plot_3_lav",
+            "k_plot_4_pickup",
+            "k_plot_4_lav",
+            "l_plot_1_pickup",
+            "l_plot_1_lav",
+            "l_plot_3_pickup",
+            "l_plot_3_lav",
+            "l_plot_4_pickup",
+            "l_plot_4_lav",
+            "m_plot_1_pickup",
+            "m_plot_1_lav",
+            "m_plot_3_pickup",
+            "m_plot_3_lav",
+            "m_plot_4_pickup",
+            "m_plot_4_lav",
+            "n_plot_1_pickup",
+            "n_plot_1_lav",
+            "n_plot_3_pickup",
+            "n_plot_3_lav",
+            "n_plot_4_pickup",
+            "n_plot_4_lav",
+            "o_plot_1_pickup",
+            "o_plot_1_lav",
+            "o_plot_3_pickup",
+            "o_plot_3_lav",
+            "o_plot_4_pickup",
+            "o_plot_4_lav",
+            "p_plot_1_pickup",
+            "p_plot_1_lav",
+            "p_plot_3_pickup",
+            "p_plot_3_lav",
+            "p_plot_4_pickup",
+            "p_plot_4_lav"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle52_native",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "vehicle52Source": "${SOURCE_COMMIT}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [
+        {
+          "phase": "single",
+          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
+          "attempt": "vehicle-native53-round6",
+          "executed": 96,
+          "passed": 96,
+          "exitCode": 0,
+          "logSHA256": "0f7b8d93fc5f682bd2ba16e24e072993333f56105c190fee68c63d9e8d67c0f4",
+          "testSourceFilesUnchanged": true,
+          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
+        }
+      ]
+    },
+    {
+      "namespace": "catancraft_sbw_procurement35",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SbwProcurement35Tests.java",
+          "sha256": "6d2c0a556941e8df064d49f5ffdf2b5954b6cc2e177c0b4e9b8204ea4c7f04a2",
+          "methods": [
+            "actual_purchase_persists_through_separate_jvm"
+          ]
+        }
+      ],
+      "phases": [
+        "seed",
+        "verify"
+      ],
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sbw_procurement35",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}",
+        "sbwRestartPhase": "${PHASE}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_service50_restart",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/VehicleService50RestartTests.java",
+          "sha256": "e339d3b6cd7a4dc5b8fe96832e7a4a28e43348ae9d813f9d52a4c5e28cd0fdf2",
+          "methods": [
+            "actual_native_locked_energy_and_paid_receipt_survive_restart"
+          ]
+        }
+      ],
+      "phases": [
+        "seed",
+        "verify"
+      ],
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_service50_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}",
+        "service50Phase": "${PHASE}",
+        "service50Source": "${SOURCE_COMMIT}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sector_hall_context53",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorHallContext53Tests.java",
+          "sha256": "ae95aaff63c89dbcdb74fa5cb4c24d27d99540343fe4a9041fb1123caedd791e",
+          "methods": [
+            "all_city_all_revision_readonly_masks_are_exact",
+            "north_paid_th4_context_and_frozen_token",
+            "south_paid_th5_context_from_r1",
+            "south_paid_th5_context_from_r2",
+            "pending_then_completed_recovery_context_keeps_original",
+            "original_identity_delta_receipt_and_owner_tampering_refused",
+            "tier_marker_without_original_never_earns_context",
+            "retained_r1_purchase_accepts_only_canonical_completed_repair"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_hall_context53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sector_hall_composition53",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorHallComposition53Tests.java",
+          "sha256": "eb2d3585b516e144f9856a77b952946144a48527dda6bc0d62a4af125eacf431",
+          "methods": [
+            "older_completed_wall_accepts_later_paid_hall_without_rewriting_history",
+            "purchase_after_paid_south_hall_preserves_approach_and_exact_price",
+            "earned_context_replaces_grass_expectation_and_keeps_other_reads_strict",
+            "changed_hall_stops_frozen_runner_then_resume_and_rollback_preserve_hall",
+            "changed_paid_hall_bytes_stop_next_slice_without_wall_mutation",
+            "retained_partial_wall_waits_for_real_paid_hall_recovery_then_resumes",
+            "retained_side_plan_receives_only_original_declared_hall_reads"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_hall_composition53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_sector_hall_concurrency53",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/SectorHallConcurrency53Tests.java",
+          "sha256": "773684711cfcf3725c6798ee0b213be0a548a990d6ebc21231ef4dc9328c9221",
+          "methods": [
+            "pending_hall_rotates_exact_wall_job_without_starving_other_city",
+            "corrupt_foreign_hall_is_quarantined_without_starving_other_city",
+            "every_city_pending_defense_blocks_new_hall_before_any_write",
+            "active_or_loading_wall_blocks_only_its_city_hall"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_hall_concurrency53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    }
+  ],
+  "runs": [
+    {
+      "id": "catancraft_basic_hall_soil53-single",
+      "namespace": "catancraft_basic_hall_soil53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 13,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_hall_soil53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_basic_hall_soil53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_placement53-single",
+      "namespace": "catancraft_placement53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_placement53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_placement53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_chunk_lifecycle-single",
+      "namespace": "catancraft_chunk_lifecycle",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_chunk_lifecycle",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_chunk_lifecycle",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_wall_gui-single",
+      "namespace": "catancraft_wall_gui",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_wall_gui",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_wall_gui",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_integration-single",
+      "namespace": "catancraft_integration",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 12,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_integration",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_integration",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_reservation_verifier-single",
+      "namespace": "catancraft_reservation_verifier",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_reservation_verifier",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_reservation_verifier",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_defense-single",
+      "namespace": "catancraft_defense",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_defense",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_defense",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sectors_p1-single",
+      "namespace": "catancraft_sectors_p1",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_p1",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sectors_p1",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_producer_growth53-single",
+      "namespace": "catancraft_producer_growth53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_growth53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_producer_growth53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_basic_target_natural53-single",
+      "namespace": "catancraft_basic_target_natural53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 5,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_target_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_basic_target_natural53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_producer_lineage53-single",
+      "namespace": "catancraft_producer_lineage53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_lineage53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_producer_lineage53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_copper_natural53-single",
+      "namespace": "catancraft_copper_natural53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 9,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_copper_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_copper_natural53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_civic_natural53-single",
+      "namespace": "catancraft_civic_natural53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 10,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_civic_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_civic_natural53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_basic_garden53-single",
+      "namespace": "catancraft_basic_garden53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_garden53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_basic_garden53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_producer_adoption53-single",
+      "namespace": "catancraft_producer_adoption53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 10,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_adoption53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_producer_adoption53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_house_natural53-single",
+      "namespace": "catancraft_house_natural53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_house_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_house_natural53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_streetscape_natural53-single",
+      "namespace": "catancraft_streetscape_natural53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_streetscape_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_streetscape_natural53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_prestige_natural53-single",
+      "namespace": "catancraft_prestige_natural53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 14,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_prestige_natural53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_prestige_natural53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_startup53-single",
+      "namespace": "catancraft_startup53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_startup53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_startup53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sector53-single",
+      "namespace": "catancraft_sector53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 19,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sector53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_startup34-single",
+      "namespace": "catancraft_startup34",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 3,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_startup34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_startup34",
+      "worldFolder": "CatanCraft_Season1_R7_Development"
+    },
+    {
+      "id": "catancraft_paid_recovery-single",
+      "namespace": "catancraft_paid_recovery",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 19,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_paid_recovery",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_paid_recovery",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_construction34-single",
+      "namespace": "catancraft_construction34",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 28,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_construction34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_construction34",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_producer_source34-single",
+      "namespace": "catancraft_producer_source34",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_source34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_producer_source34",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_producer_r2-single",
+      "namespace": "catancraft_producer_r2",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 9,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_r2",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_producer_r2",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_base_lifecycle-single",
+      "namespace": "catancraft_base_lifecycle",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_base_lifecycle",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_base_lifecycle",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sectors_service-single",
+      "namespace": "catancraft_sectors_service",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 15,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_service",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sectors_service",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sector_connections-single",
+      "namespace": "catancraft_sector_connections",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_connections",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sector_connections",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sectors_natural-single",
+      "namespace": "catancraft_sectors_natural",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_natural",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sectors_natural",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sectors_group_proof-single",
+      "namespace": "catancraft_sectors_group_proof",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 2,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors_group_proof",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sectors_group_proof",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_city_a_group-single",
+      "namespace": "catancraft_city_a_group",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_city_a_group",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_city_a_group",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_shop51-single",
+      "namespace": "catancraft_shop51",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 9,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_shop51",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_shop51",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_vehicle52-single",
+      "namespace": "catancraft_vehicle52",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle52",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_vehicle52",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_vehicle52_public-single",
+      "namespace": "catancraft_vehicle52_public",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle52_public",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_vehicle52_public",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft-single",
+      "namespace": "catancraft",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 50,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_basic_natural34-single",
+      "namespace": "catancraft_basic_natural34",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_basic_natural34",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_basic_natural34",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_producer_stability-single",
+      "namespace": "catancraft_producer_stability",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_producer_stability",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_producer_stability",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_public27-single",
+      "namespace": "catancraft_public27",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 11,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_public27",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_public27",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_houses-single",
+      "namespace": "catancraft_houses",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 11,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_houses",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_houses",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_north_p2-single",
+      "namespace": "catancraft_north_p2",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_north_p2",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_north_p2",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_city_a_p3-single",
+      "namespace": "catancraft_city_a_p3",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 5,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_city_a_p3",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_city_a_p3",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sectors-single",
+      "namespace": "catancraft_sectors",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 22,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sectors",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sectors",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sector_prices-single",
+      "namespace": "catancraft_sector_prices",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_prices",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sector_prices",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_house_natural53_restart-seed",
+      "namespace": "catancraft_house_natural53_restart",
+      "phase": "seed",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_house_natural53_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "seed",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_house_natural53_restart",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_house_natural53_restart-verify",
+      "namespace": "catancraft_house_natural53_restart",
+      "phase": "verify",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_house_natural53_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "verify",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [
+        "catancraft_house_natural53_restart-seed"
+      ],
+      "worldFamily": "catancraft_house_natural53_restart",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_streetscape_restart53-seed",
+      "namespace": "catancraft_streetscape_restart53",
+      "phase": "seed",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_streetscape_restart53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "seed",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_streetscape_restart53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_streetscape_restart53-verify",
+      "namespace": "catancraft_streetscape_restart53",
+      "phase": "verify",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_streetscape_restart53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "verify",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [
+        "catancraft_streetscape_restart53-seed"
+      ],
+      "worldFamily": "catancraft_streetscape_restart53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_prestige_natural53_restart-seed",
+      "namespace": "catancraft_prestige_natural53_restart",
+      "phase": "seed",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_prestige_natural53_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "seed",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_prestige_natural53_restart",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_prestige_natural53_restart-verify",
+      "namespace": "catancraft_prestige_natural53_restart",
+      "phase": "verify",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_prestige_natural53_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "natural53Phase": "verify",
+        "natural53Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [
+        "catancraft_prestige_natural53_restart-seed"
+      ],
+      "worldFamily": "catancraft_prestige_natural53_restart",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_handheld44-single",
+      "namespace": "catancraft_handheld44",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [
+        "tools/shop44/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_handheld44",
+        "controlledGameTests": "true",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_handheld44",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sbw-single",
+      "namespace": "catancraft_sbw",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sbw",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sbw",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_service50-single",
+      "namespace": "catancraft_service50",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_service50",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_service50",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_vehicle52_native-single",
+      "namespace": "catancraft_vehicle52_native",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 96,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle52_native",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "vehicle52Source": "${SOURCE_COMMIT}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_vehicle52_native",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sbw_procurement35-seed",
+      "namespace": "catancraft_sbw_procurement35",
+      "phase": "seed",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sbw_procurement35",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}",
+        "sbwRestartPhase": "seed"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sbw_procurement35",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sbw_procurement35-verify",
+      "namespace": "catancraft_sbw_procurement35",
+      "phase": "verify",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sbw_procurement35",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}",
+        "sbwRestartPhase": "verify"
+      },
+      "dependsOn": [
+        "catancraft_sbw_procurement35-seed"
+      ],
+      "worldFamily": "catancraft_sbw_procurement35",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_service50_restart-seed",
+      "namespace": "catancraft_service50_restart",
+      "phase": "seed",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_service50_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}",
+        "service50Phase": "seed",
+        "service50Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_service50_restart",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_service50_restart-verify",
+      "namespace": "catancraft_service50_restart",
+      "phase": "verify",
+      "status": "NOT_RUN",
+      "expectedTests": 1,
+      "initScripts": [
+        "tools/vehicle52/validate_combined.gradle"
+      ],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_service50_restart",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}",
+        "taczAuditRoot": "${VERIFIED_TACZ_RUNTIME_ROOT}",
+        "sbwAuditRoot": "${VERIFIED_SBW_RUNTIME_ROOT}",
+        "service50Phase": "verify",
+        "service50Source": "${SOURCE_COMMIT}"
+      },
+      "dependsOn": [
+        "catancraft_service50_restart-seed"
+      ],
+      "worldFamily": "catancraft_service50_restart",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sector_hall_context53-single",
+      "namespace": "catancraft_sector_hall_context53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_hall_context53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sector_hall_context53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sector_hall_composition53-single",
+      "namespace": "catancraft_sector_hall_composition53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 7,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_hall_composition53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sector_hall_composition53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_sector_hall_concurrency53-single",
+      "namespace": "catancraft_sector_hall_concurrency53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 4,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_sector_hall_concurrency53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_sector_hall_concurrency53",
+      "worldFolder": "world"
+    }
+  ]
+}
