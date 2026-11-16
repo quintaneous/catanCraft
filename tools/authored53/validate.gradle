@@ -1,0 +1,109 @@
+// Explicit authored-world tests; never reuse the synthetic flat fixture path.
+import groovy.json.JsonSlurper
+import java.nio.file.Files
+import java.security.MessageDigest
+
+beforeProject { project ->
+    def ns = project.findProperty('gameTestNamespace')
+    if (!(ns in ['catancraft_progression53', 'catancraft_sector53_authored'])
+            || project.findProperty('controlledGameTests') == 'true')
+        throw new GradleException('Authored53 requires its exact namespace, separate from controlled flat worlds')
+    def source = project.findProperty('authoredSource') ?: ''
+    def phase = project.findProperty('authoredPhase') ?: ''
+    def path = project.findProperty('authoredRunRoot') ?: ''
+    if (!(source ==~ /[0-9a-f]{40}/) || !(phase in ['seed', 'verify']) || path.isEmpty())
+        throw new GradleException('Authored53 requires exact source, phase and staged run root')
+    File root = project.file(path).absoluteFile
+    if (!root.toPath().normalize().startsWith(project.file('build').toPath().toAbsolutePath())
+            || root.toPath() != root.toPath().normalize())
+        throw new GradleException('Authored53 root must be canonical beneath this checkout build directory')
+    def noLinks = { File file ->
+        for (def p = file.toPath(); p != null; p = p.parent)
+            if (Files.isSymbolicLink(p)) throw new GradleException('Authored53 refuses symlink paths')
+    }
+    noLinks(root)
+    File marker = new File(root, '.catancraft-authored53-native.json')
+    noLinks(marker)
+    if (!marker.isFile() || marker.length() > 1048576) throw new GradleException('Missing bounded authored53 provenance')
+    def record = new JsonSlurper().parse(marker)
+    if (record.schema != 1 || record.purpose != 'verified-authored53-native-run'
+            || record.root != root.toString() || record.namespace != ns || record.sourceCommit != source
+            || record.worldFolder != 'CatanCraft_Season1_R7_Development'
+            || record.inputManifestSHA256 != 'e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d'
+            || !(record.layout in 0..8)) throw new GradleException('Foreign authored53 run/source/layout')
+    def digest = { File file -> MessageDigest.getInstance('SHA-256').digest(file.bytes).encodeHex().toString() }
+    def safeFile = { name ->
+        if (!(name instanceof String) || name.isEmpty() || name.contains('\\') || name.contains(':')
+                || name.split('/', -1).any { it in ['', '.', '..'] })
+            throw new GradleException('Unsafe authored53 inventory path')
+        File file = new File(root, name)
+        if (!file.toPath().normalize().startsWith(root.toPath())) throw new GradleException('Foreign authored53 inventory path')
+        noLinks(file)
+        file
+    }
+    def worldFiles = ['level.dat'] as Set
+    (-2..1).each { x -> (-2..1).each { z -> worldFiles.add("region/r.${x}.${z}.mca".toString()) } }
+    if (!(record.sourceWorldFiles instanceof Map) || record.sourceWorldFiles.keySet() != worldFiles
+            || !(record.initialFiles instanceof Map) || !(record.immutableFiles instanceof Map)
+            || !record.immutableFiles.keySet().every { it.startsWith('config/') && record.initialFiles[it] == record.immutableFiles[it] })
+        throw new GradleException('Incomplete or foreign authored53 inventory')
+    record.initialFiles.each { name, pin ->
+        safeFile(name)
+        if (!(pin instanceof String) || !(pin ==~ /[0-9a-f]{64}/)) throw new GradleException('Invalid authored53 file digest')
+    }
+    def identityName = record.worldFolder + '/catancraft-fresh-demo.json'
+    if (!record.initialFiles.containsKey(identityName)
+            || !worldFiles.every { record.initialFiles.containsKey(record.worldFolder + '/' + it) })
+        throw new GradleException('Missing authored53 initial world identity/files')
+    project.ext.authored53ValidatedRoot = root.toString()
+    project.plugins.withId('net.minecraftforge.gradle') {
+        project.afterEvaluate {
+            project.minecraft.runs.gameTestServer {
+                workingDirectory root
+                args '--spawnPos', '0,240,0'
+                property 'catancraft.progression53Source', source
+                property 'catancraft.progression53Phase', phase
+                property 'catancraft.progression53Layout', record.layout.toString()
+            }
+            project.tasks.named('runGameTestServer').configure {
+                doFirst {
+                    def headOut = new ByteArrayOutputStream()
+                    project.exec { commandLine 'git', 'rev-parse', 'HEAD'; standardOutput = headOut }
+                    def dirtyOut = new ByteArrayOutputStream()
+                    project.exec {
+                        commandLine 'git', 'status', '--porcelain', '--', 'src', 'build.gradle',
+                                'tools/authored53', 'tools/server53/world_profile.py'
+                        standardOutput = dirtyOut
+                    }
+                    if (headOut.toString('UTF-8').trim() != source || !dirtyOut.toString('UTF-8').trim().isEmpty())
+                        throw new GradleException('Authored native evidence requires the exact committed clean gameplay/build/harness source')
+                    noLinks(root)
+                    File world = safeFile(record.worldFolder)
+                    if (!world.isDirectory()) throw new GradleException('Authored53 world is missing')
+                    Files.walk(world.toPath()).withCloseable { paths ->
+                        paths.forEach { p -> if (Files.isSymbolicLink(p)) throw new GradleException('Authored53 refuses linked world content') }
+                    }
+                    File identity = safeFile(identityName)
+                    if (!identity.isFile() || digest(identity) != record.initialFiles[identityName])
+                        throw new GradleException('Authored53 bound identity changed')
+                    def properties = new Properties()
+                    safeFile('server.properties').withInputStream { properties.load(it) }
+                    if (!(record.serverProperties instanceof Map)
+                            || record.serverProperties['level-name'] != record.worldFolder
+                            || record.serverProperties['server-ip'] != '127.0.0.1'
+                            || record.serverProperties['online-mode'] != 'true')
+                        throw new GradleException('Foreign authored53 server profile')
+                    record.serverProperties.each { key, value ->
+                        if (properties.getProperty(key) != value) throw new GradleException('Changed authored53 server property: ' + key)
+                    }
+                    (phase == 'seed' ? record.initialFiles : record.immutableFiles).each { name, pin ->
+                        File file = safeFile(name)
+                        if (!file.isFile() || digest(file) != pin) throw new GradleException('Changed authored53 input: ' + name)
+                    }
+                    if (phase == 'seed' && new File(root, record.worldFolder + '/data/catancraft.dat').exists())
+                        throw new GradleException('Seed requires pristine history; create another run, never reset')
+                }
+            }
+        }
+    }
+}

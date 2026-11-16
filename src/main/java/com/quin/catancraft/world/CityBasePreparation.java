@@ -163,7 +163,10 @@ public final class CityBasePreparation {
     private static void discover(MinecraftServer server) {
         Path root=server.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize();
         if(!Files.isRegularFile(root.resolve(FreshDemoAuthorization.MARKER)))return;
-        try{FreshDemoAuthorization.authorize(server);TownHallRepairService.authorize(server);}catch(IOException unauthorized){return;}
+        // The current package has its own bound authored-world identity. Requiring
+        // the old disposable R7 repair opt-in as well stranded otherwise valid
+        // cities before their automatic paths/houses could initialize.
+        try{FreshDemoAuthorization.authorize(server);}catch(IOException unauthorized){return;}
         var data=CatanSavedData.get(server);
         for(var t:data.territories()) {
             String city=t.id();
@@ -188,7 +191,7 @@ public final class CityBasePreparation {
                     // again at every write/recovery boundary, including delayed retries.
                     FreshDemoAuthorization.authorize(server);
                     DefenseCityReservations.requireAvailable(root,city,null);
-                    if(feature==Feature.PUBLIC)return runPublic(StreetscapeService.context(server,city,true));
+                    if(feature==Feature.PUBLIC)return runPublic(StreetscapeService.context(server,city,true,true));
                     return runHouses(R5HouseService.context(server,city,R5HouseTransaction.Action.STATUS,true,true));
                 });
             } catch(Exception error) {

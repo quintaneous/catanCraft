@@ -45,7 +45,10 @@ public final class R5HouseService {
     }
     static R5HouseTransaction.Environment context(MinecraftServer server,String input,
             R5HouseTransaction.Action action,boolean load,boolean automatic)throws IOException {
-            Path root=TownHallRepairService.authorize(server);String city=input.toLowerCase(Locale.ROOT);
+            // Automatic initialization has the current package's exact fresh
+            // identity. Explicit legacy maintenance keeps its original opt-in.
+            Path root=automatic?FreshDemoAuthorization.authorize(server):TownHallRepairService.authorize(server);
+            String city=input.toLowerCase(Locale.ROOT);
             if(!city.matches("[a-p]"))throw new IOException("Unknown city");
             var def=MapDefinitionManager.territory(city);ProducerService.validateMap(def);
             CatanSavedData data=CatanSavedData.get(server);TerritoryData t=data.territory(city);

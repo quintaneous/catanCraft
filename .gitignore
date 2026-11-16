@@ -6,3 +6,4 @@ run/
 *.iml
 eclipse/
 bin/
+__pycache__/

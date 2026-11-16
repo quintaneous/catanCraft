@@ -47,7 +47,14 @@ public final class StreetscapeService {
     }
     private static Path file(Path root,String city){return root.resolve("data/catancraft_r5_public_"+city+"_v1.dat");}
     static StreetscapeTransaction.Environment context(MinecraftServer server,String input,boolean load)throws IOException {
-        Path root=TownHallRepairService.authorize(server);String city=input.toLowerCase(Locale.ROOT);
+        return context(server,input,load,false);
+    }
+    static StreetscapeTransaction.Environment context(MinecraftServer server,String input,boolean load,boolean automatic)throws IOException {
+        // New package initialization uses its separately bound identity; explicit
+        // historical maintenance retains its original authorization and scope.
+        // Identity serialization is unchanged so existing receipts still resume.
+        Path root=automatic?FreshDemoAuthorization.authorize(server):TownHallRepairService.authorize(server);
+        String city=input.toLowerCase(Locale.ROOT);
         if(!city.matches("[a-p]"))throw new IOException("Unknown city");
         var def=MapDefinitionManager.territory(city);ProducerService.validateMap(def);
         CatanSavedData data=CatanSavedData.get(server);TerritoryData territory=data.territory(city);

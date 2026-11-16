@@ -17,7 +17,7 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.LongSupplier;
 
-/** Server binding for one journal/price/receipt per compass sector. City A north P2 is registered; prices and other sides remain separately gated.
+/** Server binding for one journal/price/receipt per physical compass sector and qualified city.
  * Fixture providers are available only to package-private isolated native-test entrypoints.
  */
 public final class SectorService {
@@ -104,8 +104,8 @@ public final class SectorService {
         if(n==0&&!revision.isEmpty())throw new IOException("Unpurchased sector has a foreign revision");return new State(n,receipt,revision);
     }
     static SectorContracts.Contract resolveProduction(Context c,SectorContracts.Direction side,int sourceLevel)throws IOException {
-        if(c.city().equals("a")&&sourceLevel>=0&&sourceLevel<=1)
-            return SectorCityAP3Group.resolve(c,side,sourceLevel);
+        if(sourceLevel>=0&&sourceLevel<=1)
+            return c.city().equals("a")?SectorCityAP3Group.resolve(c,side,sourceLevel):SectorGroup53.resolve(c,side,sourceLevel);
         throw new IOException("No available structural sector tier for "+c.city()+" "+side+" L"+(sourceLevel+1));
     }
     private static Context production(MinecraftServer server,UUID actor,String city)throws IOException {
@@ -135,7 +135,7 @@ public final class SectorService {
         if(nation==null||territory==null||!nation.id().equals(territory.ownerNationId()))return List.of();
         String reason=""; boolean pending=active!=null||busy;
         try {
-            if(!id.equals("a"))throw new IOException("Only City A has reviewed sector placements in this test build.");
+            if(!id.equals("a"))SectorSites53.canonical(com.quin.catancraft.map.MapDefinitionManager.territory(id));
             Context c=production(server,actor,id);
             if(pending)throw new IOException("A defense operation is in progress. Wait for completion; do not buy again.");
             DefenseCityReservations.requireAvailable(c.root(),id,null);
@@ -283,7 +283,7 @@ public final class SectorService {
                 file=selected.path();identity=selected.journal().getCompound("identity").copy();contract=recorded(c,selected);terminalReadOnly=selected.journal().getString("phase").equals("COMMITTED")&&action!=SectorTransaction.Action.ROLLBACK;
             }
             DefenseCityReservations.requireAvailable(c.root(),c.city(),file);
-            if(terminalReadOnly&&!contract.cityGroup().isEmpty()){SectorCityAP3Group.verifyCurrentAssembly(c);return new MapAssetService.Result(true,"Current complete City A assembly and retained group lineage verified; zero writes and zero charge",0);}
+            if(terminalReadOnly&&!contract.cityGroup().isEmpty()){SectorGroups53.verifyCurrentAssembly(c,contract.cityGroup());return new MapAssetService.Result(true,"Current complete city assembly and retained group lineage verified; zero writes and zero charge",0);}
             if(PaidRecoveryService.isRunning(c.server()))throw new IOException("An original paid construction is being recovered; wait for completion");
             if(CityBasePreparation.isRunning(c.server()))throw new IOException("Base city paths are being prepared automatically; retry after completion");
             if(bounded&&action!=SectorTransaction.Action.STATUS)lease=SectorChunkLease.acquire(c.server().overworld(),entityBounds(contract.plan()));
@@ -318,7 +318,7 @@ public final class SectorService {
     private static SectorTransaction.Environment environment(Context c,SectorContracts.Direction side,SectorContracts.Contract contract,CompoundTag frozen,Path file,boolean terminalReadOnly){return new SectorTransaction.Environment(){
         private final DefenseReservationVerifier reservations=new DefenseReservationVerifier();
         public net.minecraft.server.level.ServerLevel level(){return c.server().overworld();}public Path file(){return file;}public SectorTransaction.Plan plan(){return contract.plan();}public CompoundTag identity(){return frozen.copy();}public EconomyCost cost(){return contract.cost();}public NationData nation(){return c.data().nation(c.owner());}
-        public CompoundTag inheritedNaturalSupportProof()throws IOException {return contract.cityGroup().isEmpty()?inheritedSupportProof(c,side,contract.plan(),file):SectorCityAP3Group.inheritedSupportProof(c,contract.cityGroup());}
+        public CompoundTag inheritedNaturalSupportProof()throws IOException {return contract.cityGroup().isEmpty()?inheritedSupportProof(c,side,contract.plan(),file):SectorGroups53.inheritedSupportProof(c,contract.cityGroup());}
         public int progress(){try{return savedState(c.data(),c.city(),side).level();}catch(IOException e){throw new IllegalStateException(e);}}
         public void progress(int n){String revision=n==contract.plan().targetLevel()?contract.plan().targetRevision():frozen.getString("previousRevision");c.data().setPlacedMapAsset(prefix(c.city(),side)+"level",Integer.toString(n));setRevision(c.data(),c.city(),side,revision);}
         public String receipt(){return value(c.data(),prefix(c.city(),side)+"receipt");}
@@ -338,12 +338,12 @@ public final class SectorService {
             else if(!c.server().saveEverything(true,true,true))throw new IOException("Whole-sector world/ledger save failed");
         }
         public void requirements(boolean rollback)throws IOException {
-            authority(c);header(c,file,frozen);if(!contract.cityGroup().isEmpty())SectorCityAP3Group.requireCurrent(c,contract,frozen,file,terminalReadOnly);else SectorNorthP2.requireNoLegacyOwnership(c,contract.plan());reservations.requireAvailable(c.root(),c.city(),file);State current=savedState(c.data(),c.city(),side);
+            authority(c);header(c,file,frozen);if(!contract.cityGroup().isEmpty())SectorGroups53.requireCurrent(c,contract,frozen,file,terminalReadOnly);else SectorNorthP2.requireNoLegacyOwnership(c,contract.plan());reservations.requireAvailable(c.root(),c.city(),file);State current=savedState(c.data(),c.city(),side);
             String revision=current.level()==contract.plan().targetLevel()?contract.plan().targetRevision():frozen.getString("previousRevision");if(!current.revision().equals(revision))throw new IOException("Current purchased sector revision changed");
             CompoundTag neighbors=frozen.getCompound("neighbors");if(!terminalReadOnly)for(var d:side.adjacent()){State state=savedState(c.data(),c.city(),d);CompoundTag pinned=neighbors.getCompound(d.name());if(state.level()!=pinned.getInt("level")||!state.receipt().equals(pinned.getString("receipt"))||!state.revision().equals(pinned.getString("revision")))throw new IOException("Adjacent sector level/receipt/revision changed during operation");}
             if(contract.cityGroup().isEmpty())requireCornerTable(c,side,contract.corners(),false);
         }
-        public void allow(BlockPos p)throws IOException {authority(c);if(!contract.cityGroup().isEmpty()){if(!SectorCityAP3Group.approvedWrite(c,contract,p))throw new IOException("Write outside exact approved grouped sector and participant-owned seam masks");}else if(c.approval().equals(PRODUCTION)){var def=com.quin.catancraft.map.MapDefinitionManager.territory(c.city());if(def==null||!def.dimension().equals(level().dimension().location().toString())||def.siegeRegion()==null||def.restorationRegion()==null)throw new IOException("Missing approved city restoration bounds");if((!def.siegeRegion().contains(p)||!def.restorationRegion().contains(p))&&!SectorNorthP2.approvedExtensionWrite(c.city(),contract.plan(),p))throw new IOException("Sector write outside approved city restoration bounds and exact north P2 extension");}if(contract.plan().cells().stream().noneMatch(cell->cell.pos().equals(p)&&!cell.before().equals(cell.after())))throw new IOException("Write outside approved whole-sector union");}
+        public void allow(BlockPos p)throws IOException {authority(c);if(!contract.cityGroup().isEmpty()){if(!SectorGroups53.approvedWrite(c,contract,p))throw new IOException("Write outside exact approved grouped sector and participant-owned seam masks");}else if(c.approval().equals(PRODUCTION)){var def=com.quin.catancraft.map.MapDefinitionManager.territory(c.city());if(def==null||!def.dimension().equals(level().dimension().location().toString())||def.siegeRegion()==null||def.restorationRegion()==null)throw new IOException("Missing approved city restoration bounds");if((!def.siegeRegion().contains(p)||!def.restorationRegion().contains(p))&&!SectorNorthP2.approvedExtensionWrite(c.city(),contract.plan(),p))throw new IOException("Sector write outside approved city restoration bounds and exact north P2 extension");}if(contract.plan().cells().stream().noneMatch(cell->cell.pos().equals(p)&&!cell.before().equals(cell.after())))throw new IOException("Write outside approved whole-sector union");}
     };}
     /** Helper validates latest city lineage/canonical geometry first; this verifies all actual targets/reads. */
     static void verifyRecordedGroup(Context c,Path file)throws IOException {
@@ -410,6 +410,46 @@ public final class SectorService {
                 return production(server,nation.leaderId(),city);
             });
         }catch(Exception e){return List.of(failure(e));}
+    }
+    record RecoveryJob(String city,String operationFile,UUID transaction) {}
+    /** Capture only histories already pending at startup; later manual failures are not queued. */
+    static List<RecoveryJob> discoverRecoveryJobs(MinecraftServer server) {
+        List<RecoveryJob> jobs=new ArrayList<>();
+        if(!server.isSameThread())throw new IllegalStateException("Sector startup discovery requires main thread");
+        try {FreshDemoAuthorization.authorize(server);}catch(IOException error){CatanCraft.LOGGER.error("Sector startup discovery refused: {}",error.getMessage());return List.of();}
+        CatanSavedData data=CatanSavedData.get(server);
+        for(char letter='a';letter<='p';letter++){
+            String city=String.valueOf(letter);
+            try {
+                var territory=data.territory(city);if(territory==null||territory.ownerNationId()==null)continue;
+                NationData nation=data.nation(territory.ownerNationId());if(nation==null)throw new IOException("Pending city has no retained owner nation");
+                Context context=production(server,nation.leaderId(),city);
+                for(Path file:pendingHistories(context)){
+                    CompoundTag journal=ProducerJournal.read(file);if(!journal.hasUUID("id"))throw new IOException("Pending wall history lacks transaction identity");
+                    jobs.add(new RecoveryJob(city,file.getFileName().toString(),journal.getUUID("id")));
+                }
+            }catch(Exception failure){CatanCraft.LOGGER.error("Sector startup discovery remains blocked in city {}: {}",city,failure.getMessage());}
+        }
+        return List.copyOf(jobs);
+    }
+    /** One captured operation per continuation; blocked cities cannot starve unrelated retained work. */
+    static List<MapAssetService.Result> recoverStartupJob(MinecraftServer server,RecoveryJob job) {
+        try {
+            String city=job.city();
+            if(!server.isSameThread()||!city.matches("[a-p]"))throw new IOException("Invalid sector startup recovery context");
+            FreshDemoAuthorization.authorize(server);CatanSavedData data=CatanSavedData.get(server);
+            var territory=data.territory(city);if(territory==null||territory.ownerNationId()==null)throw new IOException("Startup wall owner is unavailable");
+            NationData nation=data.nation(territory.ownerNationId());if(nation==null)throw new IOException("Pending city has no retained owner nation");
+            Context context=production(server,nation.leaderId(),city);
+            if(!job.operationFile().matches("catancraft_sector_"+city+"_(north|east|south|west)_[0-9a-f-]{36}_v1\\.dat"))throw new IOException("Invalid startup wall history path");
+            Path file=context.root().resolve("data").resolve(job.operationFile());CompoundTag journal=ProducerJournal.read(file);header(context,file,journal.getCompound("identity"));
+            if(!journal.hasUUID("id")||!job.transaction().equals(journal.getUUID("id")))throw new IOException("Startup wall history identity changed");
+            if(Set.of("COMMITTED","ROLLED_BACK").contains(journal.getString("phase")))return List.of();
+            List<Path> pending=pendingHistories(context);
+            if(pending.size()!=1||!pending.get(0).equals(file))throw new IOException("Multiple or changed pending sector histories require review; none were replayed");
+            var side=SectorContracts.Direction.parse(journal.getCompound("identity").getString("sector"));
+            return List.of(operate(context,side,journal.getString("phase").equals("ROLLING_BACK")?SectorTransaction.Action.ROLLBACK:SectorTransaction.Action.RESUME,SectorService::resolveProduction,(stage,writes)->{}));
+        } catch(Exception failure) {return List.of(recoveryFailure(job.city(),job.operationFile(),failure));}
     }
     static List<MapAssetService.Result> recoverFixture(List<Context> contexts)throws IOException {
         Map<String,Context> byCity=new HashMap<>();

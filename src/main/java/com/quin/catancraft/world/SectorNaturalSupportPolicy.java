@@ -98,6 +98,7 @@ public record SectorNaturalSupportPolicy(String version,Set<BlockPos> grassSuppo
     }
     /** Narrow approved City A group lineage, never a generic cross-sector proof exception. */
     private static CompoundTag groupHeader(CompoundTag group)throws IOException {
+        if(group.contains("schema",Tag.TAG_INT)&&group.getInt("schema")==2)return SectorGroup53.supportHeader(group);
         Set<String> expected=new HashSet<>(Set.of("schema","parentFile","parentCityReceipt","archiveSHA256","resourceSHA256","translation","beforeStates","beforeOpenCorners","afterOpenCorners"));
         if(group.contains("parentId"))expected.add("parentId");
         if(!group.getAllKeys().equals(expected)||!group.contains("schema",Tag.TAG_INT)||group.getInt("schema")!=1||!group.contains("translation",Tag.TAG_LONG)
@@ -121,6 +122,7 @@ public record SectorNaturalSupportPolicy(String version,Set<BlockPos> grassSuppo
         Set<String> found=new HashSet<>();for(Tag t:list)if(t.getAsString().isBlank()||!found.add(t.getAsString()))throw new IOException("Unknown/duplicate grouped corner state");return found;
     }
     private static void validateGroupParent(SectorTransaction.Plan plan,Map<BlockPos,BlockState> source,SectorTransaction.Plan previous,CompoundTag proof,CompoundTag identity,CompoundTag previousIdentity,CompoundTag group)throws IOException {
+        if(group.getInt("schema")==2){validateSiteGroupParent(plan,source,previous,proof,identity,previousIdentity,group);return;}
         if(!identity.getString("city").equals("a")||!group.hasUUID("parentId")||!group.getUUID("parentId").equals(proof.getUUID("id"))||!group.getString("parentFile").equals(previousIdentity.getString("operationFile"))||!previousIdentity.contains("cityGroup",Tag.TAG_COMPOUND))throw new IOException("Grouped support does not identify the exact City A parent history");
         CompoundTag oldGroup=groupHeader(previousIdentity.getCompound("cityGroup"));
         for(String pin:List.of("archiveSHA256","resourceSHA256","translation"))if(!Objects.equals(group.get(pin),oldGroup.get(pin)))throw new IOException("Grouped natural support asset/site changed");
@@ -129,6 +131,21 @@ public record SectorNaturalSupportPolicy(String version,Set<BlockPos> grassSuppo
         CompoundTag expected=oldGroup.getCompound("beforeStates").copy(),updated=new CompoundTag();updated.putInt("level",previous.targetLevel());updated.putString("receipt",proof.getUUID("id")+":paid");updated.putString("revision",previous.targetRevision());
         expected.put(previous.sector().toUpperCase(Locale.ROOT),updated);
         if(!expected.equals(group.getCompound("beforeStates")))throw new IOException("Grouped natural support paid sector-state lineage differs");
+    }
+    private static void validateSiteGroupParent(SectorTransaction.Plan plan,Map<BlockPos,BlockState> source,SectorTransaction.Plan previous,CompoundTag proof,CompoundTag identity,CompoundTag previousIdentity,CompoundTag group)throws IOException {
+        SectorGroup53.supportHeader(group);
+        if(!identity.getString("city").equals(group.getString("siteCity"))||!group.hasUUID("parentId")
+                ||!group.getUUID("parentId").equals(proof.getUUID("id"))||!group.getString("parentFile").equals(previousIdentity.getString("operationFile"))
+                ||!previousIdentity.contains("cityGroup",Tag.TAG_COMPOUND))throw new IOException("Grouped support does not identify its exact city parent history");
+        CompoundTag oldGroup=SectorGroup53.supportHeader(previousIdentity.getCompound("cityGroup"));
+        for(String pin:List.of("schema","archiveSHA256","resourceSHA256","translation","siteCity","siteCenter","siteRotation","mapSHA256","qualificationSHA256"))
+            if(!Objects.equals(group.get(pin),oldGroup.get(pin)))throw new IOException("Grouped natural support source/site changed: "+pin);
+        if(!identity.getString("sector").equalsIgnoreCase(plan.sector())||!previousIdentity.getString("sector").equalsIgnoreCase(previous.sector())
+                ||!geometry(previous,true).equals(source))throw new IOException("Grouped natural support requires exact entire-city parent target/source geometry");
+        if(!cornerSet(group,"beforeOpenCorners").equals(cornerSet(oldGroup,"afterOpenCorners")))throw new IOException("Grouped natural support physical corner lineage differs");
+        CompoundTag expected=oldGroup.getCompound("beforeStates").copy(),updated=new CompoundTag();updated.putInt("level",previous.targetLevel());updated.putString("receipt",proof.getUUID("id")+":paid");updated.putString("revision",previous.targetRevision());
+        expected.put(previous.sector().toUpperCase(Locale.ROOT),updated);
+        if(!expected.equals(group.getCompound("beforeStates")))throw new IOException("Grouped natural support paid city-state lineage differs");
     }
     static CompoundTag freeze(CompoundTag journal){CompoundTag result=new CompoundTag();for(String key:List.of("schema","id","nation","phase","identity","spec"))if(journal.contains(key))result.put(key,journal.get(key).copy());return result;}
     static final class Guard {
