@@ -1,0 +1,61 @@
+{
+  "coordinate_count": 67205,
+  "checksum": 67205,
+  "equal_contents": true,
+  "immutable": true,
+  "defensive_copy": true,
+  "warmup_iterations": 1,
+  "measurements": [
+    {
+      "iteration": 1,
+      "hash_copy_ms": 2.722034,
+      "hash_lookup_ms": 0.773491,
+      "map_copyof_ms": 584.423552,
+      "map_copyof_lookup_ms": 578.813531
+    },
+    {
+      "iteration": 2,
+      "hash_copy_ms": 3.136525,
+      "hash_lookup_ms": 1.102125,
+      "map_copyof_ms": 585.574831,
+      "map_copyof_lookup_ms": 572.627018
+    },
+    {
+      "iteration": 3,
+      "hash_copy_ms": 3.225445,
+      "hash_lookup_ms": 1.397261,
+      "map_copyof_ms": 591.133858,
+      "map_copyof_lookup_ms": 596.218497
+    },
+    {
+      "iteration": 4,
+      "hash_copy_ms": 3.556393,
+      "hash_lookup_ms": 1.316882,
+      "map_copyof_ms": 662.886759,
+      "map_copyof_lookup_ms": 594.464876
+    },
+    {
+      "iteration": 5,
+      "hash_copy_ms": 11.40305,
+      "hash_lookup_ms": 1.45138,
+      "map_copyof_ms": 543.534668,
+      "map_copyof_lookup_ms": 508.202812
+    }
+  ],
+  "schema": "catancraft-sector53-spatial-map-benchmark-v1",
+  "city": "m",
+  "template_sha256": "facc415887db9cff673296c3c40ca8a30f80832570de36de8fe4d6a6827560c2",
+  "sites_sha256": "b2b4f028db5838e837887bc569d06068837d4df2e536442bd947250335acd5b5",
+  "coordinate_sha256": "38278c556791b177cdd687e983f38d3f78e898b9c28f980277f4255db17f16f9",
+  "benchmark_sha256": "e96adf670b491c3e756539a5fefcf6c2d5d967047e00241bf451d876742aec34",
+  "java_version": "openjdk version \"17.0.21\" 2026-10-20\nOpenJDK Runtime Environment Temurin-17.0.21+9 (build 17.0.21+9)\nOpenJDK 64-Bit Server VM Temurin-17.0.21+9 (build 17.0.21+9, mixed mode, sharing)",
+  "limitation": "Standalone mirrored Vec3i key benchmark; not native gameplay, a world change, or end-to-end quote latency.",
+  "medians_ms": {
+    "hash_copy_ms": 3.225445,
+    "hash_lookup_ms": 1.316882,
+    "map_copyof_ms": 585.574831,
+    "map_copyof_lookup_ms": 578.813531
+  },
+  "median_copy_speedup": 181.54854012392087,
+  "median_lookup_speedup": 439.53333024523073
+}

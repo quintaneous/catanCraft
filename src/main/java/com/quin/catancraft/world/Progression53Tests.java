@@ -64,7 +64,7 @@ public final class Progression53Tests {
         final int layout, startTick;
         final JsonObject input;
         final List<Step> steps = new ArrayList<>();
-        final JsonArray events = new JsonArray(), checkpoints = new JsonArray();
+        final JsonArray events = new JsonArray(), checkpoints = new JsonArray(), plannedClaims = new JsonArray();
         final Map<String,String> histories = new TreeMap<>();
         final Map<String,CompoundTag> managers = new TreeMap<>();
         final Map<String,Integer> covered = new TreeMap<>();
@@ -173,12 +173,41 @@ public final class Progression53Tests {
         List<String> claimOrder() {
             LinkedHashSet<String> order=new LinkedHashSet<>();order.add("d");
             while(order.size()<16) {
-                String next=CITIES.stream().filter(c->!order.contains(c))
+                boolean needsFoodCity=CITIES.stream().anyMatch(c->!order.contains(c)&&foodCity(c));
+                String next;
+                if(needsFoodCity) {
+                    // Breadth-first paths from the owned frontier prioritize the
+                    // nearest additional food source. A lexicographic expansion
+                    // can exhaust all Agriculture surplus before reaching it.
+                    ArrayDeque<List<String>> paths=new ArrayDeque<>();
+                    Set<String> seen=new HashSet<>(order);
+                    for(String city:CITIES)if(!seen.contains(city)
+                            &&data.territory(city).neighbors().stream().anyMatch(order::contains)) {
+                        seen.add(city);paths.add(List.of(city));
+                    }
+                    List<String> chosen=null;
+                    while(!paths.isEmpty()) {
+                        List<String> path=paths.remove();String last=path.get(path.size()-1);
+                        if(foodCity(last)){chosen=path;break;}
+                        for(String neighbor:data.territory(last).neighbors().stream().sorted().toList())
+                            if(seen.add(neighbor)) {List<String> extended=new ArrayList<>(path);extended.add(neighbor);paths.add(List.copyOf(extended));}
+                    }
+                    require(chosen!=null,"No connected route to an unclaimed Agriculture territory");
+                    next=chosen.get(0);
+                } else next=CITIES.stream().filter(c->!order.contains(c))
                         .filter(c->data.territory(c).neighbors().stream().anyMatch(order::contains)).findFirst().orElseThrow();
+                require(!order.contains(next)&&data.territory(next).neighbors().stream().anyMatch(order::contains),
+                        "Planned claim must be newly adjacent: "+next);
                 order.add(next);
+                int food=order.stream().mapToInt(c->EconomyEngine.rawOutputPerCycle(data.territory(c),ResourceType.AGRICULTURE)).sum();
+                int upkeep=order.stream().mapToInt(c->EconomyBalance.agricultureUpkeepPerCycle(data.territory(c).producerLevel())).sum();
+                require(food>upkeep,"Expansion would consume all normal Agriculture surplus before next claim: "+next);
             }
+            for(String city:order)plannedClaims.add(city);
+            CatanCraft.LOGGER.info("PROGRESSION53_CLAIM_PLAN layout={} policy=nearest-unclaimed-agriculture-first order={}",layout,order);
             return List.copyOf(order);
         }
+        boolean foodCity(String city) {return MapDefinitionManager.territory(city).resources().contains(ResourceType.AGRICULTURE);}
         List<BuildingType> buildingTypes(String city,int tier) {
             List<BuildingType> types=new ArrayList<>();types.add(BuildingType.COMMERCIAL_DISTRICT);
             for(int i=0;i<3;i++)if(industry(city,i).minCityLevel()<=tier)types.add(industry(city,i));
@@ -489,6 +518,7 @@ public final class Progression53Tests {
             out.addProperty("manualTargetBlockWrites",0);out.addProperty("connectedClientAcceptance",false);out.addProperty("realTimePacingAcceptance",false);
             out.addProperty("acceleratedScheduledCycles",totalCycles);out.addProperty("simulatedActiveMinutes",totalCycles*15L);
             out.addProperty("actualNativeTicks",server.getTickCount()-startTick);out.addProperty("step",index);out.addProperty("activeAction",action);
+            out.addProperty("claimResourcePolicy","nearest-unclaimed-agriculture-first");out.add("claimOrder",plannedClaims.deepCopy());
             out.add("actions",events.deepCopy());out.add("checkpoints",checkpoints.deepCopy());
             JsonObject inventory=new JsonObject();histories.forEach(inventory::addProperty);out.add("completedHistorySHA256",inventory);
             JsonObject coverage=new JsonObject();covered.forEach(coverage::addProperty);out.add("factorySiteCumulativeChecks",coverage);

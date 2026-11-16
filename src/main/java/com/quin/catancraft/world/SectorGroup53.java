@@ -106,7 +106,7 @@ final class SectorGroup53 {
                 SectorContracts.Corner.SOUTH_WEST,SectorContracts.Direction.SOUTH,SectorContracts.Corner.SOUTH_EAST,SectorContracts.Direction.SOUTH);
     }
     private static Set<BlockPos> roads(String city,BlockPos delta)throws IOException {
-        Set<BlockPos> roads=new HashSet<>();for(BlockPos p:SectorSites53.site(city).protectedRoads())roads.add(p.offset(delta));return Set.copyOf(roads);
+        Set<BlockPos> roads=new HashSet<>();for(BlockPos p:SectorSites53.site(city).protectedRoads())roads.add(p.offset(delta));return Collections.unmodifiableSet(new HashSet<>(roads));
     }
     static SectorContracts.Contract fixtureContract(SectorService.Context c,SectorContracts.Direction side,int sourceLevel,BlockPos delta)throws IOException {
         if(!c.approval().equals(SectorService.FIXTURE))throw new IOException("Fixture entrypoint refused");return contract(c,side,sourceLevel,delta);

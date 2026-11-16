@@ -21,10 +21,16 @@ final class SectorSites53 {
     static final String INPUT_MANIFEST_SHA = "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d";
     private static final BlockPos A_CENTER = new BlockPos(-750,81,-750);
     private static Map<String,Site> sites;
+    private static final Map<Site,Map<BlockPos,SectorContracts.Direction>> OWNERSHIP=new IdentityHashMap<>();
     private SectorSites53() {}
 
     record Site(TerritoryDefinition definition, Map<BlockPos,BlockState> sourceOverrides,
                 Map<BlockPos,BlockState> ownedSourceOverrides, Set<BlockPos> protectedRoads) {
+        Site {
+            sourceOverrides=spatialMap(sourceOverrides);ownedSourceOverrides=spatialMap(ownedSourceOverrides);
+            Set<BlockPos> roads=new HashSet<>(protectedRoads);if(roads.contains(null))throw new NullPointerException("Null qualified road position");
+            protectedRoads=Collections.unmodifiableSet(roads);
+        }
         String city() { return definition.id(); }
         int rotation() { return definition.cityCenter().rotation(); }
         BlockPos center() { var p=definition.cityCenter();return new BlockPos(p.x(),p.y(),p.z()); }
@@ -121,22 +127,32 @@ final class SectorSites53 {
             }
             for(BlockPos p:baseline.keySet())if(transform.rearRoad(transform.point(p))&&!SectorCityAP3.ownership().containsKey(p)&&!roads.contains(transform.point(p)))throw new IOException("Missing rear resource corridor read");
             if(def.id().equals("a")&&(!overrides.isEmpty()||!ownedSources.isEmpty()))throw new IOException("Accepted City A source cannot be revised by the all-city provider");
-            found.put(def.id(),new Site(def,Map.copyOf(overrides),Map.copyOf(ownedSources),Set.copyOf(roads)));
+            found.put(def.id(),new Site(def,overrides,ownedSources,roads));
         }
         if(entries.size()!=16||found.size()!=16)throw new IOException("Wall qualification must cover exactly A through P");sites=Map.copyOf(found);
     }
     static String revision(Site site,SectorContracts.Direction side,int level)throws IOException {
         return REVISION+":"+site.city()+":"+side+":"+RESOURCE_SHA+":"+SectorCityAP3.revision(site.direction(side),level)+":"+SectorNaturalSupportPolicy.SHAPED_VERSION;
     }
-    static Map<BlockPos,SectorContracts.Direction> ownership(Site site)throws IOException {
+    /** BlockPos hashes cluster in spatial strips. Preserve HashMap's collision handling,
+     * while copying before wrapping so callers cannot mutate published qualification. */
+    private static <V> Map<BlockPos,V> spatialMap(Map<BlockPos,V> source) {
+        Map<BlockPos,V> copy=new HashMap<>(source);
+        if(copy.containsKey(null)||copy.containsValue(null))throw new NullPointerException("Null qualified spatial entry");
+        return Collections.unmodifiableMap(copy);
+    }
+    static synchronized Map<BlockPos,SectorContracts.Direction> ownership(Site site)throws IOException {
+        Map<BlockPos,SectorContracts.Direction> cached=OWNERSHIP.get(site);if(cached!=null)return cached;
         Map<BlockPos,SectorContracts.Direction> out=new HashMap<>();
-        SectorCityAP3.ownership().forEach((p,d)->out.put(site.point(p),site.direction(d)));return Map.copyOf(out);
+        SectorCityAP3.ownership().forEach((p,d)->out.put(site.point(p),site.direction(d)));
+        Map<BlockPos,SectorContracts.Direction> immutable=spatialMap(out);
+        if(OWNERSHIP.size()>=16)OWNERSHIP.clear();OWNERSHIP.put(site,immutable);return immutable;
     }
     static Map<BlockPos,BlockState> assembly(Site site,Map<SectorContracts.Direction,Integer> levels,Set<String> open)throws IOException {
         var original=SectorCityAP3.assembly(site.localLevels(levels),site.corners(open));Map<BlockPos,BlockState> states=new HashMap<>();
         original.states().forEach((p,s)->states.put(site.point(p),site.state(s)));states.putAll(site.sourceOverrides());
         var owners=ownership(site);for(var row:site.ownedSourceOverrides().entrySet())if(levels.get(owners.get(row.getKey()))==0)states.put(row.getKey(),row.getValue());
-        return Map.copyOf(states);
+        return spatialMap(states);
     }
     static Set<String> availableConnections(Site site,Map<SectorContracts.Direction,Integer> levels)throws IOException {
         return site.corners(SectorCityAP3.availableConnections(site.localLevels(levels)));
@@ -165,6 +181,6 @@ final class SectorSites53 {
         }
         var plan=new SectorTransaction.Plan(strict.sector(),strict.sourceRevision(),strict.targetRevision(),strict.sourceLevel(),strict.targetLevel(),strict.cells(),strict.reads(),SectorNaturalSupportPolicy.coveredGrassShaped(grass,fixed));
         plan.naturalSupport().validate(plan);
-        return new SectorCityAP3.Transition(plan,Map.copyOf(owners),Map.copyOf(levels),Map.copyOf(next),Set.copyOf(open),site.corners(original.afterConnections()));
+        return new SectorCityAP3.Transition(plan,spatialMap(owners),Map.copyOf(levels),Map.copyOf(next),Set.copyOf(open),site.corners(original.afterConnections()));
     }
 }

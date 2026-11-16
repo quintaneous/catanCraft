@@ -65,7 +65,7 @@ beforeProject { project ->
                 property 'catancraft.progression53Phase', phase
                 property 'catancraft.progression53Layout', record.layout.toString()
             }
-            project.tasks.named('runGameTestServer').configure {
+            project.tasks.matching { it.name == 'runGameTestServer' }.configureEach {
                 doFirst {
                     def headOut = new ByteArrayOutputStream()
                     project.exec { commandLine 'git', 'rev-parse', 'HEAD'; standardOutput = headOut }

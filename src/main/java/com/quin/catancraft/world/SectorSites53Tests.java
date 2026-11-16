@@ -56,6 +56,10 @@ public final class SectorSites53Tests {
     private static void geometry(GameTestHelper h,String city)throws Exception {
         var site=SectorSites53.site(city);SectorSites53.canonical(site.definition());
         Map<BlockPos,SectorContracts.Direction> owners=SectorSites53.ownership(site);
+        immutable(()->owners.put(site.center(),SectorContracts.Direction.NORTH));
+        immutable(()->site.sourceOverrides().put(site.center(),Blocks.DIAMOND_BLOCK.defaultBlockState()));
+        immutable(()->site.ownedSourceOverrides().put(site.center(),Blocks.DIAMOND_BLOCK.defaultBlockState()));
+        immutable(()->site.protectedRoads().add(site.center()));
         int vectors=0,histories=0,transitions=0;
         for(var side:SectorContracts.Direction.values()){
             long sum=0;int count=0;
@@ -184,6 +188,9 @@ public final class SectorSites53Tests {
         data.createTerritory(city,"Sector53 "+city,ResourceType.WOOD).setOwnerNationId(nation.id());
         Path root=h.getLevel().getServer().getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize().resolve("data/sector53-contract/"+UUID.randomUUID());
         return SectorService.fixtureContext(h.getLevel().getServer(),root,data,city,actor,UUID.randomUUID().toString(),()->100L);
+    }
+    private static void immutable(Checked mutation)throws Exception {
+        try{mutation.run();}catch(UnsupportedOperationException expected){return;}throw new AssertionError("Qualified source/ownership cache is mutable");
     }
     private static void refuse(Checked work)throws Exception {try{work.run();}catch(IOException expected){return;}throw new AssertionError("Expected strict all-city wall refusal");}
 }

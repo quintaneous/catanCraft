@@ -1,0 +1,17 @@
+  public int hashCode();
+    Code:
+       0: aload_0
+       1: invokevirtual #89                 // Method getY:()I
+       4: aload_0
+       5: invokevirtual #92                 // Method getZ:()I
+       8: bipush        31
+      10: imul
+      11: iadd
+      12: bipush        31
+      14: imul
+      15: aload_0
+      16: invokevirtual #86                 // Method getX:()I
+      19: iadd
+      20: ireturn
+
+  public int compareTo(net.minecraft.core.Vec3i);
