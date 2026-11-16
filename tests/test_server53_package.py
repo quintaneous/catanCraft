@@ -227,6 +227,41 @@ class Server53KitTests(unittest.TestCase):
         extra=self.output/'tools/extra.ps1';extra.write_bytes(b'EXTRA')
         result=invoke(script,'-VerifyOnly');self.assertNotEqual(result.returncode,0)
 
+    @unittest.skipUnless(os.environ.get('CATAN_PWSH') or shutil.which('pwsh'), 'PowerShell unavailable; no platform pass claimed')
+    def test_powershell_unicode_run_path_and_utf8_binding_readback(self):
+        # WinPS 5.1 defaults BOM-less Get-Content to ANSI, unlike pwsh 7/Linux.
+        # Assert the explicit cross-version encoding contract as well as running
+        # both scripts against actual UTF-8 path/binding bytes on this host.
+        for name in ('New-TestRun.ps1','Start-Server.ps1'):
+            text=(Path(__file__).resolve().parents[1]/'tools/server53'/name).read_text()
+            reads=[line for line in text.splitlines() if 'Get-Content ' in line]
+            self.assertTrue(reads)
+            self.assertTrue(all('Get-Content -Raw -Encoding UTF8 -LiteralPath' in line for line in reads),name)
+        self.output=self.base/'kit-Élodie-城市';self.kit()
+        pwsh=os.environ.get('CATAN_PWSH') or shutil.which('pwsh')
+        def invoke(script,*args):
+            result=subprocess.run([pwsh,'-NoProfile','-File',str(script),*args],capture_output=True,text=True)
+            print('POWERSHELL_UTF8',script.name,list(args),'exit',result.returncode,result.stdout.strip(),result.stderr.strip())
+            self.assertEqual(result.returncode,0,result.stderr)
+        run=self.base/'run-José-城'
+        invoke(self.output/'tools/New-TestRun.ps1','-Output',str(run))
+        self.assertEqual(self.launch(run),0)
+        invoke(run/'tools/Start-Server.ps1','-VerifyOnly')
+        package=json.loads((run/'PACKAGE.json').read_bytes())
+        world=run/package['worldRoot']
+        auth=dict(package['authorization'],installationBoundPath=str(world))
+        binding={'root':str(run),'inputManifestSHA256':package['inputManifestSHA256']}
+        for path,value in [(world/'catancraft-fresh-demo.json',auth),(run/'.demo-launch-state.json',binding)]:
+            raw=(json.dumps(value,ensure_ascii=False,indent=2)+'\n').encode('utf-8')
+            self.assertTrue(any(b>127 for b in raw));self.assertFalse(raw.startswith(b'\xef\xbb\xbf'))
+            path.write_bytes(raw)
+        # Synthetic established binding only; no Java/server launch or EULA change.
+        (world/'level.dat').write_bytes(b'SYNTHETIC LEGITIMATE POST-BINDING CHANGE')
+        invoke(run/'tools/Start-Server.ps1','-VerifyOnly')
+        self.assertEqual(self.launch(run),0)
+        self.assertIn('eula=false',(run/'eula.txt').read_text())
+        self.assertEqual(json.loads((run/'.demo-launch-state.json').read_bytes()),binding)
+
     def test_pristine_stager_rejects_wrong_original_without_output(self):
         (self.input/'INPUT_MANIFEST.json').write_bytes(b'{}')
         args=type('Args',(),{'original_root':self.input})()

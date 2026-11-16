@@ -42,8 +42,8 @@ function CheckInventory($Actual,$Expected) {
 }
 try {
     $Raw = Safe $Kit 'KIT.json'
-    if ((Hash $Raw) -cne ((Get-Content -Raw -LiteralPath (Safe $Kit 'KIT.sha256')).Split()[0])) { throw 'Kit manifest checksum mismatch' }
-    $Policy = Get-Content -Raw -LiteralPath $Raw | ConvertFrom-Json
+    if ((Hash $Raw) -cne ((Get-Content -Raw -Encoding UTF8 -LiteralPath (Safe $Kit 'KIT.sha256')).Split()[0])) { throw 'Kit manifest checksum mismatch' }
+    $Policy = Get-Content -Raw -Encoding UTF8 -LiteralPath $Raw | ConvertFrom-Json
     if ($Policy.schema -ne 1 -or $Policy.kind -ne 'catancraft-immutable-server53-kit') { throw 'Unsupported kit schema' }
     $Baseline = Safe $Kit 'baseline'
     CheckInventory (Inventory $Baseline) $Policy.baselineFiles
@@ -80,20 +80,20 @@ try {
         if ((Hash $Target) -cne $P.Value) { throw 'Copied run checksum mismatch' }
     }
     $PackagePath = Join-Path $Output 'PACKAGE.json'
-    $Package = Get-Content -Raw -LiteralPath $PackagePath | ConvertFrom-Json
+    $Package = Get-Content -Raw -Encoding UTF8 -LiteralPath $PackagePath | ConvertFrom-Json
     $Old = $Package.authorization.worldId
     $Names = @(($Package.worldRoot+'/catancraft-fresh-demo.json'),'PROGRESSION_RUN.json','PROGRESSION_PLAN.json')
     $Names += @($Policy.baselineFiles.PSObject.Properties.Name | Where-Object { $_ -like 'evidence/results-*' })
     foreach ($Name in $Names) {
         $Path = Safe $Output $Name
-        $Value = (Get-Content -Raw -LiteralPath $Path).Replace($Old,$RunId) | ConvertFrom-Json
+        $Value = (Get-Content -Raw -Encoding UTF8 -LiteralPath $Path).Replace($Old,$RunId) | ConvertFrom-Json
         WriteJson $Path $Value
     }
     $PlanHash = Hash (Safe $Output 'PROGRESSION_PLAN.json')
     foreach ($Name in $Names) {
         if ($Name -like 'evidence/results-*') {
             $Path = Safe $Output $Name
-            $Value = Get-Content -Raw -LiteralPath $Path | ConvertFrom-Json
+            $Value = Get-Content -Raw -Encoding UTF8 -LiteralPath $Path | ConvertFrom-Json
             $Value.planSHA256 = $PlanHash
             WriteJson $Path $Value
         }

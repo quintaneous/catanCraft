@@ -4,10 +4,10 @@
   "status": "NOT_RUN",
   "inventoriedAgainstHead": "1f2ee4e322796a85e9bb2ba19cb63aeb0042f87f",
   "sourceBinding": "At execution require clean committed gameplay/build/harness, bind exact SOURCE_COMMIT to process record, and verify inventory hashes; this plan itself is not a native result.",
-  "scope": "Parent-selected retained 52 namespaces plus three new Hall/wall namespaces; authored progression/sector seed/verify campaigns remain separate required gates.",
-  "namespaceCount": 55,
-  "phaseCount": 60,
-  "expectedTestExecutions": 555,
+  "scope": "Parent-selected retained 52 namespaces, three Hall/wall namespaces, vehicle Hall context and retained factory-envelope regression; authored progression/sector seed/verify campaigns remain separate required gates.",
+  "namespaceCount": 57,
+  "phaseCount": 62,
+  "expectedTestExecutions": 566,
   "generatorInventory": {
     "pathsScanned": "src/main/java/**/*.java",
     "registrationPatterns": [
@@ -2139,7 +2139,7 @@
       "sourceFiles": [
         {
           "path": "src/main/java/com/quin/catancraft/world/NativeVehicleSites52Tests.java",
-          "sha256": "57b8a6db40db3e9d0f7a334ae94aa2bd1f89dfaf3b95bcd2fabc58724b58c12b",
+          "sha256": "4f853dde8b175ffb1443f7a0ae76c9b80f5172a1d5e8b8491b7a461da8b81bab",
           "methods": [
             "a_plot_1_pickup",
             "a_plot_1_lav",
@@ -2256,19 +2256,7 @@
       },
       "worldFolder": "world",
       "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
-      "historicalCountCorroboration": [
-        {
-          "phase": "single",
-          "source": "1388b9d0aca6f5c860c1c743c1695a3e4f52d4ac",
-          "attempt": "vehicle-native53-round6",
-          "executed": 96,
-          "passed": 96,
-          "exitCode": 0,
-          "logSHA256": "0f7b8d93fc5f682bd2ba16e24e072993333f56105c190fee68c63d9e8d67c0f4",
-          "testSourceFilesUnchanged": true,
-          "scope": "Historical count corroboration only; current gameplay is NOT_RUN."
-        }
-      ]
+      "historicalCountCorroboration": []
     },
     {
       "namespace": "catancraft_sbw_procurement35",
@@ -2433,6 +2421,71 @@
       "worldFolder": "world",
       "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
       "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_vehicle_hall_context53",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/VehicleHallContext53Tests.java",
+          "sha256": "8dcaad135c21325594656a64c3af619de770fe3a549a230e63eb0f62036517ef",
+          "methods": [
+            "all_48_sites_qualify_all_hall_tiers_revisions_and_both_public_sources",
+            "north_actual_paid_th4_qualifies_three_factory_slots",
+            "south_actual_paid_th4_qualifies_three_factory_slots",
+            "south_paid_th5_from_r1_preserves_original_history",
+            "north_paid_th5_from_r2_preserves_original_history",
+            "pending_paid_hall_defers_then_completed_recovery_binds_original_and_companion",
+            "tier_marker_missing_history_foreign_owner_and_changed_token_refuse",
+            "actual_paid_north_and_south_envelopes_replace_baseline_strictly"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle_hall_context53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [],
+      "compatibilityCoverage": "Actual paid TH4/TH5 foundation read authority across all 48 vehicle-factory sites; histories remain immutable."
+    },
+    {
+      "namespace": "catancraft_factory50",
+      "status": "NOT_RUN",
+      "expectedTests": 3,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/world/VehicleFactory50Tests.java",
+          "sha256": "3eb3252507fc1e97f0ee492a0c72aed4a97ee634b49dffabfe537c13ef92d907",
+          "methods": [
+            "actual_city_a_factory_counter_and_preserved_lane",
+            "native_counter_ray_and_sixteen_step_route",
+            "whole_authored_envelope_accepts_barrels_and_rejects_drift"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_factory50",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": [],
+      "compatibilityCoverage": "Retained full factory-envelope source, populated barrels and drift refusal under real early-tier nation ownership."
     }
   ],
   "runs": [
@@ -3454,6 +3507,38 @@
       },
       "dependsOn": [],
       "worldFamily": "catancraft_sector_hall_concurrency53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_vehicle_hall_context53-single",
+      "namespace": "catancraft_vehicle_hall_context53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 8,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_vehicle_hall_context53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_vehicle_hall_context53",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_factory50-single",
+      "namespace": "catancraft_factory50",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 3,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_factory50",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_factory50",
       "worldFolder": "world"
     }
   ]

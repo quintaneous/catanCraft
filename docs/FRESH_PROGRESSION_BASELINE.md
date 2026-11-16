@@ -66,7 +66,7 @@ creates a different run directory and UUID; START verifies and resumes that same
 run, preserving paid progress. EULA starts false; localhost authentication,
 whitelist and the one-player limit remain enabled. Python and PowerShell reject
 changed/extra pinned runtime or tool files, redirects and partial bindings.
-[Packaging validation](SERVER53_PACKAGING_VALIDATION.json) records **78 passed,
+[Packaging validation](SERVER53_PACKAGING_VALIDATION.json) records **79 passed,
 0 failed, 0 skipped**, including actual PowerShell 7.4.6 execution on Linux; this is
 not Windows-host, Java/server, gameplay, pacing or owner acceptance evidence.
 

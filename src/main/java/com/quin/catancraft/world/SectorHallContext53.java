@@ -31,6 +31,7 @@ final class SectorHallContext53 {
             this.reads=Collections.unmodifiableMap(new HashMap<>(reads));this.files=List.copyOf(files);this.receipts=Collections.unmodifiableMap(new HashMap<>(receipts));this.absent=Set.copyOf(absent);
         }
         Map<BlockPos,BlockState> reads(){return reads;}
+        int tier(){return tier;}
         void verifyUnchanged()throws IOException {
             SectorSites53.canonical(def);if(!def.equals(MapDefinitionManager.territory(def.id())))throw new IOException("Hall context map changed");var t=data.territory(def.id());
             if(!root.equals(root.toRealPath())||Files.isSymbolicLink(root.resolve("data"))||t==null||!owner.equals(t.ownerNationId())||data.nation(owner)==null||t.cityLevel()!=tier||!Objects.equals(token,data.placedMapAsset(key(def.id()))))throw new IOException("Paid Hall read context ownership/tier changed");

@@ -4,10 +4,15 @@ import com.google.gson.*;
 import com.mojang.authlib.GameProfile;
 import com.quin.catancraft.CatanCraft;
 import com.quin.catancraft.command.NationProcurement;
+import com.quin.catancraft.data.*;
+import com.quin.catancraft.economy.*;
 import com.quin.catancraft.map.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.gametest.framework.*;
-import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.*;
+import net.minecraft.world.item.*;
+import net.minecraft.world.level.block.entity.LecternBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.network.Connection;
 import net.minecraft.network.protocol.PacketFlow;
 import net.minecraft.server.level.*;
@@ -23,8 +28,9 @@ import java.nio.file.*;
 import java.util.*;
 import java.util.function.Supplier;
 
-/** Actual A-P coordinates with their own reviewed starter/factory source overlays.
- * Each unique batch stages one alternative factory layout in an exact disposable
+/** Actual A-P coordinates with reviewed raw starter/factory source and paid Hall5
+ * foundations. Each city earns Hall4/5 from a funded TH3 source fixture; each
+ * unique batch stages one alternative factory layout in an exact disposable
  * flat world. This is native geometry/driving qualification, not an authenticated
  * purchase or a whole authored-world progression run. Never launches outside the
  * explicit namespace and never modifies pose after the initial native spawn.
@@ -344,7 +350,8 @@ public final class NativeVehicleSites52Tests {
         AABB envelope=VehicleSites52.envelope(site);
         check(envelope.getXsize()>0&&envelope.getYsize()>0&&envelope.getZsize()>0
                 &&envelope.getXsize()*envelope.getYsize()*envelope.getZsize()<=65536,"Unbounded site envelope");
-        SectorChunkLease lease=SectorChunkLease.acquire(level,envelope);
+        var hallPlan=SchematicPlacementService.plannedCells("th3",SchematicAssetRegistry.territoryAnchor("th3",definition));
+        SectorChunkLease lease=SectorChunkLease.acquire(level,envelope.minmax(TownHallRepairTransaction.bounds(hallPlan).inflate(2)));
         Run run=new Run(h,id,site,spec,root,envelope,lease,source,runtime);
         run.await(0);
     }
@@ -360,6 +367,7 @@ public final class NativeVehicleSites52Tests {
         List<AABB> previous;double previousYaw,previousPitch,previousRoll,maxDistance,maxYaw;
         int stagedCells,unchangedCells,clearanceCells,residencyWaitTicks;long residencyElapsedNanos;
         String sourceBefore="",sourceAfter="",stop="";boolean driverExited;
+        VehicleHallContext53.Context hallContext;Map<BlockPos,BlockState> hallReads=Map.of();JsonObject hallProof;
         Run(GameTestHelper h,int id,VehicleSites52.Site site,NativeVehicleBay46.Spec spec,Path root,
                 AABB envelope,SectorChunkLease lease,String source,String runtime){
             this.h=h;this.id=id;this.site=site;this.spec=spec;this.root=root;this.envelope=envelope;
@@ -379,10 +387,13 @@ public final class NativeVehicleSites52Tests {
                 java.util.concurrent.locks.LockSupport.parkNanos(java.util.concurrent.TimeUnit.MILLISECONDS.toNanos(25));
                 h.runAfterDelay(5,()->await(ticks+5));return;}
             check(h.getLevel().getEntities((Entity)null,envelope,e->e.isAlive()).isEmpty(),"Previous fixture left an entity in this site's envelope");
+            preparePaidHall();
+            hallContext=VehicleHallContext53.capture(h.getLevel(),site,FIXTURE_NATION);hallReads=hallContext.reads();
+            check(hallReads.size()==(site.plot().equals("plot_1")?120:site.plot().equals("plot_3")?93:96),"Paid Hall subfloor inventory differs");
             for(BlockPos p:cells(envelope)){
-                BlockPos at=p.immutable();h.getLevel().setBlock(at,VehicleSites52.source(site,at),2);stagedCells++;
+                BlockPos at=p.immutable();h.getLevel().setBlock(at,hallReads.getOrDefault(at,VehicleSites52.source(site,at,false)),2);stagedCells++;
             }
-            sourceBefore=sourceFingerprint(true);
+            hallContext.verifyUnchanged();sourceBefore=sourceFingerprint(true);
             var construction=new VehicleFactory50.Construction(SchematicAssetRegistry.asset("vehicle_factory").placementToken(),1);
             CompoundTag identity=VehicleFactory50.identity(site,construction,FIXTURE_NATION,root,"vehicle52_native_fixture",h.getLevel().getServer().getWorldData().getLevelName(),h.getLevel().getSeed());
             var binding=new VehicleFactory50.Binding(identity,"Native qualification fixture",1,site.counter(),site.anchor(),FIXTURE_NATION,root);
@@ -455,10 +466,91 @@ public final class NativeVehicleSites52Tests {
             NativeVehicleDriving48.input(driver,decision.keys());h.runAfterDelay(1,()->step(tick+1));
         }catch(Exception|AssertionError failure){fail(failure);}}
 
+        void preparePaidHall()throws Exception {
+            var level=h.getLevel();var server=level.getServer();var data=CatanSavedData.get(server);
+            Path proofPath=root.resolve("data/vehicle52-paid-hall-"+site.city()+".json");
+            if(Files.exists(proofPath)) {
+                hallProof=JsonParser.parseString(Files.readString(proofPath)).getAsJsonObject();verifyHallProof();return;
+            }
+            boolean newFixtureNation=data.nation(FIXTURE_NATION)==null;
+            if(newFixtureNation) {
+                check(data.nations().isEmpty()&&data.placedMapAssetsView().isEmpty()
+                        &&data.territories().stream().allMatch(t->t.ownerNationId()==null&&t.cityLevel()==1&&t.buildings().isEmpty()),"Paid native fixture refuses an existing ledger");
+                check(!Files.exists(root.resolve(FreshDemoAuthorization.MARKER)),"Paid native fixture refuses prior authorization");
+                if(Files.isDirectory(root.resolve("data")))try(var paths=Files.newDirectoryStream(root.resolve("data"))) {
+                    for(Path path:paths) {
+                        String name=path.getFileName().toString();
+                        check(!name.startsWith("catancraft_th_prestige_")&&!name.startsWith("vehicle52-paid-hall-"),"Paid native fixture refuses prior Hall history");
+                    }
+                }
+                CompoundTag ledger=data.save(new CompoundTag());ListTag nations=new ListTag();
+                var fixture=new NationData(FIXTURE_NATION,"Funded native vehicle Hall fixture",FIXTURE_NATION,10_000_000);
+                for(var resource:ResourceType.values())fixture.addResource(resource,1_000_000);
+                nations.add(fixture.save());ledger.put("nations",nations);data=CatanSavedData.load(ledger);
+                level.getDataStorage().set("catancraft",data);data.setDirty();
+            }
+            var nation=data.nation(FIXTURE_NATION);data.syncMapDefinitions();var city=data.territory(site.city());
+            check(city.ownerNationId()==null&&city.cityLevel()==1,"Paid native Hall fixture refuses existing city progression");
+            for(int tier:new int[]{4,5})check(!Files.exists(root.resolve("data/catancraft_th_prestige_"+site.city()+"_"+tier+"_v1.dat")),"Paid native Hall fixture refuses earlier history");
+            city.setOwnerNationId(FIXTURE_NATION);city.setCityLevel(3);
+            data.setPlacedMapAsset("territory:"+site.city()+":town_hall",SchematicAssetRegistry.asset("th3").placementToken());
+            var plan=SchematicPlacementService.plannedCells("th3",SchematicAssetRegistry.territoryAnchor("th3",site.definition()));
+            for(var cell:plan) {
+                var entity=level.getBlockEntity(cell.position());
+                if(entity instanceof net.minecraft.world.Container container)container.clearContent();
+                if(entity instanceof LecternBlockEntity lectern)lectern.setBook(ItemStack.EMPTY);
+                level.setBlock(cell.position(),cell.state(),PaidConstructionRecovery.FLAGS);
+            }
+            for(var entity:new ArrayList<>(level.getEntities((Entity)null,TownHallRepairTransaction.bounds(plan).inflate(2))))
+                if(entity instanceof net.minecraft.world.entity.Mob||entity instanceof net.minecraft.world.entity.item.ItemEntity)entity.discard();
+            var manager=(LecternBlockEntity)level.getBlockEntity(plan.get(TownHallRevisions.managerIndex()).position());
+            var book=new ItemStack(Items.WRITABLE_BOOK);ListTag pages=new ListTag();pages.add(StringTag.valueOf("Native vehicle paid Hall fixture"));book.getOrCreateTag().put("pages",pages);manager.setBook(book);
+            CompoundTag originalBook=manager.getBook().save(new CompoundTag());
+            Path marker=root.resolve(FreshDemoAuthorization.MARKER);
+            if(!Files.exists(marker)) {
+                check(newFixtureNation,"Later city lost native fixture authorization");JsonObject identity=new JsonObject();
+                identity.addProperty("schema",1);identity.addProperty("purpose",FreshDemoAuthorization.PURPOSE);identity.addProperty("worldId",UUID.randomUUID().toString());
+                identity.addProperty("levelName",server.getWorldData().getLevelName());identity.addProperty("seed",level.getSeed());identity.addProperty("dimension","minecraft:overworld");
+                identity.addProperty("mapSha256",TownHallRevisions.sha(Files.readAllBytes(MapDefinitionManager.path())));identity.addProperty("authoredWorldSha256","c".repeat(64));
+                identity.addProperty("bootstrapRevision","vehicle52-paid-hall-native-fixture");identity.addProperty("installationBoundPath",root.toString());Files.writeString(marker,identity.toString(),StandardOpenOption.CREATE_NEW);
+            }
+            FreshDemoAuthorization.authorize(server);hallProof=new JsonObject();hallProof.addProperty("city",site.city());hallProof.addProperty("source",source);
+            hallProof.addProperty("fundedDeveloperFixture",true);hallProof.addProperty("initialSourceTier",3);JsonObject histories=new JsonObject();hallProof.add("originalSHA256",histories);
+            for(int tier:new int[]{4,5}) {
+                var cost=EconomyCatalog.cityUpgradeCost(tier-1);long money=nation.treasury();var stock=nation.stockpileView();
+                var result=TownHallPrestigeUpgradeService.upgrade(server,data,nation,city,cost,tier);
+                check(result.success(),"Actual native Hall purchase failed: "+result.message());
+                check(city.cityLevel()==tier&&nation.treasury()==money-cost.money(),"Native Hall purchase did not charge exactly once");
+                for(var resource:ResourceType.values())check(nation.resource(resource)==stock.getOrDefault(resource,0L)-cost.resources().getOrDefault(resource,0L),"Native Hall resource debit differs");
+                check(originalBook.equals(manager.getBook().save(new CompoundTag())),"Paid native Hall changed management book");
+                Path file=root.resolve("data/catancraft_th_prestige_"+site.city()+"_"+tier+"_v1.dat");
+                CompoundTag journal=PrestigePurchaseRecovery.read(Files.readAllBytes(file));
+                check(journal.getString("phase").equals("COMMITTED")&&(journal.getUUID("transaction")+":paid").equals(data.placedMapAsset(PaidConstructionRecovery.receiptKey(journal.getUUID("transaction")))),"Native Hall lacks completed paid history");
+                histories.addProperty(file.getFileName().toString(),TownHallRevisions.sha(Files.readAllBytes(file)));
+            }
+            Files.writeString(proofPath,hallProof.toString(),StandardOpenOption.CREATE_NEW);verifyHallProof();
+        }
+        void verifyHallProof()throws Exception {
+            var data=CatanSavedData.get(h.getLevel().getServer());var city=data.territory(site.city());
+            check(hallProof!=null&&hallProof.get("city").getAsString().equals(site.city())&&hallProof.get("source").getAsString().equals(source)
+                    &&city.cityLevel()==5&&FIXTURE_NATION.equals(city.ownerNationId()),"Native paid Hall identity or earned level changed");
+            var histories=hallProof.getAsJsonObject("originalSHA256");check(histories.size()==2,"Native Hall lost an original paid upgrade");
+            for(int tier:new int[]{4,5}) {
+                String name="catancraft_th_prestige_"+site.city()+"_"+tier+"_v1.dat";Path file=root.resolve("data").resolve(name);
+                byte[] bytes=Files.readAllBytes(file);
+                check(histories.has(name)&&TownHallRevisions.sha(bytes).equals(histories.get(name).getAsString()),"Native Hall history changed during vehicle qualification");
+                CompoundTag journal=PrestigePurchaseRecovery.read(bytes);
+                check(journal.getString("phase").equals("COMMITTED")&&site.city().equals(journal.getString("city"))
+                        &&FIXTURE_NATION.toString().equals(journal.getString("ownerNation"))
+                        &&(journal.getUUID("transaction")+":paid").equals(data.placedMapAsset(PaidConstructionRecovery.receiptKey(journal.getUUID("transaction")))),"Native Hall lost original paid authority");
+            }
+        }
+
         String sourceFingerprint(boolean before)throws Exception {
             StringBuilder inventory=new StringBuilder();int checked=0;
             for(BlockPos mutable:cells(envelope)){
-                BlockPos p=mutable.immutable();checkSource(h.getLevel(),site,envelope,p);
+                BlockPos p=mutable.immutable();VehicleFactory50.loaded(h.getLevel(),p);
+                check(h.getLevel().getBlockState(p).equals(hallReads.getOrDefault(p,VehicleSites52.source(site,p,false))),"Actual paid-Hall site source drift at "+p);
                 var state=h.getLevel().getBlockState(p);var entity=h.getLevel().getBlockEntity(p);
                 check(state.hasBlockEntity()?entity!=null&&entity.getType().isValid(state):entity==null,"Unexpected native block entity at "+p);
                 CompoundTag tag=entity==null?null:entity.saveWithFullMetadata();
@@ -467,6 +559,7 @@ public final class NativeVehicleSites52Tests {
                 inventory.append(p.getX()).append(',').append(p.getY()).append(',').append(p.getZ()).append('=').append(state).append('\n');
                 if(tag!=null)inventory.append(VehicleService50.digest(tag)).append('\n');checked++;
             }
+            hallContext.verifyUnchanged();verifyHallProof();VehicleFactory50.verifyEnvelope(h.getLevel(),site.anchor(),FIXTURE_NATION);
             if(!before)unchangedCells=checked;
             return TownHallRevisions.sha(inventory.toString().getBytes(StandardCharsets.UTF_8));
         }
@@ -485,6 +578,12 @@ public final class NativeVehicleSites52Tests {
             JsonObject proof=new JsonObject();proof.addProperty("schema",1);proof.addProperty("source",source);proof.addProperty("namespace",NS);
             proof.addProperty("combinedRuntimeArtifacts",15);proof.addProperty("sbwRuntimeManifestSHA256",runtime);proof.addProperty("taczRuntimeManifestSHA256",System.getProperty("catancraft.taczRuntimeManifestSHA256",""));
             proof.addProperty("mapSHA256",ShopSites51.MAP_SHA256);proof.addProperty("nativeDefinitionSHA256",spec.sha());
+            proof.addProperty("fundedPaidHallFixture",true);
+            var observedCity=CatanSavedData.get(h.getLevel().getServer()).territory(site.city());
+            proof.addProperty("townHallLevel",observedCity==null?0:observedCity.cityLevel());
+            proof.addProperty("preparedPublicSource",false);proof.addProperty("productionEnvelopeVerified",!sourceBefore.isEmpty()&&!sourceAfter.isEmpty());
+            proof.addProperty("paidHallUpgradesPerCity",hallProof!=null&&hallProof.has("originalSHA256")?hallProof.getAsJsonObject("originalSHA256").size():0);proof.addProperty("paidHallSubfloorCells",hallReads.size());
+            if(hallProof!=null)proof.add("paidHallHistory",hallProof.deepCopy());
             proof.addProperty("productionBayConstructed",bay!=null);proof.addProperty("legacyCityAPlot1BayExactlyEqual",legacyBayEqual);
             if(bay!=null){proof.addProperty("bayId",bay.id());proof.addProperty("bayRevision",bay.facility().revision());proof.addProperty("baySupportCells",bay.support().size());proof.addProperty("bayClearanceCells",bay.clearance().size());}
             proof.addProperty("case",id);proof.addProperty("city",site.city());proof.addProperty("plot",site.plot());proof.addProperty("vehicle",spec.id());proof.addProperty("rotation",site.anchor().rotation());
@@ -531,7 +630,7 @@ public final class NativeVehicleSites52Tests {
     private static void checkSource(ServerLevel level,VehicleSites52.Site site,AABB envelope,BlockPos p)throws Exception {
         check(p.getX()>=envelope.minX&&p.getY()>=envelope.minY&&p.getZ()>=envelope.minZ&&p.getX()<envelope.maxX&&p.getY()<envelope.maxY&&p.getZ()<envelope.maxZ,"Probe leaves actual site envelope at "+p);
         VehicleFactory50.loaded(level,p);
-        check(level.getBlockState(p).equals(VehicleSites52.source(site,p)),"Actual site source drift at "+p);
+        check(level.getBlockState(p).equals(VehicleSites52.source(site,p,false)),"Actual site source drift at "+p);
     }
     private static int clear(ServerLevel level,Entity vehicle,ServerPlayer driver,VehicleSites52.Site site,AABB envelope,List<AABB> boxes)throws Exception {
         Set<BlockPos> checked=new HashSet<>();

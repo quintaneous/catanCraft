@@ -1,3 +1,32 @@
+## ECO-03 / INT-01 / INT-03 — paid Hall vehicle foundation context, 2026-11-16
+
+The corrected concurrency fixture passed **4/4 native tests** on source
+`6c26cea98325f61d5e6b8a31cafedc5d0cf715e9`. The combined-mod authored layout-0
+campaign then completed all 48 TH1–TH3 checkpoints and A/B at TH4, passing the
+former Hall/wall blocker. It failed at C TH4: vehicle envelope (287,79,-726)
+expected stone but the completed paid Hall correctly placed dirt. Native result:
+**1 executed, 0 passed, 1 failed**, exit 1; restart was not launched.
+[Retained failure, physical region/journal and raw logs](evidence/053_authored_vehicle_failure01.json).
+
+[All-48-site static audit](evidence/vehicle53_hall_context_static_audit.json) proves
+the exact intersection: 120/93/96 changed cells for factory plots 1/3/4, all at
+y79, stone to dirt, with no factory-owned cells and no change to the y80 vehicle
+support floor. TH1–TH3 and both public-space source variants agree; TH4/TH5 R1/R2
+share this exact change. The candidate now requires completed paid Hall authority
+for these replacement reads, with immutable original/repair/recovery history.
+It does not change bay identities, driving surfaces, collision checks or prices.
+Eight focused tests and strengthened native vehicle fixtures are implemented;
+**their native execution is pending**. The 96 vehicle cases retain their original
+movement/seat checks and now use actual funded Hall4/5 purchases with raw public
+source and production envelope verification. They remain technical fixtures,
+separate from the no-grant authored campaign.
+
+Packaging controls now pass **79 tests**, including explicit UTF-8 PowerShell
+reads and Unicode paths on Linux. Windows/client execution remains unverified.
+The owner JAR/kit remains **HELD** until all native campaigns, restart checks,
+retained regressions and final artifact assembly are complete. SEC-01 remains
+**UNRESOLVED / HIGH PRIORITY**; SEC-02 remains open.
+
 ## INT-01 / INT-03 / DEF-04 — restored candidate validation, 2026-11-16
 
 Gameplay checkpoint `167237cda66cd83f757e227d6b73f4e2b8f27177` and kit/validation

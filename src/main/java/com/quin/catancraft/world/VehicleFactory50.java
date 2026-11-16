@@ -250,15 +250,18 @@ final class VehicleFactory50 {
     private static void verifyEnvelope(ServerLevel level,VehicleSites52.Site site,UUID nation,boolean prepared)throws IOException {
         MapAnchor anchor=site.anchor();var definition=site.definition();var city=CatanSavedData.get(level.getServer()).territory(site.city());
         if(city==null||!nation.equals(city.ownerNationId()))throw new IOException("Factory ownership changed.");
+        var hall=VehicleHallContext53.capture(level,site,nation);
+        var earnedFoundation=hall.reads();
         for(int x=NativeVehicleBay46.MIN_X;x<=NativeVehicleBay46.MAX_X;x++)for(int y=NativeVehicleBay46.MIN_Y;y<=NativeVehicleBay46.MAX_Y;y++)for(int z=NativeVehicleBay46.MIN_Z;z<=NativeVehicleBay46.MAX_Z;z++){
             BlockPos p=NativeVehicleBay46.sourceCell(anchor,x,y,z);loaded(level,p);
-            var expected=VehicleSites52.source(site,p,prepared);var blockEntity=level.getBlockEntity(p);
+            var expected=earnedFoundation.getOrDefault(p,VehicleSites52.source(site,p,prepared));var blockEntity=level.getBlockEntity(p);
             // Authored barrels are legitimate inventories. Verify their block/type,
             // preserve contents, and never require an empty or synthetic source NBT.
             boolean entityMatches=expected.hasBlockEntity()?blockEntity!=null&&blockEntity.getType().isValid(expected):blockEntity==null;
             if(!definition.toBoundary().contains(DIMENSION,p.getX(),p.getZ())||!entityMatches||!level.getBlockState(p).equals(expected))
                 throw new IOException("Factory departure source, ownership or block entity changed at "+p+".");
         }
+        hall.verifyUnchanged();
     }
     private static void clearBox(ServerLevel level,VehicleSites52.Site site,boolean prepared,AABB box,Entity ignored)throws IOException {
         MapAnchor anchor=site.anchor();

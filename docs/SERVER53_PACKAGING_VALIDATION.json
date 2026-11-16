@@ -2,9 +2,20 @@
   "actualGameWorldUsed": false,
   "artifact": {
     "path": "docs/artifacts/server53-packaging-controls.zip",
-    "sha256": "a336672b33e36aa12fbeee4691f139c2ae23eb53b24100fa758ae3d66f2ab808"
+    "sha256": "00b231071d0f75d59a861349c305ae2d4f4aa32eb9220fc5d1fc5d356982dbc5"
   },
   "baseCommit": "1f2ee4e322796a85e9bb2ba19cb63aeb0042f87f",
+  "encodingCompatibility": {
+    "bindingFixtureOnly": true,
+    "evidence": "utf8-79-tests-r1.log",
+    "fix": "Explicit -Encoding UTF8 for every Get-Content read in both PowerShell entry points",
+    "original78TestsRetained": true,
+    "unicodePaths": [
+      "kit-\u00c9lodie-\u57ce\u5e02",
+      "run-Jos\u00e9-\u57ce"
+    ],
+    "windowsPowerShell51Executed": false
+  },
   "javaExecuted": false,
   "kind": "server53-packaging-controls-validation",
   "limitations": [
@@ -22,7 +33,10 @@
       "Python validates PowerShell-generated manifests",
       "START verify-only avoids Java",
       "EULA false refuses before Java/binding",
-      "extra mods and tools refuse"
+      "extra mods and tools refuse",
+      "Unicode kit and explicit run path round trip",
+      "BOM-less UTF-8 established binding readback without Java",
+      "Explicit UTF8 on all script reads guards Windows PowerShell 5.1 ANSI default"
     ],
     "host": "Linux x64",
     "scriptsExecuted": true,
@@ -38,7 +52,9 @@
     "focused-tests.log": "079c519d99cc2a2c3e1f1d9597bfcc00cedd1881d4c2c68952afc8cce99782cd",
     "legacy-demo-tests.log": "ff0665aea801907bc0f33509c4921a3621e61754da1632a18b1aa31b8cb6dd33",
     "powershell-parse.log": "5040b480d788daaa8fb51b53b0cb3e3bb8ac50cab023a3e922617779b4125b93",
-    "progression-tests.log": "4ce1435f59e36e51b8cb6706227057fe73dc395ac8fb6af14ee4a4658986228b"
+    "progression-tests.log": "4ce1435f59e36e51b8cb6706227057fe73dc395ac8fb6af14ee4a4658986228b",
+    "utf8-79-tests-r1.log": "8198d2e8346875acb9fac3d23ca7fcbae83648730aa9426d7a473bb46ae881ed",
+    "utf8-command.json": "a3013a21a3899b377ca907e2e5b716a48ac8fc301d151c6343e5baeefdcf24a4"
   },
   "readyForFocusedSoloTest": false,
   "retainedFailure": "focused-powershell-r1.log records hidden marker deletion refusal; fixed to delete only the owned baseline marker in the new copy, then rerun r2/final pass.",
@@ -46,12 +62,12 @@
   "serverExecuted": false,
   "sourceFingerprints": {
     "docs/SERVER_WIDE_053_SOLO_CHECKLIST.md": "edb3d05f39e3fe1d1107a49345f6071a8f72a543f03fb382dc52742665f7c4c7",
-    "tests/test_server53_package.py": "e7af82aa3561460fc669c3a49e8a63351237c82b32e09648f5f0a6170a6b248d",
+    "tests/test_server53_package.py": "83da14ea2463ccffd9d10bb569d72f8c7684a43fc01e60801f90fa748d4ef3fd",
     "tools/create_progression_run.py": "44700db03489520b3a1871149d0983e3b7d340722f9e4ccc03de58c32fb4f7d3",
     "tools/package_authored_demo.py": "179945ab36b90d3f7fda9fff19a2a270a03b8f1df5098e57b88bf43b7d0117d7",
-    "tools/server53/New-TestRun.ps1": "f8b350f4fc3827fe6e16ab50234e4aee75b79c14d9fe8cfc2316dee972dfeb6b",
+    "tools/server53/New-TestRun.ps1": "3b940e740f4bd0c8962e85bea284a10bb9e6dd0a392899c91cea1783277a9e55",
     "tools/server53/README.md": "d84363e1606207e024962d396a03048e370de47ff0812c9d94ccf2c0fee4046c",
-    "tools/server53/Start-Server.ps1": "8852e420add6802b0875e48f8196e1867651fe09e43f91eb2cf662c77909a199",
+    "tools/server53/Start-Server.ps1": "1ea4795d645719828fe696522757afbd5094b0f7b7d323ccc5c3d50d5f87b8a7",
     "tools/server53/contracts.py": "7ad6d1c1ad584d1b7e824c64073729ea0f2b82aa758b1321cc8ad4111e267b1f",
     "tools/server53/new_run.py": "2c40c857950f0630f1fdaa4073218d072bc0f1111e9148eaf5dd761d895f0f4d",
     "tools/server53/package_server.py": "cce7a20a0717366c5f049ec0967bfccbe5d6ad6fd95c6840076c9bd6a79a47aa",
@@ -61,10 +77,10 @@
   "status": "PASS_PACKAGING_CONTROLS_ONLY",
   "tests": {
     "command": "CATAN_PWSH=/workspace/scratch/92c934691925/toolchain/powershell-7.4.6/pwsh python3 (unittest suite: test_prepare_fresh_demo, test_package_authored_demo, test_progression_run, test_server53_package)",
-    "executed": 78,
+    "executed": 79,
     "exitCode": 0,
     "failed": 0,
-    "passed": 78,
+    "passed": 79,
     "skipped": 0
   }
 }

@@ -116,10 +116,13 @@ public final class VehicleFactory50Tests {
                 h.runAfterDelay(5,()->envelopeWhenReady(h,a,lease,waited+5));return;
             }
             var level=h.getLevel();var data=com.quin.catancraft.data.CatanSavedData.get(level.getServer());data.syncMapDefinitions();
-            var city=data.territory("a");UUID original=city.ownerNationId(),owner=UUID.randomUUID();
+            var city=data.territory("a");UUID original=city.ownerNationId();int originalLevel=city.cityLevel();
+            // A real fixture nation receives the normal starting treasury; Hall
+            // context verifies actual SavedData ownership even at the early tiers.
+            var nation=data.createNation("factory50-envelope-"+UUID.randomUUID(),UUID.randomUUID());UUID owner=nation.id();
             Map<BlockPos,BlockState> restore=new LinkedHashMap<>();
             try{
-                city.setOwnerNationId(owner);
+                city.setOwnerNationId(owner);city.setCityLevel(1);
                 BlockPos barrel=null;
                 for(int x=NativeVehicleBay46.MIN_X;x<=NativeVehicleBay46.MAX_X;x++)for(int y=NativeVehicleBay46.MIN_Y;y<=NativeVehicleBay46.MAX_Y;y++)for(int z=NativeVehicleBay46.MIN_Z;z<=NativeVehicleBay46.MAX_Z;z++){
                     BlockPos p=NativeVehicleBay46.sourceCell(a,x,y,z);var source=NativeVehicleBay46.source(a,p);
@@ -135,7 +138,7 @@ public final class VehicleFactory50Tests {
                 level.setBlock(road,Blocks.STONE.defaultBlockState(),18);refuse(()->VehicleFactory50.verifyEnvelope(level,a,owner));level.setBlock(road,saved,18);
                 VehicleFactory50.verifyEnvelope(level,a,owner);
                 city.setOwnerNationId(UUID.randomUUID());refuse(()->VehicleFactory50.verifyEnvelope(level,a,owner));
-            }finally{city.setOwnerNationId(original);restore.forEach((at,state)->level.setBlock(at,state,18));lease.close();}
+            }finally{city.setOwnerNationId(original);city.setCityLevel(originalLevel);data.nations().remove(nation);data.setDirty();restore.forEach((at,state)->level.setBlock(at,state,18));lease.close();}
             h.succeed();
         }catch(Exception failure){lease.close();h.fail(failure.toString());}
     }

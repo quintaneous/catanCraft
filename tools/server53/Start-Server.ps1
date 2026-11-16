@@ -40,8 +40,8 @@ function SameSet($Actual,$Expected) {
 try {
     if (Test-Path -LiteralPath (Safe '.catancraft-baseline-only')) { throw 'Immutable baseline cannot launch; use NEW_TEST_RUN' }
     $PackagePath = Safe 'PACKAGE.json'
-    if ((Hash $PackagePath) -cne ((Get-Content -Raw -LiteralPath (Safe 'PACKAGE.sha256')).Split()[0])) { throw 'Package manifest checksum mismatch' }
-    $Policy = Get-Content -Raw -LiteralPath $PackagePath | ConvertFrom-Json
+    if ((Hash $PackagePath) -cne ((Get-Content -Raw -Encoding UTF8 -LiteralPath (Safe 'PACKAGE.sha256')).Split()[0])) { throw 'Package manifest checksum mismatch' }
+    $Policy = Get-Content -Raw -Encoding UTF8 -LiteralPath $PackagePath | ConvertFrom-Json
     foreach ($P in $Policy.immutableFiles.PSObject.Properties) { Check $P.Name $P.Value }
     $Scripts = @(Get-ChildItem -Force -LiteralPath $Root | Where-Object { $_.Extension -in @('.ps1','.py','.bat','.sh','.cmd') } | ForEach-Object { $_.Name })
     $ExpectedScripts = @($Policy.immutableFiles.PSObject.Properties.Name | Where-Object { $_ -notmatch '/' -and [IO.Path]::GetExtension($_) -in @('.ps1','.py','.bat','.sh','.cmd') })
@@ -51,7 +51,7 @@ try {
         SameSet @(Files $Prefix) $Expected
     }
     $Properties = @{}
-    $Text = Get-Content -Raw -LiteralPath (Safe 'server.properties')
+    $Text = Get-Content -Raw -Encoding UTF8 -LiteralPath (Safe 'server.properties')
     if ($Text -match '[\x00-\x09\x0B\x0C\x0E-\x1F\x7F\x85\u2028\u2029]') { throw 'Unsupported property control/separator' }
     foreach ($Line in ($Text -split '\r\n|\r|\n')) {
         if (-not $Line.Trim() -or $Line.TrimStart().StartsWith('#') -or $Line.TrimStart().StartsWith('!')) { continue }
@@ -68,10 +68,10 @@ try {
     foreach ($P in $Policy.serverProperties.PSObject.Properties) { if (-not $Properties.ContainsKey($P.Name) -or $Properties[$P.Name] -cne $P.Value) { throw ('Changed required server property: '+$P.Name) } }
     $Marker = Safe '.demo-launch-state.json'
     $AuthPath = Safe ($Policy.worldRoot+'/catancraft-fresh-demo.json')
-    $Auth = Get-Content -Raw -LiteralPath $AuthPath | ConvertFrom-Json
+    $Auth = Get-Content -Raw -Encoding UTF8 -LiteralPath $AuthPath | ConvertFrom-Json
     $WorldFiles = @(Files $Policy.worldRoot)
     if (Test-Path -LiteralPath $Marker) {
-        $Binding = Get-Content -Raw -LiteralPath $Marker | ConvertFrom-Json
+        $Binding = Get-Content -Raw -Encoding UTF8 -LiteralPath $Marker | ConvertFrom-Json
         if ($Binding.root -cne $Root -or $Binding.inputManifestSHA256 -cne $Policy.inputManifestSHA256 -or @($Binding.PSObject.Properties).Count -ne 2) { throw 'Run moved or binding changed; preserve it' }
         if ($Auth.installationBoundPath -cne (Safe $Policy.worldRoot) -or @($Auth.PSObject.Properties).Count -ne (@($Policy.authorization.PSObject.Properties).Count+1)) { throw 'World authorization binding changed' }
         foreach ($P in $Policy.authorization.PSObject.Properties) { if ($Auth.($P.Name) -cne $P.Value) { throw 'World authorization changed' } }
@@ -81,7 +81,7 @@ try {
         foreach ($P in $Policy.initialWorldFiles.PSObject.Properties) { Check $P.Name $P.Value }
     }
     if ($VerifyOnly) { Write-Host 'Verified run files/binding; Java not executed, server not started'; exit 0 }
-    if ((Get-Content -Raw -LiteralPath (Safe 'eula.txt')) -notmatch '(?m)^\s*eula\s*=\s*true\s*$') { throw 'Read Minecraft EULA and personally set eula=true in this run before launch' }
+    if ((Get-Content -Raw -Encoding UTF8 -LiteralPath (Safe 'eula.txt')) -notmatch '(?m)^\s*eula\s*=\s*true\s*$') { throw 'Read Minecraft EULA and personally set eula=true in this run before launch' }
     $Java = Safe 'runtime/java17/bin/java.exe'
     if (-not (Test-Path -LiteralPath $Java)) { throw 'Bundled Java 17 missing; use the complete Windows kit' }
     $ErrorActionPreference = 'Continue'
