@@ -19,7 +19,8 @@ use the corresponding `.sh` files with Python 3.11+ and 64-bit Java 17. Never ru
 baseline directly or reuse a played run as a new baseline.
 
 Use a separate Minecraft 1.20.1 / Forge 47.4.10 client with the supplied four
-`client/mods` JARs. Add your authenticated username with `whitelist add YOUR_NAME`
+`client/mods` JARs. The resource forecast uses network protocol 6. Use the
+same CatanCraft candidate JAR on the client and the isolated server. Add your authenticated username with `whitelist add YOUR_NAME`
 in the server console and join `127.0.0.1:25566`.
 
 In a fresh run, use `/nation create <your chosen name>`, then `/nation`; choose
@@ -41,16 +42,20 @@ weapons factory and its earned tier. Do not grind the full ladder for this pass.
 ## Seven checks
 
 1. **D startup and management.** Let normal startup finish. Check the base city is
-   visible, the lectern opens, and the city/nation shown is yours in D. Record any
-   missing building, wrong city label, or refusal text.
-2. **One TaCZ gun and its ammo.** Use an affordable available shop entry. Open its
+   visible, the lectern opens, and the city/nation shown is yours in D. Open
+   **/nation → Resources**. Check that each of the 14 balances has a signed
+   net forecast or a zero for the next 15-minute production cycle. If a cycle
+   posts while you have the page open, compare the balance change against the
+   prior forecast, allowing for any intervening purchases, trades or rewards.
+   Check that balances and forecasts refresh while you stay on the page.
+2. **One TaCZ gun and its ammo.** If you own a completed Weapons Factory, right-click its marked crafting-table counter in D and confirm the factory menu opens. Record the plot and any refusal. Use an affordable available shop entry. Open its
    quote and cancel once: no charge/item. Reopen and confirm once: one charge and
    one gun. Buy matching ammo once and check it loads/fires. Record price and item.
 3. **One needed D wall purchase.** Open City management → DEFENSES. Inspect the
    sector/tier quote; buy only one genuinely needed, previously unaccepted upgrade
    if affordable. Check its wall and connection to adjacent sectors. Preserve the
    accepted City A walls (North Reinforced; East/South/West Basic); do not rebuy them.
-4. **One vehicle.** At your completed vehicle factory, review and confirm one
+4. **One vehicle.** At the crafting-table counter in your completed D Vehicle Factory, open the local vehicle menu, then review and confirm one
    affordable vehicle purchase. Enter it, drive a short safe distance, and exit.
    Record any placement, ownership or interaction problem.
 5. **Economy fuel.** With that vehicle below full fuel, review **Add 25% Fuel**.

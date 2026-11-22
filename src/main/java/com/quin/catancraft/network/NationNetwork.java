@@ -3,14 +3,16 @@ package com.quin.catancraft.network;
 import com.quin.catancraft.CatanCraft;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraftforge.network.NetworkDirection;
 import net.minecraftforge.network.NetworkRegistry;
 import net.minecraftforge.network.PacketDistributor;
 import net.minecraftforge.network.simple.SimpleChannel;
 
 import java.util.List;
+import java.util.Optional;
 
 public final class NationNetwork {
-    private static final String PROTOCOL = "5";
+    private static final String PROTOCOL = "6";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(CatanCraft.MOD_ID, "main"))
@@ -27,11 +29,14 @@ public final class NationNetwork {
         CHANNEL.registerMessage(nextId++, NationDashboardPacket.class,
                 NationDashboardPacket::encode,
                 NationDashboardPacket::decode,
-                NationDashboardPacket::handle);
+                NationDashboardPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
         CHANNEL.registerMessage(nextId++, TerritoryHudPacket.class,
                 TerritoryHudPacket::encode,
                 TerritoryHudPacket::decode,
                 TerritoryHudPacket::handle);
+        CHANNEL.registerMessage(nextId++, ResourceRefreshRequest.class,
+                ResourceRefreshRequest::encode, ResourceRefreshRequest::decode,
+                ResourceRefreshRequest::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
     }
 
     public static void sendTerritoryHud(ServerPlayer player, String label) {

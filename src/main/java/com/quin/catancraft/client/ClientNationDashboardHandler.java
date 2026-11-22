@@ -7,6 +7,10 @@ public final class ClientNationDashboardHandler {
     private ClientNationDashboardHandler() {}
     public static void open(List<String> lines) {
         Minecraft client=Minecraft.getInstance();
+        if (lines.contains("V|resource_refresh") || lines.contains("V|resource_unavailable")) {
+            if (client.screen instanceof NationDashboardScreen dashboard) dashboard.applyResourceRefresh(lines);
+            return;
+        }
         if(lines.contains("V|weapon_shop") || lines.contains("V|vehicle_shop")) { client.setScreen(new WeaponShopScreen(lines)); return; }
         NationDashboardScreen dashboard=client.screen instanceof NationDashboardScreen existing?existing
                 :client.screen instanceof DefenseConfirmationScreen confirmation?confirmation.parentDashboard():null;

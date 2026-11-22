@@ -66,6 +66,13 @@ public final class NationData {
         return stockpile.getOrDefault(type, 0L);
     }
 
+    /** Detached working balances for a production forecast. No player lists or world state are copied. */
+    public NationData copyEconomicBalances() {
+        NationData copy = new NationData(id, name, leaderId, treasury);
+        copy.stockpile.putAll(stockpile);
+        return copy;
+    }
+
     public Map<ResourceType, Long> stockpileView() {
         return Map.copyOf(stockpile);
     }

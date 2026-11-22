@@ -9,7 +9,11 @@ import com.quin.catancraft.data.ResourceType;
 import com.quin.catancraft.data.TerritoryData;
 import net.minecraft.server.MinecraftServer;
 
+import java.util.Collection;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 public final class EconomyEngine {
     public enum ProcessorStatus {
@@ -191,11 +195,41 @@ public final class EconomyEngine {
         applyCycle(CatanSavedData.get(server));
     }
 
+    /**
+     * Net change at the next production settlement with the current stockpile,
+     * ownership and building settings. Territory order is significant when
+     * processors in different cities compete for the same nation stockpile.
+     */
+    public static Map<ResourceType, Long> nextCycleResourceChanges(CatanSavedData data, NationData nation) {
+        NationData forecast = nation.copyEconomicBalances();
+        List<TerritoryData> owned = data.territories().stream()
+                .filter(territory -> nation.id().equals(territory.ownerNationId()))
+                .toList();
+        settleBalances(owned, territory -> forecast);
+        var changes = new EnumMap<ResourceType, Long>(ResourceType.class);
+        for (ResourceType type : ResourceType.values()) {
+            changes.put(type, forecast.resource(type) - nation.resource(type));
+        }
+        return Map.copyOf(changes);
+    }
+
     private static void applyCycle(CatanSavedData data) {
+        settleBalances(data.territories(), territory -> owner(data, territory));
+        data.setDirty();
+        CatanCraft.LOGGER.info(
+                "CatanCraft production cycle complete: {} nations, {} territories",
+                data.nations().size(),
+                data.territories().size()
+        );
+    }
+
+    // The four phases read territories and write only to the supplied balances.
+    private static void settleBalances(Collection<TerritoryData> territories,
+                                       Function<TerritoryData, NationData> balances) {
         // Phase 1: every territory that contains Agriculture produces it first.
         // This keeps upkeep deterministic even for multi-resource starter regions.
-        for (TerritoryData territory : data.territories()) {
-            NationData nation = owner(data, territory);
+        for (TerritoryData territory : territories) {
+            NationData nation = balances.apply(territory);
             if (nation == null) continue;
 
             if (territory.rawResources().contains(ResourceType.AGRICULTURE)) {
@@ -210,24 +244,24 @@ public final class EconomyEngine {
         // of its non-food raw outputs. This supports the actual season-one map:
         // starts produce wood/stone/agriculture, F/K produce iron/oil, and G/J
         // produce coal/copper without double-charging a bundled territory.
-        for (TerritoryData territory : data.territories()) {
-            NationData nation = owner(data, territory);
+        for (TerritoryData territory : territories) {
+            NationData nation = balances.apply(territory);
             if (nation == null) continue;
             produceNonAgricultureResources(nation, territory);
         }
 
         // Phase 3: processors run by dependency tier.
         for (int tier = 1; tier <= 3; tier++) {
-            for (TerritoryData territory : data.territories()) {
-                NationData nation = owner(data, territory);
+            for (TerritoryData territory : territories) {
+                NationData nation = balances.apply(territory);
                 if (nation == null) continue;
                 processTier(nation, territory, tier);
             }
         }
 
         // Phase 4: territorial and commercial cash income.
-        for (TerritoryData territory : data.territories()) {
-            NationData nation = owner(data, territory);
+        for (TerritoryData territory : territories) {
+            NationData nation = balances.apply(territory);
             if (nation == null) continue;
 
             nation.addTreasury(EconomyBalance.BASE_TERRITORY_INCOME_PER_CYCLE);
@@ -238,13 +272,6 @@ public final class EconomyEngine {
                 }
             }
         }
-
-        data.setDirty();
-        CatanCraft.LOGGER.info(
-                "CatanCraft production cycle complete: {} nations, {} territories",
-                data.nations().size(),
-                data.territories().size()
-        );
     }
 
     private static NationData owner(CatanSavedData data, TerritoryData territory) {

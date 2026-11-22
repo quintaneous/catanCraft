@@ -62,6 +62,7 @@ public final class NationDashboard {
         List<String> lines = new ArrayList<>();
         if(refreshOnly)lines.add("V|defense_refresh");
         if(!notice.isBlank())lines.add("M|"+DefenseMenuRows.safe(notice));
+        lines.add("I|" + nation.id());
         lines.add("H|" + nation.name());
         lines.add("G|Treasury: $" + nation.treasury());
         lines.add("B|Members: " + nation.members().size());
@@ -73,29 +74,7 @@ public final class NationDashboard {
                 " • Steel " + nation.resource(ResourceType.STEEL));
         lines.add("");
 
-        long stockedTypes = java.util.Arrays.stream(ResourceType.values())
-                .filter(type -> nation.resource(type) > 0)
-                .count();
-        lines.add("S|resources|RESOURCES • " + stockedTypes + " types stocked");
-        lines.add("H|RAW RESOURCES");
-        addResource(lines, nation, ResourceType.WOOD);
-        addResource(lines, nation, ResourceType.STONE);
-        addResource(lines, nation, ResourceType.AGRICULTURE);
-        addResource(lines, nation, ResourceType.IRON);
-        addResource(lines, nation, ResourceType.COAL);
-        addResource(lines, nation, ResourceType.OIL);
-        addResource(lines, nation, ResourceType.COPPER);
-        lines.add("");
-
-        lines.add("H|PROCESSED RESOURCES");
-        addResource(lines, nation, ResourceType.STEEL);
-        addResource(lines, nation, ResourceType.CONCRETE);
-        addResource(lines, nation, ResourceType.FABRIC);
-        addResource(lines, nation, ResourceType.FUEL);
-        addResource(lines, nation, ResourceType.MECHANICAL_PARTS);
-        addResource(lines, nation, ResourceType.ELECTRONICS);
-        addResource(lines, nation, ResourceType.EXPLOSIVES);
-        lines.add("X|resources");
+        lines.addAll(NationResourceRows.section(data, nation));
         lines.add("");
 
         if (territories.isEmpty()) {
@@ -506,10 +485,6 @@ public final class NationDashboard {
         return "A|" + command + "|" + label;
     }
 
-    private static void addResource(List<String> lines, NationData nation, ResourceType type) {
-        lines.add("G|" + pretty(type) + ": " + nation.resource(type));
-    }
-
     private static String tradeAssetText(String asset, long amount) {
         if ("money".equalsIgnoreCase(asset)) {
             return "$" + amount;
@@ -530,7 +505,7 @@ public final class NationDashboard {
         return result.toString();
     }
 
-    private static String pretty(ResourceType type) {
+    static String pretty(ResourceType type) {
         String[] pieces = type.id().split("_");
         StringBuilder result = new StringBuilder();
         for (String piece : pieces) {
