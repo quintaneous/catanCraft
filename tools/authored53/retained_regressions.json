@@ -4,10 +4,10 @@
   "status": "NOT_RUN",
   "inventoriedAgainstHead": "1f2ee4e322796a85e9bb2ba19cb63aeb0042f87f",
   "sourceBinding": "At execution require clean committed gameplay/build/harness, bind exact SOURCE_COMMIT to process record, and verify inventory hashes; this plan itself is not a native result.",
-  "scope": "Parent-selected retained 52 namespaces, three Hall/wall namespaces, vehicle Hall context and retained factory-envelope regression; authored progression/sector seed/verify campaigns remain separate required gates.",
-  "namespaceCount": 57,
-  "phaseCount": 62,
-  "expectedTestExecutions": 566,
+  "scope": "Parent-selected retained 52 namespaces, three Hall/wall namespaces, vehicle Hall context and retained factory-envelope regression; authored progression/sector seed/verify campaigns remain separate required gates. Includes next-cycle resource forecasting and the Resources page refresh wire format and membership checks.",
+  "namespaceCount": 59,
+  "phaseCount": 64,
+  "expectedTestExecutions": 574,
   "generatorInventory": {
     "pathsScanned": "src/main/java/**/*.java",
     "registrationPatterns": [
@@ -2486,6 +2486,66 @@
       "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
       "historicalCountCorroboration": [],
       "compatibilityCoverage": "Retained full factory-envelope source, populated barrels and drift refusal under real early-tier nation ownership."
+    },
+    {
+      "namespace": "catancraft_economy45",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/economy/EconomyProjection45Tests.java",
+          "sha256": "04b5af2a695b43173c93d87ba4d6c6d5c18f14959fdc4e4da9c43b3f74f673e5",
+          "methods": [
+            "starter_two_hours_uses_real_map_yields_and_one_upkeep",
+            "half_yield_rounds_up_before_food_upkeep",
+            "food_shortage_scales_raw_output_but_does_not_cancel_cash",
+            "processing_dependency_tiers_ignore_reverse_building_list_order",
+            "logistics_batch_can_overshoot_target_then_pause_without_consuming",
+            "unowned_producers_and_reload_do_not_add_projected_income"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_economy45",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
+    },
+    {
+      "namespace": "catancraft_resource_dashboard53",
+      "status": "NOT_RUN",
+      "expectedTests": 2,
+      "countBasis": "Explicit @GameTest methods in independently inventoried source; no generated tests.",
+      "sourceFiles": [
+        {
+          "path": "src/main/java/com/quin/catancraft/network/ResourceDashboard53Tests.java",
+          "sha256": "1b011b56692d9889c8e0a9b71585d1a0a51f7fcfa495cf2ef5bca2cd0943ffba",
+          "methods": [
+            "all_resources_show_stock_and_signed_current_cycle_forecast",
+            "resource_refresh_wire_and_nation_membership_are_authoritative"
+          ]
+        }
+      ],
+      "phases": [
+        "single"
+      ],
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_resource_dashboard53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "worldFolder": "world",
+      "worldReuse": "Same isolated world only for seed then verify in separate JVMs; new attempt uses a new world.",
+      "historicalCountCorroboration": []
     }
   ],
   "runs": [
@@ -3539,6 +3599,38 @@
       },
       "dependsOn": [],
       "worldFamily": "catancraft_factory50",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_economy45-single",
+      "namespace": "catancraft_economy45",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 6,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_economy45",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_economy45",
+      "worldFolder": "world"
+    },
+    {
+      "id": "catancraft_resource_dashboard53-single",
+      "namespace": "catancraft_resource_dashboard53",
+      "phase": "single",
+      "status": "NOT_RUN",
+      "expectedTests": 2,
+      "initScripts": [],
+      "gradleProperties": {
+        "gameTestNamespace": "catancraft_resource_dashboard53",
+        "controlledGameTests": "true",
+        "controlledRunLabel": "${RUN_LABEL}"
+      },
+      "dependsOn": [],
+      "worldFamily": "catancraft_resource_dashboard53",
       "worldFolder": "world"
     }
   ]

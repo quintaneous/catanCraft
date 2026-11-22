@@ -1,5 +1,8 @@
 package com.quin.catancraft.client;
 
+import com.quin.catancraft.economy.EconomyBalance;
+import com.quin.catancraft.network.NationNetwork;
+import com.quin.catancraft.network.ResourceRefreshRequest;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
@@ -10,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.UUID;
 
 public final class NationDashboardScreen extends Screen {
     private static final int PANEL_WIDTH = 660;
@@ -33,15 +37,48 @@ public final class NationDashboardScreen extends Screen {
     private int lastContentHeight;
     private int lastVisibleHeight;
     private boolean awaitingDefenseQuote;
+    private ResourcePage resources;
+    private UUID resourceViewId;
+    private int ticksUntilResourceRefresh;
 
     public NationDashboardScreen(List<String> lines) {
         super(Component.literal("Nation Dashboard"));
-        this.lines = List.copyOf(lines);
+        updateLines(lines);
         this.page = LAST_PAGE;
     }
 
     /** Preserve selected page, expanded territories/sections and scroll on server refresh. */
-    public void updateLines(List<String> fresh) { this.lines=List.copyOf(fresh); awaitingDefenseQuote=false; }
+    public void updateLines(List<String> fresh) {
+        lines = List.copyOf(fresh);
+        resources = ResourcePage.from(lines);
+        resourceViewId = UUID.randomUUID();
+        awaitingDefenseQuote = false;
+    }
+
+    public void applyResourceRefresh(List<String> fresh) {
+        if (resources.nationId() == null || !fresh.contains("I|" + resources.nationId())
+                || !fresh.contains("U|" + resourceViewId)) return;
+        if (fresh.contains("V|resource_unavailable")) {
+            onClose();
+        } else if (page == Page.RESOURCES) {
+            resources = ResourcePage.from(fresh);
+        }
+    }
+
+    @Override
+    public void tick() {
+        super.tick();
+        if (page != Page.RESOURCES) {
+            ticksUntilResourceRefresh = 0;
+            return;
+        }
+        if (resources.nationId() == null || minecraft == null || minecraft.getConnection() == null) return;
+        if (ticksUntilResourceRefresh == 0) {
+            NationNetwork.CHANNEL.sendToServer(new ResourceRefreshRequest(resources.nationId(), resourceViewId));
+            ticksUntilResourceRefresh = ResourceRefreshRequest.INTERVAL_TICKS;
+        }
+        ticksUntilResourceRefresh--;
+    }
 
     @Override
     public void render(
@@ -92,8 +129,7 @@ public final class NationDashboardScreen extends Screen {
         int endY = switch (page) {
             case OVERVIEW -> renderOverview(
                     graphics, mouseX, mouseY, left, right, startY, contentTop, contentBottom);
-            case RESOURCES -> renderResources(
-                    graphics, mouseX, mouseY, left, right, startY, contentTop, contentBottom);
+            case RESOURCES -> renderResources(graphics, left, right, startY);
             case TERRITORIES -> renderTerritories(
                     graphics, mouseX, mouseY, left, right, startY, contentTop, contentBottom);
             case TRADE -> renderGenericSection(
@@ -215,7 +251,7 @@ public final class NationDashboardScreen extends Screen {
         graphics.drawString(font, "AT A GLANCE", left + 14, y, 0xFFD166, false);
         y += 15;
 
-        String resourceLabel = sectionLabel("resources");
+        String resourceLabel = resources.summary();
         String tradeLabel = sectionLabel("trade");
         String monumentLabel = sectionLabel("monument");
         String territoryLabel = sectionLabel("territories");
@@ -300,80 +336,69 @@ public final class NationDashboardScreen extends Screen {
         return y + ROW_HEIGHT + GAP;
     }
 
-    private int renderResources(
-            GuiGraphics graphics,
-            int mouseX,
-            int mouseY,
-            int left,
-            int right,
-            int y,
-            int contentTop,
-            int contentBottom
-    ) {
-        List<String> section = sectionLines("resources");
-        List<String> raw = new ArrayList<>();
-        List<String> processed = new ArrayList<>();
-        List<String> target = raw;
-
-        for (String line : section) {
-            if (line.equals("H|RAW RESOURCES")) {
-                target = raw;
-                continue;
-            }
-            if (line.equals("H|PROCESSED RESOURCES")) {
-                target = processed;
-                continue;
-            }
-            if (line.startsWith("G|")) target.add(line.substring(2));
-        }
-
+    private int renderResources(GuiGraphics graphics, int left, int right, int y) {
+        int x = left + 14;
+        int width = right - left - 28;
         int gap = 10;
-        int colWidth = (right - left - 38 - gap) / 2;
-        int x1 = left + 14;
-        int x2 = x1 + colWidth + gap;
-        int rawY = y;
-        int processedY = y;
-
-        graphics.drawString(font, "RAW RESOURCES", x1, rawY, 0xFFD166, false);
-        rawY += 17;
-        for (String item : raw) {
-            rawY = drawResourceCard(graphics, x1, rawY, colWidth, item);
+        int column = (width - gap) / 2;
+        graphics.drawString(font, "Stockpile (net next " + EconomyBalance.CYCLE_MINUTES + "-min cycle)",
+                x, y, 0xAAB4C0, false);
+        y += 17;
+        if (column < 175) {
+            y = drawResourceGroup(graphics, x, y, width, "RAW RESOURCES", resources.raw());
+            return drawResourceGroup(graphics, x, y + GAP, width, "PROCESSED", resources.processed());
         }
-
-        graphics.drawString(font, "PROCESSED", x2, processedY, 0xFFD166, false);
-        processedY += 17;
-        for (String item : processed) {
-            processedY = drawResourceCard(graphics, x2, processedY, colWidth, item);
-        }
-
-        return Math.max(rawY, processedY);
+        int rawEnd = drawResourceGroup(graphics, x, y, column, "RAW RESOURCES", resources.raw());
+        int processedEnd = drawResourceGroup(graphics, x + column + gap, y, column, "PROCESSED", resources.processed());
+        return Math.max(rawEnd, processedEnd);
     }
 
-    private int drawResourceCard(
-            GuiGraphics graphics,
-            int x,
-            int y,
-            int width,
-            String text
-    ) {
-        graphics.fill(x, y, x + width, y + 22, 0xCC19232D);
-        int split = text.indexOf(':');
-        if (split > 0) {
-            String name = text.substring(0, split);
-            String amount = text.substring(split + 1).trim();
-            graphics.drawString(font, name, x + 8, y + 7, 0xD7DEE8, false);
-            graphics.drawString(
-                    font,
-                    amount,
-                    x + width - 8 - font.width(amount),
-                    y + 7,
-                    0x7EE787,
-                    false
-            );
-        } else {
-            graphics.drawString(font, text, x + 8, y + 7, 0xD7DEE8, false);
+    private int drawResourceGroup(GuiGraphics graphics, int x, int y, int width,
+                                  String heading, List<ResourceCard> cards) {
+        graphics.drawString(font, heading, x, y, 0xFFD166, false);
+        y += 17;
+        for (ResourceCard card : cards) {
+            String change = "(" + card.change() + ")";
+            int changeX = x + width - 8 - font.width(change);
+            int amountX = changeX - 5 - font.width(card.amount());
+            boolean wrapName = x + 14 + font.width(card.name()) > amountX;
+            boolean wrapChange = amountX < x + 8;
+            int height = wrapChange ? 43 : wrapName ? 32 : 22;
+            graphics.fill(x, y, x + width, y + height, 0xCC19232D);
+            graphics.drawString(font, card.name(), x + 8, y + 7, 0xD7DEE8, false);
+            int valueY = y + (wrapName ? 18 : 7);
+            if (wrapChange) amountX = x + width - 8 - font.width(card.amount());
+            graphics.drawString(font, card.amount(), amountX, valueY, 0xFFFFFF, false);
+            int color = card.change().startsWith("-") ? 0xFF7B72
+                    : card.change().startsWith("+") ? 0x7EE787 : 0xAAB4C0;
+            graphics.drawString(font, change, changeX, wrapChange ? valueY + 11 : valueY, color, false);
+            y += height + GAP;
         }
-        return y + 27;
+        return y;
+    }
+
+    private record ResourceCard(String name, String amount, String change) {}
+
+    private record ResourcePage(UUID nationId, String summary, List<ResourceCard> raw, List<ResourceCard> processed) {
+        private static ResourcePage from(List<String> rows) {
+            UUID nation = null;
+            String summary = "";
+            List<ResourceCard> raw = new ArrayList<>();
+            List<ResourceCard> processed = new ArrayList<>();
+            List<ResourceCard> group = null;
+            for (String row : rows) {
+                if (row.startsWith("I|")) nation = UUID.fromString(row.substring(2));
+                else if (row.startsWith("S|resources|")) summary = row.substring("S|resources|".length());
+                else if (row.equals("H|RAW RESOURCES")) group = raw;
+                else if (row.equals("H|PROCESSED RESOURCES")) group = processed;
+                else if (row.equals("X|resources")) break;
+                else if (group != null && row.startsWith("Q|")) {
+                    String[] parts = row.split("\\|", 4);
+                    if (parts.length == 4) group.add(new ResourceCard(parts[1], parts[2], parts[3]));
+                }
+            }
+            return new ResourcePage(nation, summary, List.copyOf(raw), List.copyOf(processed));
+        }
     }
 
     private int renderTerritories(

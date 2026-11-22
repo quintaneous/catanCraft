@@ -1,3 +1,11 @@
+## ECO-02 / UI-01 — resource forecasts and combined City D testing, 2026-11-22
+
+The Resources page shows the stockpile and the signed change expected at the next 15-minute settlement for all 14 resources. It refreshes from the server while open and rechecks nation membership. A detached balance copy uses the production settlement order, including territorial Agriculture upkeep and competing processor inputs. Protocol 6 requires matching client and server builds.
+
+The branch compiled on Java 17 and Forge 47.4.10. A headless comparison matched 350 forecast values against actual scheduled settlements, including repeated previews with unchanged save data. The row and packet checks exercised positive, negative, zero and 64-bit balances, current membership and delayed replies. Client rendering, the authenticated click path and complete combined runtime qualification are pending. The retained plan includes six economy cases and two resource-menu cases. [Combined City D checklist](SERVER_WIDE_053_SOLO_CHECKLIST.md)
+
+The [Agriculture audit](AGRICULTURE_USES.md), [Vehicle Factory and monument roster proposal](VEHICLE_FACTORY_AND_MONUMENT_ROSTER.md), [three City D simulation routes](GAMEPLAY_LOOP_REVIEW.md) [map feasibility review](MAP_R8_R9_FEASIBILITY.md) and [server performance investigation](SERVER_PERFORMANCE_INVESTIGATION.md) record the requested investigations. The trials use existing economic rates. Vehicle prices, reward tables and the authored map remain at baseline for this candidate. See master roadmap #10 and issues #11 through #14 for open design and performance work.
+
 ## ECO-03 / INT-01 / INT-03 — paid Hall vehicle foundation context, 2026-11-16
 
 The corrected concurrency fixture passed **4/4 native tests** on source

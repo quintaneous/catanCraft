@@ -7,6 +7,7 @@ import com.quin.catancraft.map.MapDefinitionManager;
 import net.minecraft.gametest.framework.*;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraftforge.gametest.*;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -27,8 +28,28 @@ public final class EconomyProjection45Tests {
         if (!f.data.hasEconomySchedule())
             require(EconomyEngine.scheduledCycle(f.data, 0) == EconomyEngine.ScheduledResult.INITIALIZED, "Unexpected adoption");
         for (int i = 0; i < count; i++) {
+            var savedBefore = f.data.save(new CompoundTag());
+            boolean dirtyBefore = f.data.isDirty();
+            Map<NationData, Map<ResourceType, Long>> before = new LinkedHashMap<>();
+            Map<NationData, Map<ResourceType, Long>> forecasts = new LinkedHashMap<>();
+            for (NationData nation : f.data.nations()) {
+                before.put(nation, nation.stockpileView());
+                var changes = EconomyEngine.nextCycleResourceChanges(f.data, nation);
+                require(changes.size() == ResourceType.values().length, "Incomplete resource projection");
+                require(changes.equals(EconomyEngine.nextCycleResourceChanges(f.data, nation)), "Unstable forecast");
+                forecasts.put(nation, changes);
+            }
+            require(savedBefore.equals(f.data.save(new CompoundTag())) && f.data.isDirty() == dirtyBefore,
+                    "Forecast modified live data, cycle checkpoint or dirty flag");
             long next = f.data.lastScheduledEconomyCycle() + 1;
             require(EconomyEngine.scheduledCycle(f.data, next * EconomyBalance.CYCLE_TICKS) == EconomyEngine.ScheduledResult.POSTED, "Cycle did not post");
+            for (NationData nation : f.data.nations()) {
+                for (ResourceType resource : ResourceType.values()) {
+                    long actual = nation.resource(resource) - before.get(nation).get(resource);
+                    require(actual == forecasts.get(nation).get(resource),
+                            "Wrong next-cycle delta for " + nation.name() + " " + resource + ": " + actual);
+                }
+            }
         }
     }
     private static void balances(Fixture f, long cash, Map<ResourceType, Long> expected) {
@@ -103,6 +124,13 @@ public final class EconomyProjection45Tests {
     public static void unowned_producers_and_reload_do_not_add_projected_income(GameTestHelper h) {
         Fixture f = fixture("projection45_owned", ResourceType.AGRICULTURE, 1);
         TerritoryData unowned = f.data.createTerritory("projection45_unowned", "unowned", ResourceType.WOOD);
+        // An active foreign processor must see only its own available inputs;
+        // a landless nation sees zero movement for every resource.
+        NationData foreign = f.data.createNation("foreign-projection45", UUID.randomUUID());
+        f.data.createNation("landless-projection45", UUID.randomUUID());
+        TerritoryData foreignTerritory = f.data.createTerritory("projection45_foreign", "foreign", ResourceType.STONE);
+        foreignTerritory.setOwnerNationId(foreign.id());
+        foreignTerritory.buildings().add(building(BuildingType.TEXTILE_MILL, 1, 100));
         unowned.setProducerLevel(5); unowned.buildings().add(building(BuildingType.COMMERCIAL_DISTRICT, 5, 0));
         cycle(f, 1); balances(f, 125, Map.of(ResourceType.AGRICULTURE, 10L));
         CatanSavedData loaded = CatanSavedData.load(f.data.save(new CompoundTag()));
