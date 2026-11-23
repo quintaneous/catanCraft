@@ -1,0 +1,1113 @@
+{
+  "schema": 1,
+  "sourceCommit": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+  "mapSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "boundsConvention": "minX,minZ,maxXExclusive,maxZExclusive",
+  "negativeZ": "north",
+  "currentBorderWidth": 2000.0,
+  "proposedBoundsXZ": [
+    -1600,
+    -1600,
+    1600,
+    1600
+  ],
+  "authoredBoundsXZ": [
+    -1024,
+    -1024,
+    1024,
+    1024
+  ],
+  "waterBlockY": 75,
+  "waterSurfacePlaneY": 76,
+  "authoredBorderAdditionalChunks": 23616,
+  "proposedTransitionOuterBoundsXZ": [
+    -1120,
+    -1120,
+    1120,
+    1120
+  ],
+  "sideDistanceFromShorelineToBorderRange": [
+    480,
+    576
+  ],
+  "shorelineAssumption": "Future shoreline may occupy the 96-block strip immediately outside frozen authored chunks. Axial distance to border, excluding islands and not a sounded-water claim.",
+  "mainlandSampling": "Surface palette at X and Z every four blocks. R7 region files verified against original manifest.",
+  "existingCities": [
+    {
+      "id": "a",
+      "center": [
+        -750,
+        -750
+      ]
+    },
+    {
+      "id": "b",
+      "center": [
+        -250,
+        -750
+      ]
+    },
+    {
+      "id": "c",
+      "center": [
+        250,
+        -750
+      ]
+    },
+    {
+      "id": "d",
+      "center": [
+        750,
+        -750
+      ]
+    },
+    {
+      "id": "e",
+      "center": [
+        -750,
+        -250
+      ]
+    },
+    {
+      "id": "f",
+      "center": [
+        -250,
+        -250
+      ]
+    },
+    {
+      "id": "g",
+      "center": [
+        250,
+        -250
+      ]
+    },
+    {
+      "id": "h",
+      "center": [
+        750,
+        -250
+      ]
+    },
+    {
+      "id": "i",
+      "center": [
+        -750,
+        250
+      ]
+    },
+    {
+      "id": "j",
+      "center": [
+        -250,
+        250
+      ]
+    },
+    {
+      "id": "k",
+      "center": [
+        250,
+        250
+      ]
+    },
+    {
+      "id": "l",
+      "center": [
+        750,
+        250
+      ]
+    },
+    {
+      "id": "m",
+      "center": [
+        -750,
+        750
+      ]
+    },
+    {
+      "id": "n",
+      "center": [
+        -250,
+        750
+      ]
+    },
+    {
+      "id": "o",
+      "center": [
+        250,
+        750
+      ]
+    },
+    {
+      "id": "p",
+      "center": [
+        750,
+        750
+      ]
+    }
+  ],
+  "existingBridgeAnchors": [
+    {
+      "id": "bridge_b1",
+      "xz": [
+        -16,
+        -561
+      ]
+    },
+    {
+      "id": "bridge_b2",
+      "xz": [
+        166,
+        -48
+      ]
+    },
+    {
+      "id": "bridge_b3",
+      "xz": [
+        181,
+        54
+      ]
+    },
+    {
+      "id": "bridge_b4",
+      "xz": [
+        16,
+        561
+      ]
+    }
+  ],
+  "measuredR7FringeBoatChannel": {
+    "minWidth": 8,
+    "minWaterBlocks": 3,
+    "clearAirBlocks": 4,
+    "rows": {
+      "north": [
+        {
+          "z": -1000,
+          "wetXInclusive": [
+            27,
+            48
+          ],
+          "centerX": 38,
+          "clearDeepXInclusive": [
+            31,
+            44
+          ]
+        },
+        {
+          "z": -1001,
+          "wetXInclusive": [
+            27,
+            48
+          ],
+          "centerX": 38,
+          "clearDeepXInclusive": [
+            31,
+            44
+          ]
+        },
+        {
+          "z": -1002,
+          "wetXInclusive": [
+            27,
+            49
+          ],
+          "centerX": 38,
+          "clearDeepXInclusive": [
+            31,
+            45
+          ]
+        },
+        {
+          "z": -1003,
+          "wetXInclusive": [
+            27,
+            49
+          ],
+          "centerX": 38,
+          "clearDeepXInclusive": [
+            31,
+            45
+          ]
+        },
+        {
+          "z": -1004,
+          "wetXInclusive": [
+            28,
+            49
+          ],
+          "centerX": 39,
+          "clearDeepXInclusive": [
+            32,
+            45
+          ]
+        },
+        {
+          "z": -1005,
+          "wetXInclusive": [
+            28,
+            49
+          ],
+          "centerX": 39,
+          "clearDeepXInclusive": [
+            32,
+            45
+          ]
+        },
+        {
+          "z": -1006,
+          "wetXInclusive": [
+            28,
+            50
+          ],
+          "centerX": 39,
+          "clearDeepXInclusive": [
+            32,
+            46
+          ]
+        },
+        {
+          "z": -1007,
+          "wetXInclusive": [
+            28,
+            50
+          ],
+          "centerX": 39,
+          "clearDeepXInclusive": [
+            32,
+            46
+          ]
+        },
+        {
+          "z": -1008,
+          "wetXInclusive": [
+            29,
+            50
+          ],
+          "centerX": 40,
+          "clearDeepXInclusive": [
+            33,
+            46
+          ]
+        },
+        {
+          "z": -1009,
+          "wetXInclusive": [
+            29,
+            50
+          ],
+          "centerX": 40,
+          "clearDeepXInclusive": [
+            33,
+            46
+          ]
+        },
+        {
+          "z": -1010,
+          "wetXInclusive": [
+            29,
+            50
+          ],
+          "centerX": 40,
+          "clearDeepXInclusive": [
+            33,
+            47
+          ]
+        },
+        {
+          "z": -1011,
+          "wetXInclusive": [
+            30,
+            51
+          ],
+          "centerX": 40,
+          "clearDeepXInclusive": [
+            33,
+            47
+          ]
+        },
+        {
+          "z": -1012,
+          "wetXInclusive": [
+            30,
+            51
+          ],
+          "centerX": 41,
+          "clearDeepXInclusive": [
+            34,
+            47
+          ]
+        },
+        {
+          "z": -1013,
+          "wetXInclusive": [
+            30,
+            51
+          ],
+          "centerX": 41,
+          "clearDeepXInclusive": [
+            34,
+            47
+          ]
+        },
+        {
+          "z": -1014,
+          "wetXInclusive": [
+            30,
+            51
+          ],
+          "centerX": 41,
+          "clearDeepXInclusive": [
+            34,
+            48
+          ]
+        },
+        {
+          "z": -1015,
+          "wetXInclusive": [
+            31,
+            52
+          ],
+          "centerX": 42,
+          "clearDeepXInclusive": [
+            35,
+            48
+          ]
+        },
+        {
+          "z": -1016,
+          "wetXInclusive": [
+            31,
+            52
+          ],
+          "centerX": 42,
+          "clearDeepXInclusive": [
+            35,
+            48
+          ]
+        },
+        {
+          "z": -1017,
+          "wetXInclusive": [
+            31,
+            52
+          ],
+          "centerX": 42,
+          "clearDeepXInclusive": [
+            35,
+            48
+          ]
+        },
+        {
+          "z": -1018,
+          "wetXInclusive": [
+            32,
+            52
+          ],
+          "centerX": 42,
+          "clearDeepXInclusive": [
+            35,
+            49
+          ]
+        },
+        {
+          "z": -1019,
+          "wetXInclusive": [
+            32,
+            53
+          ],
+          "centerX": 43,
+          "clearDeepXInclusive": [
+            36,
+            49
+          ]
+        },
+        {
+          "z": -1020,
+          "wetXInclusive": [
+            32,
+            53
+          ],
+          "centerX": 43,
+          "clearDeepXInclusive": [
+            36,
+            49
+          ]
+        },
+        {
+          "z": -1021,
+          "wetXInclusive": [
+            32,
+            53
+          ],
+          "centerX": 43,
+          "clearDeepXInclusive": [
+            36,
+            49
+          ]
+        },
+        {
+          "z": -1022,
+          "wetXInclusive": [
+            33,
+            53
+          ],
+          "centerX": 43,
+          "clearDeepXInclusive": [
+            36,
+            50
+          ]
+        },
+        {
+          "z": -1023,
+          "wetXInclusive": [
+            33,
+            54
+          ],
+          "centerX": 44,
+          "clearDeepXInclusive": [
+            37,
+            50
+          ]
+        },
+        {
+          "z": -1024,
+          "wetXInclusive": [
+            33,
+            54
+          ],
+          "centerX": 44,
+          "clearDeepXInclusive": [
+            37,
+            50
+          ]
+        }
+      ],
+      "south": [
+        {
+          "z": 999,
+          "wetXInclusive": [
+            -46,
+            -28
+          ],
+          "centerX": -37,
+          "clearDeepXInclusive": [
+            -44,
+            -30
+          ]
+        },
+        {
+          "z": 1000,
+          "wetXInclusive": [
+            -46,
+            -28
+          ],
+          "centerX": -37,
+          "clearDeepXInclusive": [
+            -44,
+            -30
+          ]
+        },
+        {
+          "z": 1001,
+          "wetXInclusive": [
+            -47,
+            -28
+          ],
+          "centerX": -37,
+          "clearDeepXInclusive": [
+            -45,
+            -30
+          ]
+        },
+        {
+          "z": 1002,
+          "wetXInclusive": [
+            -47,
+            -29
+          ],
+          "centerX": -38,
+          "clearDeepXInclusive": [
+            -45,
+            -31
+          ]
+        },
+        {
+          "z": 1003,
+          "wetXInclusive": [
+            -47,
+            -29
+          ],
+          "centerX": -38,
+          "clearDeepXInclusive": [
+            -45,
+            -31
+          ]
+        },
+        {
+          "z": 1004,
+          "wetXInclusive": [
+            -48,
+            -29
+          ],
+          "centerX": -38,
+          "clearDeepXInclusive": [
+            -45,
+            -31
+          ]
+        },
+        {
+          "z": 1005,
+          "wetXInclusive": [
+            -48,
+            -29
+          ],
+          "centerX": -38,
+          "clearDeepXInclusive": [
+            -46,
+            -31
+          ]
+        },
+        {
+          "z": 1006,
+          "wetXInclusive": [
+            -48,
+            -30
+          ],
+          "centerX": -39,
+          "clearDeepXInclusive": [
+            -46,
+            -32
+          ]
+        },
+        {
+          "z": 1007,
+          "wetXInclusive": [
+            -48,
+            -30
+          ],
+          "centerX": -39,
+          "clearDeepXInclusive": [
+            -46,
+            -32
+          ]
+        },
+        {
+          "z": 1008,
+          "wetXInclusive": [
+            -49,
+            -30
+          ],
+          "centerX": -39,
+          "clearDeepXInclusive": [
+            -47,
+            -32
+          ]
+        },
+        {
+          "z": 1009,
+          "wetXInclusive": [
+            -49,
+            -30
+          ],
+          "centerX": -40,
+          "clearDeepXInclusive": [
+            -47,
+            -33
+          ]
+        },
+        {
+          "z": 1010,
+          "wetXInclusive": [
+            -49,
+            -31
+          ],
+          "centerX": -40,
+          "clearDeepXInclusive": [
+            -47,
+            -33
+          ]
+        },
+        {
+          "z": 1011,
+          "wetXInclusive": [
+            -49,
+            -31
+          ],
+          "centerX": -40,
+          "clearDeepXInclusive": [
+            -47,
+            -33
+          ]
+        },
+        {
+          "z": 1012,
+          "wetXInclusive": [
+            -50,
+            -31
+          ],
+          "centerX": -40,
+          "clearDeepXInclusive": [
+            -48,
+            -33
+          ]
+        },
+        {
+          "z": 1013,
+          "wetXInclusive": [
+            -50,
+            -31
+          ],
+          "centerX": -41,
+          "clearDeepXInclusive": [
+            -48,
+            -34
+          ]
+        },
+        {
+          "z": 1014,
+          "wetXInclusive": [
+            -50,
+            -32
+          ],
+          "centerX": -41,
+          "clearDeepXInclusive": [
+            -48,
+            -34
+          ]
+        },
+        {
+          "z": 1015,
+          "wetXInclusive": [
+            -50,
+            -32
+          ],
+          "centerX": -41,
+          "clearDeepXInclusive": [
+            -48,
+            -34
+          ]
+        },
+        {
+          "z": 1016,
+          "wetXInclusive": [
+            -51,
+            -32
+          ],
+          "centerX": -41,
+          "clearDeepXInclusive": [
+            -49,
+            -34
+          ]
+        },
+        {
+          "z": 1017,
+          "wetXInclusive": [
+            -51,
+            -33
+          ],
+          "centerX": -42,
+          "clearDeepXInclusive": [
+            -49,
+            -35
+          ]
+        },
+        {
+          "z": 1018,
+          "wetXInclusive": [
+            -51,
+            -33
+          ],
+          "centerX": -42,
+          "clearDeepXInclusive": [
+            -49,
+            -35
+          ]
+        },
+        {
+          "z": 1019,
+          "wetXInclusive": [
+            -51,
+            -33
+          ],
+          "centerX": -42,
+          "clearDeepXInclusive": [
+            -49,
+            -35
+          ]
+        },
+        {
+          "z": 1020,
+          "wetXInclusive": [
+            -52,
+            -33
+          ],
+          "centerX": -42,
+          "clearDeepXInclusive": [
+            -50,
+            -35
+          ]
+        },
+        {
+          "z": 1021,
+          "wetXInclusive": [
+            -52,
+            -34
+          ],
+          "centerX": -43,
+          "clearDeepXInclusive": [
+            -50,
+            -36
+          ]
+        },
+        {
+          "z": 1022,
+          "wetXInclusive": [
+            -52,
+            -34
+          ],
+          "centerX": -43,
+          "clearDeepXInclusive": [
+            -50,
+            -36
+          ]
+        },
+        {
+          "z": 1023,
+          "wetXInclusive": [
+            -52,
+            -34
+          ],
+          "centerX": -43,
+          "clearDeepXInclusive": [
+            -50,
+            -36
+          ]
+        }
+      ]
+    }
+  },
+  "sites": [
+    {
+      "id": "lighthouse_west",
+      "name": "Harbor light",
+      "centerXZ": [
+        -1410,
+        -430
+      ],
+      "boundsXZ": [
+        -1458,
+        -478,
+        -1362,
+        -382
+      ],
+      "approachFrom": "east",
+      "approachCorridor": "approach_west",
+      "siteWidth": 96,
+      "proposedOuterEdgeToBorder": 142,
+      "distanceToFrozenChunkEdge": 338,
+      "stagingWaterBlocks": 6,
+      "surveyMarkerXYZ": [
+        -1410,
+        76,
+        -430
+      ],
+      "prototypeBerthsXYZ": {
+        "primary": [
+          -1385,
+          76,
+          -431
+        ],
+        "secondaryLandingEnvelopeXZ": [
+          -1423,
+          -452,
+          -1413,
+          -448
+        ]
+      },
+      "proposedApproachWaypointsXZ": [
+        [
+          -1362,
+          -430
+        ],
+        [
+          -1377,
+          -431
+        ],
+        [
+          -1384,
+          -431
+        ]
+      ]
+    },
+    {
+      "id": "wreck_east",
+      "name": "Grounded freighter",
+      "centerXZ": [
+        1390,
+        280
+      ],
+      "boundsXZ": [
+        1342,
+        232,
+        1438,
+        328
+      ],
+      "approachFrom": "west",
+      "approachCorridor": "approach_east",
+      "siteWidth": 96,
+      "proposedOuterEdgeToBorder": 162,
+      "distanceToFrozenChunkEdge": 318,
+      "stagingWaterBlocks": 6,
+      "surveyMarkerXYZ": [
+        1390,
+        76,
+        280
+      ],
+      "prototypeBerthsXYZ": {
+        "north": [
+          1386,
+          77,
+          262
+        ],
+        "south": [
+          1373,
+          77,
+          294
+        ]
+      },
+      "proposedApproachBranchesXZ": {
+        "north": [
+          [
+            1342,
+            280
+          ],
+          [
+            1348,
+            280
+          ],
+          [
+            1348,
+            260
+          ],
+          [
+            1386,
+            260
+          ]
+        ],
+        "south": [
+          [
+            1342,
+            280
+          ],
+          [
+            1348,
+            280
+          ],
+          [
+            1348,
+            296
+          ],
+          [
+            1373,
+            296
+          ]
+        ]
+      }
+    },
+    {
+      "id": "reserve_north",
+      "name": "North reserve",
+      "centerXZ": [
+        510,
+        -1420
+      ],
+      "boundsXZ": [
+        462,
+        -1468,
+        558,
+        -1372
+      ],
+      "approachFrom": "south",
+      "approachCorridor": "approach_north",
+      "siteWidth": 96,
+      "proposedOuterEdgeToBorder": 132,
+      "distanceToFrozenChunkEdge": 348,
+      "stagingWaterBlocks": 6,
+      "surveyMarkerXYZ": [
+        510,
+        76,
+        -1420
+      ]
+    },
+    {
+      "id": "reserve_south",
+      "name": "South reserve",
+      "centerXZ": [
+        -495,
+        1410
+      ],
+      "boundsXZ": [
+        -543,
+        1362,
+        -447,
+        1458
+      ],
+      "approachFrom": "north",
+      "approachCorridor": "approach_south",
+      "siteWidth": 96,
+      "proposedOuterEdgeToBorder": 142,
+      "distanceToFrozenChunkEdge": 338,
+      "stagingWaterBlocks": 6,
+      "surveyMarkerXYZ": [
+        -495,
+        76,
+        1410
+      ]
+    }
+  ],
+  "lanes": [
+    {
+      "id": "circuit_north",
+      "boundsXZ": [
+        -1236,
+        -1236,
+        1236,
+        -1204
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 8
+    },
+    {
+      "id": "circuit_east",
+      "boundsXZ": [
+        1204,
+        -1236,
+        1236,
+        1236
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 8
+    },
+    {
+      "id": "circuit_south",
+      "boundsXZ": [
+        -1236,
+        1204,
+        1236,
+        1236
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 8
+    },
+    {
+      "id": "circuit_west",
+      "boundsXZ": [
+        -1236,
+        -1236,
+        -1204,
+        1236
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 8
+    },
+    {
+      "id": "approach_west",
+      "boundsXZ": [
+        -1362,
+        -446,
+        -1204,
+        -414
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 6
+    },
+    {
+      "id": "approach_east",
+      "boundsXZ": [
+        1204,
+        264,
+        1342,
+        296
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 6
+    },
+    {
+      "id": "approach_north",
+      "boundsXZ": [
+        494,
+        -1372,
+        526,
+        -1204
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 6
+    },
+    {
+      "id": "approach_south",
+      "boundsXZ": [
+        -511,
+        1204,
+        -479,
+        1362
+      ],
+      "nominalWidth": 32,
+      "minWaterBlocks": 6
+    },
+    {
+      "id": "mouth_north",
+      "boundsXZ": [
+        40,
+        -1072,
+        48,
+        -1024
+      ],
+      "nominalWidth": 8,
+      "minWaterBlocks": 3
+    },
+    {
+      "id": "estuary_north",
+      "boundsXZ": [
+        32,
+        -1236,
+        56,
+        -1072
+      ],
+      "nominalWidth": 24,
+      "minWaterBlocks": 6
+    },
+    {
+      "id": "mouth_south",
+      "boundsXZ": [
+        -47,
+        1024,
+        -39,
+        1072
+      ],
+      "nominalWidth": 8,
+      "minWaterBlocks": 3
+    },
+    {
+      "id": "estuary_south",
+      "boundsXZ": [
+        -55,
+        1072,
+        -31,
+        1236
+      ],
+      "nominalWidth": 24,
+      "minWaterBlocks": 6
+    }
+  ],
+  "checks": {
+    "knownClaims": 16,
+    "authoredChunksRead": 16384,
+    "proposedLaneRegions": 12,
+    "connectedLaneRegions": 12,
+    "reservations": 4,
+    "proposedOverlapWithAuthoredColumns": 0,
+    "siteOverlapWithThroughOrApproachLanes": 0,
+    "placementAndBoatTests": "pending; route outside current authored chunks is a design envelope"
+  }
+}

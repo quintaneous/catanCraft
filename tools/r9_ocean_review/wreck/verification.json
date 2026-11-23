@@ -1,0 +1,52 @@
+{
+  "sha256": "a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf",
+  "dimensionsXYZ": [
+    74,
+    39,
+    48
+  ],
+  "voxelCount": 138528,
+  "dataVersion": 3465,
+  "spongeVersion": 2,
+  "paletteStates": 49,
+  "entities": 0,
+  "blockEntities": 0,
+  "waterBlockLocalY": 15,
+  "waterBlockWorldY": 75,
+  "pivot": [
+    37,
+    15,
+    24
+  ],
+  "standingObjectiveLocalXYZ": [
+    35,
+    20,
+    15
+  ],
+  "boardableLandingFeetLocalXYZ": [
+    [
+      33,
+      17,
+      6
+    ],
+    [
+      20,
+      17,
+      38
+    ]
+  ],
+  "walksFromLandingsInCardinalMoves": [
+    11,
+    38
+  ],
+  "boatApproachMovesFromLocalX1AlongNorthSouthRows": [
+    32,
+    19
+  ],
+  "checkedBoatCorridorWidthBlocks": 3,
+  "minimumBoatSourceWaterDepthBlocks": 3,
+  "checkedBoatAirClearanceBlocks": 2,
+  "mainDeckToLowerCabinCardinalMoves": 42,
+  "groundedKeelColumns": 374,
+  "limitations": "Static block geometry and conservative cardinal floor/clearance searches. No connected boat, dismount, swimming, lighting, capture or paste was tested."
+}

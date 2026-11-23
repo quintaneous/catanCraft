@@ -1,0 +1,25 @@
+CatanCraft R9 | First ocean design review
+Minecraft Java Edition 1.20.1
+
+OPEN THE GALLERY ON WINDOWS
+
+1. Extract this entire ZIP to a new folder.
+2. Copy the folder named CatanCraft_R9_Ocean_Gallery into the saves folder of a vanilla Minecraft Java 1.20.1 profile. For the default launcher game directory, press Win+R and enter %appdata%\.minecraft\saves. If you use a custom game directory, use its saves folder. The copied folder should contain level.dat directly. If this name already exists, use a new folder name for the incoming copy.
+3. Start that profile, open Singleplayer, and select “CatanCraft R9 - Ocean Design Gallery”. No Forge profile, CatanCraft server install, WorldEdit or mod JAR is needed to inspect the art.
+
+You start in spectator mode. Fly with the normal movement controls, Space and Shift. Use these optional chat commands for a close view of each scene.
+
+Brinewatch Pilot Station        /tp @s -102 86 74 -128 8
+Brinewake freighter wreck       /tp @s  44 82 80 -158 5
+Sheltered cove                  /tp @s -76 79 -125 -5 2
+Headland estuary                /tp @s  72 79 -125 0 2
+
+The gallery is a separate visual study. It contains four samples placed together for review. Each coastal tile has visible edges where the study ends. Locations in this gallery are local viewing coordinates. The offshore atlas uses the real Season 1 coordinate system and shows the proposed reservations there.
+
+WHAT TO LOOK FOR
+
+Fly in from water level before looking from above. Which coastline feels natural to approach? Can you spot a landing and find the route up to the lighthouse or across the freighter without the map? Compare the two coastal sheets with the original R7 edge. These answers determine the first stretch of coast worth building.
+
+Previews contains the offshore atlas, before/after coast renderings, both monument renderings and a navigation-depth chart. Schematics contains four original Sponge v2 design assets. The lighthouse is an air-masked structure intended for placement with existing water preserved and its base supported. The wreck includes its seabed, seawater and intentional air spaces. Use the review save; avoid pasting any of the four into a played world.
+
+The proposed shipping circuit, two unassigned offshore sites, event activations, rewards, the gameplay border and the final R8 shoreline are future integration work. No production coordinates, city purchases, central monument ownership, protection rules or gameplay settings were updated by this pack. The gallery and original assets passed offline block-state and region-file readback. Opening the gallery in a Minecraft client and boating in the finished coastal world remain separate checks.

@@ -1,0 +1,42 @@
+{
+  "asset": "Brinewatch_Pilot_Station.schem",
+  "sha256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+  "spongeVersion": 2,
+  "dataVersion": 3465,
+  "XYZ": [
+    55,
+    50,
+    47
+  ],
+  "nonAirBlocks": 15430,
+  "paletteStatesIncludingAir": 67,
+  "registeredStatesChecked": 67,
+  "blockEntities": 0,
+  "entities": 0,
+  "matchedDoorPairs": 4,
+  "backedLadderBlocks": 31,
+  "localHighestWaterY": 8,
+  "localWaterPlaneY": 9,
+  "anchorLocal": [
+    27,
+    8,
+    23
+  ],
+  "routeLengthsInGraphSteps": {
+    "westLanding": {
+      "chartTableStandingSpace": 28,
+      "towerSouthThreshold": 19,
+      "towerLadderBase": 25,
+      "keeperInterior": 37,
+      "watchGallery": 56
+    },
+    "southLanding": {
+      "chartTableStandingSpace": 27,
+      "towerSouthThreshold": 40,
+      "towerLadderBase": 44,
+      "keeperInterior": 28,
+      "watchGallery": 75
+    }
+  },
+  "reachabilityModel": "Two clear cells, cardinal walk, rise/descent along oriented stairs only, backed ladders, opened doors. Rails and slabs excluded as supports. No diagonal jumps. Static offline geometry; interactive boat and collision checks remain pending."
+}

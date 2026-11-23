@@ -1,0 +1,54 @@
+{
+  "Sheltered cove": {
+    "file": "coast/r9_sheltered_cove.schem",
+    "minimumXYZ": [
+      -128,
+      57,
+      -112
+    ],
+    "sizeXYZ": [
+      112,
+      64,
+      96
+    ]
+  },
+  "Estuary headland": {
+    "file": "coast/r9_headland_estuary.schem",
+    "minimumXYZ": [
+      16,
+      57,
+      -112
+    ],
+    "sizeXYZ": [
+      112,
+      64,
+      96
+    ]
+  },
+  "Brinewatch pilot station": {
+    "file": "lighthouse/Brinewatch_Pilot_Station.schem",
+    "minimumXYZ": [
+      -89,
+      67,
+      26
+    ],
+    "sizeXYZ": [
+      55,
+      50,
+      47
+    ]
+  },
+  "Freighter wreck": {
+    "file": "wreck/brinewake.schem",
+    "minimumXYZ": [
+      20,
+      60,
+      21
+    ],
+    "sizeXYZ": [
+      74,
+      39,
+      48
+    ]
+  }
+}
