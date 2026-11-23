@@ -12,7 +12,11 @@ Quin found the B1 bank, launched a boat, understood the route with the minimap, 
 
 Treat terrain as permanent during normal play and sieges. Future siege damage may affect registered building blocks only. Being inside a city or a siege boundary is insufficient. Adjacent soil, rock and riverbeds remain outside the damage mask. Read-only ground around wall foundations may naturally switch between grass and ordinary dirt.
 
-Give resource territories recognizable silhouettes at street level. Explore timber trusses in wood regions, stepped masonry in stone regions, tanks and service pipes in iron and oil regions, and copper gantries in coal and copper regions. A gabled civic tower is an option for mixed founding territories. Compare these as architectural studies before repeating them across cities. Retain recognizable entrances and stable shop counter locations when proposing a variant.
+Quin clarified that resource identity should be strongest in a few landmarks and the overall city atmosphere. A coal territory should feel like a mining town throughout the settlement. Factory redesigns are optional; the earlier factory skyline studies are exploratory rather than a requirement to reskin every factory.
+
+Develop each city as a coherent settlement through housing, streets, lighting, landscaping, working yards and a few prominent landmarks. For coal territories, explore miners’ terraces, weathered brick and timber, coal-loading yards and a pithead landmark. These are proposals for review, not approved footprints or new gameplay systems. Carry quieter material and streetscape details between landmarks so the identity remains visible while walking through the city. Use an equivalent settlement-level approach for other resource territories.
+
+Make progression visible in the settlement’s increasing scale, finish and civic presence while retaining its resource identity. Keep the familiar building functions, accessible entrances, shop counters, roads, resource access, placement anchors and defense clearances intact. Prepare a city-scale review before committing landmark locations or changes to the construction system; ask Quin about unresolved design choices. Keep this work separate from the current gameplay qualification candidate.
 
 ## Rebuild from the qualification workspace
 
