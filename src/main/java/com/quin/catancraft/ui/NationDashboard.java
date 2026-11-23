@@ -22,6 +22,8 @@ import com.quin.catancraft.world.IndustrialPlotService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.List;
 
 public final class NationDashboard {
@@ -207,12 +209,13 @@ public final class NationDashboard {
         if (territories.isEmpty()) {
             lines.add("Y|No territory assigned yet.");
         } else {
+            Map<ResourceType, FactoryTarget> targets = highestFactoryTargets(territories);
             for (TerritoryData territory : territories) {
                 lines.add("T|" + territory.id() + "|" +
                         territory.name() + " • " + resourceListText(territory.rawResources()) +
                         " • City L" + territory.cityLevel() +
                         " • Producer L" + territory.producerLevel());
-                addTerritory(lines, nation, territory, leader);
+                addTerritory(lines, nation, territory, leader, targets);
                 String baseStatus = com.quin.catancraft.world.CityBasePreparation.status(player.server,territory.id());
                 if (!baseStatus.isEmpty()) lines.add("D|" + baseStatus);
                 String recoveryStatus = com.quin.catancraft.world.PaidRecoveryService.status(player.server,territory.id());
@@ -253,11 +256,45 @@ public final class NationDashboard {
         return true;
     }
 
+    private record FactoryTarget(String city, String plant, long amount) {}
+
+    // Each processor checks the national stockpile, so targets from different sites do not add up.
+    private static Map<ResourceType, FactoryTarget> highestFactoryTargets(List<TerritoryData> owned) {
+        Map<ResourceType, FactoryTarget> targets = new EnumMap<>(ResourceType.class);
+        for (TerritoryData city : owned) {
+            for (BuildingInstance building : city.buildings()) {
+                BuildingType type = building.type();
+                if (!type.isProcessor()) continue;
+                FactoryTarget highest = targets.get(type.output());
+                if (highest == null || building.targetStock() > highest.amount()) {
+                    targets.put(type.output(), new FactoryTarget(city.name(), type.displayName(), building.targetStock()));
+                }
+            }
+        }
+        return targets;
+    }
+
+    private static void addUpgradeTargetHints(List<String> lines, NationData nation, EconomyCost nextCity,
+                                              Map<ResourceType, FactoryTarget> targets, boolean leader) {
+        nextCity.resources().forEach((resource, required) -> {
+            FactoryTarget factory = targets.get(resource);
+            long stock = nation.resource(resource);
+            if (stock >= required || factory == null || factory.amount() >= required) return;
+
+            String adjust = leader ? "Raise" : "Ask your leader to raise";
+            lines.add("Y|" + pretty(resource) + " " + stock + "/" + required +
+                    ". Highest factory target is " + factory.amount() + ". " + adjust +
+                    " it in Territories → " + factory.city() + " → Buildings → " + factory.plant() +
+                    " (Target +50), or trade for the rest.");
+        });
+    }
+
     private static void addTerritory(
             List<String> lines,
             NationData nation,
             TerritoryData territory,
-            boolean leader
+            boolean leader,
+            Map<ResourceType, FactoryTarget> targets
     ) {
         int developmentCap = developmentSlotCap(territory);
 
@@ -292,6 +329,7 @@ public final class NationDashboard {
             } else {
                 lines.add("D|Next city upgrade • " + nextCity.describe());
             }
+            addUpgradeTargetHints(lines, nation, nextCity, targets, leader);
         } else {
             lines.add("G|City max level");
         }

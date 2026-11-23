@@ -6,7 +6,7 @@ On November 22, 2026, three offline playthroughs from Northeast Hearth (City D) 
 
 From the repository root run `python3 tools/gameplay/city_d.py`. It prints each action, elapsed minutes, debit, Agriculture balance and any unfinished actions as JSON. It reads the map, live costs and 15-minute cycle through the [existing economic model](../tools/economy45/simulate.py). Each case starts at TH1 in D with $12,000 and zero materials. The nation buys the starter pistol and ammo, develops D, claims adjacent C → G → F for resources, builds industry, buys an AK and ammo, purchases and refuels a pickup, and budgets one wall side from Basic to Reinforced.
 
-| Economic milestone | Ordinary processor targets | Targets managed for next purchase | Managed, pickup prioritized |
+| Economic milestone | Four processor targets raised to 1,000 | Targets managed for next purchase | Managed, pickup prioritized |
 | --- | ---: | ---: | ---: |
 | Starter Glock 17 and 32 rounds paid for | 0h30 | 0h30 | 0h30 |
 | Commercial District built in D | 3h00 | 3h00 | 3h00 |
@@ -20,6 +20,10 @@ From the repository root run `python3 tools/gameplay/city_d.py`. It prints each 
 Elapsed times assume an active server at 20 ticks per second and purchases immediately after an affordable cycle. They exclude travel, construction delays, interactive menus, combat losses, trade and random income. The factory is local to D and the processing resources are shared nationally. Refueling assumes space for a full quarter tank and zero prepaid credit. In that case the current pickup tariff charges eight Fuel. The model calculates the debit only. Physical vehicle delivery, parking and service require a clear registered area and a real player. No target season duration or price change follows from these timings.
 
 All three routes experienced zero underfed territory-cycles and ended with **668–672 Agriculture**. These routes buy no Textile Mill, so they show how food accumulates along a vehicle-focused path. Other playstyles can consume food faster. The managed pickup-first variant moves the pickup and its first refill ahead of the chemical and electronics factories. Neither factory supplies a pickup component. The player still needs a Machine Shop to turn Steel into Mechanical Parts.
+
+## Fresh-world processor targets across the four starters
+
+The unattended column above uses the older economy simulation's raised stock targets for the Concrete Plant, Steel Mill, Machine Shop and Electronics Factory. A newly purchased processor starts at 100. In eight matched replays from A, D, M and P, taking either adjacent first claim, the unchanged targets produced 104 Concrete and stopped. The next Town Hall upgrade needed 160. All eight still waited for that upgrade at the 200-hour cutoff. With only the Concrete Plant target raised to 200 and the purchase order held fixed, all eight finished the route, and pickup affordability fell between 44h30 and 45h00 of active production time. Players can also obtain resources through trade. These modeled routes exclude trade, rewards, travel and construction delays.
 
 ## What an actual player must be able to do
 
