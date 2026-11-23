@@ -1,0 +1,11 @@
+{
+  "source": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+  "verifiedBeforeAndAfterVoxels": 14943,
+  "restoredVoxels": 14943,
+  "restoredToZeroDifferences": true,
+  "beforeImageMismatchRefusedBeforeWrites": true,
+  "minimumChessboardDistanceTo385RoadCenterlinePositions": 33,
+  "minimumChessboardDistanceToBridgeB1Anchor": 99,
+  "measure": "Maximum absolute X or Z difference between two block coordinates; 1 means adjacent.",
+  "mode": "R7 original-region read plus in-memory overlay; no Minecraft server launched."
+}

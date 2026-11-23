@@ -19,3 +19,7 @@ The four schematic generators and geometry checks are in their respective direct
 The gallery deliberately completes Brinewatch's underwater negative space with source water and supports solid foundation columns beneath both offshore sites. The gallery report counts these changes separately. Geometry readback and ZIP checks are complete. Connected-client visual review, in-game sailing, the full ocean build and gameplay integration remain open.
 
 Revision 2 extends the Brinewake hull from 61 to 76 blocks and the beam from 19 to 23. Both original landing routes still lead to the objective. The lighthouse and coastal tile schematic hashes match revision 1. The mainland brief covers all 16 territories; the first proposed joint traversal runs from Pine Reach to the northern estuary and the west lighthouse. The owner archive is `CatanCraft_R9_Ocean_Design_Review_v2.zip`, SHA-256 `ea17af597fcffdbbdefeff6d243b994f37997827c8ee99b547b7a20ba87fd4a1`. Retrieve the original wreck from revision 1 (commit `c4ce06a0a5280133261e114bffe210a8143339bf`) to regenerate the comparison.
+
+## Connected mainland and offshore pilot
+
+The [Pine Reach to Brinewatch pilot](pilot/README.md) joins the forest, bridge, river and offshore station in a single Creative world. Its [proposed gathering and delivery playtest](pilot/Fieldwork_and_Delivery.md) covers wood nodes, agricultural freight, dispatch boards, transfers and wayfinding.
