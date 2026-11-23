@@ -1,0 +1,55 @@
+{
+  "source": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+  "changingLogs": [
+    "layout7-seed"
+  ],
+  "exclusiveWriterConfirmedStopped": false,
+  "actionsAreConditionalOnExclusiveWriter": true,
+  "layouts": [
+    {
+      "layout": 0,
+      "action": "fresh_stage",
+      "detail": "No existing attempt recorded for this layout."
+    },
+    {
+      "layout": 1,
+      "action": "fresh_stage",
+      "detail": "No existing attempt recorded for this layout."
+    },
+    {
+      "layout": 2,
+      "action": "retain_pair",
+      "detail": "Matched native exits, original log hashes, world identity and 80+16 checkpoints."
+    },
+    {
+      "layout": 3,
+      "action": "retain_pair",
+      "detail": "Matched native exits, original log hashes, world identity and 80+16 checkpoints."
+    },
+    {
+      "layout": 4,
+      "action": "retain_pair",
+      "detail": "Matched native exits, original log hashes, world identity and 80+16 checkpoints."
+    },
+    {
+      "layout": 5,
+      "action": "retain_pair",
+      "detail": "Matched native exits, original log hashes, world identity and 80+16 checkpoints."
+    },
+    {
+      "layout": 6,
+      "action": "retain_pair",
+      "detail": "Matched native exits, original log hashes, world identity and 80+16 checkpoints."
+    },
+    {
+      "layout": 7,
+      "action": "wait",
+      "detail": "Native log changed during observation."
+    },
+    {
+      "layout": 8,
+      "action": "fresh_stage",
+      "detail": "No existing attempt recorded for this layout."
+    }
+  ]
+}

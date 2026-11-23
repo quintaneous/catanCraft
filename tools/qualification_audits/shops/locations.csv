@@ -1,0 +1,97 @@
+city,plot,factory,city rotation,shop counter XYZ,other crafting table XYZ,verified layout
+A,plot_1,vehicle_factory,0,-806 82 -780,,
+A,plot_1,weapons_factory,0,-805 82 -771,-812 82 -781,
+A,plot_3,vehicle_factory,0,-806 82 -740,,
+A,plot_3,weapons_factory,0,-805 82 -731,-812 82 -741,6
+A,plot_4,vehicle_factory,0,-694 82 -728,,6
+A,plot_4,weapons_factory,0,-695 82 -737,-688 82 -727,5
+B,plot_1,vehicle_factory,0,-306 82 -780,,5
+B,plot_1,weapons_factory,0,-305 82 -771,-312 82 -781,4
+B,plot_3,vehicle_factory,0,-306 82 -740,,4
+B,plot_3,weapons_factory,0,-305 82 -731,-312 82 -741,3
+B,plot_4,vehicle_factory,0,-194 82 -728,,3
+B,plot_4,weapons_factory,0,-195 82 -737,-188 82 -727,2
+C,plot_1,vehicle_factory,0,194 82 -780,,2
+C,plot_1,weapons_factory,0,195 82 -771,188 82 -781,
+C,plot_3,vehicle_factory,0,194 82 -740,,
+C,plot_3,weapons_factory,0,195 82 -731,188 82 -741,
+C,plot_4,vehicle_factory,0,306 82 -728,,
+C,plot_4,weapons_factory,0,305 82 -737,312 82 -727,
+D,plot_1,vehicle_factory,0,694 82 -780,,
+D,plot_1,weapons_factory,0,695 82 -771,688 82 -781,
+D,plot_3,vehicle_factory,0,694 82 -740,,
+D,plot_3,weapons_factory,0,695 82 -731,688 82 -741,6
+D,plot_4,vehicle_factory,0,806 82 -728,,6
+D,plot_4,weapons_factory,0,805 82 -737,812 82 -727,5
+E,plot_1,vehicle_factory,0,-806 82 -280,,5
+E,plot_1,weapons_factory,0,-805 82 -271,-812 82 -281,4
+E,plot_3,vehicle_factory,0,-806 82 -240,,4
+E,plot_3,weapons_factory,0,-805 82 -231,-812 82 -241,3
+E,plot_4,vehicle_factory,0,-694 82 -228,,3
+E,plot_4,weapons_factory,0,-695 82 -237,-688 82 -227,2
+F,plot_1,vehicle_factory,0,-306 82 -280,,2
+F,plot_1,weapons_factory,0,-305 82 -271,-312 82 -281,
+F,plot_3,vehicle_factory,0,-306 82 -240,,
+F,plot_3,weapons_factory,0,-305 82 -231,-312 82 -241,
+F,plot_4,vehicle_factory,0,-194 82 -228,,
+F,plot_4,weapons_factory,0,-195 82 -237,-188 82 -227,
+G,plot_1,vehicle_factory,0,194 82 -280,,
+G,plot_1,weapons_factory,0,195 82 -271,188 82 -281,
+G,plot_3,vehicle_factory,0,194 82 -240,,
+G,plot_3,weapons_factory,0,195 82 -231,188 82 -241,6
+G,plot_4,vehicle_factory,0,306 82 -228,,6
+G,plot_4,weapons_factory,0,305 82 -237,312 82 -227,5
+H,plot_1,vehicle_factory,0,694 82 -280,,5
+H,plot_1,weapons_factory,0,695 82 -271,688 82 -281,4
+H,plot_3,vehicle_factory,0,694 82 -240,,4
+H,plot_3,weapons_factory,0,695 82 -231,688 82 -241,3
+H,plot_4,vehicle_factory,0,806 82 -228,,3
+H,plot_4,weapons_factory,0,805 82 -237,812 82 -227,2
+I,plot_1,vehicle_factory,180,-694 82 280,,2
+I,plot_1,weapons_factory,180,-695 82 271,-688 82 281,
+I,plot_3,vehicle_factory,180,-694 82 240,,
+I,plot_3,weapons_factory,180,-695 82 231,-688 82 241,
+I,plot_4,vehicle_factory,180,-806 82 228,,
+I,plot_4,weapons_factory,180,-805 82 237,-812 82 227,
+J,plot_1,vehicle_factory,180,-194 82 280,,
+J,plot_1,weapons_factory,180,-195 82 271,-188 82 281,
+J,plot_3,vehicle_factory,180,-194 82 240,,
+J,plot_3,weapons_factory,180,-195 82 231,-188 82 241,6
+J,plot_4,vehicle_factory,180,-306 82 228,,6
+J,plot_4,weapons_factory,180,-305 82 237,-312 82 227,5
+K,plot_1,vehicle_factory,180,306 82 280,,5
+K,plot_1,weapons_factory,180,305 82 271,312 82 281,4
+K,plot_3,vehicle_factory,180,306 82 240,,4
+K,plot_3,weapons_factory,180,305 82 231,312 82 241,3
+K,plot_4,vehicle_factory,180,194 82 228,,3
+K,plot_4,weapons_factory,180,195 82 237,188 82 227,2
+L,plot_1,vehicle_factory,180,806 82 280,,2
+L,plot_1,weapons_factory,180,805 82 271,812 82 281,
+L,plot_3,vehicle_factory,180,806 82 240,,
+L,plot_3,weapons_factory,180,805 82 231,812 82 241,
+L,plot_4,vehicle_factory,180,694 82 228,,
+L,plot_4,weapons_factory,180,695 82 237,688 82 227,
+M,plot_1,vehicle_factory,180,-694 82 780,,
+M,plot_1,weapons_factory,180,-695 82 771,-688 82 781,
+M,plot_3,vehicle_factory,180,-694 82 740,,
+M,plot_3,weapons_factory,180,-695 82 731,-688 82 741,6
+M,plot_4,vehicle_factory,180,-806 82 728,,6
+M,plot_4,weapons_factory,180,-805 82 737,-812 82 727,5
+N,plot_1,vehicle_factory,180,-194 82 780,,5
+N,plot_1,weapons_factory,180,-195 82 771,-188 82 781,4
+N,plot_3,vehicle_factory,180,-194 82 740,,4
+N,plot_3,weapons_factory,180,-195 82 731,-188 82 741,3
+N,plot_4,vehicle_factory,180,-306 82 728,,3
+N,plot_4,weapons_factory,180,-305 82 737,-312 82 727,2
+O,plot_1,vehicle_factory,180,306 82 780,,2
+O,plot_1,weapons_factory,180,305 82 771,312 82 781,
+O,plot_3,vehicle_factory,180,306 82 740,,
+O,plot_3,weapons_factory,180,305 82 731,312 82 741,
+O,plot_4,vehicle_factory,180,194 82 728,,
+O,plot_4,weapons_factory,180,195 82 737,188 82 727,
+P,plot_1,vehicle_factory,180,806 82 780,,
+P,plot_1,weapons_factory,180,805 82 771,812 82 781,
+P,plot_3,vehicle_factory,180,806 82 740,,
+P,plot_3,weapons_factory,180,805 82 731,812 82 741,6
+P,plot_4,vehicle_factory,180,694 82 728,,6
+P,plot_4,weapons_factory,180,695 82 737,688 82 727,5

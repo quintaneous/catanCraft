@@ -1,0 +1,897 @@
+{
+  "source_sha256": {
+    "src/main/java/com/quin/catancraft/economy/EconomyBalance.java": "cc1af462bad26193a501f9d0a4f0d1f010dc6aff1fdceab03967012cb1c9c139",
+    "src/main/java/com/quin/catancraft/economy/EconomyEngine.java": "a03ad4dbe7f6e22c8065014aa740b00798ca78e7cc592095d62af9f701efd094",
+    "src/main/java/com/quin/catancraft/economy/EconomyCatalog.java": "c32c20a0102a4a33dc9768b65be04fef462263db286c8c38b902aa43483734ab",
+    "src/main/java/com/quin/catancraft/data/BuildingType.java": "696226d6bac19a273be8bd67a9f3247983becfdfabbc018698955b679def1d49",
+    "src/main/resources/data/catancraft/maps/season1_river_bridges_v3.json": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+    "src/main/java/com/quin/catancraft/world/SectorPriceCatalog.java": "f768df35635e6bbf6c7d35efca96469fe08cb61c2f86219d6624b1b40a45237f",
+    "src/main/java/com/quin/catancraft/world/DefenseCostCatalog.java": "8a11b66c730fe520f7d018c6b06bc297496b6b1bf3837de67069e462decc151a",
+    "src/main/java/com/quin/catancraft/command/NationProcurement.java": "9e79171be58791619ffa0fe2819726a969dbaab6478c62589c4ce650f3d8f096",
+    "src/main/java/com/quin/catancraft/world/WeaponStock42.java": "ed0263daf3dcf1db2eca6f3828c5d998321d4960a72728cf52a3f351878825ea",
+    "src/main/resources/data/catancraft/economy/weapon_tiers41.json": "230d8a97e9b744902c97534009bb8b6089a7d89314010e23771755f3b205181a",
+    "src/main/java/com/quin/catancraft/data/CatanSavedData.java": "54efb39c889c613154044160c0fdfba6424a201d1d638f6dd4ff3eccd822d1a4",
+    "src/main/java/com/quin/catancraft/world/ActiveWeaponStock44.java": "4ad0b10ff4b60f5652e9e7976681594844688a1b5c9103485418ca4d96698697",
+    "src/main/java/com/quin/catancraft/world/IndustrialPlotService.java": "f53b1539e0334849d79e529689787fd3b926b64b69688fbcd7fdaaa7cec6175f",
+    "src/main/java/com/quin/catancraft/data/BuildingInstance.java": "7cbd7ba11552f027ca752cd57e5d037e366153ffe20ee9e9b52e06b9a3ffa42d",
+    "src/main/java/com/quin/catancraft/command/CatanCommands.java": "cb625e66f109eaeceb9f02ea88db9fbc3ccdb0825bc0b160ee5cc1501498104d",
+    "src/main/java/com/quin/catancraft/economy/EconomyCost.java": "00d31b9077e9690565c6c7865e582014ba059a414f9b4816e065530b124423ea",
+    "src/main/java/com/quin/catancraft/world/VehicleFuel49.java": "e99d0e06f179813d55b37949b3be67585fac1271946371e87e5cdb221d0b8810"
+  },
+  "existing_routes_sha256": "9b7ff3f008738e314d2eeed684c5cd6ae52eeba3728340b348d99237ab5f1d19",
+  "L1_textile_without_logistics_default_target": {
+    "cycles_to_target": 13,
+    "fabric_at_target": 104,
+    "agriculture_to_first_target": 130,
+    "extra_fabric_next_cycle": 0
+  },
+  "agriculture_sources": [
+    "a",
+    "d",
+    "m",
+    "p"
+  ],
+  "single_starter_per_cycle": {
+    "1": {
+      "starter_gross": 5,
+      "starter_upkeep": 1,
+      "starter_net": 4
+    },
+    "2": {
+      "starter_gross": 9,
+      "starter_upkeep": 2,
+      "starter_net": 7
+    },
+    "3": {
+      "starter_gross": 15,
+      "starter_upkeep": 3,
+      "starter_net": 12
+    },
+    "4": {
+      "starter_gross": 23,
+      "starter_upkeep": 5,
+      "starter_net": 18
+    },
+    "5": {
+      "starter_gross": 33,
+      "starter_upkeep": 8,
+      "starter_net": 25
+    }
+  },
+  "sample_connected_L5_nations": {
+    "abfg": {
+      "gross": 33,
+      "required_upkeep": 32,
+      "short_territories_from_zero": 0
+    },
+    "abfgc": {
+      "gross": 33,
+      "required_upkeep": 40,
+      "short_territories_from_zero": 1
+    }
+  },
+  "prices_charging_agriculture": {
+    "claim": {
+      "money": 4000,
+      "wood": 60,
+      "stone": 40,
+      "agriculture": 40
+    }
+  },
+  "prices_charging_fabric": {},
+  "processors_using_agriculture": {
+    "TEXTILE_MILL": {
+      "processingTier": 1,
+      "output": "fabric",
+      "outputPerBatch": 8,
+      "inputs": {
+        "agriculture": 10
+      },
+      "minCityLevel": 2,
+      "costPercent": 100
+    }
+  },
+  "processors_using_fabric": [],
+  "routes": [
+    {
+      "starter": "a",
+      "gateway": "b",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 302,
+      "actions_completed": 26,
+      "pickup_stock": 1107,
+      "ending_stock": 1119,
+      "agriculture_flows": {
+        "produced": 2582,
+        "upkeep": 1343,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "b",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 615,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "b",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 455,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "e",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "e",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "e",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 472,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "c",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "c",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "c",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 472,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "h",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 302,
+      "actions_completed": 26,
+      "pickup_stock": 1107,
+      "ending_stock": 1119,
+      "agriculture_flows": {
+        "produced": 2582,
+        "upkeep": 1343,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "h",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 615,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "h",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 455,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "i",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 302,
+      "actions_completed": 26,
+      "pickup_stock": 1107,
+      "ending_stock": 1119,
+      "agriculture_flows": {
+        "produced": 2582,
+        "upkeep": 1343,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "i",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 615,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "i",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 455,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "n",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "n",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "n",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 472,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "l",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "l",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "l",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 188,
+      "actions_completed": 26,
+      "pickup_stock": 472,
+      "ending_stock": 672,
+      "agriculture_flows": {
+        "produced": 1556,
+        "upkeep": 764,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "o",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 302,
+      "actions_completed": 26,
+      "pickup_stock": 1107,
+      "ending_stock": 1119,
+      "agriculture_flows": {
+        "produced": 2582,
+        "upkeep": 1343,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "o",
+      "managed": true,
+      "pickup_first": false,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 615,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "o",
+      "managed": true,
+      "pickup_first": true,
+      "concrete_target": null,
+      "cycles_until_stop": 186,
+      "actions_completed": 26,
+      "pickup_stock": 455,
+      "ending_stock": 655,
+      "agriculture_flows": {
+        "produced": 1538,
+        "upkeep": 763,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "b",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3111,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3833,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "e",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3120,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3824,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "c",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3120,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3824,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "h",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3111,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3833,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "i",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3111,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3833,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "n",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3120,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3824,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "l",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3120,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3824,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "o",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 100,
+      "cycles_until_stop": 800,
+      "actions_completed": 15,
+      "pickup_stock": null,
+      "ending_stock": 3111,
+      "agriculture_flows": {
+        "produced": 7064,
+        "upkeep": 3833,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "b",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 185,
+      "actions_completed": 26,
+      "pickup_stock": 631,
+      "ending_stock": 651,
+      "agriculture_flows": {
+        "produced": 1529,
+        "upkeep": 758,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "a",
+      "gateway": "e",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "c",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "d",
+      "gateway": "h",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 185,
+      "actions_completed": 26,
+      "pickup_stock": 631,
+      "ending_stock": 651,
+      "agriculture_flows": {
+        "produced": 1529,
+        "upkeep": 758,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "i",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 185,
+      "actions_completed": 26,
+      "pickup_stock": 631,
+      "ending_stock": 651,
+      "agriculture_flows": {
+        "produced": 1529,
+        "upkeep": 758,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "m",
+      "gateway": "n",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "l",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 187,
+      "actions_completed": 26,
+      "pickup_stock": 632,
+      "ending_stock": 668,
+      "agriculture_flows": {
+        "produced": 1547,
+        "upkeep": 759,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    },
+    {
+      "starter": "p",
+      "gateway": "o",
+      "managed": false,
+      "pickup_first": false,
+      "concrete_target": 200,
+      "cycles_until_stop": 185,
+      "actions_completed": 26,
+      "pickup_stock": 631,
+      "ending_stock": 651,
+      "agriculture_flows": {
+        "produced": 1529,
+        "upkeep": 758,
+        "processing": 0,
+        "purchase_cost": 120
+      },
+      "claim_wait_cycles_agriculture_only": 0,
+      "claim_wait_cycles_also_missing_other_inputs": 0,
+      "territory_cycles_with_partial_upkeep": 0
+    }
+  ]
+}

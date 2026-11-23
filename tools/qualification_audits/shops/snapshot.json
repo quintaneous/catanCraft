@@ -1,0 +1,1379 @@
+{
+  "gameplayCommit": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+  "completedLayouts": [
+    2,
+    3,
+    4,
+    5,
+    6
+  ],
+  "sourceSchematicCraftingTablesXYZ": {
+    "weapons_factory": [
+      [
+        12,
+        3,
+        8
+      ],
+      [
+        19,
+        3,
+        18
+      ]
+    ],
+    "vehicle_factory": [
+      [
+        18,
+        3,
+        9
+      ]
+    ]
+  },
+  "possibleSites": {
+    "a:plot_1:weapons_factory": [
+      -805,
+      82,
+      -771
+    ],
+    "a:plot_1:vehicle_factory": [
+      -806,
+      82,
+      -780
+    ],
+    "a:plot_3:weapons_factory": [
+      -805,
+      82,
+      -731
+    ],
+    "a:plot_3:vehicle_factory": [
+      -806,
+      82,
+      -740
+    ],
+    "a:plot_4:weapons_factory": [
+      -695,
+      82,
+      -737
+    ],
+    "a:plot_4:vehicle_factory": [
+      -694,
+      82,
+      -728
+    ],
+    "b:plot_1:weapons_factory": [
+      -305,
+      82,
+      -771
+    ],
+    "b:plot_1:vehicle_factory": [
+      -306,
+      82,
+      -780
+    ],
+    "b:plot_3:weapons_factory": [
+      -305,
+      82,
+      -731
+    ],
+    "b:plot_3:vehicle_factory": [
+      -306,
+      82,
+      -740
+    ],
+    "b:plot_4:weapons_factory": [
+      -195,
+      82,
+      -737
+    ],
+    "b:plot_4:vehicle_factory": [
+      -194,
+      82,
+      -728
+    ],
+    "c:plot_1:weapons_factory": [
+      195,
+      82,
+      -771
+    ],
+    "c:plot_1:vehicle_factory": [
+      194,
+      82,
+      -780
+    ],
+    "c:plot_3:weapons_factory": [
+      195,
+      82,
+      -731
+    ],
+    "c:plot_3:vehicle_factory": [
+      194,
+      82,
+      -740
+    ],
+    "c:plot_4:weapons_factory": [
+      305,
+      82,
+      -737
+    ],
+    "c:plot_4:vehicle_factory": [
+      306,
+      82,
+      -728
+    ],
+    "d:plot_1:weapons_factory": [
+      695,
+      82,
+      -771
+    ],
+    "d:plot_1:vehicle_factory": [
+      694,
+      82,
+      -780
+    ],
+    "d:plot_3:weapons_factory": [
+      695,
+      82,
+      -731
+    ],
+    "d:plot_3:vehicle_factory": [
+      694,
+      82,
+      -740
+    ],
+    "d:plot_4:weapons_factory": [
+      805,
+      82,
+      -737
+    ],
+    "d:plot_4:vehicle_factory": [
+      806,
+      82,
+      -728
+    ],
+    "e:plot_1:weapons_factory": [
+      -805,
+      82,
+      -271
+    ],
+    "e:plot_1:vehicle_factory": [
+      -806,
+      82,
+      -280
+    ],
+    "e:plot_3:weapons_factory": [
+      -805,
+      82,
+      -231
+    ],
+    "e:plot_3:vehicle_factory": [
+      -806,
+      82,
+      -240
+    ],
+    "e:plot_4:weapons_factory": [
+      -695,
+      82,
+      -237
+    ],
+    "e:plot_4:vehicle_factory": [
+      -694,
+      82,
+      -228
+    ],
+    "f:plot_1:weapons_factory": [
+      -305,
+      82,
+      -271
+    ],
+    "f:plot_1:vehicle_factory": [
+      -306,
+      82,
+      -280
+    ],
+    "f:plot_3:weapons_factory": [
+      -305,
+      82,
+      -231
+    ],
+    "f:plot_3:vehicle_factory": [
+      -306,
+      82,
+      -240
+    ],
+    "f:plot_4:weapons_factory": [
+      -195,
+      82,
+      -237
+    ],
+    "f:plot_4:vehicle_factory": [
+      -194,
+      82,
+      -228
+    ],
+    "g:plot_1:weapons_factory": [
+      195,
+      82,
+      -271
+    ],
+    "g:plot_1:vehicle_factory": [
+      194,
+      82,
+      -280
+    ],
+    "g:plot_3:weapons_factory": [
+      195,
+      82,
+      -231
+    ],
+    "g:plot_3:vehicle_factory": [
+      194,
+      82,
+      -240
+    ],
+    "g:plot_4:weapons_factory": [
+      305,
+      82,
+      -237
+    ],
+    "g:plot_4:vehicle_factory": [
+      306,
+      82,
+      -228
+    ],
+    "h:plot_1:weapons_factory": [
+      695,
+      82,
+      -271
+    ],
+    "h:plot_1:vehicle_factory": [
+      694,
+      82,
+      -280
+    ],
+    "h:plot_3:weapons_factory": [
+      695,
+      82,
+      -231
+    ],
+    "h:plot_3:vehicle_factory": [
+      694,
+      82,
+      -240
+    ],
+    "h:plot_4:weapons_factory": [
+      805,
+      82,
+      -237
+    ],
+    "h:plot_4:vehicle_factory": [
+      806,
+      82,
+      -228
+    ],
+    "i:plot_1:weapons_factory": [
+      -695,
+      82,
+      271
+    ],
+    "i:plot_1:vehicle_factory": [
+      -694,
+      82,
+      280
+    ],
+    "i:plot_3:weapons_factory": [
+      -695,
+      82,
+      231
+    ],
+    "i:plot_3:vehicle_factory": [
+      -694,
+      82,
+      240
+    ],
+    "i:plot_4:weapons_factory": [
+      -805,
+      82,
+      237
+    ],
+    "i:plot_4:vehicle_factory": [
+      -806,
+      82,
+      228
+    ],
+    "j:plot_1:weapons_factory": [
+      -195,
+      82,
+      271
+    ],
+    "j:plot_1:vehicle_factory": [
+      -194,
+      82,
+      280
+    ],
+    "j:plot_3:weapons_factory": [
+      -195,
+      82,
+      231
+    ],
+    "j:plot_3:vehicle_factory": [
+      -194,
+      82,
+      240
+    ],
+    "j:plot_4:weapons_factory": [
+      -305,
+      82,
+      237
+    ],
+    "j:plot_4:vehicle_factory": [
+      -306,
+      82,
+      228
+    ],
+    "k:plot_1:weapons_factory": [
+      305,
+      82,
+      271
+    ],
+    "k:plot_1:vehicle_factory": [
+      306,
+      82,
+      280
+    ],
+    "k:plot_3:weapons_factory": [
+      305,
+      82,
+      231
+    ],
+    "k:plot_3:vehicle_factory": [
+      306,
+      82,
+      240
+    ],
+    "k:plot_4:weapons_factory": [
+      195,
+      82,
+      237
+    ],
+    "k:plot_4:vehicle_factory": [
+      194,
+      82,
+      228
+    ],
+    "l:plot_1:weapons_factory": [
+      805,
+      82,
+      271
+    ],
+    "l:plot_1:vehicle_factory": [
+      806,
+      82,
+      280
+    ],
+    "l:plot_3:weapons_factory": [
+      805,
+      82,
+      231
+    ],
+    "l:plot_3:vehicle_factory": [
+      806,
+      82,
+      240
+    ],
+    "l:plot_4:weapons_factory": [
+      695,
+      82,
+      237
+    ],
+    "l:plot_4:vehicle_factory": [
+      694,
+      82,
+      228
+    ],
+    "m:plot_1:weapons_factory": [
+      -695,
+      82,
+      771
+    ],
+    "m:plot_1:vehicle_factory": [
+      -694,
+      82,
+      780
+    ],
+    "m:plot_3:weapons_factory": [
+      -695,
+      82,
+      731
+    ],
+    "m:plot_3:vehicle_factory": [
+      -694,
+      82,
+      740
+    ],
+    "m:plot_4:weapons_factory": [
+      -805,
+      82,
+      737
+    ],
+    "m:plot_4:vehicle_factory": [
+      -806,
+      82,
+      728
+    ],
+    "n:plot_1:weapons_factory": [
+      -195,
+      82,
+      771
+    ],
+    "n:plot_1:vehicle_factory": [
+      -194,
+      82,
+      780
+    ],
+    "n:plot_3:weapons_factory": [
+      -195,
+      82,
+      731
+    ],
+    "n:plot_3:vehicle_factory": [
+      -194,
+      82,
+      740
+    ],
+    "n:plot_4:weapons_factory": [
+      -305,
+      82,
+      737
+    ],
+    "n:plot_4:vehicle_factory": [
+      -306,
+      82,
+      728
+    ],
+    "o:plot_1:weapons_factory": [
+      305,
+      82,
+      771
+    ],
+    "o:plot_1:vehicle_factory": [
+      306,
+      82,
+      780
+    ],
+    "o:plot_3:weapons_factory": [
+      305,
+      82,
+      731
+    ],
+    "o:plot_3:vehicle_factory": [
+      306,
+      82,
+      740
+    ],
+    "o:plot_4:weapons_factory": [
+      195,
+      82,
+      737
+    ],
+    "o:plot_4:vehicle_factory": [
+      194,
+      82,
+      728
+    ],
+    "p:plot_1:weapons_factory": [
+      805,
+      82,
+      771
+    ],
+    "p:plot_1:vehicle_factory": [
+      806,
+      82,
+      780
+    ],
+    "p:plot_3:weapons_factory": [
+      805,
+      82,
+      731
+    ],
+    "p:plot_3:vehicle_factory": [
+      806,
+      82,
+      740
+    ],
+    "p:plot_4:weapons_factory": [
+      695,
+      82,
+      737
+    ],
+    "p:plot_4:vehicle_factory": [
+      694,
+      82,
+      728
+    ]
+  },
+  "checkedNativeSites": [
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -188,
+          82,
+          -727
+        ]
+      ],
+      "layout": 2,
+      "site": "b:plot_4:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -195,
+        82,
+        -737
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 2,
+      "site": "c:plot_1:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        194,
+        82,
+        -780
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -688,
+          82,
+          -227
+        ]
+      ],
+      "layout": 2,
+      "site": "e:plot_4:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -695,
+        82,
+        -237
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 2,
+      "site": "f:plot_1:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -306,
+        82,
+        -280
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          812,
+          82,
+          -227
+        ]
+      ],
+      "layout": 2,
+      "site": "h:plot_4:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        805,
+        82,
+        -237
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 2,
+      "site": "i:plot_1:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        -694,
+        82,
+        280
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          188,
+          82,
+          227
+        ]
+      ],
+      "layout": 2,
+      "site": "k:plot_4:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        195,
+        82,
+        237
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 2,
+      "site": "l:plot_1:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        806,
+        82,
+        280
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -312,
+          82,
+          727
+        ]
+      ],
+      "layout": 2,
+      "site": "n:plot_4:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -305,
+        82,
+        737
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 2,
+      "site": "o:plot_1:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        306,
+        82,
+        780
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -312,
+          82,
+          -741
+        ]
+      ],
+      "layout": 3,
+      "site": "b:plot_3:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -305,
+        82,
+        -731
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 3,
+      "site": "b:plot_4:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -194,
+        82,
+        -728
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -812,
+          82,
+          -241
+        ]
+      ],
+      "layout": 3,
+      "site": "e:plot_3:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -805,
+        82,
+        -231
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 3,
+      "site": "e:plot_4:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -694,
+        82,
+        -228
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          688,
+          82,
+          -241
+        ]
+      ],
+      "layout": 3,
+      "site": "h:plot_3:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        695,
+        82,
+        -231
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 3,
+      "site": "h:plot_4:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        806,
+        82,
+        -228
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          312,
+          82,
+          241
+        ]
+      ],
+      "layout": 3,
+      "site": "k:plot_3:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        305,
+        82,
+        231
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 3,
+      "site": "k:plot_4:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        194,
+        82,
+        228
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -188,
+          82,
+          741
+        ]
+      ],
+      "layout": 3,
+      "site": "n:plot_3:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -195,
+        82,
+        731
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 3,
+      "site": "n:plot_4:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        -306,
+        82,
+        728
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -312,
+          82,
+          -781
+        ]
+      ],
+      "layout": 4,
+      "site": "b:plot_1:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -305,
+        82,
+        -771
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 4,
+      "site": "b:plot_3:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -306,
+        82,
+        -740
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -812,
+          82,
+          -281
+        ]
+      ],
+      "layout": 4,
+      "site": "e:plot_1:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -805,
+        82,
+        -271
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 4,
+      "site": "e:plot_3:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -806,
+        82,
+        -240
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          688,
+          82,
+          -281
+        ]
+      ],
+      "layout": 4,
+      "site": "h:plot_1:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        695,
+        82,
+        -271
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 4,
+      "site": "h:plot_3:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        694,
+        82,
+        -240
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          312,
+          82,
+          281
+        ]
+      ],
+      "layout": 4,
+      "site": "k:plot_1:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        305,
+        82,
+        271
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 4,
+      "site": "k:plot_3:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        306,
+        82,
+        240
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -188,
+          82,
+          781
+        ]
+      ],
+      "layout": 4,
+      "site": "n:plot_1:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -195,
+        82,
+        771
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 4,
+      "site": "n:plot_3:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        -194,
+        82,
+        740
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -688,
+          82,
+          -727
+        ]
+      ],
+      "layout": 5,
+      "site": "a:plot_4:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -695,
+        82,
+        -737
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 5,
+      "site": "b:plot_1:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -306,
+        82,
+        -780
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          812,
+          82,
+          -727
+        ]
+      ],
+      "layout": 5,
+      "site": "d:plot_4:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        805,
+        82,
+        -737
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 5,
+      "site": "e:plot_1:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -806,
+        82,
+        -280
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          312,
+          82,
+          -227
+        ]
+      ],
+      "layout": 5,
+      "site": "g:plot_4:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        305,
+        82,
+        -237
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 5,
+      "site": "h:plot_1:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        694,
+        82,
+        -280
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -312,
+          82,
+          227
+        ]
+      ],
+      "layout": 5,
+      "site": "j:plot_4:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -305,
+        82,
+        237
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 5,
+      "site": "k:plot_1:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        306,
+        82,
+        280
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -812,
+          82,
+          727
+        ]
+      ],
+      "layout": 5,
+      "site": "m:plot_4:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -805,
+        82,
+        737
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 5,
+      "site": "n:plot_1:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        -194,
+        82,
+        780
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          688,
+          82,
+          727
+        ]
+      ],
+      "layout": 5,
+      "site": "p:plot_4:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        695,
+        82,
+        737
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -812,
+          82,
+          -741
+        ]
+      ],
+      "layout": 6,
+      "site": "a:plot_3:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        -805,
+        82,
+        -731
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 6,
+      "site": "a:plot_4:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        -694,
+        82,
+        -728
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          688,
+          82,
+          -741
+        ]
+      ],
+      "layout": 6,
+      "site": "d:plot_3:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        695,
+        82,
+        -731
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 6,
+      "site": "d:plot_4:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        806,
+        82,
+        -728
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          188,
+          82,
+          -241
+        ]
+      ],
+      "layout": 6,
+      "site": "g:plot_3:weapons_factory",
+      "rotation": 0,
+      "xyz": [
+        195,
+        82,
+        -231
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 6,
+      "site": "g:plot_4:vehicle_factory",
+      "rotation": 0,
+      "xyz": [
+        306,
+        82,
+        -228
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -188,
+          82,
+          241
+        ]
+      ],
+      "layout": 6,
+      "site": "j:plot_3:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -195,
+        82,
+        231
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 6,
+      "site": "j:plot_4:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        -306,
+        82,
+        228
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          -688,
+          82,
+          741
+        ]
+      ],
+      "layout": 6,
+      "site": "m:plot_3:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        -695,
+        82,
+        731
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 6,
+      "site": "m:plot_4:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        -806,
+        82,
+        728
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:spruce_planks",
+      "otherCraftingTablesXYZ": [
+        [
+          812,
+          82,
+          741
+        ]
+      ],
+      "layout": 6,
+      "site": "p:plot_3:weapons_factory",
+      "rotation": 180,
+      "xyz": [
+        805,
+        82,
+        731
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    },
+    {
+      "counterSupport": "minecraft:smooth_stone",
+      "otherCraftingTablesXYZ": [],
+      "layout": 6,
+      "site": "p:plot_4:vehicle_factory",
+      "rotation": 180,
+      "xyz": [
+        694,
+        82,
+        728
+      ],
+      "savedBlock": "minecraft:crafting_table"
+    }
+  ],
+  "reportSHA256": {
+    "2/seed": "7b4e87b5afb1a65febc59b34a639a94647896e1faa45d68b2509485de16fc644",
+    "2/verify": "dcc0c4b1f5c11b92abef6cc02f4e7360533afa4ccc72c9d4a49bd8b823072712",
+    "3/seed": "757fb4838b8294f60e5e6a062240375000832091d3f16ef1a03504c804d6a15f",
+    "3/verify": "508f77f318044939210774bd333788c7694729a7654dd0f8db4b40b477a68a89",
+    "4/seed": "b2052a20d08cf951c45cdd3e61c5871e1e01792728e20a253be8087979d533c5",
+    "4/verify": "a506ec36bbb40686539aa992bb4e60fd2309b74d52090f4b277b74b74f0a1723",
+    "5/seed": "0d6c5ea79ca0d8ea0f4f5ab1a2c40a9cf5bcd5921c6bae12b8a1853dc7e12570",
+    "5/verify": "9e282de64d52641d557e840800c1639d21637f06a1bf5e81d7b0f011460d52aa",
+    "6/seed": "e3ba0b9a568b9fe5a4d78979fd3cd4ef0f613deb3655b9c78fea8278c856c666",
+    "6/verify": "68315abcecc56426afcf5b3b050f0449befcc4bf2b13798c62c441deb9dc2775"
+  },
+  "clientInteractionsExecuted": 0
+}
