@@ -32,7 +32,8 @@ TaCZ supplies handheld guns; SBW supplies vehicles/mounted equipment.
 Join 127.0.0.1:25566. In the server console, whitelist add YOUR_USERNAME.
 Authentication, whitelist and one-player limits remain enabled; no multiplayer test.
 
-Follow SOLO_CHECKLIST.md: one focused City D solo pass. The authored starter map
+Follow SOLO_CHECKLIST.md for a fresh solo run. Choose any available starting city
+in /nation and spot-check whichever features you reach. The authored starter map
 preserves all region bytes; only the new copy's level.dat derives Adventure,
 Normal difficulty and randomTickSpeed=3. Other authored rules remain unchanged.
 Packaging checks hashes and explicit evidence counts; it does not execute or
