@@ -151,7 +151,9 @@ public record SectorNaturalSupportPolicy(String version,Set<BlockPos> grassSuppo
     static final class Guard {
         final SectorNaturalSupportPolicy policy;final Set<BlockPos> inherited;final Set<BlockPos> exposed=new HashSet<>();
         final ServerLevel level;final Map<BlockPos,BlockState> target;boolean pending;
-        Guard(ServerLevel level,SectorTransaction.Plan plan,Set<BlockPos> inherited,boolean pending,CompoundTag journal)throws IOException {
+        final boolean interchangeableTerrainSoil;
+        Guard(ServerLevel level,boolean interchangeableTerrainSoil,SectorTransaction.Plan plan,Set<BlockPos> inherited,boolean pending,CompoundTag journal)throws IOException {
+            this.interchangeableTerrainSoil=interchangeableTerrainSoil;
             this.level=level;this.policy=plan.naturalSupport();this.target=policy.enabled()?geometry(plan,true):Map.of();this.inherited=inherited;this.pending=pending;
             if(journal!=null&&journal.contains("naturalSupportExposure")){
                 if(!policy.enabled()||!journal.contains("naturalSupportExposure",Tag.TAG_LONG_ARRAY))throw new IOException("Unknown natural support exposure journal field");
@@ -160,10 +162,14 @@ public record SectorNaturalSupportPolicy(String version,Set<BlockPos> grassSuppo
                 if(!Arrays.equals(positions,exposed.stream().mapToLong(BlockPos::asLong).sorted().toArray())||(!pending&&!exposed.isEmpty()))throw new IOException("Noncanonical or premature natural support exposure proof");
             }
         }
+        private static boolean terrainSoil(BlockState state){
+            return state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.DIRT);
+        }
         boolean matches(BlockPos pos,BlockState expected,BlockState actual){
             BlockState fixed=policy.fixedCoverGrass().get(pos);
             if(fixed!=null){
                 if(!fixed.equals(level.getBlockState(pos.above()))||level.getBlockEntity(pos.above())!=null)return false;
+                if(interchangeableTerrainSoil) return terrainSoil(expected) && terrainSoil(actual);
                 return (expected.equals(Blocks.GRASS_BLOCK.defaultBlockState())||expected.equals(Blocks.DIRT.defaultBlockState()))
                     &&(actual.equals(Blocks.GRASS_BLOCK.defaultBlockState())||actual.equals(Blocks.DIRT.defaultBlockState()));
             }
@@ -173,6 +179,9 @@ public record SectorNaturalSupportPolicy(String version,Set<BlockPos> grassSuppo
                 if(policy.covers(cover,pos.above())&&cover.equals(level.getBlockState(pos.above())))exposed.add(pos);
             }
             if(expected.equals(actual))return true;
+            // Production walls read both surveyed supports and the live one-block shell.
+            // Neither is a wall write. Ordinary dirt and grass can alternate on either.
+            if(interchangeableTerrainSoil && terrainSoil(expected) && terrainSoil(actual)) return true;
             if(!policy.grassSupports().contains(pos)||(!exposed.contains(pos)&&!inherited.contains(pos)))return false;
             return (expected.equals(Blocks.GRASS_BLOCK.defaultBlockState())||expected.equals(Blocks.DIRT.defaultBlockState()))
                 &&(actual.equals(Blocks.GRASS_BLOCK.defaultBlockState())||actual.equals(Blocks.DIRT.defaultBlockState()));
