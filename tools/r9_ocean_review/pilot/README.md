@@ -8,6 +8,12 @@ Quin liked the detail in the Pine Reach forest and pointed out how quickly it gi
 
 Quin found the B1 bank, launched a boat, understood the route with the minimap, and found the lighthouse easy to use. Keep the existing approach and landing as references for future routes. The visit did not assess freight handling, a pickup transfer, or navigation without a minimap.
 
+## Terrain and city identity
+
+Treat terrain as permanent during normal play and sieges. Future siege damage may affect registered building blocks only. Being inside a city or a siege boundary is insufficient. Adjacent soil, rock and riverbeds remain outside the damage mask. Read-only ground around wall foundations may naturally switch between grass and ordinary dirt.
+
+Give resource territories recognizable silhouettes at street level. Explore timber trusses in wood regions, stepped masonry in stone regions, tanks and service pipes in iron and oil regions, and copper gantries in coal and copper regions. A gabled civic tower is an option for mixed founding territories. Compare these as architectural studies before repeating them across cities. Retain recognizable entrances and stable shop counter locations when proposing a variant.
+
 ## Rebuild from the qualification workspace
 
 Use the exact pinned R7 input tree at `inputs/CatanCraft_Clean_R7_Input` and the gameplay checkout at `resource-ui` on `6ed6eaf31f946195f8b75fa869308c915537a6ed`. Place this pilot directory at `receipts/coast-pilot`, the review assets from its parent directory at `receipts/ocean-v2`, and the parent's `mainland` directory at `receipts/mainland-coast-plan`. Python 3.11+, NumPy and nbtlib 2.0.4 are required for world assembly. The source-input folder includes the original NBT checker. Rendering additionally uses Pillow and the review renderer dependencies described in the parent directory.
