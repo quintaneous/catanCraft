@@ -1234,7 +1234,7 @@
       "sourceFiles": [
         {
           "path": "src/main/java/com/quin/catancraft/world/SectorNaturalSupportTests.java",
-          "sha256": "5d9dd936bc69e91a4287c963a2e75dd1685f1fd06d5eeca52d9e38da13024120",
+          "sha256": "10cddb41fe5a9cdb36f1b0f592da4b2ae39c1f8961afb096c63c8132f1b1ab9a",
           "methods": [
             "fresh_is_exact_and_unrelated_reads_foreign_soil_stay_exact",
             "natural_decay_paid_upgrade_reverse_and_prior_receipt_are_preserved",

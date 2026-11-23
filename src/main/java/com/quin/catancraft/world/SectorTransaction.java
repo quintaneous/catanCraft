@@ -36,6 +36,7 @@ public final class SectorTransaction {
         /** Earned external development may replace only protected read expectations.
          * It never changes the wall plan, paid cells, price or durable journal. */
         default Map<BlockPos,BlockState> protectedReadContext()throws IOException{return Map.of();}
+        default boolean interchangeableTerrainSoil(){return false;}
         default void verifyProtectedReadContext()throws IOException{}
     }
     public interface Fault {void at(String stage,int writes)throws IOException;}
@@ -104,7 +105,7 @@ public final class SectorTransaction {
             supportProof=exists?journal.getCompound("inheritedNaturalSupportProof").copy():SectorNaturalSupportPolicy.freeze(e.inheritedNaturalSupportProof());
             inheritedSupport=SectorNaturalSupportPolicy.inherited(plan,supportProof,previous,nationId,identity);
         }
-        SectorNaturalSupportPolicy.Guard support=new SectorNaturalSupportPolicy.Guard(e.level(),plan,inheritedSupport,exists&&!phase.equals("PREPARED"),journal);
+        SectorNaturalSupportPolicy.Guard support=new SectorNaturalSupportPolicy.Guard(e.level(),e.interchangeableTerrainSoil(),plan,inheritedSupport,exists&&!phase.equals("PREPARED"),journal);
         Map<BlockPos,BlockState> contextReads=Map.copyOf(e.protectedReadContext());
         Set<BlockPos> declaredReads=new HashSet<>();for(Read r:plan.reads())declaredReads.add(r.pos());
         for(var row:contextReads.entrySet())if(!declaredReads.contains(row.getKey())||row.getValue().hasBlockEntity()||!row.getValue().getFluidState().isEmpty())

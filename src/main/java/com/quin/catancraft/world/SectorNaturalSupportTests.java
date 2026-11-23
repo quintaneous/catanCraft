@@ -33,7 +33,8 @@ public final class SectorNaturalSupportTests {
                 e.set(e.grass(0),block.defaultBlockState());refuse(()->SectorTransaction.run(e,SectorTransaction.Action.STATUS));h.assertTrue(Arrays.equals(journal,Files.readAllBytes(e.file)),"Foreign support rewrote history");
             }
             e.set(e.grass(0),Blocks.DIRT.defaultBlockState());e.set(e.offWhitelist,Blocks.DIRT.defaultBlockState());refuse(()->SectorTransaction.run(e,SectorTransaction.Action.STATUS));
-            e.set(e.offWhitelist,Blocks.GRASS_BLOCK.defaultBlockState());SectorTransaction.run(e,SectorTransaction.Action.STATUS);h.assertTrue(nbt.equals(e.book()),"Support validation touched protected inventory/book");h.succeed();
+            e.set(e.offWhitelist,Blocks.GRASS_BLOCK.defaultBlockState());SectorTransaction.run(e,SectorTransaction.Action.STATUS);h.assertTrue(nbt.equals(e.book()),"Support validation touched protected inventory/book");
+            verifyProductionSoil(h);h.succeed();
         }catch(Exception ex){throw new RuntimeException(ex);}
     }
     @GameTest(template="townhall_state_empty",batch="natural02",timeoutTicks=1200)
@@ -117,7 +118,36 @@ public final class SectorNaturalSupportTests {
             for(int i=0;i<3;i++)h.assertTrue(e.level.getBlockState(e.cover(i)).equals(stairs)&&e.level.getBlockState(e.grass(i)).is(Blocks.DIRT),"Reverse changed natural dirt or stair source");h.succeed();
         }catch(Exception ex){throw new RuntimeException(ex);}
     }
+    private static void verifyProductionSoil(GameTestHelper h)throws IOException {
+        Env e=new Env(h);
+        e.productionSoil=true;
+        // The failing authored cell was absent from the plan but below a purchased stair.
+        var original=e.plan;
+        var reads=original.reads().stream().filter(r->!r.pos().equals(e.grass(0))).toList();
+        e.plan=new SectorTransaction.Plan(original.sector(),original.sourceRevision(),original.targetRevision(),
+                original.sourceLevel(),original.targetLevel(),original.cells(),reads);
+        e.stage();
+        e.set(e.grass(0),Blocks.GRASS_BLOCK.defaultBlockState());
+        e.set(e.grass(1),Blocks.DIRT.defaultBlockState());
+        var book=e.book();
+        SectorTransaction.run(e,SectorTransaction.Action.APPLY,(stage,count)->{
+            if(stage.equals("write") && count==1) e.decay(0);
+        });
+        h.assertTrue(e.progress==1 && e.level.getBlockState(e.grass(0)).is(Blocks.DIRT),
+                "Wall purchase failed on untouched ground decaying during construction");
+        e.reload();
+        e.set(e.grass(1),Blocks.GRASS_BLOCK.defaultBlockState());
+        SectorTransaction.run(e,SectorTransaction.Action.STATUS);
+        e.set(e.grass(1),Blocks.AIR.defaultBlockState());
+        refuse(()->SectorTransaction.run(e,SectorTransaction.Action.STATUS));
+        e.set(e.grass(1),Blocks.DIRT.defaultBlockState());
+        SectorTransaction.run(e,SectorTransaction.Action.ROLLBACK);
+        h.assertTrue(e.level.getBlockState(e.grass(0)).is(Blocks.DIRT) && e.book().equals(book)
+                && e.nation.treasury()==1000,"Rollback repainted soil, changed inventory or lost payment");
+    }
     static final class Env implements SectorTransaction.Environment {
+        boolean productionSoil;
+        public boolean interchangeableTerrainSoil(){return productionSoil;}
         private static int serial;
         final ServerLevel level;final Path dir,ledger,basicFile;final BlockPos origin,offWhitelist,bookPos;Path file;SectorTransaction.Plan plan;
         NationData nation;int progress;String receipt="";CompoundTag proof=new CompoundTag();boolean proofForbidden;EconomyCost price=new EconomyCost(73,Map.of(ResourceType.STONE,3L));

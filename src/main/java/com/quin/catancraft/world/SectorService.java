@@ -336,6 +336,7 @@ public final class SectorService {
     private static SectorTransaction.Environment environment(Context c,SectorContracts.Direction side,SectorContracts.Contract contract,CompoundTag frozen,Path file,boolean terminalReadOnly){return new SectorTransaction.Environment(){
         private final DefenseReservationVerifier reservations=new DefenseReservationVerifier();
         private SectorHallContext53.Context hallContext;
+        public boolean interchangeableTerrainSoil(){return PRODUCTION.equals(c.approval());}
         public Map<BlockPos,net.minecraft.world.level.block.state.BlockState> protectedReadContext()throws IOException {
             if(!c.approval().equals(PRODUCTION))return Map.of();
             if(hallContext==null)hallContext=SectorHallContext53.capture(c.server(),c.root(),c.data(),c.city(),c.owner());
