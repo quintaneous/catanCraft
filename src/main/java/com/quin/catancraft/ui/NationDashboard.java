@@ -30,15 +30,19 @@ public final class NationDashboard {
     public static boolean open(ServerPlayer player) { return open(player, ""); }
 
     public static boolean open(ServerPlayer player, String notice) {
-        return send(player, notice, false);
+        return send(player, notice, "");
     }
 
     /** A completion packet updates an already-open menu; the client ignores it while playing. */
     public static void refreshDefenses(ServerPlayer player, String notice) {
-        send(player, notice, true);
+        send(player, notice, "V|defense_refresh");
     }
 
-    private static boolean send(ServerPlayer player, String notice, boolean refreshOnly) {
+    public static void refreshOpen(ServerPlayer player, String notice) {
+        send(player, notice, "V|dashboard_refresh");
+    }
+
+    private static boolean send(ServerPlayer player, String notice, String view) {
         CatanSavedData data = CatanSavedData.get(player.server);
         NationData nation = data.nationForPlayer(player.getUUID());
         if (nation == null) return false;
@@ -60,7 +64,7 @@ public final class NationDashboard {
                 .toList();
 
         List<String> lines = new ArrayList<>();
-        if(refreshOnly)lines.add("V|defense_refresh");
+        if (!view.isEmpty()) lines.add(view);
         if(!notice.isBlank())lines.add("M|"+DefenseMenuRows.safe(notice));
         lines.add("I|" + nation.id());
         lines.add("H|" + nation.name());
@@ -126,6 +130,10 @@ public final class NationDashboard {
 
         lines.add("S|trade|TRADE • " +
                 (incomingTrades.size() + outgoingTrades.size()) + " pending");
+        if (leader) {
+            lines.add("C|trade_create|New offer");
+            lines.add("D|Your offer is set aside until the other nation replies. Withdrawing it returns your stock.");
+        }
         if (incomingTrades.isEmpty() && outgoingTrades.isEmpty()) {
             lines.add("D|No pending trade proposals.");
         }
@@ -133,19 +141,19 @@ public final class NationDashboard {
         for (TradeProposal proposal : incomingTrades) {
             NationData sender = data.nation(proposal.senderNationId());
             String senderName = sender == null ? "Unknown Nation" : sender.name();
-            lines.add("Y|INCOMING #" + proposal.id() + " • " + senderName);
-            lines.add("G|  They offer: " + tradeAssetText(
+            lines.add("Y|Offer from " + senderName);
+            lines.add("G|  You get: " + tradeAssetText(
                     proposal.offeredAsset(), proposal.offeredAmount()));
-            lines.add("D|  They request: " + tradeAssetText(
+            lines.add("D|  You give: " + tradeAssetText(
                     proposal.requestedAsset(), proposal.requestedAmount()));
             if (leader) {
                 lines.add(action(
                         "nation trade accept " + proposal.id(),
-                        "Accept trade #" + proposal.id()
+                        "Accept offer"
                 ));
                 lines.add(action(
                         "nation trade decline " + proposal.id(),
-                        "Decline trade #" + proposal.id()
+                        "Decline offer"
                 ));
             }
         }
@@ -153,23 +161,19 @@ public final class NationDashboard {
         for (TradeProposal proposal : outgoingTrades) {
             NationData recipient = data.nation(proposal.recipientNationId());
             String recipientName = recipient == null ? "Unknown Nation" : recipient.name();
-            lines.add("B|OUTGOING #" + proposal.id() + " • " + recipientName);
-            lines.add("D|  Escrowed: " + tradeAssetText(
+            lines.add("B|Offer to " + recipientName);
+            lines.add("D|  Set aside: " + tradeAssetText(
                     proposal.offeredAsset(), proposal.offeredAmount()));
-            lines.add("D|  Requested: " + tradeAssetText(
+            lines.add("D|  You asked for: " + tradeAssetText(
                     proposal.requestedAsset(), proposal.requestedAmount()));
             if (leader) {
                 lines.add(action(
                         "nation trade cancel " + proposal.id(),
-                        "Cancel trade #" + proposal.id()
+                        "Withdraw offer"
                 ));
             }
         }
 
-        if (leader) {
-            lines.add("C|trade_create|Create Trade Proposal");
-            lines.add("D|Offered assets are escrowed until accepted, declined, or canceled.");
-        }
         lines.add("X|trade");
         lines.add("");
 
@@ -193,8 +197,7 @@ public final class NationDashboard {
             lines.add("D|X=" + activeMonument.x() +
                     " Y=" + activeMonument.y() +
                     " Z=" + activeMonument.z() +
-                    " • Radius " + activeMonument.radius() +
-                    " • Vertical ±12");
+                    " • Capture radius " + activeMonument.radius() + " blocks");
             lines.add("D|Capture: " + percent + "% • " + holder);
         }
         lines.add("X|monument");
@@ -243,7 +246,7 @@ public final class NationDashboard {
 
         if (!leader) {
             lines.add("");
-            lines.add("D|Only the nation leader can spend national resources in V0.1.");
+            lines.add("D|Your nation leader manages spending and trade offers.");
         }
 
         NationNetwork.openDashboard(player, lines);
@@ -326,7 +329,7 @@ public final class NationDashboard {
                 BuildingInstance building = territory.buildings().get(i);
                 BuildingType type = building.type();
 
-                String detail = "[" + i + "] " + type.displayName() +
+                String detail = type.displayName() +
                         " L" + building.level() +
                         (building.plotId().isBlank() ? "" : " • " + building.plotId());
 

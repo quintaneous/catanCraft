@@ -1,10 +1,19 @@
 package com.quin.catancraft.client;
 
 import net.minecraft.client.Minecraft;
+import com.quin.catancraft.network.TradeChoicesPacket;
 import java.util.List;
 
 public final class ClientNationDashboardHandler {
     private ClientNationDashboardHandler() {}
+    public static void openTrade(TradeChoicesPacket choices) {
+        Minecraft client = Minecraft.getInstance();
+        if (client.screen instanceof NationDashboardScreen dashboard
+                && dashboard.showingTradeFor(choices.nationId().toString())) {
+            client.setScreen(new TradeProposalScreen(dashboard, choices.partners(), choices.available()));
+        }
+    }
+
     public static void open(List<String> lines) {
         Minecraft client=Minecraft.getInstance();
         if (lines.contains("V|resource_refresh") || lines.contains("V|resource_unavailable")) {
@@ -18,7 +27,7 @@ public final class ClientNationDashboardHandler {
             client.setScreen(new DefenseConfirmationScreen(lines,dashboard));
             return;
         }
-        if(lines.contains("V|defense_refresh")&&dashboard==null)return;
+        if ((lines.contains("V|dashboard_refresh") || lines.contains("V|defense_refresh")) && dashboard == null) return;
         if(dashboard!=null){dashboard.updateLines(lines);if(client.screen!=dashboard)client.setScreen(dashboard);}
         else client.setScreen(new NationDashboardScreen(lines));
     }

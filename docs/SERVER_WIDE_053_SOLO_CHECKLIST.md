@@ -19,7 +19,7 @@ use the corresponding `.sh` files with Python 3.11+ and 64-bit Java 17. Never ru
 baseline directly or reuse a played run as a new baseline.
 
 Use a separate Minecraft 1.20.1 / Forge 47.4.10 client with the supplied four
-`client/mods` JARs. The resource forecast uses network protocol 6. Use the
+`client/mods` JARs. The trade picker and resource dashboard use network protocol 7. Use the
 same CatanCraft candidate JAR on the client and the isolated server. Add your authenticated username with `whitelist add YOUR_NAME`
 in the server console and join `127.0.0.1:25566`.
 
