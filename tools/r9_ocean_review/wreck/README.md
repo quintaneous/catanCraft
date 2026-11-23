@@ -1,30 +1,40 @@
-# Brinewake grounded freighter
+# Brinewake II
 
-Brinewake is a standalone offshore exploration landmark for Minecraft Java 1.20.1. A broad rocky shoal supports the broken hull. The forward half carries a flooded cargo hold, two containers, a standing mast, and a weathered cargo derrick. A two-block-wide salvage walkway crosses the flooded break to the surviving wheelhouse section. The aft cabin has an open doorway, a ladder to its upper deck and a small bridge overlooking the wreck. Its two timber boat landings give players a choice on arrival.
+The east-coast freighter grew by fifteen blocks from bow to stern, with four more blocks across its widest deck section. A second cargo hatch sits forward of the open hold. Two tiers of cargo, a deck winch and a taller twin-post derrick make the longer working deck recognizable from shore. The salvage crossing spans the split hull and connects both landings to the aft cabin and wheelhouse.
 
-Oblique view of the encoded wreck geometry — see `Brinewake_preview.png` in the review archive or regenerate locally.
+Orthographic view of Brinewake II — see `Brinewake_preview.png` in the review archive or regenerate locally.
 
-## Reservation and mounting
+| Measured in blocks | Original | Revised |
+| --- | ---: | ---: |
+| Hull length | 61 | 76 |
+| Widest beam across one hull section | 19 | 23 |
+| Schematic footprint X × Z | 74 × 48 | 88 × 54 |
+| Schematic height | 39 | 40 |
+| World elevation of landing floor block | 76 | 76 |
+| Standing feet on landing | 77 | 77 |
 
-The atlas proposes the east reservation at X 1,390 / Z 280. The pivot is local **(37, 15, 24)** at world **(1,390, 75, 280)**. Use the north-west lower corner **(1,353, 60, 256)** and zero rotation. Schematic offset is (0, 0, 0). X increases east, Z increases south. The bow faces west toward the approach. The 74 × 39 × 48 block stamp occupies X 1,353–1,426, Y 60–98 and Z 256–303, inclusive.
+Length and beam are measured from the hull plating at local Y16. Doorways, ordinary railings, stairs and the five-block ladder retain Minecraft player scale.
 
-The tile contains a full rectangular volume of source water, air and solid seabed. Local Y15 holds the top water block (world Y75) and the water surface is Y76. Treat the **full volume** as the write footprint when testing placement. Use a disposable flat review area or a new ocean prototype. The surrounding ocean floor and edge transitions still need blending during final integration. A no-air paste into occupied space would leave obstructions. The original four corners are the bounding box of a standalone sample.
+## East reservation
 
-| Review point | Local XYZ | Proposed world XYZ | What to inspect |
+Use zero rotation. The bow points west. Mount the local pivot **(44, 15, 27)** at world **(1390, 75, 280)**. The lowest north-west corner is **(1346, 60, 253)** with a schematic offset of zero. The complete rectangular stamp occupies **X1346–1433, Y60–99, Z253–306**, inclusive. In the existing 96 × 96 reservation the nearest X edge is four blocks away and the nearest Z edge is 21 blocks away.
+
+The top source-water block is local Y15, or world Y75. Water surface elevation is 76. The schematic includes its surrounding air, water and rocky shoal, so allocate the full stamp volume in a disposable world. Final seabed blending depends on the surrounding ocean terrain.
+
+| Point | Local XYZ | World XYZ | Use |
 | --- | --- | --- | --- |
-| West entrance to north approach | 1, 15, 4 | 1354, 75, 260 | Travel east along the north side of the bow, then turn south to the landing. |
-| North timber landing, standing | 33, 17, 6 | 1386, 77, 262 | Reach the dry deck by climbing toward the center of the ship. |
-| West entrance to south approach | 1, 15, 40 | 1354, 75, 296 | Travel east keeping the hull to port, then turn north to the landing. |
-| South timber landing, standing | 20, 17, 38 | 1373, 77, 294 | Board the wider forward deck from the bow side. |
-| Copper-bordered deck marker, standing | 35, 20, 15 | 1388, 80, 271 | Candidate survey or capture location on the forward deck. |
-| Lower cabin, standing | 58, 19, 28 | 1411, 79, 284 | Follow the narrow salvage crossing over the split hull to the aft cabin. |
+| West entrance to north channel | 1, 15, 5 | 1347, 75, 258 | Sail east with the bow to starboard. |
+| North landing, feet | 41, 17, 7 | 1387, 77, 260 | Turn toward the four-block timber landing and climb toward the forward deck. |
+| West entrance to south channel | 1, 15, 45 | 1347, 75, 298 | Sail east with the bow to port. |
+| South landing, feet | 22, 17, 43 | 1368, 77, 296 | Approach the southern staircase from open water. |
+| Copper-bordered marker, feet | 44, 20, 17 | 1390, 80, 270 | Reach the dry meeting spot beside the forward hold. |
+| Lower cabin, feet | 70, 19, 32 | 1416, 79, 285 | Walk across the span to the surviving accommodation deck. |
+| Wheelhouse, feet | 71, 24, 30 | 1417, 84, 283 | Climb the exterior ladder and enter the wheelhouse. |
 
-## Geometry checks
+## Verification
 
-The independent decoder reads the compressed Sponge v2 NBT, 1.20.1 data version 3465, palette and 138,528 serialized block entries. It found 374 keel columns with uninterrupted solid support to the base. Each approach allows a 3×3 boat footprint with at least three source-water blocks of depth and two air blocks above. The two dry paths from the landings reach the marker in 11 and 38 cardinal moves, with two blocks of headroom and a maximum one-block change in floor elevation. A further 42 moves reach the lower cabin. No entity or block-entity records were present. The in-game dismount, exact collision, water updates after paste, player sightlines and ship-to-shore sailing need playtesting.
+The independent Sponge v2 reader decoded 190,080 block entries, 49 palette states and Java data version 3465. Each west-entry approach maintained three-block width, at least three continuous source-water blocks of depth and two air blocks above the entire tested straight leg. Dry paths from the north and south landings reached the marker in 13 and 48 cardinal moves. The lower cabin was another 47 moves away. The route from the lower cabin into the wheelhouse took 21 moves including the ladder climb. The decoder found 603 keel columns directly supported down to the bottom of the shoal.
 
-There are no active reward tables, charge points or operating objectives. The copper marker is entirely decorative. The matching terrain, public ownership and monument rules belong to a later integration.
+The copper marker is decorative. There are no serialized entities, block entities, commands, rewards or active capture points in the asset. Boat dismounts, exact player collision, water updates after pasting, lighting and the full approach from the coast still require in-game review.
 
-## Reproduce
-
-Run `python3 build.py` in this directory to generate `brinewake.schem`. Then run `python3 review.py > verification.json` to decode the asset independently, check its geometry and rebuild the preview. The build uses the Python standard library. The review image also requires Pillow and DejaVu Sans. The ship preview uses the actual schematic geometry with illustrative material colors, simplified rails and surface shading.
+Run `python3 build.py` in this directory to rebuild `brinewake.schem`. Run `python3 review.py > verification.json` to decode the schematic, test geometry, and render `Brinewake_preview.png`. The build uses standard Python. The renderer also uses Pillow and DejaVu Sans. The preview shows the encoded block geometry with illustrative material colors and simplified railings.

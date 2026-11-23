@@ -1,5 +1,6 @@
 {
   "result": "PASS_OFFLINE_ASSET_AND_PLACEMENT_AUDIT",
+  "revision": 2,
   "originalInputs": {
     "manifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
     "matchingManifestEntries": 40,
@@ -25,7 +26,30 @@
     "mapSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
     "matchingBootstrapConfigFiles": 7
   },
-  "atlasSHA256": "256da6e97ec5b829e6587a236f7b40813bc061094a1481ffc30ac591f284dbfa",
+  "totalEncodedCells": 1695586,
+  "comparedToV1": {
+    "coast/r9_headland_estuary.schem": {
+      "v1SHA256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+      "v2SHA256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+      "byteIdentical": true
+    },
+    "coast/r9_sheltered_cove.schem": {
+      "v1SHA256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+      "v2SHA256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+      "byteIdentical": true
+    },
+    "lighthouse/Brinewatch_Pilot_Station.schem": {
+      "v1SHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+      "v2SHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+      "byteIdentical": true
+    },
+    "wreck/brinewake.schem": {
+      "v1SHA256": "a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf",
+      "v2SHA256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+      "byteIdentical": false
+    }
+  },
+  "atlasSHA256": "9b0e6e980ff707d885863a01bd0d674b5d6074005f43993d5a5ccd8eced1b572",
   "registrySourceCommit": "15f05b54846b0cc5adebe63b245c7045ba105709",
   "registryFileSHA256": {
     "minecraft_1_20_1_block_ids.json": "0b8b3236235802db1520d1514472154885c25ad1018dafff1c7072c361b04299",
@@ -120,26 +144,26 @@
     "wreck": [
       {
         "file": "brinewake.schem",
-        "sha256": "a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf",
+        "sha256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
         "formatVersion": 2,
         "dataVersion": 3465,
         "sizeXYZ": [
-          74,
-          39,
-          48
+          88,
+          40,
+          54
         ],
         "offsetXYZ": [
           0,
           0,
           0
         ],
-        "encodedCells": 138528,
+        "encodedCells": 190080,
         "usedPaletteStates": 49,
         "validatedPaletteStates": 49,
         "counts": {
-          "empty": 79389,
-          "fluid": 34380,
-          "otherBlock": 24759,
+          "empty": 110636,
+          "fluid": 45198,
+          "otherBlock": 34246,
           "pasteMask": 0
         },
         "entities": 0,
@@ -185,9 +209,9 @@
     "wreck": {
       "site": "wreck_east",
       "localPivotXYZ": [
-        37,
+        44,
         15,
-        24
+        27
       ],
       "worldPivotXYZ": [
         1390,
@@ -196,14 +220,14 @@
       ],
       "rotationDegreesAboutY": 0,
       "assetBoundsXZHalfOpen": [
-        1353,
-        256,
-        1427,
-        304
+        1346,
+        253,
+        1434,
+        307
       ],
       "assetBoundsYHalfOpen": [
         60,
-        99
+        100
       ],
       "reservationBoundsXZHalfOpen": [
         1342,
@@ -212,9 +236,9 @@
         328
       ],
       "approachFrom": "west",
-      "clearanceToReservationEdgeBlocks": 11,
-      "clearanceToAuthoredChunkSquareBlocks": 329,
-      "clearanceToProposedWorldBorderBlocks": 173
+      "clearanceToReservationEdgeBlocks": 4,
+      "clearanceToAuthoredChunkSquareBlocks": 322,
+      "clearanceToProposedWorldBorderBlocks": 166
     }
   },
   "nativeServerStarted": false,

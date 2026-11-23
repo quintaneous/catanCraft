@@ -866,14 +866,14 @@
       ],
       "prototypeBerthsXYZ": {
         "north": [
-          1386,
+          1387,
           77,
-          262
+          260
         ],
         "south": [
-          1373,
+          1368,
           77,
-          294
+          296
         ]
       },
       "proposedApproachBranchesXZ": {
@@ -883,16 +883,16 @@
             280
           ],
           [
-            1348,
+            1344,
             280
           ],
           [
-            1348,
-            260
+            1344,
+            258
           ],
           [
-            1386,
-            260
+            1387,
+            258
           ]
         ],
         "south": [
@@ -901,18 +901,68 @@
             280
           ],
           [
-            1348,
+            1344,
             280
           ],
           [
-            1348,
-            296
+            1344,
+            298
           ],
           [
-            1373,
-            296
+            1368,
+            298
           ]
         ]
+      },
+      "prototypePlacement": {
+        "revision": 2,
+        "schematic": "brinewake.schem",
+        "sha256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+        "dimensionsXYZ": [
+          88,
+          40,
+          54
+        ],
+        "rotationDegrees": 0,
+        "localPivotXYZ": [
+          44,
+          15,
+          27
+        ],
+        "worldPivotXYZ": [
+          1390,
+          75,
+          280
+        ],
+        "worldLowerCornerXYZ": [
+          1346,
+          60,
+          253
+        ],
+        "worldBoundsXYZHalfOpen": [
+          1346,
+          60,
+          253,
+          1434,
+          100,
+          307
+        ],
+        "marginsXZLowThenHigh": [
+          4,
+          21,
+          4,
+          21
+        ]
+      },
+      "localBerthBranchGeometry": {
+        "widthBlocks": 3,
+        "minWaterBlocks": 3,
+        "minOverheadAirBlocks": 2,
+        "topWaterBlockY": 75,
+        "northLocalLaneZ": 5,
+        "southLocalLaneZ": 45,
+        "withinSchematic": "validated directly against water and air states",
+        "outsideSchematic": "proposed water, pending coast authoring and boat trial"
       }
     },
     {

@@ -16,6 +16,13 @@ REGISTRY_PINS = {
     'minecraft_1_20_1_block_ids.json': '0b8b3236235802db1520d1514472154885c25ad1018dafff1c7072c361b04299',
     'minecraft_1_20_1_block_definitions.json': '226a2f512571814ce56d413524a38e20b340e28495699551f673b76a9f6976ff',
 }
+# Pins from the independently verified first review pack.
+V1_PINS = {
+    'coast/r9_headland_estuary.schem':'979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d',
+    'coast/r9_sheltered_cove.schem':'4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b',
+    'lighthouse/Brinewatch_Pilot_Station.schem':'ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb',
+    'wreck/brinewake.schem':'a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf',
+}
 WORLD = 'source_world/CatanCraft_Season1_R7_Development'
 REQUIRED_TAGS = {'Version':3, 'DataVersion':3, 'Width':2, 'Height':2, 'Length':2,
                  'Offset':11, 'PaletteMax':3, 'Palette':10, 'BlockData':7}
@@ -159,6 +166,16 @@ def fit(asset, site, pivot, turn):
             'clearanceToAuthoredChunkSquareBlocks':max(-1024-bx,ax-1024,-1024-bz,az-1024),
             'clearanceToProposedWorldBorderBlocks':min(ax+1600,az+1600,1600-bx,1600-bz)}
 
+def compare_v1(assets):
+    actual = {f"{group}/{a['file']}":a['sha256'] for group,rows in assets.items() for a in rows}
+    require(set(actual)==set(V1_PINS), 'Asset names differ from the original review pack')
+    comparison={}
+    for name, old in V1_PINS.items():
+        same = old==actual[name]
+        require(same == (name != 'wreck/brinewake.schem'), 'Unexpected revision status: '+name)
+        comparison[name] = {'v1SHA256':old,'v2SHA256':actual[name],'byteIdentical':same}
+    return comparison
+
 def run(workspace, prototype, registry_dir=None):
     root = workspace/'inputs/CatanCraft_Clean_R7_Input'
     repo = workspace/'resource-ui'
@@ -180,9 +197,21 @@ def run(workspace, prototype, registry_dir=None):
     require(atlas['waterBlockY']==75,'Unexpected top water block in atlas')
     fits = {
         'lighthouse':fit(assets['lighthouse'][0],sites['lighthouse_west'],[27,8,23],180),
-        'wreck':fit(assets['wreck'][0],sites['wreck_east'],[37,15,24],0),
+        'wreck':fit(assets['wreck'][0],sites['wreck_east'],[44,15,27],0),
     }
-    return {'result':'PASS_OFFLINE_ASSET_AND_PLACEMENT_AUDIT','originalInputs':original,
+    changes = compare_v1(assets)
+    wreck = assets['wreck'][0]
+    require(wreck['sizeXYZ']==[88,40,54], 'Expected enlarged wreck dimensions')
+    fit_result = fits['wreck']
+    x,z,x2,z2 = fit_result['assetBoundsXZHalfOpen']
+    y,y2 = fit_result['assetBoundsYHalfOpen']
+    placed = sites['wreck_east']['prototypePlacement']
+    for key, val in {'revision':2, 'rotationDegrees':0, 'localPivotXYZ':fit_result['localPivotXYZ'],
+            'worldPivotXYZ':fit_result['worldPivotXYZ'], 'dimensionsXYZ':wreck['sizeXYZ'],
+            'worldBoundsXYZHalfOpen':[x,y,z,x2,y2,z2], 'sha256':wreck['sha256']}.items():
+        require(placed[key]==val, 'Wreck disagrees with atlas: '+key)
+    return {'result':'PASS_OFFLINE_ASSET_AND_PLACEMENT_AUDIT','revision':2,'originalInputs':original,
+            'totalEncodedCells':sum(a['encodedCells'] for group in assets.values() for a in group),'comparedToV1':changes,
             'atlasSHA256':digest(prototype/'atlas/atlas.json'), 'registrySourceCommit':registry.SOURCE_COMMIT,
             'registryFileSHA256':REGISTRY_PINS,'schematics':assets,'proposedPlacementChecks':fits,
             'nativeServerStarted':False,'worldPlaced':False,'connectedPlayerTested':False}

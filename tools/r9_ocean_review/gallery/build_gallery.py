@@ -20,7 +20,7 @@ SCENES = {
     "Sheltered cove": ("coast/r9_sheltered_cove.schem", (-128,57,-112)),
     "Estuary headland": ("coast/r9_headland_estuary.schem", (16,57,-112)),
     "Brinewatch pilot station": ("lighthouse/Brinewatch_Pilot_Station.schem", (-89,67,26)),
-    "Freighter wreck": ("wreck/brinewake.schem", (20,60,21)),
+    "Freighter wreck": ("wreck/brinewake.schem", (13,60,18)),
 }
 X0, Z0 = -160, -144
 COLUMNS, ROWS = 320, 256
@@ -122,7 +122,7 @@ def write_level(template,out):
     settings['layers']=nbt.List[nbt.Compound]([nbt.Compound({'height':nbt.Int(h),'block':nbt.String('minecraft:'+b)})
                                                for h,b in [(1,'bedrock'),(120,'stone'),(1,'gravel'),(18,'water')]])
     values=nbt.Compound({'DataVersion':nbt.Int(VERSION),'Version':source['Version'],'version':nbt.Int(19133),
-        'LevelName':nbt.String('CatanCraft R9 - Ocean Design Gallery'),'GameType':nbt.Int(3),
+        'LevelName':nbt.String('CatanCraft R9 - Ocean Design Gallery v2'),'GameType':nbt.Int(3),
         'Difficulty':nbt.Byte(0),'allowCommands':nbt.Byte(1),'hardcore':nbt.Byte(0),'initialized':nbt.Byte(1),
         'Time':nbt.Long(1000),'DayTime':nbt.Long(1000),'LastPlayed':nbt.Long(0),
         'SpawnX':nbt.Int(0),'SpawnY':nbt.Int(84),'SpawnZ':nbt.Int(4),'SpawnAngle':nbt.Float(54),

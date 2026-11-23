@@ -9,6 +9,8 @@ import sys
 import zlib
 from collections import Counter, deque
 
+from wreck_placement import augment as add_wreck_placement
+
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
@@ -108,7 +110,7 @@ def mouth_survey(world):
         rows[side]=path
     return rows
 
-def design(r7,meters,mouths):
+def design(r7,meters,mouths,wreck,nbt):
     cities=[dict(id=t['id'],center=[t['cityCenter']['x'],t['cityCenter']['z']]) for t in r7['territories']]
     bridges=[dict(id=t['id'],xz=[t['x'],t['z']]) for t in r7['infrastructure']]
     check(len(cities)==16 and len(bridges)==4,"Unexpected map metadata")
@@ -149,10 +151,7 @@ def design(r7,meters,mouths):
         site["surveyMarkerXYZ"]=[x,76,z]
     sites[0]["prototypeBerthsXYZ"]={"primary":[-1385,76,-431],"secondaryLandingEnvelopeXZ":[-1423,-452,-1413,-448]}
     sites[0]["proposedApproachWaypointsXZ"]=[[-1362,-430],[-1377,-431],[-1384,-431]]
-    sites[1]["prototypeBerthsXYZ"]={"north":[1386,77,262],"south":[1373,77,294]}
-    sites[1]["proposedApproachBranchesXZ"]={
-        "north":[[1342,280],[1348,280],[1348,260],[1386,260]],
-        "south":[[1342,280],[1348,280],[1348,296],[1373,296]]}
+    add_wreck_placement(sites[1],wreck,nbt)
     nodes=list(rects)
     seen={nodes[0]}
     queue=deque(seen)
@@ -234,6 +233,7 @@ def main():
     parser.add_argument('repo',type=Path)
     parser.add_argument('input_root',type=Path)
     parser.add_argument('output',type=Path)
+    parser.add_argument('--wreck',type=Path,default=Path(__file__).resolve().parents[1]/'wreck/brinewake.schem')
     args=parser.parse_args()
     repo=args.repo.resolve();base=args.input_root.resolve();out=args.output
     out.mkdir(parents=True,exist_ok=True)
@@ -251,7 +251,7 @@ def main():
     meta=NBT(gzip.decompress(level)).root()['Data']
     check(meta['BorderSize']==2000 and meta['BorderSizeLerpTime']==0 and meta['BorderCenterX']==meta['BorderCenterZ']==0,"Wrong border")
     image=raster(world,base,pins,NBT)
-    doc=design(config,meta['BorderSize'],mouth_survey(World(world,NBT)))
+    doc=design(config,meta['BorderSize'],mouth_survey(World(world,NBT)),args.wreck,NBT)
     (out/'atlas.json').write_text(json.dumps(doc,indent=2)+'\n')
     draw(out/'R9-offshore-atlas.png',doc,image)
 

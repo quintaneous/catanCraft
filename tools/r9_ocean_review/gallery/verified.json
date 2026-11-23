@@ -7,7 +7,7 @@
     84,
     4
   ],
-  "sceneCellsChecked": 1644034,
+  "sceneCellsChecked": 1695586,
   "scenes": [
     {
       "scene": "Sheltered cove",
@@ -48,14 +48,14 @@
     {
       "scene": "Freighter wreck",
       "minimumXYZ": [
-        20,
+        13,
         60,
-        21
+        18
       ],
-      "comparedCells": 138528,
-      "sourceSHA256": "a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf",
+      "comparedCells": 190080,
+      "sourceSHA256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
       "waterFilledTransparentCells": 0,
-      "extraFoundationBlocks": 7104
+      "extraFoundationBlocks": 9504
     }
   ],
   "bootedInMinecraft": false

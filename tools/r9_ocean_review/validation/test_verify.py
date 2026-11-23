@@ -1,6 +1,6 @@
 import unittest
 
-from verify import block_counts, fit, protected_content
+from verify import V1_PINS, block_counts, compare_v1, fit, protected_content
 
 
 class ReviewValidationTests(unittest.TestCase):
@@ -22,6 +22,24 @@ class ReviewValidationTests(unittest.TestCase):
         self.assertEqual(fit(asset,site,[27,8,23],180)['assetBoundsXZHalfOpen'], [-1437,-453,-1382,-406])
         with self.assertRaises(ValueError):
             fit(asset,dict(site,boundsXZ=[-1436,-478,-1362,-382]),[27,8,23],180)
+
+    def test_enlarged_wreck_mount(self):
+        result = fit({'sizeXYZ':[88,40,54]}, {'id':'wreck_east','centerXZ':[1390,280],
+                'boundsXZ':[1342,232,1438,328],'approachFrom':'west'},[44,15,27],0)
+        self.assertEqual(result['assetBoundsXZHalfOpen'],[1346,253,1434,307])
+        self.assertEqual(result['assetBoundsYHalfOpen'],[60,100])
+        self.assertEqual(result['clearanceToReservationEdgeBlocks'],4)
+
+    def test_only_wreck_can_change(self):
+        assets = {}
+        for path, pin in V1_PINS.items():
+            group,name=path.split('/')
+            assets.setdefault(group,[]).append({'file':name,'sha256':pin})
+        with self.assertRaises(ValueError): compare_v1(assets)
+        assets['wreck'][0]['sha256']='a'*64
+        self.assertFalse(compare_v1(assets)['wreck/brinewake.schem']['byteIdentical'])
+        assets['coast'][0]['sha256']='a'*64
+        with self.assertRaises(ValueError): compare_v1(assets)
 
     def test_mainland_and_border(self):
         asset = {'sizeXYZ':[1,1,1]}

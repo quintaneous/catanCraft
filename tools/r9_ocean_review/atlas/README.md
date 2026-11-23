@@ -1,4 +1,4 @@
-# R9 offshore reservation atlas
+# R9 offshore reservation atlas · Brinewake revision 2
 
 [R9-offshore-atlas.png](R9-offshore-atlas.png) overlays candidate ocean routes on the actual R7 map. North is negative Z. The mainland colors come from saved surface blocks sampled every four blocks, so roads and river bends follow the original map. The 16 city centers and four bridge anchors come directly from the map configuration. The dotted line is the live ±1,000 border. The thin solid line is the edge of the 16,384 authored chunks, at block coordinates −1,024…+1,023 inclusive.
 
@@ -26,7 +26,11 @@ Coordinates below use X then Z. Every 96×96 reservation has a notional survey m
 | North reserve | +510, −1420 | From south | 348 | 132 | Unassigned space |
 | South reserve | −495, +1410 | From north | 338 | 142 | Unassigned space |
 
-For the lighthouse, align local block (27,8,23) to world (−1410,75,−430) and turn 180°. The primary landing at (−1385,76,−431) faces the east approach. For the freighter, align local (37,0,24) to (1390,60,280) without rotation. A boat coming from the west can split around the bow toward the proposed north approach (Z ≤260) or south approach (Z ≥296). Boarding targets are (1386,77,262) and (1373,77,294). The JSON includes indicative interior waypoints. Both terminals need collision, draft and walk-off checks against the eventual seafloor.
+For the lighthouse, align local block (27,8,23) to world (−1410,75,−430) and turn 180°. The primary landing at (−1385,76,−431) faces the east approach.
+
+For **Brinewake v2**, align local (44,15,27) to (1390,75,280), with zero rotation. The 88×40×54 schematic occupies world X 1346…1433, Y 60…99 and Z 253…306 inclusive, leaving four empty columns on each X side and 21 on each Z side of the reserved footprint. Enter from the west spur at (1342,280). Turn at X 1344, then approach the north gangway along Z 258 or the south gangway along Z 298. The dry boarding targets are (1387,77,260) and (1368,77,296). The JSON stores the actual pivot, lower corner, margins, gangways, schematic hash and turning coordinates.
+
+At each terminal, the verifier read the full in-tile approach from the encoded schematic and checked a three-block-wide channel, three source-water blocks deep with two air blocks overhead. The short turn immediately outside the schematic still requires water when the future site is authored. The global image shows reservations and external shipping lanes; those features are identical in the v1 and v2 maps. No visual recalibration of the fixed map is needed for the replacement wreck.
 
 ## Checks and reproduction
 
@@ -35,7 +39,7 @@ For the lighthouse, align local block (27,8,23) to world (−1410,75,−430) and
 From the qualification workspace, run:
 
 ```sh
-python3 -B receipts/ocean-prototype/atlas/build_atlas.py resource-ui inputs/CatanCraft_Clean_R7_Input /tmp/r9-atlas
+python3 -B receipts/ocean-v2/atlas/build_atlas.py resource-ui inputs/CatanCraft_Clean_R7_Input /tmp/r9-atlas
 ```
 
-The generator requires Python, NumPy and Matplotlib. It reads the 16 original region files, heightmaps, level metadata, protected geometry extent and registry, checks pinned hashes and writes only the output directory. The pristine input manifest SHA-256 is `e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d`. The map JSON SHA-256 is `e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986`. Gameplay source is `6ed6eaf31f946195f8b75fa869308c915537a6ed`.
+The generator locates the current `../wreck/brinewake.schem` relative to the atlas folder. You can override it with `--wreck PATH`. The generator requires Python, NumPy and Matplotlib. It reads the 16 original region files, heightmaps, level metadata, protected geometry extent and registry, checks pinned hashes and writes only the output directory. The pristine input manifest SHA-256 is `e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d`. The map JSON SHA-256 is `e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986`. Gameplay source is `6ed6eaf31f946195f8b75fa869308c915537a6ed`.

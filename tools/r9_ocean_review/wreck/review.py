@@ -42,7 +42,7 @@ def read(path):
     return s,values,w,h,l
 schem=ROOT/'brinewake.schem'
 s,blocks,W,H,L=read(schem)
-assert (W,H,L)==(74,39,48) and s['Version']==2 and s['DataVersion']==3465 and s['Offset']==[0,0,0]
+assert (W,H,L)==(88,40,54) and s['Version']==2 and s['DataVersion']==3465 and s['Offset']==[0,0,0]
 assert s['Entities']==s['BlockEntities']==[]
 def b(x,y,z):
     if not (0<=x<W and 0<=y<H and 0<=z<L): return 'air'
@@ -78,19 +78,43 @@ def rower(p):
     for dx,dz in D:
         nx,nz=x+dx,z+dz
         if waterclear(nx,nz):yield nx,nz
-obj=(35,20,15)
-landings=[(33,17,6),(20,17,38)]
+obj=(44,20,17)
+landings=[(41,17,7),(22,17,43)]
 paths=[path(start,obj,walker) for start in landings]
-aft=path(obj,(58,19,28),walker)
-channels=[path((1,z),(x,z),rower) for x,z in ((33,4),(20,40))]
+aft=path(obj,(70,19,32),walker)
+channels=[path((1,z),(x,z),rower) for x,z in ((41,5),(22,45))]
 # Both boat centerlines reach the bank with a water block between the boat center and landing edge.
 assert all(clear(p) for p in landings+[obj])
-assert [b(x,15,z) for x,z in ((33,5),(20,39))]==['water[level=0]']*2
-assert all(get=='ladder[facing=south,waterlogged=false]' for get in [b(62,y,31) for y in range(19,24)])
+assert [b(x,15,z) for x,z in ((41,6),(22,44))]==['water[level=0]']*2
+assert all(get=='ladder[facing=south,waterlogged=false]' for get in [b(75,y,35) for y in range(19,24)])
 # Hull rib in contact with rock, verified as a direct vertical support stack to tile base.
 contacts=[(x,z) for x in range(W) for z in range(L) if bare(b(x,10,z)) in {'red_terracotta','terracotta','cut_copper'} and all(b(x,y,z) not in ('air','water[level=0]') for y in range(10))]
 assert len(contacts)>30
-print(json.dumps({'sha256':hashlib.sha256(schem.read_bytes()).hexdigest(),'dimensionsXYZ':[W,H,L],'voxelCount':len(blocks),'dataVersion':s['DataVersion'],'spongeVersion':s['Version'],'paletteStates':s['PaletteMax'],'entities':0,'blockEntities':0,'waterBlockLocalY':15,'waterBlockWorldY':75,'pivot':[37,15,24],'standingObjectiveLocalXYZ':obj,'boardableLandingFeetLocalXYZ':landings,'walksFromLandingsInCardinalMoves':[len(p)-1 for p in paths],'boatApproachMovesFromLocalX1AlongNorthSouthRows':[len(p)-1 for p in channels],'checkedBoatCorridorWidthBlocks':3,'minimumBoatSourceWaterDepthBlocks':3,'checkedBoatAirClearanceBlocks':2,'mainDeckToLowerCabinCardinalMoves':len(aft)-1,'groundedKeelColumns':len(contacts),'limitations':'Static block geometry and conservative cardinal floor/clearance searches. No connected boat, dismount, swimming, lighting, capture or paste was tested.'},indent=2))
+hull_states={'gray_concrete','light_gray_concrete','red_terracotta','terracotta','cut_copper'}
+hull_sections = {x: [z for z in range(L) if bare(b(x,16,z)) in hull_states] for x in range(W)}
+xs=[x for x in range(W) if hull_sections[x]]
+length=max(xs)-min(xs)+1
+beam=max(max(z)-min(z)+1 for z in hull_sections.values() if z)
+assert (min(xs), max(xs), length, beam)==(5,80,76,23)
+# Verify actual boarding corridor at full requested dimensions along the entire straight leg.
+for target,z in ((41,5),(22,45)):
+    assert all(waterclear(x,z) for x in range(1,target+1))
+    assert all(b(x,16,z)=='air' and b(x,17,z)=='air' for x in range(5))
+# Reach the open wheelhouse via the existing full-height aft ladder, including a top-out onto deck.
+def climber(p):
+    x,y,z=p
+    ladder=lambda y: bare(b(x,y,z))=='ladder'
+    # Clear deck space or walk into a ladder over solid support.
+    yield from walker(p)
+    if ladder(y):
+        if ladder(y+1) or (ladder(y-1) and b(x,y+1,z)==b(x,y+2,z)=='air'):
+            yield(x,y+1,z)
+    for dx,dz in D:
+        if bare(b(x+dx,y,z+dz))=='ladder' and (clear(p) or ladder(y)):
+            yield(x+dx,y,z+dz)
+bridge=path((70,19,32),(71,24,30),climber)
+assert any((x,z)==(75,35) for x,y,z in bridge)
+print(json.dumps({'sha256':hashlib.sha256(schem.read_bytes()).hexdigest(),'dimensionsXYZ':[W,H,L],'hullLengthBlocks':length,'maximumHullBeamBlocks':beam,'hullBoundsAtLocalY16':[min(xs),max(xs)],'mainHullToAftDisplacementBlocks':3,'voxelCount':len(blocks),'dataVersion':s['DataVersion'],'spongeVersion':s['Version'],'paletteStates':s['PaletteMax'],'entities':0,'blockEntities':0,'waterBlockLocalY':15,'waterBlockWorldY':75,'pivot':[44,15,27],'standingObjectiveLocalXYZ':obj,'boardableLandingFeetLocalXYZ':landings,'walksFromLandingsInCardinalMoves':[len(p)-1 for p in paths],'boatApproachMovesFromLocalX1AlongNorthSouthRows':[len(p)-1 for p in channels],'checkedBoatCorridorWidthBlocks':3,'minimumBoatSourceWaterDepthBlocks':3,'checkedBoatAirClearanceBlocks':2,'mainDeckToLowerCabinCardinalMoves':len(aft)-1,'lowerCabinToWheelhouseMovesIncludingLadder':len(bridge)-1,'groundedKeelColumns':len(contacts),'limitations':'Static block geometry and conservative cardinal floor/clearance searches. No connected boat, dismount, swimming, lighting, capture or paste was tested.'},indent=2))
 
 # Geometry render. Materials are schematic-derived colors; non-cube blocks have simplified meshes.
 colors={'spruce_planks':(153,115,78),'dark_oak_planks':(113,84,60),'stripped_dark_oak_log':(103,79,56),'gray_concrete':(72,85,91),'light_gray_concrete':(159,162,151),'red_terracotta':(166,84,56),'brown_terracotta':(113,64,47),'terracotta':(176,107,72),'yellow_terracotta':(211,157,64),'orange_terracotta':(180,115,54),'cyan_terracotta':(69,116,123),'waxed_weathered_cut_copper':(78,145,133),'waxed_exposed_cut_copper':(157,115,86),'waxed_exposed_copper':(147,105,79),'waxed_cut_copper':(185,126,82),'cut_copper':(187,126,85),'smooth_sandstone':(220,205,168),'smooth_quartz':(236,230,210),'light_blue_stained_glass':(101,156,164),'polished_andesite':(126,132,127),'polished_deepslate':(68,76,78),'polished_blackstone':(58,62,66),'chiseled_stone_bricks':(149,144,123),'iron_bars':(151,155,146),'dark_oak_fence':(122,88,62),'chain':(85,91,90),'lightning_rod':(169,115,78),'lantern':(242,177,78),'spruce_stairs':(153,115,78),'ladder':(149,106,72),'stone_button':(161,162,152),'polished_blackstone_wall':(76,79,80),'gravel':(125,128,119),'andesite':(127,132,126),'stone':(122,126,123),'tuff':(114,126,113)}
@@ -104,13 +128,13 @@ def text(x,y,msg,size,color,bold=False):
 def polygon(points,c): d.polygon([(round(u*S),round(v*S)) for u,v in points],fill=c)
 def line(points,c,width=1):d.line([(round(u*S),round(v*S)) for u,v in points],fill=c,width=width*S)
 ink=(38,58,62)
-text(42,25,'BRINEWAKE',42,ink,True)
-text(45,84,'Grounded coastal freighter   /   Offshore monument study',19,(71,96,94))
+text(42,25,'BRINEWAKE  /  II',42,ink,True)
+text(45,84,'Grounded coastal freighter   /   Extended cargo deck',19,(71,96,94))
 text(880,51,'CATANCRAFT   /   R9',18,ink,True)
 line([(44,123),(1156,123)],(177,190,180))
 # Local water tile and dry hull. Orthographic with bow in the foreground on left.
 def project(x,y,z):
-    return 88 + 12.2*(.955*x+.296*z), 349 + 12.2*((-.296*x+.955*z)*.46-(y-16)*.886)
+    return 75 + 10.55*(.955*x+.296*z), 349 + 10.55*((-.296*x+.955*z)*.46-(y-16)*.886)
 def cuboid(x0,y0,z0,x1,y1,z1,c,occupancy=(True,True,True)):
     top=[(x0,y1,z0),(x1,y1,z0),(x1,y1,z1),(x0,y1,z1)]
     west=[(x0,y0,z0),(x0,y0,z1),(x0,y1,z1),(x0,y1,z0)]
@@ -160,7 +184,7 @@ text(46,630,'TWO BOARDING ROUTES',19,ink,True)
 text(46,664,'Approach around the bow. Either timber landing',17,ink)
 text(46,690,'leads to the copper-edged marker on the main deck.',17,ink)
 text(645,630,'WRECK TILE',19,ink,True)
-text(645,664,'74 × 48 blocks   ·   39 blocks tall',17,ink)
-text(645,690,'Top water block Y75   ·   source water in the tile',17,ink)
+text(645,664,'76-block hull   ·   23-block beam',17,ink)
+text(645,690,'88 × 54 block tile   ·   waterline at Y76',17,ink)
 text(46,734,'Orthographic schematic render  /  Water shading shows depth.  /  Local material colors and simplified rail geometry.',13,(82,103,99))
 img.resize((1200,770),Image.Resampling.LANCZOS).save(ROOT/'Brinewake_preview.png',optimize=True)

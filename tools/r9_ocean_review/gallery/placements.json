@@ -41,14 +41,14 @@
   "Freighter wreck": {
     "file": "wreck/brinewake.schem",
     "minimumXYZ": [
-      20,
+      13,
       60,
-      21
+      18
     ],
     "sizeXYZ": [
-      74,
-      39,
-      48
+      88,
+      40,
+      54
     ]
   }
 }
