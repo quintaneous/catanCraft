@@ -46,6 +46,28 @@ public final class SectorAuthored53Tests {
         var bytes=new ByteArrayOutputStream();NbtIo.writeCompressed(stable,bytes);return TownHallRevisions.sha(bytes.toByteArray());
     }
 
+    /** Bounds count completed purchases. The final two APPLYING journals must coexist at shutdown. */
+    private record SeedRange(int start,int end,String predecessor) {
+        static SeedRange requested(String phase)throws IOException {
+            String start=System.getProperty("catancraft.wall53RangeStart");
+            String end=System.getProperty("catancraft.wall53RangeEnd");
+            String predecessor=System.getProperty("catancraft.wall53Predecessor","");
+            if(start==null&&end==null&&predecessor.isEmpty())return null;
+            require(phase.equals("seed")&&start!=null&&end!=null&&start.matches("0|[1-9][0-9]{0,2}")
+                    &&end.matches("0|[1-9][0-9]{0,2}"),"Invalid wall seed range");
+            int first=Integer.parseInt(start),last=Integer.parseInt(end);
+            require(first<=126&&last<=128&&last!=127,"Range splits the two-city partial recovery");
+            require(predecessor.isEmpty()?first==0:predecessor.matches("[0-9a-f]{64}"),"Invalid checkpoint predecessor");
+            require(last>first||(last==0&&first==0&&predecessor.isEmpty()),"Empty or reversed wall range");
+            return new SeedRange(first,last,predecessor);
+        }
+        void addTo(JsonObject report){
+            report.addProperty("rangeStart",start);
+            report.addProperty("rangeEnd",end);
+            report.addProperty("predecessorSHA256",predecessor);
+        }
+    }
+
     private static final class Campaign {
         final GameTestHelper h;final ServerLevel level;final MinecraftServer server;final CatanSavedData data;
         final Path root,evidence;final String source,phase;final List<Purchase> purchases=new ArrayList<>();
@@ -56,6 +78,7 @@ public final class SectorAuthored53Tests {
         int hallFrom;long hallCash,hallCycle;Map<ResourceType,Long> hallStock;
         Map<String,String> priorWallHashes=Map.of();CompoundTag priorWallStates;
         final Map<String,String> hallHistories=new TreeMap<>();
+        final SeedRange range;
 
         Campaign(GameTestHelper helper)throws Exception {
             h=helper;level=h.getLevel();server=level.getServer();data=CatanSavedData.get(server);
@@ -63,6 +86,7 @@ public final class SectorAuthored53Tests {
             root=server.getWorldPath(LevelResource.ROOT).toRealPath();
             source=System.getProperty("catancraft.progression53Source","");phase=System.getProperty("catancraft.progression53Phase","");
             require(source.matches("[0-9a-f]{40}")&&Set.of("seed","verify").contains(phase),"Exact source and seed|verify required");
+            range=SeedRange.requested(phase);
             Path inputPath=Path.of("config/catancraft/progression53-input.json");
             require(Files.isRegularFile(inputPath,LinkOption.NOFOLLOW_LINKS)&&Files.size(inputPath)<65536,"Bounded authored input required");
             JsonObject input=JsonParser.parseString(Files.readString(inputPath)).getAsJsonObject();
@@ -84,6 +108,7 @@ public final class SectorAuthored53Tests {
         }
         void start()throws Exception {
             if(phase.equals("verify")){beginVerify();return;}
+            if(range!=null&&!range.predecessor().isEmpty()){resumeRange();return;}
             require(!Files.exists(evidence)&&data.nations().isEmpty()&&data.territories().size()==16
                     &&data.territories().stream().allMatch(t->t.ownerNationId()==null&&t.cityLevel()==1&&t.buildings().isEmpty()),
                     "Seed requires pristine unowned authored world; never reset existing progress");
@@ -146,6 +171,7 @@ public final class SectorAuthored53Tests {
         }
         void purchaseNext()throws Exception {
             if(purchaseIndex==purchases.size()){finishSeed();return;}
+            if(range!=null&&purchaseIndex==range.end()){finishRange();return;}
             current=purchases.get(purchaseIndex);action="wall "+current.city()+" "+current.side();acquire(current.city());
             if(!readyLease()){schedule(this::purchaseNext);return;}
             int requiredHall=current.orderIndex()<2?1:current.orderIndex()<4?4:5;
@@ -274,6 +300,102 @@ public final class SectorAuthored53Tests {
         }
         void nextPurchase(){purchaseIndex++;operation=null;closeLease();schedule(this::purchaseNext);}
         void writeProgress()throws IOException {Files.writeString(evidence.resolve("progress.json"),JSON.toJson(events)+"\n");}
+        Path checkpoint(int index){return evidence.resolve("checkpoint-"+index+".json");}
+        Path checkpointLedger(int index){return evidence.resolve("checkpoint-"+index+"-ledger.nbt");}
+
+        void finishRange()throws Exception {
+            require(purchaseIndex<=126&&!SectorService.hasActiveOperation(server)&&!PaidRecoveryService.isRunning(server),
+                    "Refusing to checkpoint an unfinished transaction");
+            require(server.saveEverything(true,true,true),"Wall range save failed");
+            Path ledger=checkpointLedger(purchaseIndex);
+            require(!Files.exists(ledger,LinkOption.NOFOLLOW_LINKS),"Refusing to replace a wall range ledger");
+            CompoundTag saved=data.save(new CompoundTag());
+            var disk=CatanSavedData.load(NbtIo.readCompressed(root.resolve("data/catancraft.dat").toFile()).getCompound("data"));
+            require(disk.save(new CompoundTag()).equals(saved),"Wall range SavedData differs on disk");
+            NbtIo.writeCompressed(saved,ledger.toFile());
+            JsonObject report=base();
+            range.addTo(report);
+            report.addProperty("result","WALL_SEED_SEGMENT_PASS");
+            report.addProperty("ledgerSHA256",TownHallRevisions.sha(Files.readAllBytes(ledger)));
+            report.add("events",events);
+            report.add("hallHistorySHA256",JSON.toJsonTree(hallHistories));
+            writeProgress();
+            Files.writeString(checkpoint(purchaseIndex),JSON.toJson(report)+"\n",StandardOpenOption.CREATE_NEW);
+            closeLease();
+            h.succeed();
+        }
+
+        void resumeRange()throws Exception {
+            action="resume wall checkpoint "+range.start();
+            require(!Files.exists(evidence.resolve("seed.json"))&&!Files.exists(evidence.resolve("verify.json"))
+                    &&!Files.exists(evidence.resolve("failure-seed.json")),"World already finished or failed");
+            Path path=checkpoint(range.start());
+            require(Files.isRegularFile(path,LinkOption.NOFOLLOW_LINKS)&&Files.size(path)<2_000_000,
+                    "Missing or oversized checkpoint");
+            byte[] bytes=Files.readAllBytes(path);
+            require(TownHallRevisions.sha(bytes).equals(range.predecessor()),"Wall checkpoint hash mismatch");
+            JsonObject prior=JsonParser.parseString(new String(bytes,java.nio.charset.StandardCharsets.UTF_8)).getAsJsonObject();
+            require(prior.get("schema").getAsInt()==1&&source.equals(prior.get("source").getAsString())
+                    &&FreshDemoAuthorization.worldId(server,root).equals(prior.get("worldId").getAsString())
+                    &&"seed".equals(prior.get("phase").getAsString())&&"WALL_SEED_SEGMENT_PASS".equals(prior.get("result").getAsString())
+                    &&prior.get("rangeEnd").getAsInt()==range.start(),"Different wall checkpoint identity");
+            events.addAll(prior.getAsJsonArray("events"));
+            require(events.equals(JsonParser.parseString(Files.readString(evidence.resolve("progress.json")))),
+                    "Wall progress has moved past the sealed checkpoint");
+            Path ledger=checkpointLedger(range.start());
+            require(Files.isRegularFile(ledger,LinkOption.NOFOLLOW_LINKS)&&TownHallRevisions.sha(Files.readAllBytes(ledger))
+                    .equals(prior.get("ledgerSHA256").getAsString()),"Wall checkpoint ledger changed");
+            expected=CatanSavedData.load(NbtIo.readCompressed(ledger.toFile()));
+            expectedEconomy();
+            for(String city:ORDER)require(expected.territory(city).save().equals(data.territory(city).save()),
+                    "Territory changed across wall checkpoint: "+city);
+            makePurchases();
+            int founded=0;
+            for(JsonElement item:events){
+                JsonObject row=item.getAsJsonObject();
+                String kind=row.get("kind").getAsString();
+                if(kind.equals("normal_founding_and_automatic_base")){
+                    require(founded<ORDER.size()&&ORDER.get(founded).equals(row.get("city").getAsString()),
+                            "Checkpoint founding history differs");
+                    founded++;
+                }else if(kind.equals("wall_purchase")){
+                    require(purchaseIndex<range.start(),"Too many prior purchases at checkpoint");
+                    Purchase earlier=purchases.get(purchaseIndex++);
+                    require(earlier.city().equals(row.get("city").getAsString())&&earlier.side().equals(row.get("side").getAsString())
+                            &&!row.get("partialAtSeed").getAsBoolean(),"Prior wall purchase order differs");
+                    String operationName=row.get("operation").getAsString();
+                    require(operationName.matches("catancraft_sector_"+earlier.city()+"_"+earlier.side()+"_[0-9a-f-]{36}_v1\\.dat"),
+                            "Invalid wall history path");
+                    require(row.get("journalSHA256").getAsString().equals(TownHallRevisions.sha(
+                            Files.readAllBytes(root.resolve("data").resolve(operationName)))),"Prior wall history changed: "+operationName);
+                }
+            }
+            require(founded==ORDER.size()&&purchaseIndex==range.start(),"Incomplete wall checkpoint prefix");
+            verifyHallHistories(prior);
+            for(var row:prior.getAsJsonObject("hallHistorySHA256").entrySet())
+                hallHistories.put(row.getKey(),row.getValue().getAsString());
+            waited=0;
+            schedule(this::waitForResumedBase);
+        }
+
+        void waitForResumedBase()throws Exception {
+            action="waiting for base verification after wall checkpoint";
+            expectedEconomy();
+            require(++waited<12000,"Base verification did not finish after wall checkpoint");
+            boolean ready=!PaidRecoveryService.isRunning(server)&&!CityBasePreparation.isRunning(server)
+                    &&!SectorService.hasActiveOperation(server);
+            for(String city:ORDER){
+                String status=CityBasePreparation.status(server,city);
+                require(!status.contains("blocked:"),city+": "+status);
+                String paid=PaidRecoveryService.status(server,city);
+                require(!paid.contains("blocked:"),city+": "+paid);
+                ready&=READY.equals(status);
+            }
+            if(!ready){schedule(this::waitForResumedBase);return;}
+            waited=0;
+            schedule(this::purchaseNext);
+        }
+
         void finishSeed()throws Exception {
             require(purchaseIndex==128,"Incomplete 128-operation wall scope");
             int pending=0;for(String city:ORDER)for(var side:SectorContracts.Direction.values()) {
@@ -285,6 +407,7 @@ public final class SectorAuthored53Tests {
             require(pending==2&&server.saveEverything(true,true,true),"Seed histories not saved");
             Path ledger=evidence.resolve("seed-ledger.nbt");NbtIo.writeCompressed(data.save(new CompoundTag()),ledger.toFile());
             JsonObject report=base();report.addProperty("result","SEED_PASS_TWO_PARTIAL_OPERATIONS_REQUIRE_PROCESS_RESTART");
+            if(range!=null)range.addTo(report);
             report.addProperty("cities",16);report.addProperty("sectorPlacements",64);report.addProperty("purchases",128);
             report.addProperty("committedAtSeed",126);report.addProperty("partialAtSeed",2);report.addProperty("seedLedgerSHA256",TownHallRevisions.sha(Files.readAllBytes(ledger)));report.add("events",events);report.add("hallHistorySHA256",JSON.toJsonTree(hallHistories));report.addProperty("paidHallUpgrades",64);
             Files.writeString(evidence.resolve("seed.json"),JSON.toJson(report)+"\n",StandardOpenOption.CREATE_NEW);
@@ -296,11 +419,11 @@ public final class SectorAuthored53Tests {
             require(seed.get("source").getAsString().equals(source)&&seed.get("worldId").getAsString().equals(FreshDemoAuthorization.worldId(server,root))
                     &&seed.get("result").getAsString().equals("SEED_PASS_TWO_PARTIAL_OPERATIONS_REQUIRE_PROCESS_RESTART"),"Foreign seed proof");
             Path ledger=evidence.resolve("seed-ledger.nbt");require(TownHallRevisions.sha(Files.readAllBytes(ledger)).equals(seed.get("seedLedgerSHA256").getAsString()),"Seed ledger proof changed");
-            verifyMilestoneCoverage(seed.getAsJsonArray("events"));verifyHallHistories();
+            verifyMilestoneCoverage(seed.getAsJsonArray("events"));verifyHallHistories(seed);
             expected=CatanSavedData.load(NbtIo.readCompressed(ledger.toFile()));waited=0;schedule(this::waitRecovery);
         }
-        void verifyHallHistories()throws IOException {
-            for(var entry:seed.getAsJsonObject("hallHistorySHA256").entrySet()) {
+        void verifyHallHistories(JsonObject history)throws IOException {
+            for(var entry:history.getAsJsonObject("hallHistorySHA256").entrySet()) {
                 require(entry.getKey().matches("catancraft_(basic_purchase|th_prestige)_[a-p]_[a-z0-9_.-]+"),"Unsafe Hall evidence path");
                 require(TownHallRevisions.sha(Files.readAllBytes(root.resolve("data").resolve(entry.getKey()))).equals(entry.getValue().getAsString()),"Hall history changed across restart");
             }
@@ -357,7 +480,7 @@ public final class SectorAuthored53Tests {
             require(server.saveEverything(true,true,true),"Restart final save failed");
             CatanSavedData disk=CatanSavedData.load(NbtIo.readCompressed(root.resolve("data/catancraft.dat").toFile()).getCompound("data"));
             require(disk.save(new CompoundTag()).equals(data.save(new CompoundTag())),"Final SavedData disk/memory differs");
-            verifyHallHistories();
+            verifyHallHistories(seed);
             JsonObject report=base();report.addProperty("result","PASS");report.addProperty("cities",16);report.addProperty("sectorPlacements",64);
             report.addProperty("committedPurchases",128);report.addProperty("partialOperationsRecovered",2);report.addProperty("unchangedCommittedJournals",126);
             report.addProperty("paidHallUpgrades",64);report.addProperty("allCityHall4And5WallPurchasesVerified",true);

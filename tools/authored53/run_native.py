@@ -8,6 +8,7 @@ required even when verification deliberately reopens the same isolated world.
 import argparse
 import hashlib
 import json
+import os
 from pathlib import Path
 import re
 import subprocess
@@ -27,9 +28,20 @@ def main():
     parser.add_argument('--wrapper', type=Path, required=True)
     parser.add_argument('--output', type=Path, required=True)
     parser.add_argument('--source', required=True)
+    parser.add_argument('--lease-fd', type=int, help='Already-held shared lease inherited from the segment coordinator')
+    parser.add_argument('--lease-file', type=Path, help='Path of the same shared lease')
     parser.add_argument('--expected-tests', type=int, required=True)
     parser.add_argument('gradle', nargs=argparse.REMAINDER)
     args = parser.parse_args()
+    inherited = ()
+    if args.lease_fd is not None or args.lease_file is not None:
+        import fcntl
+        if args.lease_fd is None or args.lease_fd < 3 or args.lease_file is None:
+            parser.error('Both the campaign lease and its inherited descriptor are required')
+        if not os.path.samestat(os.fstat(args.lease_fd), args.lease_file.stat()):
+            parser.error('Inherited descriptor is for a different lease')
+        fcntl.flock(args.lease_fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+        inherited = (args.lease_fd,)
     if not re.fullmatch('[0-9a-f]{40}', args.source) or args.expected_tests < 1:
         parser.error('Exact source and positive expected native count required')
     if git('rev-parse', 'HEAD') != args.source or git('status', '--porcelain', '--', *BOUND):
@@ -48,7 +60,7 @@ def main():
                'status': 'RUNNING', 'requiresHumanLogReview': True}
     (output / 'process.json').write_text(json.dumps(initial, indent=2) + '\n')
     with (output / 'native.log').open('xb') as log:
-        process = subprocess.run(command, cwd=REPO, stdout=log, stderr=subprocess.STDOUT)
+        process = subprocess.run(command, cwd=REPO, stdout=log, stderr=subprocess.STDOUT, pass_fds=inherited)
     raw = (output / 'native.log').read_bytes()
     text = raw.decode('utf-8', errors='replace')
     # Minecraft reports completion independently of Gradle. Require both and

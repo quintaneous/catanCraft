@@ -13,6 +13,23 @@ beforeProject { project ->
     def path = project.findProperty('authoredRunRoot') ?: ''
     if (!(source ==~ /[0-9a-f]{40}/) || !(phase in ['seed', 'verify']) || path.isEmpty())
         throw new GradleException('Authored53 requires exact source, phase and staged run root')
+    def rangeStart = project.findProperty('wall53RangeStart')
+    def rangeEnd = project.findProperty('wall53RangeEnd')
+    def predecessor = project.findProperty('wall53Predecessor')
+    def segmented = rangeStart != null || rangeEnd != null || predecessor != null
+    def continuing = predecessor != null
+    if (segmented) {
+        if (ns != 'catancraft_sector53_authored' || phase != 'seed')
+            throw new GradleException('Wall segments require the authored wall seed namespace and phase')
+        def decimal = { value -> value instanceof String && value ==~ /0|[1-9][0-9]{0,2}/ }
+        if (!decimal(rangeStart) || !decimal(rangeEnd))
+            throw new GradleException('Wall segment bounds must be canonical decimal purchase counts')
+        int start = rangeStart.toInteger(), end = rangeEnd.toInteger()
+        if (start > 126 || end == 127 || end > 128 || end < start)
+            throw new GradleException('Wall segment cannot split the final two recovery purchases')
+        if (continuing ? (!(predecessor ==~ /[0-9a-f]{64}/) || start == end) : start != 0)
+            throw new GradleException('A resumed range requires its predecessor SHA-256 and positive progress; first range starts at zero')
+    }
     File root = project.file(path).absoluteFile
     if (!root.toPath().normalize().startsWith(project.file('build').toPath().toAbsolutePath())
             || root.toPath() != root.toPath().normalize())
@@ -64,6 +81,11 @@ beforeProject { project ->
                 property 'catancraft.progression53Source', source
                 property 'catancraft.progression53Phase', phase
                 property 'catancraft.progression53Layout', record.layout.toString()
+                if (segmented) {
+                    property 'catancraft.wall53RangeStart', rangeStart
+                    property 'catancraft.wall53RangeEnd', rangeEnd
+                    if (continuing) property 'catancraft.wall53Predecessor', predecessor
+                }
             }
             project.tasks.matching { it.name == 'runGameTestServer' }.configureEach {
                 doFirst {
@@ -96,12 +118,27 @@ beforeProject { project ->
                     record.serverProperties.each { key, value ->
                         if (properties.getProperty(key) != value) throw new GradleException('Changed authored53 server property: ' + key)
                     }
-                    (phase == 'seed' ? record.initialFiles : record.immutableFiles).each { name, pin ->
+                    def pristineSeed = phase == 'seed' && !continuing
+                    (pristineSeed ? record.initialFiles : record.immutableFiles).each { name, pin ->
                         File file = safeFile(name)
                         if (!file.isFile() || digest(file) != pin) throw new GradleException('Changed authored53 input: ' + name)
                     }
-                    if (phase == 'seed' && new File(root, record.worldFolder + '/data/catancraft.dat').exists())
+                    File savedData = new File(world, 'data/catancraft.dat')
+                    if (pristineSeed && savedData.exists())
                         throw new GradleException('Seed requires pristine history; create another run, never reset')
+                    if (continuing) {
+                        File evidence = new File(world, 'data/sector53-authored')
+                        File checkpoint = new File(evidence, "checkpoint-${rangeStart}.json")
+                        if (!savedData.isFile() || !checkpoint.isFile() || checkpoint.length() > 2000000 || digest(checkpoint) != predecessor)
+                            throw new GradleException('Saved wall checkpoint is missing or differs from the preceding segment')
+                        def prior = new JsonSlurper().parse(checkpoint)
+                        if (prior.schema != 1 || prior.result != 'WALL_SEED_SEGMENT_PASS' || prior.phase != 'seed'
+                                || prior.source != source || prior.worldId != record.worldId || prior.rangeEnd != rangeStart.toInteger()
+                                || new JsonSlurper().parse(identity).worldId != record.worldId)
+                            throw new GradleException('Saved wall checkpoint belongs to a different range, source or world')
+                        if (new File(evidence, 'seed.json').exists() || new File(evidence, 'verify.json').exists())
+                            throw new GradleException('Completed wall seed cannot be resumed for new purchases')
+                    }
                 }
             }
         }

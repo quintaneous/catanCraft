@@ -907,3 +907,9 @@ Corrected native integration rerun passed 12/12 at `9f624dd`. Prior failed logs/
 SEC-01 crowbar/retrieval remains UNRESOLVED / HIGH PRIORITY; passing isolated SBW
 tests does not close owner-modpack acceptance. SEC-02 replay remains unresolved.
 No NPC/siege work, live-world changes, deployment or additional geometry approval.
+
+### DEF-03/04 authored wall qualification in parts
+
+The optional segmented seed records closed checkpoints on one isolated authored world. Founding, each purchase batch, and the final restart have their own native process receipts. The final two deliberately interrupted purchases in D and M remain in the same process before restart. The original all-city seed and verify assertions still cover 128 paid purchases and 64 paid Hall upgrades.
+
+Run `python tools/authored53/segmented_wall.py --help` for pinned runtime, fixture, wrapper, and lease arguments. Keep the same source, range size, world identity, and evidence directory for every invocation. `--max-steps 1` stops after one newly completed step. Preserve failed or interrupted attempts and verify the whole chain with `tools/authored53/verify_wall_segments.py`. This harness compiled and its receipt tests passed. A native checkpoint, complete wall chain, gameplay qualification, and release promotion are separate milestones.
