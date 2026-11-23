@@ -1,0 +1,16 @@
+test_atomic_publish_never_replaces_empty_dir (test_checkpoint.CheckpointTests.test_atomic_publish_never_replaces_empty_dir) ... ok
+test_bound_identity_mismatch (test_checkpoint.CheckpointTests.test_bound_identity_mismatch) ... ok
+test_existing_outputs (test_checkpoint.CheckpointTests.test_existing_outputs) ... ok
+test_failed_seed (test_checkpoint.CheckpointTests.test_failed_seed) ... ok
+test_links (test_checkpoint.CheckpointTests.test_links) ... ok
+test_live_java_style_lock (test_checkpoint.CheckpointTests.test_live_java_style_lock) ... ok
+test_partial_verify (test_checkpoint.CheckpointTests.test_partial_verify) ... ok
+test_roundtrip (test_checkpoint.CheckpointTests.test_roundtrip) ... ok
+test_stale_runner_receipt (test_checkpoint.CheckpointTests.test_stale_runner_receipt) ... ok
+test_tampered_copy (test_checkpoint.CheckpointTests.test_tampered_copy) ... ok
+test_wrong_pin_or_changed_receipt (test_checkpoint.CheckpointTests.test_wrong_pin_or_changed_receipt) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 0.075s
+
+OK

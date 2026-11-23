@@ -1,0 +1,251 @@
+{
+  "source": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+  "mapSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "boxFormat": "inclusive [minX,maxX,minZ,maxZ]",
+  "currentPublicBounds": [
+    -150,
+    149,
+    -150,
+    149
+  ],
+  "publicColumnsByCity": {
+    "f": 22500,
+    "g": 22500,
+    "j": 22500,
+    "k": 22500
+  },
+  "fullCourtBounds": [
+    -150,
+    150,
+    -150,
+    150
+  ],
+  "fullCourtColumnsByCity": {
+    "f": 22500,
+    "g": 22650,
+    "j": 22650,
+    "k": 22801
+  },
+  "omittedCourtEdgesByCity": {
+    "g": 150,
+    "j": 150,
+    "k": 301
+  },
+  "monuments": {
+    "industrial": {
+      "captureAnchorXYZ": [
+        -86,
+        81,
+        -80
+      ],
+      "captureRadius": 14,
+      "captureAtBlockCentersByCity": {
+        "f": 613
+      },
+      "placementAnchorXYZ": [
+        -82,
+        81,
+        -62
+      ],
+      "placementBoxXZ": [
+        -124,
+        -40,
+        -104,
+        -20
+      ],
+      "placementColumnsByCity": {
+        "f": 7225
+      },
+      "nonAirColumnsAboveY80ByCity": {
+        "f": 2910
+      }
+    },
+    "depot": {
+      "captureAnchorXYZ": [
+        88,
+        81,
+        -35
+      ],
+      "captureRadius": 14,
+      "captureAtBlockCentersByCity": {
+        "g": 613
+      },
+      "placementAnchorXYZ": [
+        82,
+        81,
+        -58
+      ],
+      "placementBoxXZ": [
+        40,
+        124,
+        -96,
+        -20
+      ],
+      "placementColumnsByCity": {
+        "g": 6545
+      },
+      "nonAirColumnsAboveY80ByCity": {
+        "g": 3015
+      }
+    },
+    "refinery": {
+      "captureAnchorXYZ": [
+        22,
+        81,
+        107
+      ],
+      "captureRadius": 14,
+      "captureAtBlockCentersByCity": {
+        "k": 613
+      },
+      "placementAnchorXYZ": [
+        0,
+        81,
+        81
+      ],
+      "placementBoxXZ": [
+        -39,
+        39,
+        37,
+        125
+      ],
+      "placementColumnsByCity": {
+        "j": 3471,
+        "k": 3560
+      },
+      "nonAirColumnsAboveY80ByCity": {
+        "j": 772,
+        "k": 1517
+      }
+    }
+  },
+  "plotAnchorCount": 96,
+  "testedPointsAndBoxes": 196,
+  "wallGuardMinimumDistanceByCity": {
+    "a": 513,
+    "b": 504,
+    "c": 504,
+    "d": 513,
+    "e": 506,
+    "f": 13,
+    "g": 13,
+    "h": 505,
+    "i": 505,
+    "j": 13,
+    "k": 13,
+    "l": 506,
+    "m": 513,
+    "n": 504,
+    "o": 504,
+    "p": 513
+  },
+  "wholeClaimNeutralizationImpact": {
+    "f": {
+      "allClaimColumns": 250000,
+      "plotAnchorsLost": 6
+    },
+    "g": {
+      "allClaimColumns": 250000,
+      "plotAnchorsLost": 6
+    },
+    "j": {
+      "allClaimColumns": 250000,
+      "plotAnchorsLost": 6
+    },
+    "k": {
+      "allClaimColumns": 250000,
+      "plotAnchorsLost": 6
+    }
+  },
+  "minimumDistanceToProtectedPointsAndBoxes": 4,
+  "closestProtected": [
+    "f/siegeRegion",
+    "f/restorationRegion",
+    "g/siegeRegion",
+    "g/restorationRegion",
+    "j/siegeRegion",
+    "j/restorationRegion",
+    "k/siegeRegion",
+    "k/restorationRegion"
+  ],
+  "distanceToBridgeAnchors": {
+    "bridge_b1": 411,
+    "bridge_b2": 16,
+    "bridge_b3": 31,
+    "bridge_b4": 411
+  },
+  "regionCount": 16,
+  "border": {
+    "BorderSize": 2000.0,
+    "BorderSizeLerpTarget": 2000.0,
+    "BorderSizeLerpTime": 0,
+    "BorderCenterX": 0.0,
+    "BorderCenterZ": 0.0
+  },
+  "currentBorderSurface": {
+    "north": {
+      "surface": {
+        "minecraft:grass_block": 1976,
+        "minecraft:sand": 2,
+        "minecraft:water": 22
+      },
+      "waterRange": [
+        27,
+        48
+      ],
+      "depthMinMedianMax": [
+        1,
+        3.0,
+        4
+      ],
+      "widthAtLeastThreeBlocksDeep": 14
+    },
+    "south": {
+      "surface": {
+        "minecraft:grass_block": 1979,
+        "minecraft:sand": 2,
+        "minecraft:water": 19
+      },
+      "waterRange": [
+        -46,
+        -28
+      ],
+      "depthMinMedianMax": [
+        1,
+        4,
+        6
+      ],
+      "widthAtLeastThreeBlocksDeep": 15
+    },
+    "west": {
+      "surface": {
+        "minecraft:grass_block": 2000
+      },
+      "waterRange": null,
+      "depthMinMedianMax": null,
+      "widthAtLeastThreeBlocksDeep": 0
+    },
+    "east": {
+      "surface": {
+        "minecraft:grass_block": 2000
+      },
+      "waterRange": null,
+      "depthMinMedianMax": null,
+      "widthAtLeastThreeBlocksDeep": 0
+    }
+  },
+  "coastScenarios": [
+    {
+      "coastAtApprox1000WaterWidth": 350,
+      "squareBorderDiameter": 2700,
+      "additionalChunksForBorderInterior": 12516,
+      "preservedAuthoredChunks": 16384
+    },
+    {
+      "coastAtApprox1000WaterWidth": 600,
+      "squareBorderDiameter": 3200,
+      "additionalChunksForBorderInterior": 23616,
+      "preservedAuthoredChunks": 16384
+    }
+  ]
+}

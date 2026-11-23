@@ -1,0 +1,16 @@
+test_aborted_verify_before_report (__main__.RecoveryTests.test_aborted_verify_before_report) ... ok
+test_bad_seal (__main__.RecoveryTests.test_bad_seal) ... ok
+test_changed_ledger (__main__.RecoveryTests.test_changed_ledger) ... ok
+test_changed_paid_history (__main__.RecoveryTests.test_changed_paid_history) ... ok
+test_completed_pair (__main__.RecoveryTests.test_completed_pair) ... ok
+test_completed_seed (__main__.RecoveryTests.test_completed_seed) ... ok
+test_different_source_or_bad_process_log (__main__.RecoveryTests.test_different_source_or_bad_process_log) ... ok
+test_mismatched_verify_history (__main__.RecoveryTests.test_mismatched_verify_history) ... ok
+test_partial_seed (__main__.RecoveryTests.test_partial_seed) ... ok
+test_partial_verify_not_reopened (__main__.RecoveryTests.test_partial_verify_not_reopened) ... ok
+test_unseen_and_in_progress (__main__.RecoveryTests.test_unseen_and_in_progress) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.307s
+
+OK
