@@ -30,3 +30,7 @@ python receipts/coast-pilot/mainland_verify.py
 ```
 
 The builder requires a new destination. Original region files and level metadata are hash-checked. Each altered original block is listed with its before and after state in the compressed placement file. Published receipts include the coast joins, two dock approaches, rotated lighthouse block comparison, boat channel, boarding-bank walk, lighting markers, and changes to each original region. Vehicle and freight trials remain open.
+
+## Central monument playability
+
+Keep the depot watchtower usable as a ranged position on future revisions. A player must be able to climb to a firing opening, see a walkable opposing position, be seen from there, and return to ground. Check the saved block geometry and playtest with the intended weapons. Inspect accessible roofs, vessels, ledges and climb-down routes across all three monuments. Follow each district exit in both directions to its next regional road or bridge. Include the approach slopes in the visual review.
