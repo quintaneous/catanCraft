@@ -1,0 +1,1228 @@
+{
+  "source": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+  "sourceManifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
+  "regionSHA256": {
+    "source_world/CatanCraft_Season1_R7_Development/region/r.-1.-1.mca": "2b190b5e007f375e55987efb97880070ee1534ee59b6da8025a75545d902d521",
+    "source_world/CatanCraft_Season1_R7_Development/region/r.-1.-2.mca": "2913cc7f3b95704334d74ff8e07d2e127bc8e045abe3ff3d8ae0861778e1dca4"
+  },
+  "spanSHA256": "55d02bdca7de2f42d639fe87a65864ce8cbdee21f2ddbcc22acc015076d27103",
+  "sourceAndTargetStatePalette": [
+    "minecraft:air",
+    "minecraft:andesite",
+    "minecraft:birch_leaves[distance=1,persistent=true,waterlogged=false]",
+    "minecraft:birch_log[axis=y]",
+    "minecraft:coarse_dirt",
+    "minecraft:cobblestone",
+    "minecraft:fern",
+    "minecraft:grass",
+    "minecraft:grass_block[snowy=false]",
+    "minecraft:mossy_cobblestone",
+    "minecraft:podzol[snowy=false]",
+    "minecraft:spruce_leaves[distance=1,persistent=true,waterlogged=false]",
+    "minecraft:spruce_log[axis=x]",
+    "minecraft:spruce_log[axis=y]",
+    "minecraft:spruce_log[axis=z]"
+  ],
+  "boundsInclusiveXYZ": [
+    [
+      -391,
+      81,
+      -642
+    ],
+    [
+      -115,
+      111,
+      -508
+    ]
+  ],
+  "changedVoxels": 14943,
+  "changedColumns": 5596,
+  "featureCounts": {
+    "spruce": 76,
+    "birch": 31,
+    "lichen boulder": 85,
+    "fallen spruce": 35,
+    "forest floor": 2128,
+    "understory": 1769
+  },
+  "trees": [
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -283,
+        87,
+        -626
+      ],
+      "blocks": 52,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -154,
+        83,
+        -608
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -245,
+        83,
+        -625
+      ],
+      "blocks": 20,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -147,
+        83,
+        -615
+      ],
+      "blocks": 148,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -336,
+        89,
+        -623
+      ],
+      "blocks": 60,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -163,
+        82,
+        -609
+      ],
+      "blocks": 125,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -251,
+        92,
+        -519
+      ],
+      "blocks": 143,
+      "height": 12,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -340,
+        96,
+        -514
+      ],
+      "blocks": 151,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -226,
+        83,
+        -621
+      ],
+      "blocks": 140,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -119,
+        90,
+        -521
+      ],
+      "blocks": 19,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -240,
+        82,
+        -628
+      ],
+      "blocks": 136,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -322,
+        87,
+        -628
+      ],
+      "blocks": 148,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -363,
+        95,
+        -513
+      ],
+      "blocks": 146,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -127,
+        90,
+        -522
+      ],
+      "blocks": 143,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -156,
+        83,
+        -615
+      ],
+      "blocks": 171,
+      "height": 14,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -330,
+        86,
+        -630
+      ],
+      "blocks": 154,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -326,
+        94,
+        -520
+      ],
+      "blocks": 184,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -267,
+        84,
+        -630
+      ],
+      "blocks": 182,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -331,
+        94,
+        -524
+      ],
+      "blocks": 53,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -146,
+        87,
+        -532
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -264,
+        93,
+        -518
+      ],
+      "blocks": 65,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -276,
+        93,
+        -524
+      ],
+      "blocks": 151,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -136,
+        90,
+        -521
+      ],
+      "blocks": 281,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -274,
+        88,
+        -618
+      ],
+      "blocks": 149,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -368,
+        85,
+        -634
+      ],
+      "blocks": 66,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -235,
+        84,
+        -618
+      ],
+      "blocks": 60,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -151,
+        83,
+        -621
+      ],
+      "blocks": 186,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -367,
+        89,
+        -624
+      ],
+      "blocks": 146,
+      "height": 12,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -254,
+        83,
+        -631
+      ],
+      "blocks": 258,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -230,
+        91,
+        -514
+      ],
+      "blocks": 20,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -352,
+        87,
+        -629
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -182,
+        91,
+        -518
+      ],
+      "blocks": 141,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -162,
+        91,
+        -514
+      ],
+      "blocks": 57,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -157,
+        82,
+        -624
+      ],
+      "blocks": 127,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -176,
+        90,
+        -523
+      ],
+      "blocks": 154,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -298,
+        90,
+        -618
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -345,
+        88,
+        -625
+      ],
+      "blocks": 146,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -380,
+        90,
+        -620
+      ],
+      "blocks": 19,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -241,
+        84,
+        -621
+      ],
+      "blocks": 146,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -251,
+        85,
+        -617
+      ],
+      "blocks": 127,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -144,
+        83,
+        -623
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -153,
+        92,
+        -513
+      ],
+      "blocks": 151,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -171,
+        89,
+        -528
+      ],
+      "blocks": 51,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -156,
+        89,
+        -526
+      ],
+      "blocks": 277,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -222,
+        90,
+        -524
+      ],
+      "blocks": 58,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -137,
+        84,
+        -616
+      ],
+      "blocks": 136,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -222,
+        82,
+        -626
+      ],
+      "blocks": 19,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -191,
+        82,
+        -617
+      ],
+      "blocks": 56,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -236,
+        91,
+        -517
+      ],
+      "blocks": 147,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -290,
+        88,
+        -624
+      ],
+      "blocks": 143,
+      "height": 12,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -245,
+        91,
+        -525
+      ],
+      "blocks": 258,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -293,
+        84,
+        -634
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -257,
+        92,
+        -529
+      ],
+      "blocks": 141,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -178,
+        81,
+        -610
+      ],
+      "blocks": 21,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -246,
+        82,
+        -631
+      ],
+      "blocks": 58,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -269,
+        86,
+        -623
+      ],
+      "blocks": 143,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -354,
+        90,
+        -619
+      ],
+      "blocks": 124,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -132,
+        89,
+        -529
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -272,
+        82,
+        -638
+      ],
+      "blocks": 119,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -187,
+        82,
+        -610
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -358,
+        95,
+        -518
+      ],
+      "blocks": 184,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -281,
+        89,
+        -620
+      ],
+      "blocks": 125,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -169,
+        82,
+        -620
+      ],
+      "blocks": 148,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -365,
+        91,
+        -613
+      ],
+      "blocks": 148,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -170,
+        91,
+        -517
+      ],
+      "blocks": 65,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -347,
+        85,
+        -633
+      ],
+      "blocks": 65,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -283,
+        90,
+        -612
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -377,
+        94,
+        -520
+      ],
+      "blocks": 66,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -302,
+        88,
+        -623
+      ],
+      "blocks": 57,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -228,
+        90,
+        -522
+      ],
+      "blocks": 203,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -342,
+        90,
+        -616
+      ],
+      "blocks": 20,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -122,
+        89,
+        -528
+      ],
+      "blocks": 63,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -350,
+        91,
+        -613
+      ],
+      "blocks": 170,
+      "height": 14,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -380,
+        89,
+        -631
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -240,
+        81,
+        -635
+      ],
+      "blocks": 54,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -268,
+        94,
+        -512
+      ],
+      "blocks": 58,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -146,
+        92,
+        -514
+      ],
+      "blocks": 142,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -366,
+        94,
+        -521
+      ],
+      "blocks": 142,
+      "height": 12,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -162,
+        90,
+        -520
+      ],
+      "blocks": 139,
+      "height": 13,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -126,
+        84,
+        -610
+      ],
+      "blocks": 51,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -145,
+        89,
+        -527
+      ],
+      "blocks": 148,
+      "height": 9,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -268,
+        92,
+        -531
+      ],
+      "blocks": 21,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -125,
+        84,
+        -618
+      ],
+      "blocks": 20,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -165,
+        82,
+        -625
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -176,
+        82,
+        -618
+      ],
+      "blocks": 200,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -376,
+        92,
+        -613
+      ],
+      "blocks": 20,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -374,
+        94,
+        -515
+      ],
+      "blocks": 146,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -362,
+        87,
+        -630
+      ],
+      "blocks": 183,
+      "height": 15,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -235,
+        90,
+        -530
+      ],
+      "blocks": 149,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -280,
+        94,
+        -519
+      ],
+      "blocks": 55,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -282,
+        92,
+        -529
+      ],
+      "blocks": 21,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -264,
+        92,
+        -525
+      ],
+      "blocks": 20,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -342,
+        96,
+        -526
+      ],
+      "blocks": 141,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -353,
+        96,
+        -529
+      ],
+      "blocks": 64,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -289,
+        93,
+        -521
+      ],
+      "blocks": 21,
+      "height": 4,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -250,
+        81,
+        -638
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -261,
+        82,
+        -635
+      ],
+      "blocks": 263,
+      "height": 11,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -228,
+        90,
+        -530
+      ],
+      "blocks": 21,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -184,
+        82,
+        -614
+      ],
+      "blocks": 174,
+      "height": 14,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -342,
+        91,
+        -610
+      ],
+      "blocks": 53,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -259,
+        87,
+        -613
+      ],
+      "blocks": 57,
+      "height": 7,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -124,
+        91,
+        -516
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -244,
+        85,
+        -613
+      ],
+      "blocks": 22,
+      "height": 5,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -284,
+        85,
+        -632
+      ],
+      "blocks": 148,
+      "height": 10,
+      "young": false
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -162,
+        82,
+        -620
+      ],
+      "blocks": 52,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "spruce",
+      "anchorXYZ": [
+        -138,
+        84,
+        -608
+      ],
+      "blocks": 54,
+      "height": 6,
+      "young": true
+    },
+    {
+      "kind": "birch",
+      "anchorXYZ": [
+        -252,
+        91,
+        -533
+      ],
+      "blocks": 66,
+      "height": 6,
+      "young": true
+    }
+  ],
+  "protectedOverlap": 0
+}

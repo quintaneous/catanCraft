@@ -1,0 +1,62 @@
+{
+  "minecraft": "Java 1.20.1",
+  "dataVersion": 3465,
+  "chunksChecked": 320,
+  "spectatorSpawn": [
+    0,
+    84,
+    4
+  ],
+  "sceneCellsChecked": 1695586,
+  "scenes": [
+    {
+      "scene": "Sheltered cove",
+      "minimumXYZ": [
+        -128,
+        57,
+        -112
+      ],
+      "comparedCells": 688128,
+      "sourceSHA256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+      "waterFilledTransparentCells": 0,
+      "extraFoundationBlocks": 0
+    },
+    {
+      "scene": "Estuary headland",
+      "minimumXYZ": [
+        16,
+        57,
+        -112
+      ],
+      "comparedCells": 688128,
+      "sourceSHA256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+      "waterFilledTransparentCells": 0,
+      "extraFoundationBlocks": 0
+    },
+    {
+      "scene": "Brinewatch pilot station",
+      "minimumXYZ": [
+        -89,
+        67,
+        26
+      ],
+      "comparedCells": 129250,
+      "sourceSHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+      "waterFilledTransparentCells": 13532,
+      "extraFoundationBlocks": 10494
+    },
+    {
+      "scene": "Freighter wreck",
+      "minimumXYZ": [
+        13,
+        60,
+        18
+      ],
+      "comparedCells": 190080,
+      "sourceSHA256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+      "waterFilledTransparentCells": 0,
+      "extraFoundationBlocks": 9504
+    }
+  ],
+  "bootedInMinecraft": false
+}

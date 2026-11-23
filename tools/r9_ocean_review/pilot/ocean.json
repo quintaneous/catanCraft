@@ -1,0 +1,350 @@
+{
+  "waterBlockY": 75,
+  "waterSurfacePlaneY": 76,
+  "newChunkRectanglesHalfOpenXZ": [
+    [
+      -1568,
+      -1408,
+      224,
+      -1024
+    ],
+    [
+      -1568,
+      -1024,
+      -1024,
+      -224
+    ]
+  ],
+  "exteriorChunks": 4388,
+  "primaryRouteXZ": [
+    [
+      44,
+      -1025
+    ],
+    [
+      44,
+      -1220
+    ],
+    [
+      -1220,
+      -1220
+    ],
+    [
+      -1220,
+      -430
+    ],
+    [
+      -1362,
+      -430
+    ],
+    [
+      -1383,
+      -430
+    ],
+    [
+      -1383,
+      -431
+    ]
+  ],
+  "alternateRouteXZ": [
+    [
+      -1362,
+      -430
+    ],
+    [
+      -1362,
+      -464
+    ],
+    [
+      -1419,
+      -464
+    ],
+    [
+      -1419,
+      -454
+    ]
+  ],
+  "landingsXYZ": {
+    "primary": [
+      -1385,
+      76,
+      -431
+    ],
+    "alternate": [
+      -1419,
+      76,
+      -452
+    ]
+  },
+  "primaryRouteCenterColumns": 2414,
+  "alternateRouteCenterColumns": 102,
+  "channelProof": [
+    {
+      "name": "north estuary throat",
+      "boundsXZ": [
+        40,
+        -1072,
+        48,
+        -1024
+      ],
+      "width": 8,
+      "minimumRequired": 3,
+      "minimumUnderKeelWaterBlocks": 4
+    },
+    {
+      "name": "north estuary fairway",
+      "boundsXZ": [
+        32,
+        -1236,
+        56,
+        -1072
+      ],
+      "width": 24,
+      "minimumRequired": 6,
+      "minimumUnderKeelWaterBlocks": 7
+    },
+    {
+      "name": "north circuit to northwest turn",
+      "boundsXZ": [
+        -1236,
+        -1236,
+        60,
+        -1204
+      ],
+      "width": 32,
+      "minimumRequired": 8,
+      "minimumUnderKeelWaterBlocks": 11
+    },
+    {
+      "name": "west circuit to island turn",
+      "boundsXZ": [
+        -1236,
+        -1236,
+        -1204,
+        -414
+      ],
+      "width": 32,
+      "minimumRequired": 8,
+      "minimumUnderKeelWaterBlocks": 11
+    },
+    {
+      "name": "lighthouse approach",
+      "boundsXZ": [
+        -1362,
+        -446,
+        -1204,
+        -414
+      ],
+      "width": 32,
+      "minimumRequired": 6,
+      "minimumUnderKeelWaterBlocks": 10
+    }
+  ],
+  "terminalClearance": {
+    "boatWidth": 3,
+    "waterBlocks": 3,
+    "airBlocks": 2,
+    "horizontalCenterToDeckBlocks": 2
+  },
+  "seamlessNeighborColumns": {
+    "north": 1248,
+    "west": 800
+  },
+  "mooredPilotSpars": [
+    {
+      "x": 58,
+      "z": -1115,
+      "id": "exit-1",
+      "turn": false
+    },
+    {
+      "x": 58,
+      "z": -1198,
+      "id": "exit-2",
+      "turn": false
+    },
+    {
+      "x": -36,
+      "z": -1244,
+      "id": "north-1",
+      "turn": false
+    },
+    {
+      "x": -120,
+      "z": -1244,
+      "id": "north-2",
+      "turn": false
+    },
+    {
+      "x": -204,
+      "z": -1244,
+      "id": "north-3",
+      "turn": false
+    },
+    {
+      "x": -288,
+      "z": -1244,
+      "id": "north-4",
+      "turn": false
+    },
+    {
+      "x": -372,
+      "z": -1244,
+      "id": "north-5",
+      "turn": false
+    },
+    {
+      "x": -456,
+      "z": -1244,
+      "id": "north-6",
+      "turn": false
+    },
+    {
+      "x": -540,
+      "z": -1244,
+      "id": "north-7",
+      "turn": false
+    },
+    {
+      "x": -624,
+      "z": -1244,
+      "id": "north-8",
+      "turn": false
+    },
+    {
+      "x": -708,
+      "z": -1244,
+      "id": "north-9",
+      "turn": false
+    },
+    {
+      "x": -792,
+      "z": -1244,
+      "id": "north-10",
+      "turn": false
+    },
+    {
+      "x": -876,
+      "z": -1244,
+      "id": "north-11",
+      "turn": false
+    },
+    {
+      "x": -960,
+      "z": -1244,
+      "id": "north-12",
+      "turn": false
+    },
+    {
+      "x": -1044,
+      "z": -1244,
+      "id": "north-13",
+      "turn": false
+    },
+    {
+      "x": -1128,
+      "z": -1244,
+      "id": "north-14",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -1136,
+      "id": "west-1",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -1052,
+      "id": "west-2",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -968,
+      "id": "west-3",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -884,
+      "id": "west-4",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -800,
+      "id": "west-5",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -716,
+      "id": "west-6",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -632,
+      "id": "west-7",
+      "turn": false
+    },
+    {
+      "x": -1244,
+      "z": -548,
+      "id": "west-8",
+      "turn": false
+    },
+    {
+      "x": -1270,
+      "z": -454,
+      "id": "station-1",
+      "turn": false
+    },
+    {
+      "x": -1348,
+      "z": -454,
+      "id": "station-2",
+      "turn": false
+    },
+    {
+      "x": 64,
+      "z": -1239,
+      "id": "turn-1",
+      "turn": true
+    },
+    {
+      "x": 71,
+      "z": -1233,
+      "id": "turn-2",
+      "turn": true
+    },
+    {
+      "x": -1244,
+      "z": -1241,
+      "id": "turn-3",
+      "turn": true
+    },
+    {
+      "x": -1251,
+      "z": -1234,
+      "id": "turn-4",
+      "turn": true
+    },
+    {
+      "x": -1245,
+      "z": -455,
+      "id": "turn-5",
+      "turn": true
+    },
+    {
+      "x": -1252,
+      "z": -462,
+      "id": "turn-6",
+      "turn": true
+    }
+  ],
+  "shorelineSide": "green to starboard travelling from river toward lighthouse",
+  "lighthouseSHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+  "gameplayBoatTrial": "pending"
+}

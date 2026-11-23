@@ -1,0 +1,41 @@
+CatanCraft | Pine Reach to Brinewatch
+A Creative terrain review for Minecraft Java Edition 1.20.1
+
+OPEN THE WORLD ON WINDOWS
+1. In File Explorer, right-click the downloaded ZIP and choose Extract All.
+2. Press Windows + R, enter %APPDATA%\.minecraft\saves and press Enter.
+   If your launcher uses a separate game directory, open its saves folder instead.
+3. Copy the CatanCraft_Pine_Reach_Brinewatch folder directly into saves. Open
+   that folder once and check that level.dat and region are directly inside it.
+4. Open vanilla Minecraft Java Edition 1.20.1, choose Singleplayer, and open
+   the Pine Reach / Brinewatch review world. Its starting point is the road in
+   Pine Reach. You can walk, fly, or take a boat from the Creative inventory.
+
+TAKE THE TRIP
+Head east from spawn along the broad gravel road. The new spruce and birch
+groves are on either side. Where the road approaches the north bridge, leave
+the road on your left just before the stone deck. Follow the sloping gravel
+and sand down to the water. Place a boat just off the bank and right-click
+to board. Face north and follow the bends to the sea.
+
+At the mouth, follow the lit green-and-white marks, keeping them to your
+right on the way out. Taller paired lights mark the turns. Turn west along
+the northern coast, south at the northwest corner, then west to the lighthouse.
+Approach its main landing from the east. Left Shift dismounts. The second
+landing is on the north side. On the way home, keep the markers on your left.
+
+OPTIONAL SHORTCUTS
+Creative mode includes flight. If you prefer to start partway through the
+trip, these chat commands use coordinates in this review world.
+
+Road start, looking east           /tp @s -399.5 81 -567.5 -90 0
+Bridge approach, looking east      /tp @s -44.5 81 -567.5 -90 0
+Launch bank, looking north         /tp @s -25.5 76 -569.5 180 0
+Northern mouth, above the river    /tp @s 43.5 77 -1023.5 180 0
+Lighthouse main landing            /tp @s -1384.5 77 -430.5 90 0
+
+This is a standalone landscape study. Its offshore build covers the surveyed
+northern and western route. CatanCraft progression, nation founding and
+monument rewards belong to the separate Forge gameplay kit. Boat handling,
+the view from each bend and how easily you can find the landing are the
+main questions for a first-person visit.

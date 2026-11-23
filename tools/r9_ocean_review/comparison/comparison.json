@@ -1,0 +1,30 @@
+{
+  "v1": {
+    "schematic_sha256": "a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf",
+    "stamp_xyz": [
+      74,
+      39,
+      48
+    ],
+    "hull_length": 61,
+    "widest_hull_cross_section": 19
+  },
+  "v2": {
+    "schematic_sha256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+    "stamp_xyz": [
+      88,
+      40,
+      54
+    ],
+    "hull_length": 76,
+    "widest_hull_cross_section": 23
+  },
+  "png_sha256": "8182b3d69030f7235f2c03f4dc731c8e7fb6d5e5a7bcc875d9c02aef02239f10",
+  "projection": {
+    "yaw_degrees": 17,
+    "elevation_degrees": 24,
+    "pixels_per_block": 8.85,
+    "local_water_surface_y": 16,
+    "world_water_surface_y": 76
+  }
+}

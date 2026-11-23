@@ -1,0 +1,91 @@
+{
+  "sheltered_cove": {
+    "tile_origin_XYZ": [
+      -368,
+      57,
+      -1024
+    ],
+    "size_XYZ": [
+      112,
+      64,
+      96
+    ],
+    "source_regions": {
+      "region/r.-1.-2.mca": "2913cc7f3b95704334d74ff8e07d2e127bc8e045abe3ff3d8ae0861778e1dca4"
+    },
+    "schematic_sha256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+    "cameras_local_XYZ": {
+      "aerial": [
+        [
+          -29,
+          100,
+          -84
+        ],
+        [
+          55,
+          15,
+          48
+        ]
+      ],
+      "waterline": [
+        [
+          50,
+          21.4,
+          -29
+        ],
+        [
+          50,
+          31,
+          53
+        ]
+      ]
+    },
+    "waterline_top_Y": 76,
+    "review_png_sha256": "61342e1973338663e0ebaa4be57107c6f7052b41d977250f8405af8974663016"
+  },
+  "headland_estuary": {
+    "tile_origin_XYZ": [
+      -40,
+      57,
+      -1024
+    ],
+    "size_XYZ": [
+      112,
+      64,
+      96
+    ],
+    "source_regions": {
+      "region/r.-1.-2.mca": "2913cc7f3b95704334d74ff8e07d2e127bc8e045abe3ff3d8ae0861778e1dca4",
+      "region/r.0.-2.mca": "0714fee846a082959738f0c4b0e88c6f05a34929a04eda8b66989b16b624192c"
+    },
+    "schematic_sha256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+    "cameras_local_XYZ": {
+      "aerial": [
+        [
+          -29,
+          100,
+          -84
+        ],
+        [
+          55,
+          15,
+          48
+        ]
+      ],
+      "waterline": [
+        [
+          77,
+          21.4,
+          -5
+        ],
+        [
+          61,
+          23,
+          55
+        ]
+      ]
+    },
+    "waterline_top_Y": 76,
+    "review_png_sha256": "0893bc6cf614c3f55041dfbeb51731875a38b30431190817af018ce77b6c9506"
+  }
+}

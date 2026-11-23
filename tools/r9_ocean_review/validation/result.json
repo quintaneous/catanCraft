@@ -1,0 +1,247 @@
+{
+  "result": "PASS_OFFLINE_ASSET_AND_PLACEMENT_AUDIT",
+  "revision": 2,
+  "originalInputs": {
+    "manifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
+    "matchingManifestEntries": 40,
+    "canonicalWorldRegionFileSHA256": {
+      "r.-1.-1.mca": "2b190b5e007f375e55987efb97880070ee1534ee59b6da8025a75545d902d521",
+      "r.-1.-2.mca": "2913cc7f3b95704334d74ff8e07d2e127bc8e045abe3ff3d8ae0861778e1dca4",
+      "r.-1.0.mca": "7f69bcb2ad9a8260f3c9594974d2684ff15b2656f3bd8cf54e01b93fb6094b6e",
+      "r.-1.1.mca": "eccb58fc227b884f640bccb094200c3c5680a0c07f28a9b878dcdb77ee02bc47",
+      "r.-2.-1.mca": "94a70eed07877a98321848ff7fc9156f207c316e5bc0748b595402e9c507f09c",
+      "r.-2.-2.mca": "f6c6d08685d8a68465db6c4cc3f4ea377f168372f7648cea83398bda74ba0eb4",
+      "r.-2.0.mca": "3b5f9f909516415dfeb053ac8dc9ab443ed6a84a5a83e7bd6f81aeb7aeb091b0",
+      "r.-2.1.mca": "b623a1bacf54de7b275d8b19a3e48b205d64a1421f267c875ff91a1dcb5470b5",
+      "r.0.-1.mca": "ea7e40ba8ebf381c5140803b36ef798a4da27ce205855cfc40fe39a730bb891e",
+      "r.0.-2.mca": "0714fee846a082959738f0c4b0e88c6f05a34929a04eda8b66989b16b624192c",
+      "r.0.0.mca": "6a7df8ba1058748d453ba469d82bf9aae51ddb091cec25e790b614a2b2d3f862",
+      "r.0.1.mca": "9ee0d76627eb330f4267ad4cdaee2f97300fe104210ba97ae8487a443c201f2f",
+      "r.1.-1.mca": "145a213ad01521676e6f66ead7a6c906af2b5f4fb809b2100c9b01f7d79c6582",
+      "r.1.-2.mca": "7ed06b640a784dd36373f9d30b08cef30a213869e454706d3b4c4fd25678b69d",
+      "r.1.0.mca": "da4e66ca7f5e03822f4550c5a2706aafcfb43e84385ac01dc5cbabef72975da2",
+      "r.1.1.mca": "c2b36940b5678fc2a5210711e10d87f605f4bbdce3dbb8acf480135db24ccc94"
+    },
+    "originalLevelDatSHA256": "f9d708db1457e2f0cc63100db6a1997c9d59e41bdf83e956d556f1cdc46b9c14",
+    "mapSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+    "matchingBootstrapConfigFiles": 7
+  },
+  "totalEncodedCells": 1695586,
+  "comparedToV1": {
+    "coast/r9_headland_estuary.schem": {
+      "v1SHA256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+      "v2SHA256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+      "byteIdentical": true
+    },
+    "coast/r9_sheltered_cove.schem": {
+      "v1SHA256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+      "v2SHA256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+      "byteIdentical": true
+    },
+    "lighthouse/Brinewatch_Pilot_Station.schem": {
+      "v1SHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+      "v2SHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+      "byteIdentical": true
+    },
+    "wreck/brinewake.schem": {
+      "v1SHA256": "a62cab06c03f8dd2eeeca994829c3f4bae57cc3801b9eb4dc7a4d37d182e52cf",
+      "v2SHA256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+      "byteIdentical": false
+    }
+  },
+  "atlasSHA256": "9b0e6e980ff707d885863a01bd0d674b5d6074005f43993d5a5ccd8eced1b572",
+  "registrySourceCommit": "15f05b54846b0cc5adebe63b245c7045ba105709",
+  "registryFileSHA256": {
+    "minecraft_1_20_1_block_ids.json": "0b8b3236235802db1520d1514472154885c25ad1018dafff1c7072c361b04299",
+    "minecraft_1_20_1_block_definitions.json": "226a2f512571814ce56d413524a38e20b340e28495699551f673b76a9f6976ff"
+  },
+  "schematics": {
+    "coast": [
+      {
+        "file": "r9_headland_estuary.schem",
+        "sha256": "979e1092136020777200866fb529c6065a84b8aa1cdc901beea6104c831b967d",
+        "formatVersion": 2,
+        "dataVersion": 3465,
+        "sizeXYZ": [
+          112,
+          64,
+          96
+        ],
+        "offsetXYZ": [
+          0,
+          0,
+          0
+        ],
+        "encodedCells": 688128,
+        "usedPaletteStates": 20,
+        "validatedPaletteStates": 20,
+        "counts": {
+          "empty": 393977,
+          "fluid": 35861,
+          "otherBlock": 258290,
+          "pasteMask": 0
+        },
+        "entities": 0,
+        "blockEntities": 0
+      },
+      {
+        "file": "r9_sheltered_cove.schem",
+        "sha256": "4a7dc3a3f176a956d0287441d2f11b3bf89475dc4ca9df8eaf7a751d6228940b",
+        "formatVersion": 2,
+        "dataVersion": 3465,
+        "sizeXYZ": [
+          112,
+          64,
+          96
+        ],
+        "offsetXYZ": [
+          0,
+          0,
+          0
+        ],
+        "encodedCells": 688128,
+        "usedPaletteStates": 19,
+        "validatedPaletteStates": 19,
+        "counts": {
+          "empty": 412734,
+          "fluid": 32687,
+          "otherBlock": 242707,
+          "pasteMask": 0
+        },
+        "entities": 0,
+        "blockEntities": 0
+      }
+    ],
+    "lighthouse": [
+      {
+        "file": "Brinewatch_Pilot_Station.schem",
+        "sha256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+        "formatVersion": 2,
+        "dataVersion": 3465,
+        "sizeXYZ": [
+          55,
+          50,
+          47
+        ],
+        "offsetXYZ": [
+          0,
+          0,
+          0
+        ],
+        "encodedCells": 129250,
+        "usedPaletteStates": 67,
+        "validatedPaletteStates": 67,
+        "counts": {
+          "empty": 113820,
+          "fluid": 0,
+          "otherBlock": 15430,
+          "pasteMask": 0
+        },
+        "entities": 0,
+        "blockEntities": 0
+      }
+    ],
+    "wreck": [
+      {
+        "file": "brinewake.schem",
+        "sha256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+        "formatVersion": 2,
+        "dataVersion": 3465,
+        "sizeXYZ": [
+          88,
+          40,
+          54
+        ],
+        "offsetXYZ": [
+          0,
+          0,
+          0
+        ],
+        "encodedCells": 190080,
+        "usedPaletteStates": 49,
+        "validatedPaletteStates": 49,
+        "counts": {
+          "empty": 110636,
+          "fluid": 45198,
+          "otherBlock": 34246,
+          "pasteMask": 0
+        },
+        "entities": 0,
+        "blockEntities": 0
+      }
+    ]
+  },
+  "proposedPlacementChecks": {
+    "lighthouse": {
+      "site": "lighthouse_west",
+      "localPivotXYZ": [
+        27,
+        8,
+        23
+      ],
+      "worldPivotXYZ": [
+        -1410,
+        75,
+        -430
+      ],
+      "rotationDegreesAboutY": 180,
+      "assetBoundsXZHalfOpen": [
+        -1437,
+        -453,
+        -1382,
+        -406
+      ],
+      "assetBoundsYHalfOpen": [
+        67,
+        117
+      ],
+      "reservationBoundsXZHalfOpen": [
+        -1458,
+        -478,
+        -1362,
+        -382
+      ],
+      "approachFrom": "east",
+      "clearanceToReservationEdgeBlocks": 20,
+      "clearanceToAuthoredChunkSquareBlocks": 358,
+      "clearanceToProposedWorldBorderBlocks": 163
+    },
+    "wreck": {
+      "site": "wreck_east",
+      "localPivotXYZ": [
+        44,
+        15,
+        27
+      ],
+      "worldPivotXYZ": [
+        1390,
+        75,
+        280
+      ],
+      "rotationDegreesAboutY": 0,
+      "assetBoundsXZHalfOpen": [
+        1346,
+        253,
+        1434,
+        307
+      ],
+      "assetBoundsYHalfOpen": [
+        60,
+        100
+      ],
+      "reservationBoundsXZHalfOpen": [
+        1342,
+        232,
+        1438,
+        328
+      ],
+      "approachFrom": "west",
+      "clearanceToReservationEdgeBlocks": 4,
+      "clearanceToAuthoredChunkSquareBlocks": 322,
+      "clearanceToProposedWorldBorderBlocks": 166
+    }
+  },
+  "nativeServerStarted": false,
+  "worldPlaced": false,
+  "connectedPlayerTested": false
+}

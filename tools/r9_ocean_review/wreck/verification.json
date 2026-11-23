@@ -1,0 +1,60 @@
+{
+  "sha256": "ac2748319005f623cb6f47fc2f3abda0d91d3ed35fd0f0154524d6dc1311a04b",
+  "dimensionsXYZ": [
+    88,
+    40,
+    54
+  ],
+  "hullLengthBlocks": 76,
+  "maximumHullBeamBlocks": 23,
+  "hullBoundsAtLocalY16": [
+    5,
+    80
+  ],
+  "mainHullToAftDisplacementBlocks": 3,
+  "voxelCount": 190080,
+  "dataVersion": 3465,
+  "spongeVersion": 2,
+  "paletteStates": 49,
+  "entities": 0,
+  "blockEntities": 0,
+  "waterBlockLocalY": 15,
+  "waterBlockWorldY": 75,
+  "pivot": [
+    44,
+    15,
+    27
+  ],
+  "standingObjectiveLocalXYZ": [
+    44,
+    20,
+    17
+  ],
+  "boardableLandingFeetLocalXYZ": [
+    [
+      41,
+      17,
+      7
+    ],
+    [
+      22,
+      17,
+      43
+    ]
+  ],
+  "walksFromLandingsInCardinalMoves": [
+    13,
+    48
+  ],
+  "boatApproachMovesFromLocalX1AlongNorthSouthRows": [
+    40,
+    21
+  ],
+  "checkedBoatCorridorWidthBlocks": 3,
+  "minimumBoatSourceWaterDepthBlocks": 3,
+  "checkedBoatAirClearanceBlocks": 2,
+  "mainDeckToLowerCabinCardinalMoves": 47,
+  "lowerCabinToWheelhouseMovesIncludingLadder": 21,
+  "groundedKeelColumns": 603,
+  "limitations": "Static block geometry and conservative cardinal floor/clearance searches. No connected boat, dismount, swimming, lighting, capture or paste was tested."
+}

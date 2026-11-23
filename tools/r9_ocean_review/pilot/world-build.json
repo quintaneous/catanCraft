@@ -1,0 +1,64 @@
+{
+  "mainland": {
+    "operation": "build",
+    "source": "6ed6eaf31f946195f8b75fa869308c915537a6ed",
+    "changedBlocks": 14943,
+    "changedColumns": 5596,
+    "boundsInclusiveXYZ": [
+      [
+        -391,
+        81,
+        -642
+      ],
+      [
+        -115,
+        111,
+        -508
+      ]
+    ],
+    "features": {
+      "spruce": 76,
+      "birch": 31,
+      "lichen boulder": 85,
+      "fallen spruce": 35,
+      "forest floor": 2128,
+      "understory": 1769
+    },
+    "originalAndTargetSpanSHA256": "55d02bdca7de2f42d639fe87a65864ce8cbdee21f2ddbcc22acc015076d27103"
+  },
+  "exteriorArt": null,
+  "lighthouse": {
+    "assetSHA256": "ae9e82291ee2af4e660a23e9da0cf6240edea10903e7358f146cdf3f1a2a0bbb",
+    "rotation": 180,
+    "nonAirBlocks": 15430,
+    "foundationWrites": 0,
+    "anchorWorldXYZ": [
+      -1410,
+      75,
+      -430
+    ],
+    "anchorLocalXYZ": [
+      27,
+      8,
+      23
+    ],
+    "xBounds": [
+      -1437,
+      -1383
+    ],
+    "zBounds": [
+      -453,
+      -407
+    ]
+  },
+  "landmarkBlocks": {
+    "-400,80,-568": "minecraft:andesite",
+    "-16,75,-570": "minecraft:water[level=0]",
+    "-1385,76,-431": "minecraft:spruce_planks",
+    "-1409,81,-434": "minecraft:cartography_table"
+  },
+  "sourceManifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
+  "newChunks": 4388,
+  "dirtyChunks": 4473,
+  "mainlandDistinctVoxelEdits": 14943
+}
