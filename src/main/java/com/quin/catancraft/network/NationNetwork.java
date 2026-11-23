@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Optional;
 
 public final class NationNetwork {
-    private static final String PROTOCOL = "6";
+    private static final String PROTOCOL = "7";
 
     public static final SimpleChannel CHANNEL = NetworkRegistry.ChannelBuilder
             .named(new ResourceLocation(CatanCraft.MOD_ID, "main"))
@@ -37,6 +37,13 @@ public final class NationNetwork {
         CHANNEL.registerMessage(nextId++, ResourceRefreshRequest.class,
                 ResourceRefreshRequest::encode, ResourceRefreshRequest::decode,
                 ResourceRefreshRequest::handle, Optional.of(NetworkDirection.PLAY_TO_SERVER));
+        CHANNEL.registerMessage(nextId++, TradeChoicesPacket.class,
+                TradeChoicesPacket::encode, TradeChoicesPacket::decode,
+                TradeChoicesPacket::handle, Optional.of(NetworkDirection.PLAY_TO_CLIENT));
+    }
+
+    public static void sendTradeChoices(ServerPlayer player, TradeChoicesPacket choices) {
+        CHANNEL.send(PacketDistributor.PLAYER.with(() -> player), choices);
     }
 
     public static void sendTerritoryHud(ServerPlayer player, String label) {

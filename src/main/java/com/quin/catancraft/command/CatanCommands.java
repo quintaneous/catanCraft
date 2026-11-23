@@ -1,5 +1,7 @@
 package com.quin.catancraft.command;
 
+import com.quin.catancraft.network.NationNetwork;
+import com.quin.catancraft.network.TradeChoicesPacket;
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.arguments.LongArgumentType;
@@ -152,6 +154,15 @@ public final class CatanCommands {
         node.then(building);
 
         LiteralArgumentBuilder<CommandSourceStack> trade = Commands.literal("trade");
+        trade.then(Commands.literal("compose").executes(ctx -> {
+            CommandSourceStack source = ctx.getSource();
+            ServerPlayer player = source.getPlayerOrException();
+            CatanSavedData data = CatanSavedData.get(source.getServer());
+            NationData sender = requireLeaderNation(source, player, data);
+            if (sender == null) return 0;
+            NationNetwork.sendTradeChoices(player, TradeChoicesPacket.from(data, sender));
+            return 1;
+        }));
         trade.then(Commands.literal("propose")
                 .then(Commands.argument("nation", StringArgumentType.string())
                         .then(Commands.argument("offerAsset", StringArgumentType.word())
@@ -1592,9 +1603,7 @@ public final class CatanCommands {
 
         NationData recipient = data.nationByName(recipientNationName.trim());
         if (recipient == null) {
-            source.sendFailure(Component.literal(
-                    "Unknown nation: " + recipientNationName));
-            return 0;
+            return tradeRefused(source, player, "Unknown nation: " + recipientNationName);
         }
         if (sender.id().equals(recipient.id())) {
             source.sendFailure(Component.literal("You cannot trade with your own nation."));
@@ -1607,16 +1616,12 @@ public final class CatanCommands {
             offeredAsset = normalizeTradeAsset(offeredAssetRaw);
             requestedAsset = normalizeTradeAsset(requestedAssetRaw);
         } catch (IllegalArgumentException ex) {
-            source.sendFailure(Component.literal(
-                    "Trade assets must be money or a valid resource id."));
-            return 0;
+            return tradeRefused(source, player, "Trade assets must be money or a valid resource id.");
         }
 
         if (!hasTradeAsset(sender, offeredAsset, offeredAmount)) {
-            source.sendFailure(Component.literal(
-                    "Your nation does not have enough " +
-                            tradeAssetDisplay(offeredAsset) + " to escrow this offer."));
-            return 0;
+            return tradeRefused(source, player, "Your nation does not have enough " +
+                            tradeAssetDisplay(offeredAsset) + " to set aside for this offer.");
         }
 
         debitTradeAsset(sender, offeredAsset, offeredAmount);
@@ -1644,7 +1649,7 @@ public final class CatanCommands {
                         "[CatanCraft] New trade proposal #" + proposal.id() +
                                 " from " + sender.name() + ". Open /nation to review it.")));
 
-        NationDashboard.open(player);
+        NationDashboard.open(player, "Offer sent to " + recipient.name() + ".");
         return 1;
     }
 
@@ -1659,27 +1664,21 @@ public final class CatanCommands {
 
         TradeProposal proposal = data.tradeProposal(proposalId);
         if (proposal == null || !recipient.id().equals(proposal.recipientNationId())) {
-            source.sendFailure(Component.literal(
-                    "No incoming trade proposal with id " + proposalId + "."));
-            return 0;
+            return tradeRefused(source, player, "This incoming offer is no longer available.");
         }
 
         NationData sender = data.nation(proposal.senderNationId());
         if (sender == null) {
-            source.sendFailure(Component.literal(
-                    "The sending nation no longer exists."));
-            return 0;
+            return tradeRefused(source, player, "The sending nation no longer exists.");
         }
 
         if (!hasTradeAsset(
                 recipient,
                 proposal.requestedAsset(),
                 proposal.requestedAmount())) {
-            source.sendFailure(Component.literal(
-                    "Your nation does not have enough " +
+            return tradeRefused(source, player, "Your nation does not have enough " +
                             tradeAssetDisplay(proposal.requestedAsset()) +
-                            " to accept this trade."));
-            return 0;
+                            " to accept this trade.");
         }
 
         debitTradeAsset(
@@ -1707,7 +1706,7 @@ public final class CatanCommands {
                         "[CatanCraft] " + recipient.name() +
                                 " accepted trade #" + proposal.id() + ".")));
 
-        NationDashboard.open(player);
+        NationDashboard.open(player, "Trade completed with " + sender.name() + ".");
         return 1;
     }
 
@@ -1722,9 +1721,7 @@ public final class CatanCommands {
 
         TradeProposal proposal = data.tradeProposal(proposalId);
         if (proposal == null || !recipient.id().equals(proposal.recipientNationId())) {
-            source.sendFailure(Component.literal(
-                    "No incoming trade proposal with id " + proposalId + "."));
-            return 0;
+            return tradeRefused(source, player, "This incoming offer is no longer available.");
         }
 
         NationData sender = data.nation(proposal.senderNationId());
@@ -1747,7 +1744,7 @@ public final class CatanCommands {
                                     ". Escrow was refunded.")));
         }
 
-        NationDashboard.open(player);
+        NationDashboard.open(player, "Offer declined.");
         return 1;
     }
 
@@ -1762,9 +1759,7 @@ public final class CatanCommands {
 
         TradeProposal proposal = data.tradeProposal(proposalId);
         if (proposal == null || !sender.id().equals(proposal.senderNationId())) {
-            source.sendFailure(Component.literal(
-                    "No outgoing trade proposal with id " + proposalId + "."));
-            return 0;
+            return tradeRefused(source, player, "This outgoing offer is no longer available.");
         }
 
         creditTradeAsset(sender, proposal.offeredAsset(), proposal.offeredAmount());
@@ -1773,8 +1768,14 @@ public final class CatanCommands {
 
         source.sendSuccess(() -> Component.literal(
                 "Canceled trade #" + proposal.id() + ". Escrow was refunded."), true);
-        NationDashboard.open(player);
+        NationDashboard.open(player, "Offer withdrawn. Your stock has been returned.");
         return 1;
+    }
+
+    private static int tradeRefused(CommandSourceStack source, ServerPlayer player, String reason) {
+        source.sendFailure(Component.literal(reason));
+        NationDashboard.refreshOpen(player, reason);
+        return 0;
     }
 
     private static String resourceListText(

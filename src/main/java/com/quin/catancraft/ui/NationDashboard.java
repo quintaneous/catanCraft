@@ -22,6 +22,8 @@ import com.quin.catancraft.world.IndustrialPlotService;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.List;
 
 public final class NationDashboard {
@@ -30,15 +32,19 @@ public final class NationDashboard {
     public static boolean open(ServerPlayer player) { return open(player, ""); }
 
     public static boolean open(ServerPlayer player, String notice) {
-        return send(player, notice, false);
+        return send(player, notice, "");
     }
 
     /** A completion packet updates an already-open menu; the client ignores it while playing. */
     public static void refreshDefenses(ServerPlayer player, String notice) {
-        send(player, notice, true);
+        send(player, notice, "V|defense_refresh");
     }
 
-    private static boolean send(ServerPlayer player, String notice, boolean refreshOnly) {
+    public static void refreshOpen(ServerPlayer player, String notice) {
+        send(player, notice, "V|dashboard_refresh");
+    }
+
+    private static boolean send(ServerPlayer player, String notice, String view) {
         CatanSavedData data = CatanSavedData.get(player.server);
         NationData nation = data.nationForPlayer(player.getUUID());
         if (nation == null) return false;
@@ -60,7 +66,7 @@ public final class NationDashboard {
                 .toList();
 
         List<String> lines = new ArrayList<>();
-        if(refreshOnly)lines.add("V|defense_refresh");
+        if (!view.isEmpty()) lines.add(view);
         if(!notice.isBlank())lines.add("M|"+DefenseMenuRows.safe(notice));
         lines.add("I|" + nation.id());
         lines.add("H|" + nation.name());
@@ -126,6 +132,10 @@ public final class NationDashboard {
 
         lines.add("S|trade|TRADE • " +
                 (incomingTrades.size() + outgoingTrades.size()) + " pending");
+        if (leader) {
+            lines.add("C|trade_create|New offer");
+            lines.add("D|Your offer is set aside until the other nation replies. Withdrawing it returns your stock.");
+        }
         if (incomingTrades.isEmpty() && outgoingTrades.isEmpty()) {
             lines.add("D|No pending trade proposals.");
         }
@@ -133,19 +143,19 @@ public final class NationDashboard {
         for (TradeProposal proposal : incomingTrades) {
             NationData sender = data.nation(proposal.senderNationId());
             String senderName = sender == null ? "Unknown Nation" : sender.name();
-            lines.add("Y|INCOMING #" + proposal.id() + " • " + senderName);
-            lines.add("G|  They offer: " + tradeAssetText(
+            lines.add("Y|Offer from " + senderName);
+            lines.add("G|  You get: " + tradeAssetText(
                     proposal.offeredAsset(), proposal.offeredAmount()));
-            lines.add("D|  They request: " + tradeAssetText(
+            lines.add("D|  You give: " + tradeAssetText(
                     proposal.requestedAsset(), proposal.requestedAmount()));
             if (leader) {
                 lines.add(action(
                         "nation trade accept " + proposal.id(),
-                        "Accept trade #" + proposal.id()
+                        "Accept offer"
                 ));
                 lines.add(action(
                         "nation trade decline " + proposal.id(),
-                        "Decline trade #" + proposal.id()
+                        "Decline offer"
                 ));
             }
         }
@@ -153,23 +163,19 @@ public final class NationDashboard {
         for (TradeProposal proposal : outgoingTrades) {
             NationData recipient = data.nation(proposal.recipientNationId());
             String recipientName = recipient == null ? "Unknown Nation" : recipient.name();
-            lines.add("B|OUTGOING #" + proposal.id() + " • " + recipientName);
-            lines.add("D|  Escrowed: " + tradeAssetText(
+            lines.add("B|Offer to " + recipientName);
+            lines.add("D|  Set aside: " + tradeAssetText(
                     proposal.offeredAsset(), proposal.offeredAmount()));
-            lines.add("D|  Requested: " + tradeAssetText(
+            lines.add("D|  You asked for: " + tradeAssetText(
                     proposal.requestedAsset(), proposal.requestedAmount()));
             if (leader) {
                 lines.add(action(
                         "nation trade cancel " + proposal.id(),
-                        "Cancel trade #" + proposal.id()
+                        "Withdraw offer"
                 ));
             }
         }
 
-        if (leader) {
-            lines.add("C|trade_create|Create Trade Proposal");
-            lines.add("D|Offered assets are escrowed until accepted, declined, or canceled.");
-        }
         lines.add("X|trade");
         lines.add("");
 
@@ -193,8 +199,7 @@ public final class NationDashboard {
             lines.add("D|X=" + activeMonument.x() +
                     " Y=" + activeMonument.y() +
                     " Z=" + activeMonument.z() +
-                    " • Radius " + activeMonument.radius() +
-                    " • Vertical ±12");
+                    " • Capture radius " + activeMonument.radius() + " blocks");
             lines.add("D|Capture: " + percent + "% • " + holder);
         }
         lines.add("X|monument");
@@ -204,12 +209,13 @@ public final class NationDashboard {
         if (territories.isEmpty()) {
             lines.add("Y|No territory assigned yet.");
         } else {
+            Map<ResourceType, FactoryTarget> targets = highestFactoryTargets(territories);
             for (TerritoryData territory : territories) {
                 lines.add("T|" + territory.id() + "|" +
                         territory.name() + " • " + resourceListText(territory.rawResources()) +
                         " • City L" + territory.cityLevel() +
                         " • Producer L" + territory.producerLevel());
-                addTerritory(lines, nation, territory, leader);
+                addTerritory(lines, nation, territory, leader, targets);
                 String baseStatus = com.quin.catancraft.world.CityBasePreparation.status(player.server,territory.id());
                 if (!baseStatus.isEmpty()) lines.add("D|" + baseStatus);
                 String recoveryStatus = com.quin.catancraft.world.PaidRecoveryService.status(player.server,territory.id());
@@ -243,18 +249,52 @@ public final class NationDashboard {
 
         if (!leader) {
             lines.add("");
-            lines.add("D|Only the nation leader can spend national resources in V0.1.");
+            lines.add("D|Your nation leader manages spending and trade offers.");
         }
 
         NationNetwork.openDashboard(player, lines);
         return true;
     }
 
+    private record FactoryTarget(String city, String plant, long amount) {}
+
+    // Each processor checks the national stockpile, so targets from different sites do not add up.
+    private static Map<ResourceType, FactoryTarget> highestFactoryTargets(List<TerritoryData> owned) {
+        Map<ResourceType, FactoryTarget> targets = new EnumMap<>(ResourceType.class);
+        for (TerritoryData city : owned) {
+            for (BuildingInstance building : city.buildings()) {
+                BuildingType type = building.type();
+                if (!type.isProcessor()) continue;
+                FactoryTarget highest = targets.get(type.output());
+                if (highest == null || building.targetStock() > highest.amount()) {
+                    targets.put(type.output(), new FactoryTarget(city.name(), type.displayName(), building.targetStock()));
+                }
+            }
+        }
+        return targets;
+    }
+
+    private static void addUpgradeTargetHints(List<String> lines, NationData nation, EconomyCost nextCity,
+                                              Map<ResourceType, FactoryTarget> targets, boolean leader) {
+        nextCity.resources().forEach((resource, required) -> {
+            FactoryTarget factory = targets.get(resource);
+            long stock = nation.resource(resource);
+            if (stock >= required || factory == null || factory.amount() >= required) return;
+
+            String adjust = leader ? "Raise" : "Ask your leader to raise";
+            lines.add("Y|" + pretty(resource) + " " + stock + "/" + required +
+                    ". Highest factory target is " + factory.amount() + ". " + adjust +
+                    " it in Territories → " + factory.city() + " → Buildings → " + factory.plant() +
+                    " (Target +50), or trade for the rest.");
+        });
+    }
+
     private static void addTerritory(
             List<String> lines,
             NationData nation,
             TerritoryData territory,
-            boolean leader
+            boolean leader,
+            Map<ResourceType, FactoryTarget> targets
     ) {
         int developmentCap = developmentSlotCap(territory);
 
@@ -289,6 +329,7 @@ public final class NationDashboard {
             } else {
                 lines.add("D|Next city upgrade • " + nextCity.describe());
             }
+            addUpgradeTargetHints(lines, nation, nextCity, targets, leader);
         } else {
             lines.add("G|City max level");
         }
@@ -326,7 +367,7 @@ public final class NationDashboard {
                 BuildingInstance building = territory.buildings().get(i);
                 BuildingType type = building.type();
 
-                String detail = "[" + i + "] " + type.displayName() +
+                String detail = type.displayName() +
                         " L" + building.level() +
                         (building.plotId().isBlank() ? "" : " • " + building.plotId());
 

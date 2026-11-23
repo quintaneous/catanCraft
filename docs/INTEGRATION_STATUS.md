@@ -1,3 +1,11 @@
+## UI-01 — nation dashboard and click-through trade, 2026-11-22
+
+On this successor branch the dashboard puts the starting-city choice first for founders and highlights resources with a negative forecast. Members and roles are available under Nation details. Trade leaders choose a partner and named resources or money, adjust quantities, review the reservation and send. Incoming offers read from the recipient's perspective. The server supplies current choices on opening the form and rechecks the existing permissions and balances on submission. Protocol 7 requires matching clients and servers.
+
+City upgrade details also identify an owned factory when every target for a needed processed resource is below the upgrade cost. The panel shows current and required stock and where a leader can adjust its target. Headless checks covered leaders and members, multiple factories, sufficient stock, absent production and higher targets.
+
+Headless checks exercised actual Minecraft controls at 320×240, 426×240 and 854×480, including partner and asset pagination, insufficient stock, resize and Back, quoted nation names, duplicate submit protection and the outgoing command. The dashboard routing check exercised the Trade tab and rejected responses for other nations and pages. Packet checks covered money and all 14 stocks, names with punctuation and 64-bit amounts. A connected client and server still need the visual and transaction acceptance pass tracked under [#17](https://github.com/quintaneous/catanCraft/issues/17). The existing gameplay candidate on #15 has its own source-bound results.
+
 ## ECO-02 / UI-01 — resource forecasts and combined City D testing, 2026-11-22
 
 The Resources page shows the stockpile and the signed change expected at the next 15-minute settlement for all 14 resources. It refreshes from the server while open and rechecks nation membership. A detached balance copy uses the production settlement order, including territorial Agriculture upkeep and competing processor inputs. Protocol 6 requires matching client and server builds.

@@ -8,6 +8,7 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,6 +31,8 @@ public final class NationDashboardScreen extends Screen {
     private static final Set<String> OPEN_TERRITORY_SECTIONS = new HashSet<>();
 
     private List<String> lines;
+    private boolean showNationDetails;
+    private HitTarget keyboardTarget;
     private final List<HitTarget> hitTargets = new ArrayList<>();
 
     private Page page;
@@ -44,7 +47,7 @@ public final class NationDashboardScreen extends Screen {
     public NationDashboardScreen(List<String> lines) {
         super(Component.literal("Nation Dashboard"));
         updateLines(lines);
-        this.page = LAST_PAGE;
+        this.page = lines.contains("H|CHOOSE STARTING CITY") ? Page.OVERVIEW : LAST_PAGE;
     }
 
     /** Preserve selected page, expanded territories/sections and scroll on server refresh. */
@@ -53,6 +56,11 @@ public final class NationDashboardScreen extends Screen {
         resources = ResourcePage.from(lines);
         resourceViewId = UUID.randomUUID();
         awaitingDefenseQuote = false;
+        keyboardTarget = null;
+    }
+
+    boolean showingTradeFor(String id) {
+        return page == Page.TRADE && resources.nationId() != null && resources.nationId().toString().equals(id);
     }
 
     public void applyResourceRefresh(List<String> fresh) {
@@ -98,21 +106,11 @@ public final class NationDashboardScreen extends Screen {
         graphics.fill(left, TOP, right, bottom, 0xF012161D);
         graphics.fill(left, TOP, right, TOP + HEADER_HEIGHT, 0xFF202A38);
 
-        String nationName = nationName();
-        graphics.drawString(font, nationName, left + 14, TOP + 9, 0xFFFFFF, false);
-        graphics.drawString(
-                font,
-                "NATION CONTROL",
-                right - 14 - font.width("NATION CONTROL"),
-                TOP + 9,
-                0x8B949E,
-                false
-        );
+        graphics.drawString(font, font.plainSubstrByWidth(nationName(), panelWidth - 28),
+                left + 14, TOP + 12, 0xFFFFFF, false);
 
         int tabsTop = TOP + HEADER_HEIGHT;
-        renderTabs(graphics, mouseX, mouseY, left, right, tabsTop);
-
-        int contentTop = tabsTop + TAB_HEIGHT + 7;
+        int contentTop = renderTabs(graphics, mouseX, mouseY, left, right, tabsTop) + 7;
         String notice=lines.stream().filter(line->line.startsWith("M|")).map(line->line.substring(2)).findFirst().orElse("");
         if(!notice.isBlank()) {
             var wrapped=font.split(Component.literal(notice),panelWidth-32);
@@ -146,11 +144,17 @@ public final class NationDashboardScreen extends Screen {
         graphics.disableScissor();
 
         lastContentHeight = Math.max(0, endY - startY);
+        clampScroll();
         drawScrollbar(graphics, right, contentTop, contentBottom);
 
+        if (keyboardTarget != null && hitTargets.contains(keyboardTarget)) {
+            graphics.renderOutline(keyboardTarget.x1(), keyboardTarget.y1(),
+                    keyboardTarget.x2() - keyboardTarget.x1(), keyboardTarget.y2() - keyboardTarget.y1(), 0xFFFFFFFF);
+        }
         graphics.drawCenteredString(
                 font,
-                "Click territory and section rows to expand • Mouse wheel to scroll • Esc to close",
+                keyboardTarget != null ? "Tab to select   •   Enter to open   •   ↑ ↓ to scroll"
+                        : lastContentHeight > lastVisibleHeight ? "Scroll for more   •   Esc to close" : "Esc to close",
                 this.width / 2,
                 bottom + 5,
                 0x7D8590
@@ -159,7 +163,7 @@ public final class NationDashboardScreen extends Screen {
         super.render(graphics, mouseX, mouseY, partialTick);
     }
 
-    private void renderTabs(
+    private int renderTabs(
             GuiGraphics graphics,
             int mouseX,
             int mouseY,
@@ -169,41 +173,45 @@ public final class NationDashboardScreen extends Screen {
     ) {
         Page[] pages = Page.values();
         int available = right - left - 12;
-        int tabWidth = available / pages.length;
-        int x = left + 6;
-
+        int widest = 0;
+        for (Page candidate : pages) widest = Math.max(widest, font.width(candidate.label));
+        int columns = available / pages.length >= widest + 8 ? pages.length : 3;
+        int rowTop = top;
         for (int i = 0; i < pages.length; i++) {
             Page candidate = pages[i];
-            int x2 = i == pages.length - 1 ? right - 6 : x + tabWidth;
+            int column = i % columns;
+            rowTop = top + i / columns * TAB_HEIGHT;
+            int x = left + 6 + available * column / columns;
+            int x2 = left + 6 + available * (column + 1) / columns;
             boolean selected = candidate == page;
             boolean hovered = mouseX >= x && mouseX <= x2
-                    && mouseY >= top && mouseY <= top + TAB_HEIGHT;
+                    && mouseY >= rowTop && mouseY <= rowTop + TAB_HEIGHT;
 
             graphics.fill(
                     x,
-                    top,
+                    rowTop,
                     x2 - 2,
-                    top + TAB_HEIGHT,
+                    rowTop + TAB_HEIGHT,
                     selected
                             ? 0xFF344A63
                             : hovered ? 0xFF293847 : 0xFF1B232E
             );
             if (selected) {
-                graphics.fill(x, top + TAB_HEIGHT - 2, x2 - 2,
-                        top + TAB_HEIGHT, 0xFF79C0FF);
+                graphics.fill(x, rowTop + TAB_HEIGHT - 2, x2 - 2,
+                        rowTop + TAB_HEIGHT, 0xFF79C0FF);
             }
             graphics.drawCenteredString(
                     font,
                     candidate.label,
                     (x + x2 - 2) / 2,
-                    top + 7,
+                    rowTop + 7,
                     selected ? 0xFFFFFF : 0xAAB4C0
             );
             hitTargets.add(new HitTarget(
-                    x, top, x2 - 2, top + TAB_HEIGHT,
+                    x, rowTop, x2 - 2, rowTop + TAB_HEIGHT,
                     HitKind.PAGE, candidate.name()));
-            x = x2;
         }
+        return rowTop + TAB_HEIGHT;
     }
 
     private int renderOverview(
@@ -216,49 +224,31 @@ public final class NationDashboardScreen extends Screen {
             int contentTop,
             int contentBottom
     ) {
+        int startIndex = lines.indexOf("H|CHOOSE STARTING CITY");
+        if (startIndex >= 0) {
+            boolean leader = "Leader".equals(findTopValue("Role:", "Member"));
+            String heading = leader ? "H|Choose your starting city" : "H|Your leader chooses the starting city";
+            y = drawEncodedLine(graphics, mouseX, mouseY, left, right, y, contentTop, contentBottom, heading);
+            for (int i = startIndex + 1; i < lines.size() && !lines.get(i).isEmpty(); i++) {
+                y = drawEncodedLine(graphics, mouseX, mouseY, left, right, y, contentTop, contentBottom, lines.get(i));
+            }
+            y += GAP;
+        }
         String treasury = findTopValue("Treasury:", "$0");
-        String members = findTopValue("Members:", "0");
-        String territories = findTopValue("Territories:", "0");
-        String role = findTopValue("Role:", "Member");
-        String quickStock = findTopLine("Quick stock:");
+        y = drawEncodedLine(graphics, mouseX, mouseY, left, right, y, contentTop, contentBottom,
+                "G|Treasury  " + treasury);
+        y += GAP;
 
-        int cardGap = 6;
-        int cardWidth = (right - left - 28 - cardGap * 3) / 4;
-        int cardLeft = left + 14;
-
-        y = drawStatCard(graphics, cardLeft, y, cardWidth,
-                "TREASURY", treasury, 0x7EE787);
-        drawStatCard(graphics, cardLeft + (cardWidth + cardGap), y - 37, cardWidth,
-                "MEMBERS", members, 0x79C0FF);
-        drawStatCard(graphics, cardLeft + 2 * (cardWidth + cardGap), y - 37, cardWidth,
-                "TERRITORIES", territories, 0xFFD166);
-        drawStatCard(graphics, cardLeft + 3 * (cardWidth + cardGap), y - 37, cardWidth,
-                "ROLE", role, 0xD2A8FF);
-
-        y += 4;
-        graphics.fill(left + 14, y, right - 14, y + 28, 0xCC1A222C);
-        graphics.drawString(font, "QUICK STOCK", left + 22, y + 5, 0x8B949E, false);
-        graphics.drawString(
-                font,
-                quickStock.isBlank() ? "No stock data." : quickStock,
-                left + 22,
-                y + 16,
-                0xD7DEE8,
-                false
-        );
-        y += 35;
-
-        graphics.drawString(font, "AT A GLANCE", left + 14, y, 0xFFD166, false);
-        y += 15;
-
-        String resourceLabel = resources.summary();
+        String resourceLabel = resources.declining().isEmpty()
+                ? cleanSectionSummary(resources.summary(), "Resources")
+                : resources.declining();
         String tradeLabel = sectionLabel("trade");
         String monumentLabel = sectionLabel("monument");
         String territoryLabel = sectionLabel("territories");
         String expansionLabel = sectionLabel("expansion");
 
         y = drawOverviewRow(graphics, left, right, y, "Resources",
-                cleanSectionSummary(resourceLabel, "Resources"), Page.RESOURCES,
+                resourceLabel, Page.RESOURCES,
                 mouseX, mouseY, contentTop, contentBottom);
         y = drawOverviewRow(graphics, left, right, y, "Territories",
                 cleanSectionSummary(territoryLabel, "Territories"), Page.TERRITORIES,
@@ -273,35 +263,13 @@ public final class NationDashboardScreen extends Screen {
                 cleanSectionSummary(expansionLabel, "Available Expansion"), Page.EXPANSION,
                 mouseX, mouseY, contentTop, contentBottom);
 
-        List<String> outside = outsideSectionLines();
-        boolean startBlock = false;
-        for (String encoded : outside) {
-            if (encoded.startsWith("H|CHOOSE STARTING CITY")) {
-                startBlock = true;
-                y += 5;
-            }
-            if (!startBlock) continue;
-            y = drawEncodedLine(
-                    graphics, mouseX, mouseY, left, right, y,
-                    contentTop, contentBottom, encoded);
+        y = drawEncodedLine(graphics, mouseX, mouseY, left, right, y, contentTop, contentBottom,
+                "C|nation_details|" + (showNationDetails ? "Hide nation details" : "Show nation details"));
+        if (showNationDetails) {
+            y = drawEncodedLine(graphics, mouseX, mouseY, left, right, y, contentTop, contentBottom,
+                    "D|Members  " + findTopValue("Members:", "0") + "     Your role  " + findTopValue("Role:", "Member"));
         }
-
         return y;
-    }
-
-    private int drawStatCard(
-            GuiGraphics graphics,
-            int x,
-            int y,
-            int width,
-            String label,
-            String value,
-            int valueColor
-    ) {
-        graphics.fill(x, y, x + width, y + 32, 0xCC1A222C);
-        graphics.drawString(font, label, x + 7, y + 5, 0x7D8590, false);
-        graphics.drawString(font, value, x + 7, y + 17, valueColor, false);
-        return y + 37;
     }
 
     private int drawOverviewRow(
@@ -322,18 +290,23 @@ public final class NationDashboardScreen extends Screen {
         boolean hovered = mouseX >= x1 && mouseX <= x2
                 && mouseY >= y && mouseY <= y + ROW_HEIGHT;
 
-        graphics.fill(x1, y, x2, y + ROW_HEIGHT,
-                hovered ? 0xEE2E4053 : 0xCC1A2633);
+        boolean stacked = font.width(title) + font.width(summary) + 24 > x2 - x1;
+        var detail = font.split(Component.literal(summary), x2 - x1 - 16);
+        int height = ROW_HEIGHT + (stacked ? detail.size() * LINE_HEIGHT : 0);
+        graphics.fill(x1, y, x2, y + height, hovered ? 0xEE2E4053 : 0xCC1A2633);
         graphics.drawString(font, title, x1 + 8, y + 6, 0xFFFFFF, false);
-        int summaryX = x2 - 8 - font.width(summary);
-        graphics.drawString(font, summary, summaryX, y + 6, 0x8B949E, false);
-
-        if (y + ROW_HEIGHT >= contentTop && y <= contentBottom) {
-            hitTargets.add(new HitTarget(
-                    x1, y, x2, y + ROW_HEIGHT,
+        if (stacked) {
+            for (int i = 0; i < detail.size(); i++) {
+                graphics.drawString(font, detail.get(i), x1 + 8, y + 6 + (i + 1) * LINE_HEIGHT, 0xAAB4C0, false);
+            }
+        } else {
+            graphics.drawString(font, summary, x2 - 8 - font.width(summary), y + 6, 0xAAB4C0, false);
+        }
+        if (y + height >= contentTop && y <= contentBottom) {
+            hitTargets.add(new HitTarget(x1, Math.max(y, contentTop), x2, Math.min(y + height, contentBottom),
                     HitKind.PAGE, target.name()));
         }
-        return y + ROW_HEIGHT + GAP;
+        return y + height + GAP;
     }
 
     private int renderResources(GuiGraphics graphics, int left, int right, int y) {
@@ -341,9 +314,13 @@ public final class NationDashboardScreen extends Screen {
         int width = right - left - 28;
         int gap = 10;
         int column = (width - gap) / 2;
-        graphics.drawString(font, "Stockpile (net next " + EconomyBalance.CYCLE_MINUTES + "-min cycle)",
-                x, y, 0xAAB4C0, false);
-        y += 17;
+        String legend = "Each balance shows its expected change over the next "
+                + EconomyBalance.CYCLE_MINUTES + "-minute production cycle.";
+        for (var line : font.split(Component.literal(legend), width)) {
+            graphics.drawString(font, line, x, y, 0xAAB4C0, false);
+            y += LINE_HEIGHT;
+        }
+        y += GAP;
         if (column < 175) {
             y = drawResourceGroup(graphics, x, y, width, "RAW RESOURCES", resources.raw());
             return drawResourceGroup(graphics, x, y + GAP, width, "PROCESSED", resources.processed());
@@ -379,13 +356,14 @@ public final class NationDashboardScreen extends Screen {
 
     private record ResourceCard(String name, String amount, String change) {}
 
-    private record ResourcePage(UUID nationId, String summary, List<ResourceCard> raw, List<ResourceCard> processed) {
+    private record ResourcePage(UUID nationId, String summary, String declining, List<ResourceCard> raw, List<ResourceCard> processed) {
         private static ResourcePage from(List<String> rows) {
             UUID nation = null;
             String summary = "";
             List<ResourceCard> raw = new ArrayList<>();
             List<ResourceCard> processed = new ArrayList<>();
             List<ResourceCard> group = null;
+            List<String> deficits = new ArrayList<>();
             for (String row : rows) {
                 if (row.startsWith("I|")) nation = UUID.fromString(row.substring(2));
                 else if (row.startsWith("S|resources|")) summary = row.substring("S|resources|".length());
@@ -394,10 +372,18 @@ public final class NationDashboardScreen extends Screen {
                 else if (row.equals("X|resources")) break;
                 else if (group != null && row.startsWith("Q|")) {
                     String[] parts = row.split("\\|", 4);
-                    if (parts.length == 4) group.add(new ResourceCard(parts[1], parts[2], parts[3]));
+                    if (parts.length == 4) {
+                        group.add(new ResourceCard(parts[1], parts[2], parts[3]));
+                        if (parts[3].startsWith("-")) deficits.add(parts[1] + " " + parts[3]);
+                    }
                 }
             }
-            return new ResourcePage(nation, summary, List.copyOf(raw), List.copyOf(processed));
+            String declining = switch (deficits.size()) {
+                case 0 -> "";
+                case 1 -> deficits.get(0) + " next cycle";
+                default -> deficits.size() + " resources declining next cycle";
+            };
+            return new ResourcePage(nation, summary, declining, List.copyOf(raw), List.copyOf(processed));
         }
     }
 
@@ -414,44 +400,39 @@ public final class NationDashboardScreen extends Screen {
         List<String> section = sectionLines("territories");
         boolean territoryHidden = false;
         boolean subsectionHidden = false;
-        String currentTerritory = "";
 
         for (String encoded : section) {
             if (encoded.startsWith("T|")) {
                 TerritoryRow territory = TerritoryRow.parse(encoded);
                 if (territory == null) continue;
 
-                currentTerritory = territory.id();
                 boolean open = OPEN_TERRITORIES.contains(territory.id());
                 territoryHidden = !open;
                 subsectionHidden = false;
 
                 int x1 = left + 14;
                 int x2 = right - 14;
+                var label = font.split(Component.literal((open ? "▼ " : "▶ ") + territory.label()), x2 - x1 - 16);
+                int rowHeight = 26 + Math.max(0, label.size() - 1) * LINE_HEIGHT;
                 boolean hovered = mouseX >= x1 && mouseX <= x2
-                        && mouseY >= y && mouseY <= y + 26;
-                graphics.fill(x1, y, x2, y + 26,
+                        && mouseY >= y && mouseY <= y + rowHeight;
+                graphics.fill(x1, y, x2, y + rowHeight,
                         hovered ? 0xEE31475F : 0xDD202C3A);
-                graphics.drawString(
-                        font,
-                        (open ? "▼ " : "▶ ") + territory.label(),
-                        x1 + 8,
-                        y + 9,
-                        open ? 0xFFFFFF : 0x79C0FF,
-                        false
-                );
+                for (int i = 0; i < label.size(); i++) {
+                    graphics.drawString(font, label.get(i), x1 + 8, y + 9 + i * LINE_HEIGHT,
+                            open ? 0xFFFFFF : 0x79C0FF, false);
+                }
 
-                if (y + 26 >= contentTop && y <= contentBottom) {
+                if (y + rowHeight >= contentTop && y <= contentBottom) {
                     hitTargets.add(new HitTarget(
-                            x1, y, x2, y + 26,
+                            x1, Math.max(y, contentTop), x2, Math.min(y + rowHeight, contentBottom),
                             HitKind.TERRITORY, territory.id()));
                 }
-                y += 31;
+                y += rowHeight + GAP;
                 continue;
             }
 
             if (encoded.startsWith("E|")) {
-                currentTerritory = "";
                 territoryHidden = false;
                 subsectionHidden = false;
                 y += 4;
@@ -471,28 +452,26 @@ public final class NationDashboardScreen extends Screen {
 
                 int x1 = left + 24;
                 int x2 = right - 24;
+                var label = font.split(Component.literal((open ? "▼ " : "▶ ") + subsection.label()), x2 - x1 - 16);
+                int rowHeight = 22 + Math.max(0, label.size() - 1) * LINE_HEIGHT;
                 boolean hovered = mouseX >= x1 && mouseX <= x2
-                        && mouseY >= y && mouseY <= y + 22;
+                        && mouseY >= y && mouseY <= y + rowHeight;
 
                 graphics.fill(
-                        x1, y, x2, y + 22,
+                        x1, y, x2, y + rowHeight,
                         hovered ? 0xEE2A3A4C : 0xCC192530
                 );
-                graphics.drawString(
-                        font,
-                        (open ? "▼ " : "▶ ") + subsection.label(),
-                        x1 + 8,
-                        y + 7,
-                        open ? 0xFFFFFF : 0xAAB4C0,
-                        false
-                );
+                for (int i = 0; i < label.size(); i++) {
+                    graphics.drawString(font, label.get(i), x1 + 8, y + 7 + i * LINE_HEIGHT,
+                            open ? 0xFFFFFF : 0xAAB4C0, false);
+                }
 
-                if (y + 22 >= contentTop && y <= contentBottom) {
+                if (y + rowHeight >= contentTop && y <= contentBottom) {
                     hitTargets.add(new HitTarget(
-                            x1, y, x2, y + 22,
+                            x1, Math.max(y, contentTop), x2, Math.min(y + rowHeight, contentBottom),
                             HitKind.SUBSECTION, key));
                 }
-                y += 27;
+                y += rowHeight + GAP;
                 continue;
             }
 
@@ -549,31 +528,31 @@ public final class NationDashboardScreen extends Screen {
 
             int x1 = left + 22;
             int x2 = right - 22;
+            var label = font.split(Component.literal(action.label()), x2 - x1 - 14);
+            int rowHeight = ROW_HEIGHT + Math.max(0, label.size() - 1) * LINE_HEIGHT;
             boolean hovered = mouseX >= x1 && mouseX <= x2
-                    && mouseY >= y && mouseY <= y + ROW_HEIGHT;
+                    && mouseY >= y && mouseY <= y + rowHeight;
             boolean special = encoded.startsWith("C|");
 
             graphics.fill(
-                    x1, y, x2, y + ROW_HEIGHT,
+                    x1, y, x2, y + rowHeight,
                     special
                             ? (hovered ? 0xEE62477C : 0xCC463258)
                             : (hovered ? 0xEE36506E : 0xCC28384D)
             );
-            graphics.drawCenteredString(
-                    font,
-                    action.label(),
-                    (x1 + x2) / 2,
-                    y + 6,
-                    hovered ? 0xFFFFFF : 0xD7DEE8
-            );
+            for (int i = 0; i < label.size(); i++) {
+                var line = label.get(i);
+                graphics.drawString(font, line, (x1 + x2 - font.width(line)) / 2, y + 6 + i * LINE_HEIGHT,
+                        hovered ? 0xFFFFFF : 0xD7DEE8, false);
+            }
 
-            if (y + ROW_HEIGHT >= contentTop && y <= contentBottom) {
+            if (y + rowHeight >= contentTop && y <= contentBottom) {
                 hitTargets.add(new HitTarget(
-                        x1, y, x2, y + ROW_HEIGHT,
+                        x1, Math.max(y, contentTop), x2, Math.min(y + rowHeight, contentBottom),
                         HitKind.ACTION,
                         (special ? "C:" : "A:") + action.command()));
             }
-            return y + ROW_HEIGHT + GAP;
+            return y + rowHeight + GAP;
         }
 
         String text = encoded;
@@ -622,24 +601,6 @@ public final class NationDashboardScreen extends Screen {
                 continue;
             }
             if (inside) result.add(line);
-        }
-        return result;
-    }
-
-    private List<String> outsideSectionLines() {
-        List<String> result = new ArrayList<>();
-        boolean inSection = false;
-
-        for (String line : lines) {
-            if (line.startsWith("S|")) {
-                inSection = true;
-                continue;
-            }
-            if (line.startsWith("X|")) {
-                inSection = false;
-                continue;
-            }
-            if (!inSection) result.add(line);
         }
         return result;
     }
@@ -719,62 +680,98 @@ public final class NationDashboardScreen extends Screen {
     public boolean mouseClicked(double mouseX, double mouseY, int button) {
         if (button != 0) return super.mouseClicked(mouseX, mouseY, button);
 
+        keyboardTarget = null;
         for (HitTarget hit : hitTargets) {
-            if (!hit.contains(mouseX, mouseY)) continue;
-
-            if (hit.kind() == HitKind.PAGE) {
-                page = Page.valueOf(hit.value());
-                LAST_PAGE = page;
-                scroll = 0;
-                return true;
-            }
-
-            if (hit.kind() == HitKind.TERRITORY) {
-                if (!OPEN_TERRITORIES.add(hit.value())) {
-                    OPEN_TERRITORIES.remove(hit.value());
-                }
-                clampScroll();
-                return true;
-            }
-
-            if (hit.kind() == HitKind.SUBSECTION) {
-                if (!OPEN_TERRITORY_SECTIONS.add(hit.value())) {
-                    OPEN_TERRITORY_SECTIONS.remove(hit.value());
-                }
-                clampScroll();
-                return true;
-            }
-
-            if (hit.kind() == HitKind.ACTION) {
-                Minecraft minecraft = Minecraft.getInstance();
-                boolean clientAction = hit.value().startsWith("C:");
-                String command = hit.value().substring(2);
-
-                if (clientAction && command.equals("trade_create")) {
-                    minecraft.setScreen(new TradeProposalScreen(this));
-                } else if (minecraft.player != null
-                        && minecraft.player.connection != null) {
-                    if(command.startsWith("nation defense review ")) {
-                        if(awaitingDefenseQuote)return true;
-                        awaitingDefenseQuote=true;
-                        List<String> pending=new ArrayList<>(lines);
-                        pending.removeIf(line->line.startsWith("M|"));
-                        pending.add(0,"M|Checking the whole-side quote and placement contract...");
-                        lines=List.copyOf(pending);
-                    }
-                    minecraft.player.connection.sendCommand(command);
-                }
-                return true;
-            }
+            if (hit.contains(mouseX, mouseY)) return activate(hit);
         }
-
         return super.mouseClicked(mouseX, mouseY, button);
     }
 
     @Override
+    public boolean keyPressed(int key, int scanCode, int modifiers) {
+        if (key == GLFW.GLFW_KEY_TAB && !hitTargets.isEmpty()) {
+            int current = hitTargets.indexOf(keyboardTarget);
+            int offset = hasShiftDown() ? -1 : 1;
+            if (current == -1 && offset == -1) current = 0;
+            keyboardTarget = hitTargets.get(Math.floorMod(current + offset, hitTargets.size()));
+            return true;
+        }
+        if (key == GLFW.GLFW_KEY_ENTER || key == GLFW.GLFW_KEY_KP_ENTER || key == GLFW.GLFW_KEY_SPACE) {
+            if (keyboardTarget != null && hitTargets.contains(keyboardTarget)) return activate(keyboardTarget);
+        }
+        int distance = switch (key) {
+            case GLFW.GLFW_KEY_UP -> -ROW_HEIGHT;
+            case GLFW.GLFW_KEY_DOWN -> ROW_HEIGHT;
+            case GLFW.GLFW_KEY_PAGE_UP -> -lastVisibleHeight;
+            case GLFW.GLFW_KEY_PAGE_DOWN -> lastVisibleHeight;
+            default -> 0;
+        };
+        if (distance != 0) {
+            scroll += distance;
+            clampScroll();
+            keyboardTarget = null;
+            return true;
+        }
+        return super.keyPressed(key, scanCode, modifiers);
+    }
+
+    private boolean activate(HitTarget hit) {
+        if (hit.kind() == HitKind.PAGE) {
+            page = Page.valueOf(hit.value());
+            LAST_PAGE = page;
+            scroll = 0;
+            return true;
+        }
+
+        if (hit.kind() == HitKind.TERRITORY) {
+            if (!OPEN_TERRITORIES.add(hit.value())) {
+                OPEN_TERRITORIES.remove(hit.value());
+            }
+            clampScroll();
+            return true;
+        }
+
+        if (hit.kind() == HitKind.SUBSECTION) {
+            if (!OPEN_TERRITORY_SECTIONS.add(hit.value())) {
+                OPEN_TERRITORY_SECTIONS.remove(hit.value());
+            }
+            clampScroll();
+            return true;
+        }
+
+        if (hit.kind() == HitKind.ACTION) {
+            Minecraft minecraft = Minecraft.getInstance();
+            boolean clientAction = hit.value().startsWith("C:");
+            String command = hit.value().substring(2);
+
+            if (clientAction && command.equals("trade_create")) {
+                if (minecraft.player != null && minecraft.player.connection != null) {
+                    minecraft.player.connection.sendCommand("nation trade compose");
+                }
+            } else if (clientAction && command.equals("nation_details")) {
+                showNationDetails = !showNationDetails;
+            } else if (minecraft.player != null
+                    && minecraft.player.connection != null) {
+                if(command.startsWith("nation defense review ")) {
+                    if(awaitingDefenseQuote)return true;
+                    awaitingDefenseQuote=true;
+                    List<String> pending=new ArrayList<>(lines);
+                    pending.removeIf(line->line.startsWith("M|"));
+                    pending.add(0,"M|Checking price and placement…");
+                    lines=List.copyOf(pending);
+                }
+                minecraft.player.connection.sendCommand(command);
+            }
+            return true;
+        }
+        return false;
+    }
+
+    @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta) {
-        int maxScroll = Math.max(0, lastContentHeight - lastVisibleHeight);
-        scroll = Math.max(0, Math.min(maxScroll, scroll - delta * 26));
+        keyboardTarget = null;
+        scroll -= delta * 26;
+        clampScroll();
         return true;
     }
 
