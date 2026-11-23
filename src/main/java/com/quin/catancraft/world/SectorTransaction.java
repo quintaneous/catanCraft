@@ -59,15 +59,28 @@ public final class SectorTransaction {
         for(var e:cost.resources().entrySet())tag.putLong(e.getKey().id(),e.getValue());return tag;
     }
     public static CompoundTag describe(Plan p)throws IOException {
+        return description(p, null);
+    }
+    /** Compare in order, keeping only one additional encoded row live at a time. */
+    static boolean matchesDescription(Plan plan, CompoundTag saved) throws IOException {
+        return saved.equals(description(plan, saved));
+    }
+    private static CompoundTag description(Plan p, CompoundTag saved) throws IOException {
         if(p==null||p.sector()==null||p.sector().isBlank()||p.sourceRevision()==null||p.sourceRevision().isBlank()||p.targetRevision()==null||p.targetRevision().isBlank()||p.sourceRevision().equals(p.targetRevision())||p.sourceLevel()<0||p.sourceLevel()==Integer.MAX_VALUE||p.targetLevel()<0||p.targetLevel()!=p.sourceLevel()+1||p.cells().isEmpty()||p.cells().size()>250000||p.reads().size()>500000)throw new IOException("Invalid whole-sector source/target contract");
         CompoundTag spec=new CompoundTag();spec.putString("sector",p.sector());spec.putString("sourceRevision",p.sourceRevision());spec.putString("targetRevision",p.targetRevision());spec.putInt("sourceLevel",p.sourceLevel());spec.putInt("targetLevel",p.targetLevel());
         Set<BlockPos> positions=new HashSet<>();ListTag cells=new ListTag(),reads=new ListTag();int changes=0;
+        if (saved != null) {
+            cells = saved.getList("cells", Tag.TAG_COMPOUND);
+            reads = saved.getList("reads", Tag.TAG_COMPOUND);
+            if (cells.size() != p.cells().size() || reads.size() != p.reads().size()) return null;
+        }
+        int cellIndex = 0, readIndex = 0;
         for(Cell c:p.cells()){
             if(!positions.add(c.pos()))throw new IOException("Overlapping sector union cells");boolean changesCell=!c.before().equals(c.after());if(changesCell){changes++;if(c.before().hasBlockEntity()||c.after().hasBlockEntity()||!c.before().getFluidState().isEmpty()||!c.after().getFluidState().isEmpty())throw new IOException("Sector changes would replace an inventory/block entity or fluid");}
-            CompoundTag row=new CompoundTag();row.putLong("pos",c.pos().asLong());row.put("before",NbtUtils.writeBlockState(c.before()));row.put("after",NbtUtils.writeBlockState(c.after()));cells.add(row);
+            CompoundTag row=new CompoundTag();row.putLong("pos",c.pos().asLong());row.put("before",NbtUtils.writeBlockState(c.before()));row.put("after",NbtUtils.writeBlockState(c.after()));if (saved == null) cells.add(row); else if (!row.equals(cells.get(cellIndex++))) return null;
         }
         if(changes==0)throw new IOException("Whole-sector purchase has no declared changes");
-        for(Read r:p.reads()){if(!positions.add(r.pos()))throw new IOException("Sector protected reads overlap union or each other");CompoundTag row=new CompoundTag();row.putLong("pos",r.pos().asLong());row.put("state",NbtUtils.writeBlockState(r.state()));reads.add(row);}
+        for(Read r:p.reads()){if(!positions.add(r.pos()))throw new IOException("Sector protected reads overlap union or each other");CompoundTag row=new CompoundTag();row.putLong("pos",r.pos().asLong());row.put("state",NbtUtils.writeBlockState(r.state()));if (saved == null) reads.add(row); else if (!row.equals(reads.get(readIndex++))) return null;}
         spec.put("cells",cells);spec.put("reads",reads);p.naturalSupport().validate(p);
         if(p.naturalSupport().enabled())spec.put("naturalSupport",p.naturalSupport().describe());return spec;
     }
@@ -77,7 +90,7 @@ public final class SectorTransaction {
         for(Tag t:spec.getList("reads",Tag.TAG_COMPOUND)){CompoundTag row=(CompoundTag)t;reads.add(new Read(BlockPos.of(row.getLong("pos")),state(row.getCompound("state"))));}
         if(spec.contains("naturalSupport")&&!spec.contains("naturalSupport",Tag.TAG_COMPOUND))throw new IOException("Invalid natural support spec type");
         Plan plan=new Plan(spec.getString("sector"),spec.getString("sourceRevision"),spec.getString("targetRevision"),spec.getInt("sourceLevel"),spec.getInt("targetLevel"),cells,reads,SectorNaturalSupportPolicy.read(spec.getCompound("naturalSupport")));
-        if(!describe(plan).equals(spec))throw new IOException("Noncanonical recorded sector plan");return plan;
+        if(!matchesDescription(plan,spec))throw new IOException("Noncanonical recorded sector plan");return plan;
     }
     private static BlockState state(CompoundTag tag)throws IOException {
         BlockState state=NbtUtils.readBlockState(BuiltInRegistries.BLOCK.asLookup(),tag);if(!NbtUtils.writeBlockState(state).equals(tag))throw new IOException("Unknown recorded sector block state");return state;

@@ -7,30 +7,19 @@ import net.minecraft.nbt.*;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import com.google.common.collect.MapMaker;
+import static com.quin.catancraft.world.SectorGroupHistory.history;
 
 /** Qualified city composite lineage: one new side price/level with coordinated exclusive corner writes.
  * Schema 2 never adopts schema-1 City A or unrelated paid worlds; journals remain immutable. */
 final class SectorGroup53 {
     private SectorGroup53(){}
-    private static final Map<SectorContracts.Contract,Map<BlockPos,SectorContracts.Direction>> VALIDATED=Collections.synchronizedMap(new IdentityHashMap<>());
-    private record Cached(byte[] bytes,CompoundTag journal){}
-    private static final LinkedHashMap<Path,Cached> CACHE=new LinkedHashMap<>(16,.75f,true){protected boolean removeEldestEntry(Map.Entry<Path,Cached> e){return size()>12;}};
+    private static final Map<SectorContracts.Contract,Map<BlockPos,SectorContracts.Direction>> VALIDATED=new MapMaker().weakKeys().makeMap();
     private static Set<String> legacySockets;
-    private static final Map<CompoundTag,Boolean> VERIFIED_HISTORY=new IdentityHashMap<>();
-    private static final Map<CompoundTag,SectorTransaction.Plan> VERIFIED_OWN=new IdentityHashMap<>();
+    private static final Map<CompoundTag,Boolean> VERIFIED_HISTORY=new MapMaker().weakKeys().makeMap();
+    private static final Map<CompoundTag,SectorTransaction.Plan> VERIFIED_OWN=new MapMaker().weakKeys().weakValues().makeMap();
     private static String key(SectorService.Context c,String field){return "city_group_v1:"+c.city()+":"+field;}
     private static String value(SectorService.Context c,String field){String v=c.data().placedMapAsset(key(c,field));return v==null||v.equals("none")?"":v;}
-    private static synchronized CompoundTag history(Path file)throws IOException {
-        if(!Files.isRegularFile(file,LinkOption.NOFOLLOW_LINKS)||Files.size(file)>8*1024*1024+40)throw new IOException("Invalid bounded city group history");
-        byte[] before=sealedBytes(file);Cached old=CACHE.get(file);if(old!=null&&Arrays.equals(old.bytes(),before))return old.journal();
-        CompoundTag j=ProducerJournal.read(before);byte[] after=sealedBytes(file);if(!Arrays.equals(before,after))throw new IOException("City history changed while verifying");CACHE.put(file,new Cached(after,j));return j;
-    }
-    private static byte[] sealedBytes(Path file)throws IOException {
-        try(var in=Files.newByteChannel(file,Set.of(StandardOpenOption.READ,LinkOption.NOFOLLOW_LINKS))){
-            if(in.size()>8*1024*1024+40)throw new IOException("Oversized qualified city history");var out=new ByteArrayOutputStream();var buffer=java.nio.ByteBuffer.allocate(16384);int total=0;
-            for(int n;(n=in.read(buffer))!=-1;){if(n==0)continue;if((total+=n)>8*1024*1024+40)throw new IOException("Growing qualified city history");out.write(buffer.array(),0,n);buffer.clear();}return out.toByteArray();
-        }
-    }
     private static Path path(SectorService.Context c,String name)throws IOException {
         if(!name.matches("catancraft_sector_"+c.city()+"_(north|east|south|west)_[0-9a-f-]{36}_v1\\.dat"))throw new IOException("Invalid retained city group filename");
         Path dir=c.root().resolve("data");if(Files.isSymbolicLink(dir))throw new IOException("City group history directory symlink");return dir.resolve(name);
@@ -143,8 +132,8 @@ final class SectorGroup53 {
             CompoundTag id=child.getCompound("identity"),g=id.getCompound("cityGroup");
             if(!VERIFIED_HISTORY.containsKey(child)){
                 var side=SectorContracts.Direction.parse(id.getString("sector"));var expected=plan(c.city(),side,levels(c.city(),g.getCompound("beforeStates")),corners(g,"beforeOpenCorners"),delta);
-                if(!SectorTransaction.describe(expected).equals(child.getCompound("spec"))||!transition(c.city(),side,levels(c.city(),g.getCompound("beforeStates")),corners(g,"beforeOpenCorners")).afterConnections().equals(corners(g,"afterOpenCorners")))throw new IOException("Retained city lineage has foreign geometry or connections");
-                if(VERIFIED_HISTORY.size()>24)VERIFIED_HISTORY.clear();VERIFIED_HISTORY.put(child,Boolean.TRUE);
+                if(!SectorTransaction.matchesDescription(expected,child.getCompound("spec"))||!transition(c.city(),side,levels(c.city(),g.getCompound("beforeStates")),corners(g,"beforeOpenCorners")).afterConnections().equals(corners(g,"afterOpenCorners")))throw new IOException("Retained city lineage has foreign geometry or connections");
+                VERIFIED_HISTORY.put(child,Boolean.TRUE);
             }
             String parent=g.getString("parentFile");
             if(parent.isEmpty()){
@@ -167,7 +156,7 @@ final class SectorGroup53 {
         if(VALIDATED.containsKey(contract))return;
         var source=levels(c.city(),group.getCompound("beforeStates"));var open=corners(group,"beforeOpenCorners");var t=transition(c.city(),contract.sector(),source,open);var expected=plan(c.city(),contract.sector(),source,open,delta);
         if(!expected.equals(contract.plan())||!t.afterConnections().equals(corners(group,"afterOpenCorners"))||!roads(c.city(),delta).equals(contract.roads())||!cornerOwners().equals(contract.corners()))throw new IOException("Changed canonical qualified city group geometry/connection mode");
-        Map<BlockPos,SectorContracts.Direction> writes=new HashMap<>();t.writeOwners().forEach((p,d)->writes.put(p.offset(delta),d));if(VALIDATED.size()>32)VALIDATED.clear();VALIDATED.put(contract,Collections.unmodifiableMap(writes));
+        Map<BlockPos,SectorContracts.Direction> writes=new HashMap<>();t.writeOwners().forEach((p,d)->writes.put(p.offset(delta),d));VALIDATED.put(contract,Collections.unmodifiableMap(writes));
     }
     static boolean approvedWrite(SectorService.Context c,SectorContracts.Contract contract,BlockPos p)throws IOException {validateContract(c,contract);return VALIDATED.get(contract).containsKey(p);}
     static void requireCurrent(SectorService.Context c,SectorContracts.Contract contract,CompoundTag frozen,Path file,boolean terminalReadOnly)throws IOException {
@@ -177,9 +166,9 @@ final class SectorGroup53 {
         // Filename uniqueness and durable transaction identity are deliberately independent UUIDs.
         String ownId="";if(Files.exists(file,LinkOption.NOFOLLOW_LINKS)){CompoundTag own=history(file);if(!own.hasUUID("id")||!own.getCompound("identity").equals(frozen))throw new IOException("Changed current group journal identity");ownId=own.getUUID("id").toString();
             if(VERIFIED_OWN.get(own)!=contract.plan()){
-                if(own.getInt("schema")!=1||!SectorTransaction.describe(contract.plan()).equals(own.getCompound("spec")))throw new IOException("Current group source specification changed");
+                if(own.getInt("schema")!=1||!SectorTransaction.matchesDescription(contract.plan(),own.getCompound("spec")))throw new IOException("Current group source specification changed");
                 var cost=SectorTransaction.historicalCost(own.getCompound("cost"));if(cost.money()!=contract.cost().money()||!cost.resources().equals(contract.cost().resources()))throw new IOException("Current group historical price changed");
-                if(VERIFIED_OWN.size()>24)VERIFIED_OWN.clear();VERIFIED_OWN.put(own,contract.plan());
+                VERIFIED_OWN.put(own,contract.plan());
             }
         }
         if(!(cursor.equals(parentFile)&&receipt.equals(parentReceipt))&&!(cursor.equals(filename)&&(receipt.equals(ownId+":reserved")||receipt.equals(ownId+":paid"))))throw new IOException("City group superseded; old operation cannot overwrite later sector connections");
