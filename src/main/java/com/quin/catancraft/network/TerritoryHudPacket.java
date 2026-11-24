@@ -14,7 +14,12 @@ public final class TerritoryHudPacket {
     private final String label;
 
     public TerritoryHudPacket(String label) {
-        this.label = label == null ? "" : label;
+        if (label == null || label.length() <= MAX_LENGTH) {
+            this.label = label == null ? "" : label;
+        } else {
+            int end = Character.isHighSurrogate(label.charAt(MAX_LENGTH - 1)) ? MAX_LENGTH - 1 : MAX_LENGTH;
+            this.label = label.substring(0, end);
+        }
     }
 
     public static void encode(TerritoryHudPacket packet, FriendlyByteBuf buffer) {

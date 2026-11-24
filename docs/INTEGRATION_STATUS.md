@@ -990,3 +990,18 @@ full-map verifier’s 25 city-pad, lectern, bridge and central-district location
 were checked in the saved world. These file checks establish physical
 compatibility. Native founding, earned purchases, reload and friends joining
 are separate playtest results. The release qualification remains on 02b5e67.
+
+### Friends’ place-name HUD on Full Map Review 02
+
+The HUD now displays the authored town name inside the registered settlement
+footprint and the public district name inside its configured polygon. Leaving
+both clears the label, even within the same ownership tile. The existing
+territory lookup still governs ownership and expansion. Surveyed city bounds
+come from the rotated starter settlement, independently checked against all
+sixteen preinstalled city pads. Roads outside named areas have no HUD label.
+
+The standalone Java 17 regression in `tests/visual/PlaceLabelTest.java` accepts
+the original friends ZIP and its independent city-survey.json as arguments.
+It passed 410 position checks, six packet round trips, four client transitions
+and disconnect clearing. The graphical client still needs a visual walk across
+a town edge. Gameplay qualification continues on its separately pinned source.

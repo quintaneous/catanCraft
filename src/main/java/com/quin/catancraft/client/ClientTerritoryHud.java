@@ -5,6 +5,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.client.event.RenderGuiEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -22,6 +23,11 @@ public final class ClientTerritoryHud {
     }
 
     @SubscribeEvent
+    public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
+        label = "";
+    }
+
+    @SubscribeEvent
     public static void render(RenderGuiEvent.Post event) {
         Minecraft client = Minecraft.getInstance();
         if (client.player == null || client.level == null) {
@@ -31,13 +37,12 @@ public final class ClientTerritoryHud {
         if (client.options.hideGui || client.screen != null || label.isBlank()) return;
 
         Font font = client.font;
-        String message = "Territory: " + label;
         GuiGraphics graphics = event.getGuiGraphics();
         int centerX = event.getWindow().getGuiScaledWidth() / 2;
-        int width = font.width(message);
+        int width = font.width(label);
         int left = centerX - width / 2;
 
         graphics.fill(left - 6, 4, left + width + 6, 19, 0xB015202B);
-        graphics.drawString(font, message, left, 7, 0xFFE6EEF6, true);
+        graphics.drawString(font, label, left, 7, 0xFFE6EEF6, true);
     }
 }

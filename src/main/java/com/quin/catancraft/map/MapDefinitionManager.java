@@ -40,6 +40,7 @@ public final class MapDefinitionManager {
             "/data/catancraft/maps/season1_river_bridges_v3.json";
 
     private static CatanMapDefinition current = new CatanMapDefinition();
+    private static PlaceLabel placeLabels = new PlaceLabel(current);
     private static Map<String, TerritoryDefinition> territories = Map.of();
     private static Map<String, MonumentDefinition> monuments = Map.of();
     private static Map<String, MapZoneDefinition> publicZones = Map.of();
@@ -53,6 +54,10 @@ public final class MapDefinitionManager {
     public static Collection<MonumentDefinition> monuments() { return monuments.values(); }
     public static Collection<MapZoneDefinition> publicZones() { return publicZones.values(); }
     public static Collection<InfrastructureDefinition> infrastructure() { return infrastructure.values(); }
+
+    public static String placeLabelAt(ServerLevel level, BlockPos pos) {
+        return placeLabels.at(level.dimension().location().toString(), pos);
+    }
 
     @Nullable
     public static TerritoryDefinition territory(String id) {
@@ -119,6 +124,7 @@ public final class MapDefinitionManager {
         Map<String, InfrastructureDefinition> infrastructureMap =
                 validateInfrastructure(loaded);
 
+        placeLabels = new PlaceLabel(loaded);
         current = loaded;
         territories = Map.copyOf(territoryMap);
         monuments = Map.copyOf(monumentMap);
