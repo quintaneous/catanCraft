@@ -2,6 +2,7 @@ package com.quin.catancraft;
 
 import com.mojang.logging.LogUtils;
 import com.quin.catancraft.command.CatanCommands;
+import com.quin.catancraft.delivery.DeliveryCommands;
 import com.quin.catancraft.command.R5SurveyCommand;
 import com.quin.catancraft.command.DefenseSurveyCommand;
 import com.quin.catancraft.command.AdminSpeedCommand;
@@ -44,6 +45,7 @@ public final class CatanCraft {
     @SubscribeEvent
     public void onRegisterCommands(RegisterCommandsEvent event) {
         CatanCommands.register(event.getDispatcher());
+        DeliveryCommands.register(event.getDispatcher());
         DefenseSurveyCommand.register(event.getDispatcher());
         R5SurveyCommand.register(event.getDispatcher());
         AdminSpeedCommand.register(event.getDispatcher());
@@ -69,6 +71,7 @@ public final class CatanCraft {
     @SubscribeEvent
     public void onServerTick(TickEvent.ServerTickEvent event) {
         if (event.phase == TickEvent.Phase.END) {
+            if (event.getServer().getTickCount() % 20 == 0) DeliveryCommands.promptArrivals(event.getServer());
             EconomyEngine.tick(event.getServer());
             MonumentManager.tick(event.getServer());
             if (event.getServer().getTickCount() % 200 == 0) {

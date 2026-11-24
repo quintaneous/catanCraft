@@ -1,0 +1,118 @@
+{
+  "mapId": "catancraft_full_map_review_02",
+  "mapArchiveSHA256": "46e4d890f4bf2ed513b1936c7e72f98c17b774a9839cf3f337695d7952318292",
+  "regionSource": "All 64 Review 02 region files and level.dat verified against the original ZIP.",
+  "coverage": "Every configured landmark. Offshore landmarks have no configured capturable objective.",
+  "geometry": "Roofed walkable ground-floor cells inside the main building. Excludes exterior thresholds, machinery, roof and other levels. Feet from Y 81 inclusive to 83 exclusive allow ordinary jumps.",
+  "sites": {
+    "industrial": {
+      "name": "Switchyard Turbine Hall",
+      "roomBoundsXZ": [
+        -106,
+        -106,
+        -66,
+        -55
+      ],
+      "navigableCells": 1572,
+      "unreachableClearCellsExcluded": 0,
+      "disjointBoxes": 58,
+      "exteriorToInterior": [
+        [
+          -86,
+          81,
+          -108
+        ],
+        [
+          -86,
+          81,
+          -107
+        ],
+        [
+          -86,
+          81,
+          -106
+        ]
+      ],
+      "navigationXYZ": [
+        -86,
+        81,
+        -80
+      ],
+      "legacyAnchorInside": true,
+      "oldMapMismatchCount": 3
+    },
+    "depot": {
+      "name": "Meridian Airlift Depot",
+      "roomBoundsXZ": [
+        48,
+        -88,
+        82,
+        -52
+      ],
+      "navigableCells": 1241,
+      "unreachableClearCellsExcluded": 0,
+      "disjointBoxes": 26,
+      "exteriorToInterior": [
+        [
+          66,
+          81,
+          -50
+        ],
+        [
+          66,
+          81,
+          -51
+        ],
+        [
+          66,
+          81,
+          -52
+        ]
+      ],
+      "navigationXYZ": [
+        64,
+        81,
+        -54
+      ],
+      "legacyAnchorInside": false,
+      "oldMapMismatchCount": 3
+    },
+    "refinery": {
+      "name": "Copperline Refinery",
+      "roomBoundsXZ": [
+        -33,
+        89,
+        -13,
+        113
+      ],
+      "navigableCells": 385,
+      "unreachableClearCellsExcluded": 3,
+      "disjointBoxes": 25,
+      "exteriorToInterior": [
+        [
+          -22,
+          81,
+          87
+        ],
+        [
+          -22,
+          81,
+          88
+        ],
+        [
+          -22,
+          81,
+          89
+        ]
+      ],
+      "navigationXYZ": [
+        -22,
+        81,
+        98
+      ],
+      "legacyAnchorInside": false,
+      "oldMapMismatchCount": 3
+    }
+  },
+  "catalogSHA256": "d203e3cf7f46702c36b5589d2d7852335d286294b857b9da63e95c0b8e3cbd4b"
+}

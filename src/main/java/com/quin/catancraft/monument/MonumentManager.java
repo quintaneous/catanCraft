@@ -7,6 +7,8 @@ import com.quin.catancraft.data.MonumentType;
 import com.quin.catancraft.world.MonumentRewards41;
 import java.io.IOException;
 import com.quin.catancraft.data.NationData;
+import com.quin.catancraft.map.MapDefinitionManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
@@ -16,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 
 public final class MonumentManager {
     public static final int CAPTURE_SECONDS = 120;
@@ -102,25 +105,38 @@ public final class MonumentManager {
         if (active != null) sendZoneStatus(server, active, "REWARD RECOVERY PENDING");
     }
 
+    public record ActivationResult(boolean success, String message) {}
+
     public static boolean forceActivate(MinecraftServer server, CatanSavedData data, MonumentData monument) {
-        if (monument == null || data.monument(monument.id()) != monument) return false;
+        return activateVerified(server, data, monument).success();
+    }
+
+    public static ActivationResult activateVerified(MinecraftServer server, CatanSavedData data, MonumentData monument) {
+        if (monument == null || data.monument(monument.id()) != monument)
+            return new ActivationResult(false, "The selected monument no longer matches the loaded world.");
         try {
-            MonumentData previous = data.activeMonument();
-            for (MonumentData existing : data.monuments())
-                if (!MonumentRewards41.canReplace(server, data, existing)) return false;
-            if (previous != null) previous.resetCapture();
-            monument.resetCapture();
-            data.setActiveMonumentId(monument.id());
-            data.setLastActivatedMonumentId(monument.id());
-            data.setNextMonumentActivationGameTime(0);
-            data.setDirty();
-            MonumentRewards41.prepareActivation(server, data, monument);
-            announceActivation(server, monument);
-            return true;
+            if (!MonumentRewards41.activateRound(server, data, monument))
+                return new ActivationResult(false, "An earlier monument reward is still awaiting verified settlement.");
         } catch (IOException | RuntimeException failure) {
             rewardHold(server, server.overworld().getGameTime() / 20, failure);
-            return false;
+            return new ActivationResult(false, activationFailure(failure));
         }
+        announceActivation(server, monument);
+        return new ActivationResult(true, "Activated " + monument.name());
+    }
+
+    private static String activationFailure(Exception failure) {
+        // Keep hidden rolls, raw filesystem paths and stack traces out of chat.
+        String detail = String.valueOf(failure.getMessage()).toLowerCase(java.util.Locale.ROOT);
+        if (detail.contains("hard-link") || detail.contains("file identity"))
+            return "The save volume could not verify a stable reward lock file. See latest.log for the filesystem error.";
+        if (detail.contains("lock") || detail.contains("operation is active"))
+            return "The server could not acquire or verify the reward storage lock. See latest.log for the cause.";
+        if (detail.contains("world or geometry") || detail.contains("source changed") || detail.contains("scope"))
+            return "Saved reward history belongs to a different world or monument identity. See latest.log.";
+        if (detail.contains("save") || detail.contains("readback") || detail.contains("native") || detail.contains("receipt"))
+            return "The server could not verify the saved reward data. See latest.log for the cause.";
+        return "The server could not verify this monument’s reward configuration or history. See latest.log for the cause.";
     }
 
     private static void activateNext(MinecraftServer server, CatanSavedData data) {
@@ -147,12 +163,39 @@ public final class MonumentManager {
     private static Set<UUID> nationsPresent(MinecraftServer server, CatanSavedData data, MonumentData monument) {
         Set<UUID> result = new LinkedHashSet<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            String dimension = player.serverLevel().dimension().location().toString();
-            if (!monument.contains(dimension, player.getX(), player.getY(), player.getZ())) continue;
+            if (!player.isAlive() || player.isSpectator() || player.isRemoved() || !inside(monument, player)) continue;
             NationData nation = data.nationForPlayer(player.getUUID());
             if (nation != null) result.add(nation.id());
         }
         return result;
+    }
+
+    private static boolean inside(MonumentData monument, ServerPlayer player) {
+        return admits(MapDefinitionManager.mapId(), monument, player.serverLevel().dimension().location().toString(),
+                player.getX(), player.getY(), player.getZ(),
+                () -> !AuthoredCaptureFloors.boxes(player.serverLevel(), monument).isEmpty());
+    }
+
+    static boolean admits(String mapId, MonumentData monument, String dimension, double x, double y, double z,
+                          BooleanSupplier authoredBlocksMatch) {
+        if (!monument.dimensionId().equals(dimension)) return false;
+        if (!AuthoredCaptureFloors.applies(mapId)) return monument.contains(dimension, x, y, z);
+        return AuthoredCaptureFloors.boxes(monument).stream().anyMatch(box -> box.contains(x, y, z))
+                && authoredBlocksMatch.getAsBoolean();
+    }
+
+    public static String directions(MonumentData monument) {
+        if (AuthoredCaptureFloors.applies(MapDefinitionManager.mapId())) {
+            return AuthoredCaptureFloors.navigation(monument)
+                    .map(pos -> "Capture floor inside the building at " + coordinates(pos))
+                    .orElse("No surveyed capture floor at this site");
+        }
+        return coordinates(new BlockPos(monument.x(), monument.y(), monument.z()))
+                + " • Radius " + monument.radius() + " • Vertical ±12";
+    }
+
+    private static String coordinates(BlockPos pos) {
+        return "X=" + pos.getX() + " Y=" + pos.getY() + " Z=" + pos.getZ();
     }
 
     private static int progressPercent(MonumentData monument) {
@@ -170,8 +213,7 @@ public final class MonumentManager {
             String status
     ) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            String dimension = player.serverLevel().dimension().location().toString();
-            if (monument.contains(dimension, player.getX(), player.getY(), player.getZ())) {
+            if (inside(monument, player)) {
                 player.displayClientMessage(
                         Component.literal(monument.name() + " • " + status),
                         true
@@ -200,9 +242,7 @@ public final class MonumentManager {
     private static void announceActivation(MinecraftServer server, MonumentData monument) {
         server.getPlayerList().broadcastSystemMessage(
                 Component.literal("[CatanCraft] Monument active: " + monument.name() +
-                        " at X=" + monument.x() +
-                        " Y=" + monument.y() +
-                        " Z=" + monument.z() +
+                        ". " + directions(monument) +
                         ". Hold the zone for " + CAPTURE_SECONDS + " seconds."), false);
     }
 }

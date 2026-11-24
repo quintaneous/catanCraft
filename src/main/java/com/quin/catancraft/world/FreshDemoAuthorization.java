@@ -15,16 +15,54 @@ public final class FreshDemoAuthorization {
     public static final String MARKER="catancraft-fresh-demo.json";
     public static final String PURPOSE="catancraft-fresh-authored-demo";
     private static final Set<String> FIELDS=Set.of("schema","purpose","worldId","levelName","seed","dimension","mapSha256","authoredWorldSha256","bootstrapRevision","installationBoundPath");
+    static final String FULL_MAP_ID = "catancraft_full_map_review_02";
+    static final String FULL_MAP_NAME = "CatanCraft – Full Map Review 02";
+    static final long FULL_MAP_SEED = 1042026L;
+    static final String FULL_MAP_CONFIG = "baaa524daa111ce966a12dfe304df9575251fdb1c2092b601104d5b305864fc1";
+    static final String FULL_MAP_WORLD = "e9d324768b3493bf0e7a7f7beda2c6cd1fc693a8051a7a7c6cbd2c0da098d050";
+    static final String FULL_MAP_REVISION = "full-map-review-02-field-v3";
+
     private FreshDemoAuthorization(){}
+
+    static boolean selectsFullMap(String mapId, String levelName) {
+        return FULL_MAP_ID.equals(mapId) || FULL_MAP_NAME.equals(levelName);
+    }
+
+    static boolean selectsFullMap(MinecraftServer server) {
+        return selectsFullMap(MapDefinitionManager.mapId(), server.getWorldData().getLevelName());
+    }
+
     public static Path authorize(MinecraftServer server)throws IOException {
         if(!server.isSameThread())throw new IOException("Sector operation requires the server thread");
         Path root=server.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize();
-        validate(root,MapDefinitionManager.path(),server.getWorldData().getLevelName(),server.overworld().getSeed(),server.overworld().dimension().location().toString());
+        boundIdentity(server, root);
         return root.toRealPath();
     }
+
     public static String worldId(MinecraftServer server,Path root)throws IOException {
-        return validate(root,MapDefinitionManager.path(),server.getWorldData().getLevelName(),server.overworld().getSeed(),server.overworld().dimension().location().toString()).get("worldId").getAsString();
+        return boundIdentity(server, root).get("worldId").getAsString();
     }
+
+    private static JsonObject boundIdentity(MinecraftServer server, Path root) throws IOException {
+        String mapId = MapDefinitionManager.mapId();
+        String name = server.getWorldData().getLevelName();
+        long seed = server.overworld().getSeed();
+        if (selectsFullMap(mapId, name) && !Files.exists(root.resolve(MARKER), LinkOption.NOFOLLOW_LINKS))
+            throw new IOException("This Full Map Review 02 save has no playtest installation binding. Start a fresh copy using the supplied installer.");
+        JsonObject identity = validate(root, MapDefinitionManager.path(), name, seed, server.overworld().dimension().location().toString());
+        verifyFullMapPins(mapId, name, seed, identity);
+        return identity;
+    }
+
+    static void verifyFullMapPins(String mapId, String name, long seed, JsonObject identity) throws IOException {
+        if (!selectsFullMap(mapId, name) && !FULL_MAP_REVISION.equals(identity.get("bootstrapRevision").getAsString())) return;
+        if (!FULL_MAP_ID.equals(mapId) || !FULL_MAP_NAME.equals(name) || seed != FULL_MAP_SEED
+                || !FULL_MAP_CONFIG.equals(identity.get("mapSha256").getAsString())
+                || !FULL_MAP_WORLD.equals(identity.get("authoredWorldSha256").getAsString())
+                || !FULL_MAP_REVISION.equals(identity.get("bootstrapRevision").getAsString()))
+            throw new IOException("The loaded map, authored save, or installation binding differs from the Full Map Review 02 field profile.");
+    }
+
     static JsonObject validate(Path root,Path map,String levelName,long seed,String dimension)throws IOException {
         root=root.toAbsolutePath().normalize();rejectSymlinks(root);
         if(!Files.isDirectory(root)||!root.equals(root.toRealPath()))throw new IOException("Fresh demo world path is unavailable or not canonical");

@@ -273,6 +273,13 @@ public final class NationDashboardScreen extends Screen {
                 cleanSectionSummary(expansionLabel, "Available Expansion"), Page.EXPANSION,
                 mouseX, mouseY, contentTop, contentBottom);
 
+        for (String row : lines) {
+            if (row.startsWith("A|delivery|")) {
+                y = drawEncodedLine(graphics, mouseX, mouseY, left, right, y, contentTop, contentBottom, row);
+                break;
+            }
+        }
+
         List<String> outside = outsideSectionLines();
         boolean startBlock = false;
         for (String encoded : outside) {
@@ -762,6 +769,7 @@ public final class NationDashboardScreen extends Screen {
                         pending.add(0,"M|Checking the whole-side quote and placement contract...");
                         lines=List.copyOf(pending);
                     }
+                    if (command.equals("delivery")) onClose();
                     minecraft.player.connection.sendCommand(command);
                 }
                 return true;

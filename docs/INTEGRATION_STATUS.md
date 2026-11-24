@@ -913,3 +913,80 @@ No NPC/siege work, live-world changes, deployment or additional geometry approva
 The optional segmented seed records closed checkpoints on one isolated authored world. Founding, each purchase batch, and the final restart have their own native process receipts. The final two deliberately interrupted purchases in D and M remain in the same process before restart. The original all-city seed and verify assertions still cover 128 paid purchases and 64 paid Hall upgrades.
 
 Run `python tools/authored53/segmented_wall.py --help` for pinned runtime, fixture, wrapper, and lease arguments. Keep the same source, range size, world identity, and evidence directory for every invocation. `--max-steps 1` stops after one newly completed step. Preserve failed or interrupted attempts and verify the whole chain with `tools/authored53/verify_wall_segments.py`. This harness compiled and its receipt tests passed. A native checkpoint, complete wall chain, gameplay qualification, and release promotion are separate milestones.
+
+### Archived first delivery field trial on R7 (November 23, 2026)
+
+The delivery branch adds one player-bound waybill for a crate of pump fittings.
+Open `/delivery` anywhere, or select the depot delivery board in the nation
+overview. Stand on the Military Depot roadside pad (75, 81, -16) to collect it.
+Carry the load on foot to the Refinery pad (22, 81, 89). A separate receipt
+records each successful delivery. Use `/delivery receipt` to retrieve your
+latest receipt after saving and reopening. A nation, vehicle and earned
+building are optional. Cargo lives on the waybill and the trial awards no
+money, stock or items.
+
+The read-only route audit of the pristine R7 map found a continuous approach
+from each of the 16 city centers, including A, D, M and P. The loaded leg is
+158 level steps outside the monument capture circles. See
+`tools/delivery/route_audit.json` and reproduce it with
+`python tools/delivery/audit_route.py CLEAN_R7_INPUT_ROOT`. The Java tests in
+`tests/delivery` exercise the same handoff actions, Brigadier commands and
+Minecraft's compressed NBT format, including a second JVM reopening the file.
+A real player walking the route, interacting with the HUD and saving and
+reopening the singleplayer world remains a separate check. The release
+qualification on `02b5e67` continues independently of this field trial.
+
+### Full Map Review 02 delivery and capture floors (November 23, 2026)
+
+The field profile uses the original 65 save files from Full Map Review 02 with its
+own map configuration. Meridian Airlift Depot dispatches the sealed barrel at
+(74,82,-30). The bearer right-clicks the Copperline Refinery counter at (28,82,75)
+for one signed receipt. Death or deliberate transfer allows a different player
+to finish. Dispatch and handoff are free. The optional Xaero fullscreen view and
+built-in `/deliverymap` trace the same surveyed 281-block route. The field profile
+and the independent qualification campaign have separate sources and evidence.
+
+On this map the capture timer and contest check use reachable interior floor
+cells in Switchyard Turbine Hall, the depot hangar and the refinery process hall.
+Server outlines use the same physically checked floor definitions. The dashboard,
+activation announcement and monument list direct players to a point on the floor.
+Ordinary jumps inside count. The exterior roads, yards, roof and cellar do not.
+The optional siege survey shows city planning limits. The main game has no active
+production siege-objective registration. The standalone siege drill uses its own
+two marked objectives. Its acceptance does not qualify main-map sieges.
+
+Developer verification uses `tools/delivery/audit_route.py FULL_MAP_REVIEW_02_ZIP CLEAN_R7_INPUT_ROOT`,
+`tools/delivery/audit_capture_floors.py --help`, and the production-class checks
+in `tests/delivery` and `tests/visual`. The route survey covers all 16 cities.
+The map and item checks do not replace a player's in-game walk, two-player
+interception or visual acceptance of the overlays.
+
+Quin completed the physical delivery on Full Map Review 02. The next field
+update uses vivid red for the monument and siege boundary lines. Active
+monuments have a continuous line, survey monuments use short dashes, and siege
+surveys use longer dashes with uprights. The delivery route stays purple.
+
+The field client includes Xaero’s World Map 1.47.0 for Forge 1.20.1. The
+in-place update keeps the existing world at the same path. The monument reward
+lock supports the packaged Windows Java 17 provider, whose basic file key is
+always absent, by pinning the locked file with a hard link. Activation stages
+the reward and active monument together and checks the saved record on retry.
+Other systems with their own file locks require separate Windows verification.
+
+### Friends’ founding playtest on Full Map Review 02
+
+The delivery field save could create a nation, but its first starter claim
+stopped at the legacy R7 authorization before the producer checks or assignment.
+The friends’ profile binds each fresh installation to the original 65-file
+Full Map Review 02 inventory, pinned map configuration, world seed and local
+save path. The legacy R7 repair path keeps its original identity. Normal city
+expansion recognizes all 16 preinstalled city pads and skips the broad
+environment paste. Unbound field saves refuse construction and retain progress.
+
+The field and R7 saves matched in all 31,587,152 blocks and all 60 block entities
+across the 16 city pads. Each of the four original starter Town Halls and its
+three tier-one producers also matched their rotated source schematics. The
+full-map verifier’s 25 city-pad, lectern, bridge and central-district locations
+were checked in the saved world. These file checks establish physical
+compatibility. Native founding, earned purchases, reload and friends joining
+are separate playtest results. The release qualification remains on 02b5e67.

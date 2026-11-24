@@ -1,0 +1,74 @@
+name: Windows reward lock
+
+on:
+  push:
+    branches: ['chatgpt/optional-depot-delivery']
+    paths:
+      - '.github/workflows/windows-reward-lock.yml'
+      - 'src/main/java/com/quin/catancraft/world/MonumentRewards41.java'
+      - 'src/main/java/com/quin/catancraft/world/RewardStorageLock.java'
+      - 'tests/monument/RewardStorageLockTest.java'
+      - 'tools/server53/contracts.py'
+
+permissions:
+  contents: read
+
+jobs:
+  reward-lock:
+    runs-on: windows-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Compile the lock and exercise it with the server kit's Windows JRE
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $root = Join-Path $env:RUNNER_TEMP "catancraft-lock-$env:GITHUB_RUN_ID-$env:GITHUB_RUN_ATTEMPT"
+          $classes = Join-Path $root 'classes'
+          $evidence = Join-Path $env:RUNNER_TEMP 'catancraft-reward-lock-evidence'
+          New-Item -ItemType Directory -Path $root, $classes, $evidence | Out-Null
+
+          $contracts = Get-Content -Raw 'tools/server53/contracts.py'
+          if ($contracts -notmatch "(?m)^WINDOWS_JAVA_ARCHIVE_SHA = '([a-f0-9]{64})'\s*$") {
+            throw 'Missing Windows JRE archive pin in the packaging contract.'
+          }
+          $expected = $Matches[1]
+          $url = 'https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.21%2B9/OpenJDK17U-jre_x64_windows_hotspot_17.0.21_9.zip'
+          $zip = Join-Path $root 'jre.zip'
+          Invoke-WebRequest -Uri $url -OutFile $zip
+          $actual = (Get-FileHash $zip -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne $expected) { throw "Windows runtime digest mismatch: $actual" }
+          Expand-Archive -LiteralPath $zip -DestinationPath $root
+          $java = Join-Path $root 'jdk-17.0.21+9-jre/bin/java.exe'
+
+          $info = @{
+            source = (git rev-parse HEAD)
+            operatingSystem = [System.Environment]::OSVersion.VersionString
+            filesystem = [System.IO.DriveInfo]::new([System.IO.Path]::GetPathRoot($root)).DriveFormat
+            jreArchiveSHA256 = $actual
+          }
+          $info | ConvertTo-Json | Set-Content (Join-Path $evidence 'platform.json')
+          & $java -version 2>&1 | Tee-Object (Join-Path $evidence 'java-version.txt')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+          $src = 'src/main/java/com/quin/catancraft/world/RewardStorageLock.java'
+          $test = 'tests/monument/RewardStorageLockTest.java'
+          & javac --release 17 -proc:none -encoding UTF-8 -d $classes $src $test
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          & $java -ea -cp $classes com.quin.catancraft.world.RewardStorageLockTest (Join-Path $root 'fixture') 2>&1 |
+            Tee-Object (Join-Path $evidence 'lock-test.log')
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+      - name: Preserve Windows runtime and test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-reward-lock-${{ github.sha }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/catancraft-reward-lock-evidence/
+          if-no-files-found: warn
+          retention-days: 14

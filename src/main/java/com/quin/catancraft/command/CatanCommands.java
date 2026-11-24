@@ -954,7 +954,7 @@ public final class CatanCommands {
         ServerPlayer player = source.getPlayerOrException();
         if (!NationDashboard.open(player)) {
             source.sendFailure(Component.literal(
-                    "You are not in a nation. Use /nation create <name> or accept an invitation."));
+                    "You are not in a nation. Use /nation create <name>, accept an invitation, or try /delivery."));
             return 0;
         }
         return 1;
@@ -2174,8 +2174,9 @@ public final class CatanCommands {
             return 0;
         }
 
-        if (!MonumentManager.forceActivate(source.getServer(), data, monument)) {
-            source.sendFailure(Component.literal("Monument activation could not be verified. Its saved reward history has been retained."));
+        MonumentManager.ActivationResult activation = MonumentManager.activateVerified(source.getServer(), data, monument);
+        if (!activation.success()) {
+            source.sendFailure(Component.literal(activation.message()));
             return 0;
         }
         source.sendSuccess(() -> Component.literal("Activated " + monument.name()), true);
@@ -2198,10 +2199,7 @@ public final class CatanCommands {
                     (isActive ? "[ACTIVE] " : "") +
                             monument.name() + " [" + monument.id() + "] • " +
                             monument.type().displayName() +
-                            " • X=" + monument.x() +
-                            " Y=" + monument.y() +
-                            " Z=" + monument.z() +
-                            " • R=" + monument.radius()), false);
+                            " • " + MonumentManager.directions(monument)), false);
         }
         return 1;
     }

@@ -1,0 +1,988 @@
+{
+  "mapId": "catancraft_full_map_review_02",
+  "sites": [
+    {
+      "id": "industrial",
+      "name": "Switchyard Turbine Hall",
+      "type": "industrial_complex",
+      "dimension": "minecraft:overworld",
+      "x": -86,
+      "y": 81,
+      "z": -80,
+      "radius": 14,
+      "navigation": {
+        "x": -86,
+        "y": 81,
+        "z": -80
+      },
+      "fingerprints": [
+        {
+          "x": -107,
+          "y": 86,
+          "z": -106,
+          "block": "minecraft:cyan_stained_glass"
+        },
+        {
+          "x": -86,
+          "y": 108,
+          "z": -80,
+          "block": "minecraft:polished_deepslate"
+        },
+        {
+          "x": -86,
+          "y": 80,
+          "z": -80,
+          "block": "minecraft:ochre_froglight"
+        }
+      ],
+      "boxes": [
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -106,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -105
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -104,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -104
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -103,
+          "maxX": -100,
+          "maxY": 82,
+          "maxZ": -103
+        },
+        {
+          "minX": -98,
+          "minY": 81,
+          "minZ": -103,
+          "maxX": -74,
+          "maxY": 82,
+          "maxZ": -103
+        },
+        {
+          "minX": -72,
+          "minY": 81,
+          "minZ": -103,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -103
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -102,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -102
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -101,
+          "maxX": -91,
+          "maxY": 82,
+          "maxZ": -100
+        },
+        {
+          "minX": -86,
+          "minY": 81,
+          "minZ": -101,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -100
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -99,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -99
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -98,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -98
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -98,
+          "maxX": -98,
+          "maxY": 82,
+          "maxZ": -97
+        },
+        {
+          "minX": -85,
+          "minY": 81,
+          "minZ": -97,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -97
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -97,
+          "maxX": -89,
+          "maxY": 82,
+          "maxZ": -96
+        },
+        {
+          "minX": -85,
+          "minY": 81,
+          "minZ": -96,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -96
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -95,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -94
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -96,
+          "maxX": -98,
+          "maxY": 82,
+          "maxZ": -89
+        },
+        {
+          "minX": -74,
+          "minY": 81,
+          "minZ": -93,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -89
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -88,
+          "maxX": -100,
+          "maxY": 82,
+          "maxZ": -88
+        },
+        {
+          "minX": -98,
+          "minY": 81,
+          "minZ": -88,
+          "maxX": -98,
+          "maxY": 82,
+          "maxZ": -88
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -93,
+          "maxX": -82,
+          "maxY": 82,
+          "maxZ": -88
+        },
+        {
+          "minX": -74,
+          "minY": 81,
+          "minZ": -88,
+          "maxX": -74,
+          "maxY": 82,
+          "maxZ": -88
+        },
+        {
+          "minX": -72,
+          "minY": 81,
+          "minZ": -88,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -88
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -87,
+          "maxX": -82,
+          "maxY": 82,
+          "maxZ": -83
+        },
+        {
+          "minX": -74,
+          "minY": 81,
+          "minZ": -87,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -83
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -82,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -82
+        },
+        {
+          "minX": -96,
+          "minY": 81,
+          "minZ": -81,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -81
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -81,
+          "maxX": -100,
+          "maxY": 82,
+          "maxZ": -80
+        },
+        {
+          "minX": -96,
+          "minY": 81,
+          "minZ": -80,
+          "maxX": -77,
+          "maxY": 82,
+          "maxZ": -80
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -79,
+          "maxX": -77,
+          "maxY": 82,
+          "maxZ": -79
+        },
+        {
+          "minX": -73,
+          "minY": 81,
+          "minZ": -80,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -79
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -78,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -78
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -77,
+          "maxX": -91,
+          "maxY": 82,
+          "maxZ": -77
+        },
+        {
+          "minX": -86,
+          "minY": 81,
+          "minZ": -77,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -77
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -76,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -75
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -74,
+          "maxX": -98,
+          "maxY": 82,
+          "maxZ": -73
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -74,
+          "maxX": -84,
+          "maxY": 82,
+          "maxZ": -73
+        },
+        {
+          "minX": -79,
+          "minY": 81,
+          "minZ": -74,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -73
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -72,
+          "maxX": -100,
+          "maxY": 82,
+          "maxZ": -72
+        },
+        {
+          "minX": -98,
+          "minY": 81,
+          "minZ": -72,
+          "maxX": -98,
+          "maxY": 82,
+          "maxZ": -72
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -72,
+          "maxX": -74,
+          "maxY": 82,
+          "maxZ": -72
+        },
+        {
+          "minX": -72,
+          "minY": 81,
+          "minZ": -72,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -72
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -71,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -71
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -70,
+          "maxX": -82,
+          "maxY": 82,
+          "maxZ": -65
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -71,
+          "maxX": -98,
+          "maxY": 82,
+          "maxZ": -64
+        },
+        {
+          "minX": -90,
+          "minY": 81,
+          "minZ": -64,
+          "maxX": -87,
+          "maxY": 82,
+          "maxZ": -64
+        },
+        {
+          "minX": -74,
+          "minY": 81,
+          "minZ": -70,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -64
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -63,
+          "maxX": -87,
+          "maxY": 82,
+          "maxZ": -63
+        },
+        {
+          "minX": -83,
+          "minY": 81,
+          "minZ": -64,
+          "maxX": -82,
+          "maxY": 82,
+          "maxZ": -63
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -62,
+          "maxX": -82,
+          "maxY": 82,
+          "maxZ": -61
+        },
+        {
+          "minX": -88,
+          "minY": 81,
+          "minZ": -60,
+          "maxX": -82,
+          "maxY": 82,
+          "maxZ": -60
+        },
+        {
+          "minX": -74,
+          "minY": 81,
+          "minZ": -63,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -60
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -60,
+          "maxX": -93,
+          "maxY": 82,
+          "maxZ": -59
+        },
+        {
+          "minX": -88,
+          "minY": 81,
+          "minZ": -59,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -59
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -58,
+          "maxX": -100,
+          "maxY": 82,
+          "maxZ": -58
+        },
+        {
+          "minX": -98,
+          "minY": 81,
+          "minZ": -58,
+          "maxX": -74,
+          "maxY": 82,
+          "maxZ": -58
+        },
+        {
+          "minX": -72,
+          "minY": 81,
+          "minZ": -58,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -58
+        },
+        {
+          "minX": -100,
+          "minY": 81,
+          "minZ": -57,
+          "maxX": -72,
+          "maxY": 82,
+          "maxZ": -56
+        },
+        {
+          "minX": -106,
+          "minY": 81,
+          "minZ": -55,
+          "maxX": -66,
+          "maxY": 82,
+          "maxZ": -55
+        }
+      ]
+    },
+    {
+      "id": "depot",
+      "name": "Meridian Airlift Depot",
+      "type": "military_depot",
+      "dimension": "minecraft:overworld",
+      "x": 88,
+      "y": 81,
+      "z": -35,
+      "radius": 14,
+      "navigation": {
+        "x": 64,
+        "y": 81,
+        "z": -54
+      },
+      "fingerprints": [
+        {
+          "x": 47,
+          "y": 85,
+          "z": -88,
+          "block": "minecraft:light_blue_stained_glass"
+        },
+        {
+          "x": 66,
+          "y": 100,
+          "z": -52,
+          "block": "minecraft:light_blue_stained_glass"
+        },
+        {
+          "x": 82,
+          "y": 90,
+          "z": -52,
+          "block": "minecraft:waxed_weathered_cut_copper"
+        }
+      ],
+      "boxes": [
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -88,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -88
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -87,
+          "maxX": 49,
+          "maxY": 82,
+          "maxZ": -86
+        },
+        {
+          "minX": 53,
+          "minY": 81,
+          "minZ": -87,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -86
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -85,
+          "maxX": 75,
+          "maxY": 82,
+          "maxZ": -82
+        },
+        {
+          "minX": 79,
+          "minY": 81,
+          "minZ": -85,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -82
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -81,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -81
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -80,
+          "maxX": 66,
+          "maxY": 82,
+          "maxZ": -80
+        },
+        {
+          "minX": 68,
+          "minY": 81,
+          "minZ": -80,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -80
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -79,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -76
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -75,
+          "maxX": 60,
+          "maxY": 82,
+          "maxZ": -73
+        },
+        {
+          "minX": 63,
+          "minY": 81,
+          "minZ": -75,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -73
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -72,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -70
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -69,
+          "maxX": 59,
+          "maxY": 82,
+          "maxZ": -69
+        },
+        {
+          "minX": 75,
+          "minY": 81,
+          "minZ": -69,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -69
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -68,
+          "maxX": 58,
+          "maxY": 82,
+          "maxZ": -68
+        },
+        {
+          "minX": 76,
+          "minY": 81,
+          "minZ": -68,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -68
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -67,
+          "maxX": 59,
+          "maxY": 82,
+          "maxZ": -67
+        },
+        {
+          "minX": 61,
+          "minY": 81,
+          "minZ": -69,
+          "maxX": 73,
+          "maxY": 82,
+          "maxZ": -67
+        },
+        {
+          "minX": 75,
+          "minY": 81,
+          "minZ": -67,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -67
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -66,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -64
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -63,
+          "maxX": 76,
+          "maxY": 82,
+          "maxZ": -59
+        },
+        {
+          "minX": 80,
+          "minY": 81,
+          "minZ": -63,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -59
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -58,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -58
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -57,
+          "maxX": 49,
+          "maxY": 82,
+          "maxZ": -56
+        },
+        {
+          "minX": 53,
+          "minY": 81,
+          "minZ": -57,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -56
+        },
+        {
+          "minX": 48,
+          "minY": 81,
+          "minZ": -55,
+          "maxX": 82,
+          "maxY": 82,
+          "maxZ": -52
+        }
+      ]
+    },
+    {
+      "id": "refinery",
+      "name": "Copperline Refinery",
+      "type": "refinery",
+      "dimension": "minecraft:overworld",
+      "x": 22,
+      "y": 81,
+      "z": 107,
+      "radius": 14,
+      "navigation": {
+        "x": -22,
+        "y": 81,
+        "z": 98
+      },
+      "fingerprints": [
+        {
+          "x": -34,
+          "y": 81,
+          "z": 89,
+          "block": "minecraft:polished_blackstone"
+        },
+        {
+          "x": -22,
+          "y": 92,
+          "z": 89,
+          "block": "minecraft:deepslate_tiles"
+        },
+        {
+          "x": -22,
+          "y": 80,
+          "z": 101,
+          "block": "minecraft:deepslate_tiles"
+        }
+      ],
+      "boxes": [
+        {
+          "minX": -28,
+          "minY": 81,
+          "minZ": 89,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 89
+        },
+        {
+          "minX": -27,
+          "minY": 81,
+          "minZ": 90,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 90
+        },
+        {
+          "minX": -26,
+          "minY": 81,
+          "minZ": 91,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 91
+        },
+        {
+          "minX": -26,
+          "minY": 81,
+          "minZ": 92,
+          "maxX": -22,
+          "maxY": 82,
+          "maxZ": 93
+        },
+        {
+          "minX": -27,
+          "minY": 81,
+          "minZ": 94,
+          "maxX": -22,
+          "maxY": 82,
+          "maxZ": 94
+        },
+        {
+          "minX": -28,
+          "minY": 81,
+          "minZ": 95,
+          "maxX": -22,
+          "maxY": 82,
+          "maxZ": 95
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 96,
+          "maxX": -22,
+          "maxY": 82,
+          "maxZ": 96
+        },
+        {
+          "minX": -18,
+          "minY": 81,
+          "minZ": 92,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 96
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 97,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 99
+        },
+        {
+          "minX": -30,
+          "minY": 81,
+          "minZ": 100,
+          "maxX": -29,
+          "maxY": 82,
+          "maxZ": 100
+        },
+        {
+          "minX": -29,
+          "minY": 81,
+          "minZ": 101,
+          "maxX": -29,
+          "maxY": 82,
+          "maxZ": 102
+        },
+        {
+          "minX": -30,
+          "minY": 81,
+          "minZ": 103,
+          "maxX": -29,
+          "maxY": 82,
+          "maxZ": 103
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 104,
+          "maxX": -29,
+          "maxY": 82,
+          "maxZ": 104
+        },
+        {
+          "minX": -25,
+          "minY": 81,
+          "minZ": 100,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 104
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 105,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 105
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 106,
+          "maxX": -32,
+          "maxY": 82,
+          "maxZ": 106
+        },
+        {
+          "minX": -28,
+          "minY": 81,
+          "minZ": 106,
+          "maxX": -21,
+          "maxY": 82,
+          "maxZ": 106
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 107,
+          "maxX": -33,
+          "maxY": 82,
+          "maxZ": 107
+        },
+        {
+          "minX": -27,
+          "minY": 81,
+          "minZ": 107,
+          "maxX": -21,
+          "maxY": 82,
+          "maxZ": 107
+        },
+        {
+          "minX": -26,
+          "minY": 81,
+          "minZ": 108,
+          "maxX": -21,
+          "maxY": 82,
+          "maxZ": 110
+        },
+        {
+          "minX": -17,
+          "minY": 81,
+          "minZ": 106,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 110
+        },
+        {
+          "minX": -27,
+          "minY": 81,
+          "minZ": 111,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 111
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 112,
+          "maxX": -32,
+          "maxY": 82,
+          "maxZ": 112
+        },
+        {
+          "minX": -28,
+          "minY": 81,
+          "minZ": 112,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 112
+        },
+        {
+          "minX": -33,
+          "minY": 81,
+          "minZ": 113,
+          "maxX": -13,
+          "maxY": 82,
+          "maxZ": 113
+        }
+      ]
+    }
+  ]
+}

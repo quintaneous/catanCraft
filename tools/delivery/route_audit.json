@@ -1,0 +1,547 @@
+{
+  "mapId": "catancraft_full_map_review_02",
+  "sourceArchive": "CatanCraft_Full_Map_Review_02.zip",
+  "sourceSHA256": "46e4d890f4bf2ed513b1936c7e72f98c17b774a9839cf3f337695d7952318292",
+  "levelDatSHA256": "04bb327f22db24e8232a8f15be55abf62749e0d2fa610a8eeb444c71e90901ff",
+  "verifiedRegionFiles": 64,
+  "cityAnchorDefinitionSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "negativeControlManifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
+  "scope": "Original Full Map Review 02 save blocks, footprints and hand reach, before purchases. Static audit.",
+  "movement": "Cardinal walking with three air blocks above a full floor and at most one block of rise or drop. Loaded leg stays level on paving; city approaches may cross natural ground.",
+  "foundingCities": [
+    "a",
+    "d",
+    "m",
+    "p"
+  ],
+  "loadedRouteAvoidsAllCaptureZones": true,
+  "loadedRouteTurnsXZ": [
+    [
+      74,
+      -29
+    ],
+    [
+      50,
+      -29
+    ],
+    [
+      50,
+      -45
+    ],
+    [
+      45,
+      -45
+    ],
+    [
+      45,
+      -53
+    ],
+    [
+      28,
+      -53
+    ],
+    [
+      28,
+      -44
+    ],
+    [
+      17,
+      -44
+    ],
+    [
+      17,
+      -33
+    ],
+    [
+      7,
+      -33
+    ],
+    [
+      7,
+      -25
+    ],
+    [
+      -3,
+      -25
+    ],
+    [
+      -3,
+      -14
+    ],
+    [
+      -8,
+      -14
+    ],
+    [
+      -8,
+      -9
+    ],
+    [
+      -13,
+      -9
+    ],
+    [
+      -13,
+      7
+    ],
+    [
+      -11,
+      7
+    ],
+    [
+      -11,
+      10
+    ],
+    [
+      -6,
+      10
+    ],
+    [
+      -6,
+      12
+    ],
+    [
+      4,
+      12
+    ],
+    [
+      4,
+      71
+    ],
+    [
+      29,
+      71
+    ],
+    [
+      29,
+      75
+    ]
+  ],
+  "loadedRouteSurfaceCells": {
+    "andesite": 81,
+    "coarse_dirt": 3,
+    "cobblestone": 8,
+    "gravel": 105,
+    "polished_andesite": 63,
+    "stone": 3,
+    "stone_bricks": 19
+  },
+  "counters": {
+    "depot": {
+      "name": "Meridian Airlift Depot",
+      "block": [
+        74,
+        82,
+        -30
+      ],
+      "stand": [
+        74,
+        81,
+        -29
+      ],
+      "eye": [
+        74.5,
+        82.62,
+        -28.5
+      ],
+      "hitFace": [
+        74.5,
+        82.25,
+        -29.0
+      ],
+      "reachBlocks": 0.622,
+      "approachFloor": "andesite",
+      "fingerprints": [
+        {
+          "block": [
+            74,
+            82,
+            -30
+          ],
+          "state": "minecraft:spruce_slab[type=bottom]",
+          "r7State": "minecraft:air"
+        },
+        {
+          "block": [
+            74,
+            81,
+            -30
+          ],
+          "state": "minecraft:spruce_planks",
+          "r7State": "minecraft:air"
+        },
+        {
+          "block": [
+            72,
+            81,
+            -30
+          ],
+          "state": "minecraft:stripped_spruce_log",
+          "r7State": "minecraft:air"
+        }
+      ]
+    },
+    "refinery": {
+      "name": "Copperline Refinery",
+      "block": [
+        28,
+        82,
+        75
+      ],
+      "stand": [
+        29,
+        81,
+        75
+      ],
+      "eye": [
+        29.5,
+        82.62,
+        75.5
+      ],
+      "hitFace": [
+        29.0,
+        82.5,
+        75.5
+      ],
+      "reachBlocks": 0.514,
+      "approachFloor": "polished_andesite",
+      "fingerprints": [
+        {
+          "block": [
+            28,
+            82,
+            75
+          ],
+          "state": "minecraft:waxed_exposed_cut_copper",
+          "r7State": "minecraft:air"
+        },
+        {
+          "block": [
+            28,
+            81,
+            75
+          ],
+          "state": "minecraft:deepslate_bricks",
+          "r7State": "minecraft:air"
+        },
+        {
+          "block": [
+            27,
+            83,
+            75
+          ],
+          "state": "minecraft:chiseled_polished_blackstone",
+          "r7State": "minecraft:air"
+        }
+      ]
+    }
+  },
+  "routes": {
+    "depotToRefinery": {
+      "steps": 281,
+      "feetY": [
+        81,
+        81
+      ],
+      "start": [
+        74,
+        81,
+        -29
+      ],
+      "end": [
+        29,
+        81,
+        75
+      ],
+      "pathSHA256": "30c1f81e3e930b64500b65dfda383d7503a15dea06a73c54d52f1a5b039335f7"
+    },
+    "a": {
+      "steps": 1545,
+      "feetY": [
+        81,
+        90
+      ],
+      "start": [
+        -750,
+        81,
+        -750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "5f6c0bf9b3564e5cbcc7821fae856348b3ad017b5bcfaef3d7902b3b5b3480db"
+    },
+    "b": {
+      "steps": 1047,
+      "feetY": [
+        81,
+        116
+      ],
+      "start": [
+        -250,
+        81,
+        -750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "6cc567261a84bca839cb78af94342b7610d1916c0b522556d67d023961875cb3"
+    },
+    "c": {
+      "steps": 897,
+      "feetY": [
+        81,
+        100
+      ],
+      "start": [
+        250,
+        81,
+        -750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "8616faeb963c58864aee0e00bf49a280b5ca4eec8614d3ea138d3c9bdaa4bf04"
+    },
+    "d": {
+      "steps": 1397,
+      "feetY": [
+        81,
+        107
+      ],
+      "start": [
+        750,
+        81,
+        -750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "08579a102445b0c66c8f0671ace7d9b96df68a6486cc06769d1a3d57d74de6e5"
+    },
+    "e": {
+      "steps": 1045,
+      "feetY": [
+        81,
+        90
+      ],
+      "start": [
+        -750,
+        81,
+        -250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "326c15187b0c1870b2b4aa0231e711c23566b3c089ac417ec679e8c9b001f1d7"
+    },
+    "f": {
+      "steps": 545,
+      "feetY": [
+        81,
+        96
+      ],
+      "start": [
+        -250,
+        81,
+        -250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "fdcd5bd975674178a3fc056a5216cdea26d7b6303c264ee575ac827f1a47ad71"
+    },
+    "g": {
+      "steps": 397,
+      "feetY": [
+        81,
+        100
+      ],
+      "start": [
+        250,
+        81,
+        -250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "0ac1b6a28ddd9e543bf7fda0274451486e9668904302fb34e7511872b0c8edec"
+    },
+    "h": {
+      "steps": 897,
+      "feetY": [
+        81,
+        107
+      ],
+      "start": [
+        750,
+        81,
+        -250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "6566c727ff754cee65f37af4b70020a6e6c55d9a24c59dfc4ed020fb092076dd"
+    },
+    "i": {
+      "steps": 1103,
+      "feetY": [
+        80,
+        95
+      ],
+      "start": [
+        -750,
+        81,
+        250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "242983970722281dd6cc5701b4c4ea9cbbd5809abadc066ab38039fa7b7d1ebf"
+    },
+    "j": {
+      "steps": 603,
+      "feetY": [
+        81,
+        95
+      ],
+      "start": [
+        -250,
+        81,
+        250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "2a47d05be893b243590958a5326e7d4352e223167ea5464e84c2b52551b60529"
+    },
+    "k": {
+      "steps": 465,
+      "feetY": [
+        80,
+        116
+      ],
+      "start": [
+        250,
+        81,
+        250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "3d1fd6457bf14e1f7e7ad5ae4abe2dce16a578b88c0649d928dd344186fbe293"
+    },
+    "l": {
+      "steps": 955,
+      "feetY": [
+        80,
+        115
+      ],
+      "start": [
+        750,
+        81,
+        250
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "1c334893b5fd3f723b9eedc9e647523ed5bae2170b5738f3804443237b7aebc4"
+    },
+    "m": {
+      "steps": 1603,
+      "feetY": [
+        80,
+        95
+      ],
+      "start": [
+        -750,
+        81,
+        750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "7c47daf69b965687bc5e9c3ffa48b756646fdf411d8ae7999eacbaa7e4b1f4eb"
+    },
+    "n": {
+      "steps": 1103,
+      "feetY": [
+        81,
+        95
+      ],
+      "start": [
+        -250,
+        81,
+        750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "070dd720d6f018e21005645c0a68716e6983a15fd43f84f6d0ad7bdb866ac689"
+    },
+    "o": {
+      "steps": 965,
+      "feetY": [
+        80,
+        116
+      ],
+      "start": [
+        250,
+        81,
+        750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "04f81d30b8bd0e43431fbd8c87e9308af3318a84db5a5536b27a21fd37ccaaef"
+    },
+    "p": {
+      "steps": 1455,
+      "feetY": [
+        80,
+        115
+      ],
+      "start": [
+        750,
+        81,
+        750
+      ],
+      "end": [
+        74,
+        81,
+        -29
+      ],
+      "pathSHA256": "45a2a0b61391780898ac799bfa5435233da577471205842c90900b04d299d73e"
+    }
+  }
+}
