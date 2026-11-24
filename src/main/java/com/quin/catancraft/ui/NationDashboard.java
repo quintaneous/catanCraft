@@ -191,11 +191,7 @@ public final class NationDashboard {
 
             lines.add("Y|" + activeMonument.name() +
                     " • " + activeMonument.type().displayName());
-            lines.add("D|X=" + activeMonument.x() +
-                    " Y=" + activeMonument.y() +
-                    " Z=" + activeMonument.z() +
-                    " • Radius " + activeMonument.radius() +
-                    " • Vertical ±12");
+            lines.add("D|" + MonumentManager.directions(activeMonument));
             lines.add("D|Capture: " + percent + "% • " + holder);
         }
         lines.add("X|monument");

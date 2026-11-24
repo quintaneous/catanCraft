@@ -7,6 +7,8 @@ import com.quin.catancraft.data.MonumentType;
 import com.quin.catancraft.world.MonumentRewards41;
 import java.io.IOException;
 import com.quin.catancraft.data.NationData;
+import com.quin.catancraft.map.MapDefinitionManager;
+import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.MinecraftServer;
@@ -16,6 +18,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.BooleanSupplier;
 
 public final class MonumentManager {
     public static final int CAPTURE_SECONDS = 120;
@@ -147,12 +150,39 @@ public final class MonumentManager {
     private static Set<UUID> nationsPresent(MinecraftServer server, CatanSavedData data, MonumentData monument) {
         Set<UUID> result = new LinkedHashSet<>();
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            String dimension = player.serverLevel().dimension().location().toString();
-            if (!monument.contains(dimension, player.getX(), player.getY(), player.getZ())) continue;
+            if (!player.isAlive() || player.isSpectator() || player.isRemoved() || !inside(monument, player)) continue;
             NationData nation = data.nationForPlayer(player.getUUID());
             if (nation != null) result.add(nation.id());
         }
         return result;
+    }
+
+    private static boolean inside(MonumentData monument, ServerPlayer player) {
+        return admits(MapDefinitionManager.mapId(), monument, player.serverLevel().dimension().location().toString(),
+                player.getX(), player.getY(), player.getZ(),
+                () -> !AuthoredCaptureFloors.boxes(player.serverLevel(), monument).isEmpty());
+    }
+
+    static boolean admits(String mapId, MonumentData monument, String dimension, double x, double y, double z,
+                          BooleanSupplier authoredBlocksMatch) {
+        if (!monument.dimensionId().equals(dimension)) return false;
+        if (!AuthoredCaptureFloors.applies(mapId)) return monument.contains(dimension, x, y, z);
+        return AuthoredCaptureFloors.boxes(monument).stream().anyMatch(box -> box.contains(x, y, z))
+                && authoredBlocksMatch.getAsBoolean();
+    }
+
+    public static String directions(MonumentData monument) {
+        if (AuthoredCaptureFloors.applies(MapDefinitionManager.mapId())) {
+            return AuthoredCaptureFloors.navigation(monument)
+                    .map(pos -> "Capture floor inside the building at " + coordinates(pos))
+                    .orElse("No surveyed capture floor at this site");
+        }
+        return coordinates(new BlockPos(monument.x(), monument.y(), monument.z()))
+                + " • Radius " + monument.radius() + " • Vertical ±12";
+    }
+
+    private static String coordinates(BlockPos pos) {
+        return "X=" + pos.getX() + " Y=" + pos.getY() + " Z=" + pos.getZ();
     }
 
     private static int progressPercent(MonumentData monument) {
@@ -170,8 +200,7 @@ public final class MonumentManager {
             String status
     ) {
         for (ServerPlayer player : server.getPlayerList().getPlayers()) {
-            String dimension = player.serverLevel().dimension().location().toString();
-            if (monument.contains(dimension, player.getX(), player.getY(), player.getZ())) {
+            if (inside(monument, player)) {
                 player.displayClientMessage(
                         Component.literal(monument.name() + " • " + status),
                         true
@@ -200,9 +229,7 @@ public final class MonumentManager {
     private static void announceActivation(MinecraftServer server, MonumentData monument) {
         server.getPlayerList().broadcastSystemMessage(
                 Component.literal("[CatanCraft] Monument active: " + monument.name() +
-                        " at X=" + monument.x() +
-                        " Y=" + monument.y() +
-                        " Z=" + monument.z() +
+                        ". " + directions(monument) +
                         ". Hold the zone for " + CAPTURE_SECONDS + " seconds."), false);
     }
 }

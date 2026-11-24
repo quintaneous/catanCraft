@@ -2198,10 +2198,7 @@ public final class CatanCommands {
                     (isActive ? "[ACTIVE] " : "") +
                             monument.name() + " [" + monument.id() + "] • " +
                             monument.type().displayName() +
-                            " • X=" + monument.x() +
-                            " Y=" + monument.y() +
-                            " Z=" + monument.z() +
-                            " • R=" + monument.radius()), false);
+                            " • " + MonumentManager.directions(monument)), false);
         }
         return 1;
     }

@@ -914,7 +914,7 @@ The optional segmented seed records closed checkpoints on one isolated authored 
 
 Run `python tools/authored53/segmented_wall.py --help` for pinned runtime, fixture, wrapper, and lease arguments. Keep the same source, range size, world identity, and evidence directory for every invocation. `--max-steps 1` stops after one newly completed step. Preserve failed or interrupted attempts and verify the whole chain with `tools/authored53/verify_wall_segments.py`. This harness compiled and its receipt tests passed. A native checkpoint, complete wall chain, gameplay qualification, and release promotion are separate milestones.
 
-### Optional public delivery field trial (November 23, 2026)
+### Archived first delivery field trial on R7 (November 23, 2026)
 
 The delivery branch adds one player-bound waybill for a crate of pump fittings.
 Open `/delivery` anywhere, or select the depot delivery board in the nation
@@ -935,3 +935,28 @@ Minecraft's compressed NBT format, including a second JVM reopening the file.
 A real player walking the route, interacting with the HUD and saving and
 reopening the singleplayer world remains a separate check. The release
 qualification on `02b5e67` continues independently of this field trial.
+
+### Full Map Review 02 delivery and capture floors (November 23, 2026)
+
+The field profile uses the original 65 save files from Full Map Review 02 with its
+own map configuration. Meridian Airlift Depot dispatches the sealed barrel at
+(74,82,-30). The bearer right-clicks the Copperline Refinery counter at (28,82,75)
+for one signed receipt. Death or deliberate transfer allows a different player
+to finish. Dispatch and handoff are free. The optional Xaero fullscreen view and
+built-in `/deliverymap` trace the same surveyed 281-block route. The field profile
+and the independent qualification campaign have separate sources and evidence.
+
+On this map the capture timer and contest check use reachable interior floor
+cells in Switchyard Turbine Hall, the depot hangar and the refinery process hall.
+Server outlines use the same physically checked floor definitions. The dashboard,
+activation announcement and monument list direct players to a point on the floor.
+Ordinary jumps inside count. The exterior roads, yards, roof and cellar do not.
+The optional siege survey shows city planning limits. The main game has no active
+production siege-objective registration. The standalone siege drill uses its own
+two marked objectives. Its acceptance does not qualify main-map sieges.
+
+Developer verification uses `tools/delivery/audit_route.py FULL_MAP_REVIEW_02_ZIP CLEAN_R7_INPUT_ROOT`,
+`tools/delivery/audit_capture_floors.py --help`, and the production-class checks
+in `tests/delivery` and `tests/visual`. The route survey covers all 16 cities.
+The map and item checks do not replace a player's in-game walk, two-player
+interception or visual acceptance of the overlays.
