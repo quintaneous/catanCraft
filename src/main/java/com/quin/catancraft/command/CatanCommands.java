@@ -2174,8 +2174,9 @@ public final class CatanCommands {
             return 0;
         }
 
-        if (!MonumentManager.forceActivate(source.getServer(), data, monument)) {
-            source.sendFailure(Component.literal("Monument activation could not be verified. Its saved reward history has been retained."));
+        MonumentManager.ActivationResult activation = MonumentManager.activateVerified(source.getServer(), data, monument);
+        if (!activation.success()) {
+            source.sendFailure(Component.literal(activation.message()));
             return 0;
         }
         source.sendSuccess(() -> Component.literal("Activated " + monument.name()), true);

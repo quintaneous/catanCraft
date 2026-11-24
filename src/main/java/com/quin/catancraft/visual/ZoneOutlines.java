@@ -96,8 +96,8 @@ public final class ZoneOutlines {
                 update(p, true);
                 String text = switch (mode) {
                     case OFF -> "Zone outlines off.";
-                    case NEARBY -> "Nearby outlines: solid gold capture boundary, cyan dispatch box, green receiving box.";
-                    case SURVEY -> "Survey outlines: dashed gray inactive monument, dashed violet city siege planning boundary. A planning boundary does not indicate an active siege.";
+                    case NEARBY -> "Nearby outlines: solid red capture boundary, cyan dispatch box, green receiving box.";
+                    case SURVEY -> "Survey outlines: short red dashes for inactive monuments, long red dashes with uprights for city siege planning. A planning boundary does not indicate an active siege.";
                 };
                 p.sendSystemMessage(Component.literal(text));
                 return 1;

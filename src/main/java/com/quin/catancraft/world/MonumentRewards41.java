@@ -9,9 +9,7 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.level.storage.LevelResource;
 
 import java.io.*;
-import java.nio.channels.*;
 import java.nio.file.*;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -22,7 +20,6 @@ public final class MonumentRewards41 {
     private static final int MAX_HISTORY=4096,MAX_MONUMENTS=64,MAX_FILE=8*1024*1024+40;
     private static final SecureRandom RANDOM=new SecureRandom();
     private static final Fault NONE=p->{};
-    private static boolean busy;
     public enum SavePoint { BEFORE_ACTIVATION_SAVE,AFTER_ACTIVATION_SAVE,BEFORE_CAPTURE_SAVE,AFTER_CAPTURE_SAVE,BEFORE_INTENT,AFTER_INTENT,AFTER_CREDIT,AFTER_CREDIT_SAVE,BEFORE_COMMITTED,AFTER_COMMITTED }
     public interface Fault { void at(SavePoint point)throws IOException; }
     public interface Environment { MinecraftServer server();CatanSavedData data();void persist()throws IOException; }
@@ -45,7 +42,7 @@ public final class MonumentRewards41 {
         return readyActivation(e,monument,false);
     }
     private static boolean readyActivation(Environment e,MonumentData monument,boolean fixture)throws IOException {
-        try(Lock lock=lock(e)){
+        try(RewardStorageLock lock=lock(e)){
             CompoundTag state=state(e,monument,fixture);if(!state.getString("phase").equals("OPEN"))return false;
             check(e,lock,monument,state,fixture);
             if(!nativeActivation(e,monument,state))saveVerified(e,monument,state,fixture);
@@ -61,7 +58,7 @@ public final class MonumentRewards41 {
         return canReplace(runtime(server,data),monument,false);
     }
     private static boolean canReplace(Environment e,MonumentData monument,boolean fixture)throws IOException {
-        try(Lock lock=lock(e)){
+        try(RewardStorageLock lock=lock(e)){
             requireMonument(e,monument);for(MonumentData current:monuments(e)){
                 if(current.rewardActivation41()==null)continue;
                 if(!fixture&&controlledRecord(e,current))return false;
@@ -76,7 +73,7 @@ public final class MonumentRewards41 {
         return pendingRewards(runtime(server,data),nationId,false);
     }
     private static List<CompoundTag> pendingRewards(Environment e,UUID nationId,boolean fixture)throws IOException {
-        try(Lock lock=lock(e)){
+        try(RewardStorageLock lock=lock(e)){
             if(nationId==null||e.data().nation(nationId)==null)throw new IOException("Original reward nation is unavailable");
             List<CompoundTag> result=new ArrayList<>();for(Path path:history(e)){
                 byte[] bytes=read(path);CompoundTag intent=readIntent(e,bytes,fixture);UUID id=intent.getUUID("id");
@@ -103,7 +100,7 @@ public final class MonumentRewards41 {
         return pendingRewards(e,nationId,true);
     }
     private static void prepare(Environment e,MonumentData m,RewardTable41 table,long seed,UUID id,Fault fault,boolean fixture)throws IOException {
-        try(Lock lock=lock(e)){
+        try(RewardStorageLock lock=lock(e)){
             requireMonument(e,m);if(e.data().activeMonument()!=m)throw new IOException("Set the current monument before preparing its activation");
             for(MonumentData other:monuments(e))if(other.rewardActivation41()!=null){
                 CompoundTag prior=state(e,other,recordScope(e,other,fixture));
@@ -118,18 +115,123 @@ public final class MonumentRewards41 {
                     check(e,lock,m,prior,fixture);fault.at(SavePoint.AFTER_ACTIVATION_SAVE);check(e,lock,m,prior,fixture);return;
                 }
             }
-            if(id==null||id.equals(new UUID(0,0)))throw new IOException("Explicit reward activation identity required");
-            if(history(e).size()>=MAX_HISTORY||Files.exists(intentPath(e,id),LinkOption.NOFOLLOW_LINKS)||Files.exists(receiptPath(e,id),LinkOption.NOFOLLOW_LINKS))
-                throw new IOException("Reward history is full or activation identity already exists");
-            for(MonumentData other:monuments(e))if(other.rewardActivation41() instanceof CompoundTag old&&old.hasUUID("id")&&old.getUUID("id").equals(id))throw new IOException("Reward activation identity already assigned");
-            RewardTable41.Roll roll=table.roll(seed);CompoundTag state=new CompoundTag();state.putInt("schema",1);state.putUUID("id",id);state.putString("phase","OPEN");
-            state.put("identity",identity(e,fixture));state.put("monument",geometry(m));state.putString("tableRevision",table.revision());state.putString("tableSHA256",hashTag(table.save()));
-            state.putString("entry",roll.entryId());state.put("roll",roll.reward().save());m.setRewardActivation41(state);e.data().setDirty();
+            CompoundTag state=newOpenState(e,m,table,seed,id,fixture);
+            m.setRewardActivation41(state);e.data().setDirty();
             fault.at(SavePoint.BEFORE_ACTIVATION_SAVE);check(e,lock,m,state,fixture);saveVerified(e,m,state,fixture);fault.at(SavePoint.AFTER_ACTIVATION_SAVE);check(e,lock,m,state,fixture);
         }
     }
+    private static CompoundTag newOpenState(Environment e, MonumentData monument, RewardTable41 table, long seed,
+                                            UUID id, boolean fixture) throws IOException {
+        if (id == null || id.equals(new UUID(0, 0))) throw new IOException("Explicit reward activation identity required");
+        if (history(e).size() >= MAX_HISTORY || Files.exists(intentPath(e, id), LinkOption.NOFOLLOW_LINKS)
+                || Files.exists(receiptPath(e, id), LinkOption.NOFOLLOW_LINKS))
+            throw new IOException("Reward history is full or activation identity already exists");
+        for (MonumentData other : monuments(e)) {
+            if (other.rewardActivation41() instanceof CompoundTag old && old.hasUUID("id") && old.getUUID("id").equals(id))
+                throw new IOException("Reward activation identity already assigned");
+        }
+        RewardTable41.Roll roll = table.roll(seed);
+        CompoundTag state = new CompoundTag();
+        state.putInt("schema", 1);
+        state.putUUID("id", id);
+        state.putString("phase", "OPEN");
+        state.put("identity", identity(e, fixture));
+        state.put("monument", geometry(monument));
+        state.putString("tableRevision", table.revision());
+        state.putString("tableSHA256", hashTag(table.save()));
+        state.putString("entry", roll.entryId());
+        state.put("roll", roll.reward().save());
+        return state;
+    }
+
+    /** Activate in one reward transaction, with the frozen outcome and pointers in the same native save. */
+    public static boolean activateRound(MinecraftServer server, CatanSavedData data, MonumentData target) throws IOException {
+        return activateRound(runtime(server, data), target, null, NONE, false);
+    }
+
+    static boolean fixtureActivateRound(Environment e, MonumentData target, RewardTable41 table, Fault fault) throws IOException {
+        fixture(e);
+        return activateRound(e, target, Objects.requireNonNull(table), fault, true);
+    }
+
+    private static boolean activateRound(Environment e, MonumentData target, RewardTable41 fixtureTable, Fault fault,
+                                         boolean fixture) throws IOException {
+        try (RewardStorageLock lock = lock(e)) {
+            requireMonument(e, target);
+            for (MonumentData current : monuments(e)) {
+                if (current.rewardActivation41() == null) continue;
+                if (!fixture && controlledRecord(e, current)) return false;
+                CompoundTag record = state(e, current, recordScope(e, current, fixture));
+                if (!record.getString("phase").equals("OPEN") && !terminal(e, current, record)) return false;
+            }
+
+            CompoundTag prior = target.rewardActivation41() == null ? null : state(e, target, fixture);
+            CompoundTag diskRecord = nativeRecord(e, target);
+            if (prior == null && diskRecord != null && diskRecord.contains("rewardActivation41"))
+                throw new IOException("Saved reward activation is missing from live state; retain native history for recovery");
+
+            boolean reuse = prior != null && prior.getString("phase").equals("OPEN");
+            CompoundTag next = reuse ? prior : newOpenState(e, target,
+                    fixture ? fixtureTable : MonumentSupply44.table(target.type()), RANDOM.nextLong(), UUID.randomUUID(), fixture);
+            boolean alreadySaved = nativeActivation(e, target, next);
+            nativeHistoryGuard(e, target);
+            lock.verify();
+
+            MonumentData previous = e.data().activeMonument();
+            if (previous == target && reuse && alreadySaved) return true;
+            CompoundTag before = e.data().save(new CompoundTag());
+            CompoundTag diskBefore = nativeDataIfPresent(e);
+            // All validation and fault injection precede mutations. An initial failure
+            // must not expose an active pointer with an unfrozen (legacy) reward.
+            fault.at(SavePoint.BEFORE_ACTIVATION_SAVE);
+            if (previous != target || !reuse) {
+                if (previous != null) previous.resetCapture();
+                target.resetCapture();
+            }
+            target.setRewardActivation41(next);
+            e.data().setActiveMonumentId(target.id());
+            e.data().setLastActivatedMonumentId(target.id());
+            e.data().setNextMonumentActivationGameTime(0);
+            CompoundTag staged = e.data().save(new CompoundTag());
+            try {
+                saveVerified(e, target, next, fixture);
+                fault.at(SavePoint.AFTER_ACTIVATION_SAVE);
+                check(e, lock, target, next, fixture);
+                return true;
+            } catch (IOException | RuntimeException failure) {
+                // A callback may have failed after a successful save. Restore only
+                // when readback proves the old disk and our exact staged live state.
+                try {
+                    CompoundTag disk = nativeDataIfPresent(e);
+                    if (!staged.equals(disk) && Objects.equals(diskBefore, disk) && staged.equals(e.data().save(new CompoundTag()))) {
+                        restoreCapture(before, target);
+                        if (previous != null && previous != target) restoreCapture(before, previous);
+                        target.setRewardActivation41(prior);
+                        e.data().setActiveMonumentId(before.contains("activeMonumentId") ? before.getString("activeMonumentId") : null);
+                        e.data().setLastActivatedMonumentId(before.contains("lastActivatedMonumentId") ? before.getString("lastActivatedMonumentId") : null);
+                        e.data().setNextMonumentActivationGameTime(before.getLong("nextMonumentActivationGameTime"));
+                    }
+                } catch (IOException | RuntimeException readback) {
+                    failure.addSuppressed(readback);
+                }
+                throw failure;
+            }
+        }
+    }
+
+    private static void restoreCapture(CompoundTag ledger, MonumentData monument) {
+        for (var row : ledger.getList("monuments", Tag.TAG_COMPOUND)) {
+            CompoundTag saved = (CompoundTag)row;
+            if (monument.id().equals(saved.getString("id"))) {
+                monument.setCaptureProgressTicks(saved.getInt("captureProgressTicks"));
+                monument.setCapturingNationId(saved.hasUUID("capturingNationId") ? saved.getUUID("capturingNationId") : null);
+                return;
+            }
+        }
+    }
+
     private static Result capture(Environment e,MonumentData m,UUID winner,Fault fault,boolean fixture)throws IOException {
-        try(Lock lock=lock(e)){
+        try(RewardStorageLock lock=lock(e)){
             CompoundTag state=state(e,m,fixture);
             if(state.getString("phase").equals("OPEN")){
                 if(e.data().activeMonument()!=m||winner==null||e.data().nation(winner)==null||!winner.equals(m.capturingNationId())
@@ -146,7 +248,7 @@ public final class MonumentRewards41 {
         }
     }
     private static boolean recover(Environment e,Fault fault,boolean fixture)throws IOException {
-        try(Lock lock=lock(e)){
+        try(RewardStorageLock lock=lock(e)){
             boolean processed=false;for(MonumentData m:monuments(e)){
                 if(m.rewardActivation41()==null||(!fixture&&controlledRecord(e,m)))continue;
                 boolean scope=recordScope(e,m,fixture);CompoundTag state=state(e,m,scope);if(state.getString("phase").equals("OPEN"))continue;
@@ -157,7 +259,7 @@ public final class MonumentRewards41 {
             return processed;
         }
     }
-    private static Result settle(Environment e,Lock lock,MonumentData m,CompoundTag original,Fault fault,boolean fixture)throws IOException {
+    private static Result settle(Environment e,RewardStorageLock lock,MonumentData m,CompoundTag original,Fault fault,boolean fixture)throws IOException {
         CompoundTag state=original.copy();UUID id=state.getUUID("id");
         if(terminal(e,m,state))return result(state,"Reward already settled; no repeated credit.");
         if(e.data().activeMonument()!=null&&e.data().activeMonument()!=m)throw new IOException("Another capture is active; original reward retained for recovery");
@@ -251,7 +353,7 @@ public final class MonumentRewards41 {
     private static CompoundTag identity(Environment e,boolean fixture)throws IOException {CompoundTag n=new CompoundTag();n.putString("root",root(e).toString());n.putString("levelName",e.server().getWorldData().getLevelName());n.putLong("seed",e.server().overworld().getSeed());n.putString("scope",fixture?"controlled_fixture":"runtime");return n;}
     private static void requireMonument(Environment e,MonumentData m)throws IOException {thread(e);if(m==null||e.data().monument(m.id())!=m)throw new IOException("Reward requires the current native monument record");}
     private static List<MonumentData> monuments(Environment e)throws IOException {if(e.data().monuments().size()>MAX_MONUMENTS)throw new IOException("Too many monument reward records");return List.copyOf(e.data().monuments());}
-    private static void check(Environment e,Lock lock,MonumentData m,CompoundTag expected,boolean fixture)throws IOException {
+    private static void check(Environment e,RewardStorageLock lock,MonumentData m,CompoundTag expected,boolean fixture)throws IOException {
         lock.verify();if(!state(e,m,fixture).equals(expected))throw new IOException("Frozen reward activation changed");
         if(expected.getString("phase").equals("SETTLED")){
             if(e.data().activeMonument()!=null||e.data().nextMonumentActivationGameTime()!=expected.getLong("nextActivation"))throw new IOException("Pending reward round/cooldown changed");
@@ -333,7 +435,7 @@ public final class MonumentRewards41 {
         return List.copyOf(paths);
     }
     private static byte[] read(Path p)throws IOException {safe(p);if(!Files.isRegularFile(p,LinkOption.NOFOLLOW_LINKS)||Files.size(p)>MAX_FILE)throw new IOException("Missing/invalid bounded reward file");byte[] bytes=Files.readAllBytes(p);if(bytes.length>MAX_FILE)throw new IOException("Oversized reward file");return bytes;}
-    private static void safe(Path path)throws IOException {Path walk=path.getRoot();for(Path part:path){walk=walk.resolve(part);if(Files.isSymbolicLink(walk)||(!walk.equals(path)&&Files.exists(walk,LinkOption.NOFOLLOW_LINKS)&&!Files.isDirectory(walk,LinkOption.NOFOLLOW_LINKS)))throw new IOException("Unsafe reward storage path");}}
+    private static void safe(Path path) throws IOException { RewardStorageLock.ensureSafePath(path); }
     private static void thread(Environment e)throws IOException {if(e.server()==null||!e.server().isSameThread()||e.data()!=CatanSavedData.get(e.server()))throw new IOException("Reward requires current native data/server thread");}
     private static void fixture(Environment e)throws IOException {
         thread(e);Path root=root(e);if(!(e.server() instanceof GameTestServer)||!root.getFileName().toString().equals("world")
@@ -352,16 +454,8 @@ public final class MonumentRewards41 {
         if(!(m.rewardActivation41() instanceof CompoundTag tag)||!tag.getCompound("identity").getString("scope").equals("controlled_fixture"))return false;
         fixture(e);return true;
     }
-    private static Lock lock(Environment e)throws IOException {
-        thread(e);if(busy)throw new IOException("Another monument reward operation is active");busy=true;FileChannel channel=null;
-        try{Path path=root(e).resolve("data/catancraft_reward41.lock");safe(path);Files.createDirectories(path.getParent());channel=FileChannel.open(path,StandardOpenOption.CREATE,StandardOpenOption.WRITE,LinkOption.NOFOLLOW_LINKS);
-            FileLock lock;try{lock=channel.tryLock();}catch(OverlappingFileLockException failure){throw new IOException("Reward storage is locked",failure);}if(lock==null)throw new IOException("Reward storage is locked");return new Lock(path,channel,lock);
-        }catch(IOException|RuntimeException failure){try{if(channel!=null)channel.close();}finally{busy=false;}throw failure;}
-    }
-    private static final class Lock implements AutoCloseable {
-        final Path path;final FileChannel channel;final FileLock lock;final Object key;
-        Lock(Path path,FileChannel channel,FileLock lock)throws IOException{this.path=path;this.channel=channel;this.lock=lock;key=Files.readAttributes(path,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS).fileKey();if(key==null)throw new IOException("Reward storage needs stable lock identity");}
-        void verify()throws IOException{safe(path);if(!lock.isValid()||!Files.isRegularFile(path,LinkOption.NOFOLLOW_LINKS)||!key.equals(Files.readAttributes(path,BasicFileAttributes.class,LinkOption.NOFOLLOW_LINKS).fileKey()))throw new IOException("Reward lock changed");}
-        public void close()throws IOException{try{if(lock.isValid())lock.release();}finally{try{channel.close();}finally{busy=false;}}}
+    private static RewardStorageLock lock(Environment e) throws IOException {
+        thread(e);
+        return RewardStorageLock.acquire(root(e).resolve("data/catancraft_reward41.lock"));
     }
 }

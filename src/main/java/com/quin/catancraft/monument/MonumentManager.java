@@ -105,25 +105,38 @@ public final class MonumentManager {
         if (active != null) sendZoneStatus(server, active, "REWARD RECOVERY PENDING");
     }
 
+    public record ActivationResult(boolean success, String message) {}
+
     public static boolean forceActivate(MinecraftServer server, CatanSavedData data, MonumentData monument) {
-        if (monument == null || data.monument(monument.id()) != monument) return false;
+        return activateVerified(server, data, monument).success();
+    }
+
+    public static ActivationResult activateVerified(MinecraftServer server, CatanSavedData data, MonumentData monument) {
+        if (monument == null || data.monument(monument.id()) != monument)
+            return new ActivationResult(false, "The selected monument no longer matches the loaded world.");
         try {
-            MonumentData previous = data.activeMonument();
-            for (MonumentData existing : data.monuments())
-                if (!MonumentRewards41.canReplace(server, data, existing)) return false;
-            if (previous != null) previous.resetCapture();
-            monument.resetCapture();
-            data.setActiveMonumentId(monument.id());
-            data.setLastActivatedMonumentId(monument.id());
-            data.setNextMonumentActivationGameTime(0);
-            data.setDirty();
-            MonumentRewards41.prepareActivation(server, data, monument);
-            announceActivation(server, monument);
-            return true;
+            if (!MonumentRewards41.activateRound(server, data, monument))
+                return new ActivationResult(false, "An earlier monument reward is still awaiting verified settlement.");
         } catch (IOException | RuntimeException failure) {
             rewardHold(server, server.overworld().getGameTime() / 20, failure);
-            return false;
+            return new ActivationResult(false, activationFailure(failure));
         }
+        announceActivation(server, monument);
+        return new ActivationResult(true, "Activated " + monument.name());
+    }
+
+    private static String activationFailure(Exception failure) {
+        // Keep hidden rolls, raw filesystem paths and stack traces out of chat.
+        String detail = String.valueOf(failure.getMessage()).toLowerCase(java.util.Locale.ROOT);
+        if (detail.contains("hard-link") || detail.contains("file identity"))
+            return "The save volume could not verify a stable reward lock file. See latest.log for the filesystem error.";
+        if (detail.contains("lock") || detail.contains("operation is active"))
+            return "The server could not acquire or verify the reward storage lock. See latest.log for the cause.";
+        if (detail.contains("world or geometry") || detail.contains("source changed") || detail.contains("scope"))
+            return "Saved reward history belongs to a different world or monument identity. See latest.log.";
+        if (detail.contains("save") || detail.contains("readback") || detail.contains("native") || detail.contains("receipt"))
+            return "The server could not verify the saved reward data. See latest.log for the cause.";
+        return "The server could not verify this monument’s reward configuration or history. See latest.log for the cause.";
     }
 
     private static void activateNext(MinecraftServer server, CatanSavedData data) {

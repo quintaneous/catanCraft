@@ -262,7 +262,52 @@ public final class MonumentRewards41Tests {
         h.assertTrue(!MonumentManager.forceActivate(f.server(),f.data,next),"Admin activation replaced an unsettled captured reward");
         h.assertTrue(f.data.activeMonument()==f.monument&&f.state().equals(original)&&next.rewardActivation41()==null,"Refused activation changed original pending round");
         MonumentRewards41.fixtureRecover(f,NONE);f.assertCredit(bundle());
+        exerciseAdminRetry(h, f, next);
     });}
+
+    private static void exerciseAdminRetry(GameTestHelper h, Fixture f, MonumentData next) throws Exception {
+        byte[] intent = f.intentBytes(), receipt = f.receiptBytes();
+        Path intentPath = f.intentPath(), receiptPath = f.receiptPath();
+        h.assertTrue(MonumentRewards41.fixtureActivateRound(f, next, single(102, 4), NONE), "Could not open the next round");
+        next.setCapturingNationId(f.nation.id());
+        next.setCaptureProgressTicks(100);
+        f.persist();
+        CompoundTag before = f.data.save(new CompoundTag());
+        byte[] diskBefore = f.ledgerBytes();
+
+        // A prior Windows lock refusal stops before any round mutation. Reopen
+        // the lock file from another channel to exercise that exact carryover.
+        try (var channel = java.nio.channels.FileChannel.open(f.root.resolve("data/catancraft_reward41.lock"), StandardOpenOption.WRITE);
+             var held = channel.lock()) {
+            refuse(() -> MonumentRewards41.fixtureActivateRound(f, f.monument, single(103, 5), NONE));
+        }
+        h.assertTrue(before.equals(f.data.save(new CompoundTag())), "Lock refusal changed the ongoing capture");
+        same(h, diskBefore, f.ledgerPath(), "Lock refusal changed existing reward history");
+
+        refuse(() -> MonumentRewards41.fixtureActivateRound(f, f.monument, single(103, 5), failAt(SavePoint.BEFORE_ACTIVATION_SAVE)));
+        h.assertTrue(before.equals(f.data.save(new CompoundTag())), "Failed pre-save activation reset the live round");
+        same(h, diskBefore, f.ledgerPath(), "Failed pre-save activation changed the native ledger");
+
+        f.suppress = true;
+        try {
+            refuse(() -> MonumentRewards41.fixtureActivateRound(f, f.monument, single(103, 5), NONE));
+        } finally {
+            f.suppress = false;
+        }
+        h.assertTrue(before.equals(f.data.save(new CompoundTag())), "Failed write left the target active or changed capture progress");
+        same(h, diskBefore, f.ledgerPath(), "Suppressed write altered disk");
+
+        refuse(() -> MonumentRewards41.fixtureActivateRound(f, f.monument, single(103, 5), failAt(SavePoint.AFTER_ACTIVATION_SAVE)));
+        h.assertTrue(f.data.activeMonument() == f.monument && dataWithoutNativeFileChange(f), "Post-save failure rolled back a durable activation");
+        CompoundTag committed = f.state();
+        f.monument.setCapturingNationId(f.nation.id());
+        f.monument.setCaptureProgressTicks(140);
+        h.assertTrue(MonumentRewards41.fixtureActivateRound(f, f.monument, single(999, 9), NONE)
+                && f.state().equals(committed) && f.monument.captureProgressTicks()==140, "Retry rerolled a saved activation or reset an ongoing capture");
+        same(h, intent, intentPath, "Activation retry rewrote earlier winner history");
+        same(h, receipt, receiptPath, "Activation retry rewrote prior payment receipt");
+        f.assertCredit(bundle());
+    }
 
     @GameTest(template="townhall_state_empty",batch="rewards41_24",timeoutTicks=200)
     public static void post_native_credit_and_terminal_marker_faults_reconcile_without_replay(GameTestHelper h){run(h,f->{

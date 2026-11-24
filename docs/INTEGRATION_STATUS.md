@@ -960,3 +960,15 @@ Developer verification uses `tools/delivery/audit_route.py FULL_MAP_REVIEW_02_ZI
 in `tests/delivery` and `tests/visual`. The route survey covers all 16 cities.
 The map and item checks do not replace a player's in-game walk, two-player
 interception or visual acceptance of the overlays.
+
+Quin completed the physical delivery on Full Map Review 02. The next field
+update uses vivid red for the monument and siege boundary lines. Active
+monuments have a continuous line, survey monuments use short dashes, and siege
+surveys use longer dashes with uprights. The delivery route stays purple.
+
+The field client includes Xaero’s World Map 1.47.0 for Forge 1.20.1. The
+in-place update keeps the existing world at the same path. The monument reward
+lock supports the packaged Windows Java 17 provider, whose basic file key is
+always absent, by pinning the locked file with a hard link. Activation stages
+the reward and active monument together and checks the saved record on retry.
+Other systems with their own file locks require separate Windows verification.

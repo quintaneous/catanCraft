@@ -23,6 +23,7 @@ public final class OutlineRenderer {
     private static ZoneOutlines.Snapshot visible;
     private static List<InteriorEdges.Edge> interior = List.of();
     private static final int CIRCLE_SEGMENTS = 96;
+    private static final int BOUNDARY_RED = 0xFF3030;
 
     private OutlineRenderer() {}
 
@@ -65,22 +66,21 @@ public final class OutlineRenderer {
         }
     }
 
-    private static void drawInteriorEdge(PoseStack stack, VertexConsumer lines, InteriorEdges.Edge edge) {
-        int color = edge.active() ? 0xFFC848 : 0xBCC6CF;
+    static void drawInteriorEdge(PoseStack stack, VertexConsumer lines, InteriorEdges.Edge edge) {
         double floor = edge.floor() + .075;
         if (edge.active()) {
-            edgeLine(stack, lines, edge, edge.begin(), edge.end(), floor, color);
+            edgeLine(stack, lines, edge, edge.begin(), edge.end(), floor, BOUNDARY_RED);
             // Short ticks on the true boundary remain visible beside skirting or furniture.
             double firstTick = Math.ceil(edge.begin() / 3) * 3;
             for (double i = firstTick; i < edge.end(); i += 3) {
                 double x = edge.alongX() ? i : edge.fixed(), z = edge.alongX() ? edge.fixed() : i;
-                line(stack, lines, x, floor, z, x, Math.min(floor + .55, edge.ceiling()), z, color, .85f);
+                line(stack, lines, x, floor, z, x, Math.min(floor + .55, edge.ceiling()), z, BOUNDARY_RED, .85f);
             }
         } else {
             double start = Math.floor(edge.begin() / 1.5) * 1.5;
             for (double i = start; i < edge.end(); i += 1.5) {
                 double a = Math.max(i, edge.begin()), b = Math.min(i + .85, edge.end());
-                if (b > a) edgeLine(stack, lines, edge, a, b, floor, color);
+                if (b > a) edgeLine(stack, lines, edge, a, b, floor, BOUNDARY_RED);
             }
         }
     }
@@ -108,9 +108,8 @@ public final class OutlineRenderer {
         }
     }
 
-    private static void monument(PoseStack stack, VertexConsumer lines, OutlineShape s, double playerY) {
+    static void monument(PoseStack stack, VertexConsumer lines, OutlineShape s, double playerY) {
         boolean active = s.kind() == OutlineShape.Kind.ACTIVE_MONUMENT;
-        int color = active ? 0xFFC848 : 0xBCC6CF;
         double cx = (s.x0() + s.x1()) / 2, cz = (s.z0() + s.z1()) / 2;
         double r = (s.x1() - s.x0()) / 2;
         double y = Mth.clamp(playerY + .13, s.y0(), s.y1());
@@ -120,16 +119,16 @@ public final class OutlineRenderer {
             double b = (i + 1) * (Math.PI * 2 / CIRCLE_SEGMENTS);
             double x = cx + r * Math.cos(a), z = cz + r * Math.sin(a);
             double nextX = cx + r * Math.cos(b), nextZ = cz + r * Math.sin(b);
-            line(stack, lines, x, y, z, nextX, y, nextZ, color, .92f);
+            line(stack, lines, x, y, z, nextX, y, nextZ, BOUNDARY_RED, .92f);
             if (active) {
-                line(stack, lines, x, s.y1(), z, nextX, s.y1(), nextZ, color, .53f);
-                line(stack, lines, x, s.y0(), z, nextX, s.y0(), nextZ, color, .53f);
-                if (i % 24 == 0) line(stack, lines, x, s.y0(), z, x, s.y1(), z, color, .55f);
+                line(stack, lines, x, s.y1(), z, nextX, s.y1(), nextZ, BOUNDARY_RED, .53f);
+                line(stack, lines, x, s.y0(), z, nextX, s.y0(), nextZ, BOUNDARY_RED, .53f);
+                if (i % 24 == 0) line(stack, lines, x, s.y0(), z, x, s.y1(), z, BOUNDARY_RED, .55f);
             }
         }
     }
 
-    private static void siege(PoseStack stack, VertexConsumer lines, OutlineShape s, double playerY, Vec3 camera) {
+    static void siege(PoseStack stack, VertexConsumer lines, OutlineShape s, double playerY, Vec3 camera) {
         double y = Mth.clamp(playerY + .18, s.y0(), s.y1());
         for (double x : new double[]{s.x0(), s.x1()}) {
             if (Math.abs(camera.x - x) > 50) continue;
@@ -151,11 +150,10 @@ public final class OutlineRenderer {
 
     private static void siegeDash(PoseStack stack, VertexConsumer lines, OutlineShape s,
                                   double x, double z, double ex, double ez, double y) {
-        int purple = 0xD7A2F6;
-        line(stack, lines, x,y,z, ex,y,ez, purple,.88f);
-        line(stack, lines, x,s.y1(),z, ex,s.y1(),ez, purple,.4f);
-        line(stack, lines, x,s.y0(),z, ex,s.y0(),ez, purple,.4f);
-        line(stack, lines, x,y,z, x,Math.min(y + .8,s.y1()),z, purple,.8f);
+        line(stack, lines, x,y,z, ex,y,ez, BOUNDARY_RED,.88f);
+        line(stack, lines, x,s.y1(),z, ex,s.y1(),ez, BOUNDARY_RED,.4f);
+        line(stack, lines, x,s.y0(),z, ex,s.y0(),ez, BOUNDARY_RED,.4f);
+        line(stack, lines, x,y,z, x,Math.min(y + .8,s.y1()),z, BOUNDARY_RED,.8f);
     }
 
     private static void line(PoseStack stack, VertexConsumer out, double ax, double ay, double az,
