@@ -62,6 +62,7 @@ public final class NationDashboard {
         List<String> lines = new ArrayList<>();
         if(refreshOnly)lines.add("V|defense_refresh");
         if(!notice.isBlank())lines.add("M|"+DefenseMenuRows.safe(notice));
+        if (com.quin.catancraft.delivery.DeliveryRoute.current().isPresent()) lines.add("A|delivery|Depot delivery board");
         lines.add("I|" + nation.id());
         lines.add("H|" + nation.name());
         lines.add("G|Treasury: $" + nation.treasury());

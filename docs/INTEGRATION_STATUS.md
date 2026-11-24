@@ -913,3 +913,25 @@ No NPC/siege work, live-world changes, deployment or additional geometry approva
 The optional segmented seed records closed checkpoints on one isolated authored world. Founding, each purchase batch, and the final restart have their own native process receipts. The final two deliberately interrupted purchases in D and M remain in the same process before restart. The original all-city seed and verify assertions still cover 128 paid purchases and 64 paid Hall upgrades.
 
 Run `python tools/authored53/segmented_wall.py --help` for pinned runtime, fixture, wrapper, and lease arguments. Keep the same source, range size, world identity, and evidence directory for every invocation. `--max-steps 1` stops after one newly completed step. Preserve failed or interrupted attempts and verify the whole chain with `tools/authored53/verify_wall_segments.py`. This harness compiled and its receipt tests passed. A native checkpoint, complete wall chain, gameplay qualification, and release promotion are separate milestones.
+
+### Optional public delivery field trial (November 23, 2026)
+
+The delivery branch adds one player-bound waybill for a crate of pump fittings.
+Open `/delivery` anywhere, or select the depot delivery board in the nation
+overview. Stand on the Military Depot roadside pad (75, 81, -16) to collect it.
+Carry the load on foot to the Refinery pad (22, 81, 89). A separate receipt
+records each successful delivery. Use `/delivery receipt` to retrieve your
+latest receipt after saving and reopening. A nation, vehicle and earned
+building are optional. Cargo lives on the waybill and the trial awards no
+money, stock or items.
+
+The read-only route audit of the pristine R7 map found a continuous approach
+from each of the 16 city centers, including A, D, M and P. The loaded leg is
+158 level steps outside the monument capture circles. See
+`tools/delivery/route_audit.json` and reproduce it with
+`python tools/delivery/audit_route.py CLEAN_R7_INPUT_ROOT`. The Java tests in
+`tests/delivery` exercise the same handoff actions, Brigadier commands and
+Minecraft's compressed NBT format, including a second JVM reopening the file.
+A real player walking the route, interacting with the HUD and saving and
+reopening the singleplayer world remains a separate check. The release
+qualification on `02b5e67` continues independently of this field trial.

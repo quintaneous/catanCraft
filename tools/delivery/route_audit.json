@@ -1,0 +1,376 @@
+{
+  "fixtureManifestSHA256": "e7ecd5d0f0ac5c1457be5c234d2e5e08c9239007787b20e0bdc45b3e2b8d862d",
+  "mapSHA256": "e50d9753c807b5fe6f8fdee9765ae09640d951cc0ba2d59f1612f0923485c986",
+  "scope": "Static pedestrian clearance in the pristine authored R7 source, before purchases.",
+  "movement": "Cardinal walking with three air blocks and at most one full-block rise or drop. The loaded leg stays at feet Y=81 and crosses one grass block between gravel lots. City approaches may cross natural ground.",
+  "foundingCities": [
+    "a",
+    "d",
+    "m",
+    "p"
+  ],
+  "loadedRouteAvoidsAllCaptureZones": true,
+  "loadedRouteTurnsXZ": [
+    [
+      75,
+      -16
+    ],
+    [
+      72,
+      -16
+    ],
+    [
+      72,
+      4
+    ],
+    [
+      44,
+      4
+    ],
+    [
+      44,
+      82
+    ],
+    [
+      29,
+      82
+    ],
+    [
+      29,
+      87
+    ],
+    [
+      22,
+      87
+    ],
+    [
+      22,
+      89
+    ]
+  ],
+  "loadedLegSurfaceSteps": {
+    "gravel": 157,
+    "grass": 1
+  },
+  "landmarkPads": {
+    "depot": [
+      75,
+      81,
+      -16
+    ],
+    "refinery": [
+      22,
+      81,
+      89
+    ]
+  },
+  "padWidth": 5,
+  "routes": {
+    "depotToRefinery": {
+      "steps": 158,
+      "feetY": [
+        81,
+        81
+      ],
+      "start": [
+        75,
+        81,
+        -16
+      ],
+      "end": [
+        22,
+        81,
+        89
+      ],
+      "pathSHA256": "2b95197b4056e986f642e169eeebecca4fd7ff12a5662682a375a78cb9721d01"
+    },
+    "a": {
+      "steps": 1559,
+      "feetY": [
+        81,
+        95
+      ],
+      "start": [
+        -750,
+        81,
+        -750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "e25efed35a4a9596cdfaade3b6e2cc72d6648e21072fac73a1507add6a49dfb1"
+    },
+    "b": {
+      "steps": 1059,
+      "feetY": [
+        81,
+        104
+      ],
+      "start": [
+        -250,
+        81,
+        -750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "76c329619ea0038a09bf1342e1ead4727fd620a22be1ce3812ed7271d6c538cf"
+    },
+    "c": {
+      "steps": 909,
+      "feetY": [
+        80,
+        100
+      ],
+      "start": [
+        250,
+        81,
+        -750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "7b1b188fa4cdfee15a0dc01b661c772ad7cdf3384b2fda93393b8bbf53930848"
+    },
+    "d": {
+      "steps": 1409,
+      "feetY": [
+        80,
+        106
+      ],
+      "start": [
+        750,
+        81,
+        -750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "007ff1c3ac9892004e5fd40271919e77367f3b83a9c7e0e8062f97a26a847f8c"
+    },
+    "e": {
+      "steps": 1059,
+      "feetY": [
+        81,
+        95
+      ],
+      "start": [
+        -750,
+        81,
+        -250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "77b8876aab8ca6da229ab5d8274e11b9ae9259018e358ddc2e435c7dff6cca89"
+    },
+    "f": {
+      "steps": 559,
+      "feetY": [
+        81,
+        96
+      ],
+      "start": [
+        -250,
+        81,
+        -250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "eecfbeb2c4b75b86adc9a4673bf80b4dffaf384f7d5c65a75a1b8a89b9c84d8a"
+    },
+    "g": {
+      "steps": 409,
+      "feetY": [
+        80,
+        100
+      ],
+      "start": [
+        250,
+        81,
+        -250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "6604f49c0a26f5aebb41ce87112730c90b2ab43b796814424b09fe16b500e14b"
+    },
+    "h": {
+      "steps": 909,
+      "feetY": [
+        80,
+        106
+      ],
+      "start": [
+        750,
+        81,
+        -250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "a03f32b25102878cb13e3e3ef7f56ad85db3a1bdaff2225eada3500ea1a1320a"
+    },
+    "i": {
+      "steps": 1091,
+      "feetY": [
+        80,
+        95
+      ],
+      "start": [
+        -750,
+        81,
+        250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "72dd40119e18970902bf99339f1ad4e728763408e8e53f16786df31d58b33660"
+    },
+    "j": {
+      "steps": 591,
+      "feetY": [
+        81,
+        95
+      ],
+      "start": [
+        -250,
+        81,
+        250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "3380f00b3fb6fa351a69147e84adeaeed150e52796045c21be03ba05bfc5d40c"
+    },
+    "k": {
+      "steps": 497,
+      "feetY": [
+        80,
+        116
+      ],
+      "start": [
+        250,
+        81,
+        250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "748ddabdb652a7790e759a78186b19715f3f10ddc6d6b2e1775ae452f6962ef4"
+    },
+    "l": {
+      "steps": 941,
+      "feetY": [
+        80,
+        110
+      ],
+      "start": [
+        750,
+        81,
+        250
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "7c4344a1ba06f5de59710a82ca699325102b5229f78b1fc87af2edf41c43df8b"
+    },
+    "m": {
+      "steps": 1591,
+      "feetY": [
+        80,
+        95
+      ],
+      "start": [
+        -750,
+        81,
+        750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "0e37e448885c02e023bfa4be346b7e2c43f2fc7c84343aae45bd233a7b78fe2d"
+    },
+    "n": {
+      "steps": 1091,
+      "feetY": [
+        81,
+        95
+      ],
+      "start": [
+        -250,
+        81,
+        750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "43592b6240def8128c023cedb70f584969b792c1c6c2ec94a7c4a55017bb9d35"
+    },
+    "o": {
+      "steps": 997,
+      "feetY": [
+        80,
+        116
+      ],
+      "start": [
+        250,
+        81,
+        750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "2043a14e51b6934d671aec1dfa1377ee95f0ded6e6def5a5dd745cff9f6fe3ec"
+    },
+    "p": {
+      "steps": 1441,
+      "feetY": [
+        80,
+        110
+      ],
+      "start": [
+        750,
+        81,
+        750
+      ],
+      "end": [
+        75,
+        81,
+        -16
+      ],
+      "pathSHA256": "1bcd77a6ace9d5d016333a544c3572be5c57755a1439255d1e75c1ab759e223d"
+    }
+  }
+}

@@ -954,7 +954,7 @@ public final class CatanCommands {
         ServerPlayer player = source.getPlayerOrException();
         if (!NationDashboard.open(player)) {
             source.sendFailure(Component.literal(
-                    "You are not in a nation. Use /nation create <name> or accept an invitation."));
+                    "You are not in a nation. Use /nation create <name>, accept an invitation, or try /delivery."));
             return 0;
         }
         return 1;
