@@ -972,3 +972,21 @@ lock supports the packaged Windows Java 17 provider, whose basic file key is
 always absent, by pinning the locked file with a hard link. Activation stages
 the reward and active monument together and checks the saved record on retry.
 Other systems with their own file locks require separate Windows verification.
+
+### Friends’ founding playtest on Full Map Review 02
+
+The delivery field save could create a nation, but its first starter claim
+stopped at the legacy R7 authorization before the producer checks or assignment.
+The friends’ profile binds each fresh installation to the original 65-file
+Full Map Review 02 inventory, pinned map configuration, world seed and local
+save path. The legacy R7 repair path keeps its original identity. Normal city
+expansion recognizes all 16 preinstalled city pads and skips the broad
+environment paste. Unbound field saves refuse construction and retain progress.
+
+The field and R7 saves matched in all 31,587,152 blocks and all 60 block entities
+across the 16 city pads. Each of the four original starter Town Halls and its
+three tier-one producers also matched their rotated source schematics. The
+full-map verifier’s 25 city-pad, lectern, bridge and central-district locations
+were checked in the saved world. These file checks establish physical
+compatibility. Native founding, earned purchases, reload and friends joining
+are separate playtest results. The release qualification remains on 02b5e67.

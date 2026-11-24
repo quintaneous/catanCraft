@@ -31,16 +31,18 @@ public final class WorldMapVerifier {
         List<String> failures = new ArrayList<>();
         int[] counts = new int[] {0, 0};
 
-        if (!"season1_river_bridges_v3".equals(MapDefinitionManager.mapId())) {
+        if (!"season1_river_bridges_v3".equals(MapDefinitionManager.mapId())
+                && !FreshDemoAuthorization.FULL_MAP_ID.equals(MapDefinitionManager.mapId())) {
             failures.add(
                     "Loaded map id is '" + MapDefinitionManager.mapId() +
-                            "', expected season1_river_bridges_v3.");
+                            "', expected the River & Bridges or Full Map Review 02 profile.");
         }
 
         CatanSavedData data = CatanSavedData.get(server);
         boolean v4Baseline =
                 MapAssetService.isEnvironmentV4World(server)
-                        || MapAssetService.allEnvironmentMarkersPresent(data);
+                        || (!FreshDemoAuthorization.selectsFullMap(server)
+                            && MapAssetService.allEnvironmentMarkersPresent(data));
 
         check(
                 counts,

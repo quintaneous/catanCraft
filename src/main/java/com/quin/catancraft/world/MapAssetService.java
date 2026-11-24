@@ -42,6 +42,14 @@ public final class MapAssetService {
         if (server == null || server.getWorldData() == null) return false;
         String levelName = server.getWorldData().getLevelName();
         if (levelName == null) return false;
+        if (FreshDemoAuthorization.selectsFullMap(server)) {
+            try {
+                FreshDemoAuthorization.authorize(server);
+                return true;
+            } catch (java.io.IOException unavailable) {
+                return false;
+            }
+        }
         String normalized = levelName.trim();
         return ENVIRONMENT_V4_LEVEL_NAME.equalsIgnoreCase(normalized)
                 || MONUMENT_GAMEPLAY_R1_LEVEL_NAME.equalsIgnoreCase(normalized)
@@ -95,6 +103,16 @@ public final class MapAssetService {
             TerritoryDefinition territory,
             boolean prebuiltStartingCity
     ) {
+        // All sixteen Full Map Review 02 pads already exist. A failed binding
+        // must stop even an expansion before the legacy environment paste path.
+        boolean fullMap = FreshDemoAuthorization.selectsFullMap(server);
+        if (fullMap) {
+            try {
+                FreshDemoAuthorization.authorize(server);
+            } catch (java.io.IOException refused) {
+                return new Result(false, refused.getMessage(), 0);
+            }
+        }
         if (prebuiltStartingCity) {
             Result adoption = ProducerService.adoptPrebuilt(server, data, territory);
             if (!adoption.success()) return adoption;
@@ -115,7 +133,7 @@ public final class MapAssetService {
             );
         }
 
-        if (isEnvironmentV4World(server)) {
+        if (fullMap || isEnvironmentV4World(server)) {
             // Environment V4 ships with this layer already baked into all
             // sixteen pads. Persist the fact; never clear the pad again.
             data.setPlacedMapAsset(

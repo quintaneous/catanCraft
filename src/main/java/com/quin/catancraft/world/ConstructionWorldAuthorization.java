@@ -13,7 +13,7 @@ final class ConstructionWorldAuthorization {
     private ConstructionWorldAuthorization(){}
     static Path authorize(MinecraftServer server)throws IOException {
         Path root=server.getWorldPath(LevelResource.ROOT).toAbsolutePath().normalize();
-        if(Files.exists(root.resolve(FreshDemoAuthorization.MARKER),LinkOption.NOFOLLOW_LINKS))return FreshDemoAuthorization.authorize(server);
+        if(FreshDemoAuthorization.selectsFullMap(server) || Files.exists(root.resolve(FreshDemoAuthorization.MARKER),LinkOption.NOFOLLOW_LINKS))return FreshDemoAuthorization.authorize(server);
         return TownHallRepairService.authorize(server);
     }
 }
